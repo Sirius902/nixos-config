@@ -21,6 +21,7 @@ install-passwd:
 # * Running `make install-passwd`.
 # * Copying `secrets-example.nix` to `secrets.nix` and modifying secrets appropriately.
 # * Modifying `HOST` above to match desired host.
+# * If installing on a VM, edit `boot.zfs.devNodes` in `vm.nix` to be the boot partition.
 .PHONY: install
 install:
 	# Mount `/efi` with root-only permissions to avoid systemd complaining about a security hole.
