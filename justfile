@@ -25,5 +25,5 @@ install efi=(`df --output=source /mnt/efi | awk ' NR==2 '`):
 
 	sudo chmod -R g-rx,o-rx /mnt/persist/passwords/
 	sudo nixos-generate-config --root /mnt
-	sudo rsync -a "{{ justfile_directory() }}" /mnt/etc/nixos
+	sudo rsync -a "{{ justfile_directory() }}/" /mnt/etc/nixos/
 	sudo nixos-install --flake "path:/mnt/etc/nixos#{{ host }}" --no-root-passwd
