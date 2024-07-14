@@ -15,9 +15,17 @@
     let
       system = "x86_64-linux";
       home-manager = inputs.home-manager.nixosModules;
+      pkgs = import nixpkgs { inherit system; };
     in
     {
       formatter.${system} = nixpkgs.legacyPackages.${system}.nixpkgs-fmt;
+
+      defaultPackage.${system} = pkgs.mkShell {
+        packages = [
+          pkgs.just
+          pkgs.mkpasswd
+        ];
+      };
 
       nixosConfigurations = {
         nixlee = nixpkgs.lib.nixosSystem {
