@@ -63,6 +63,24 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
+  i18n.inputMethod = {
+    enabled = "ibus";
+    ibus.engines = with pkgs.ibus-engines; [
+      mozc
+    ];
+
+    # enabled = "fcitx5";
+    # fcitx5 = {
+    #   addons = with pkgs; [
+    #     fcitx5-mozc
+    #     fcitx5-chinese-addons
+    #     fcitx5-gtk
+    #     fcitx5-configtool
+    #   ];
+    #   waylandFrontend = true;
+    # };
+  };
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
@@ -146,6 +164,7 @@ in
 
   programs = {
     git.enable = true;
+    nix-ld.enable = true;
     neovim = {
       enable = true;
       defaultEditor = true;
@@ -170,6 +189,7 @@ in
     ripgrep
     virtiofsd # For virtio support in QEMU.
     # TODO: Only use these packages on desktop with graphics.
+    jetbrains-mono
     discord
     gkraken
     keepassxc
@@ -190,11 +210,13 @@ in
 
     pure-prompt
 
+    unzip # Required for clangd tree-sitter parser.
+    gcc
+    nodejs_22
+    rustup
     zig
     zls
-    rustup
-    # TODO: Switch to regular vscodium and manage extensions with nix.
-    vscodium-fhs
+    vscodium
 
     (buildFHSUserEnv {
       name = "fhs";
