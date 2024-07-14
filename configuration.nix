@@ -165,6 +165,7 @@ in
   programs = {
     git.enable = true;
     nix-ld.enable = true;
+    # TODO: Use https://github.com/nix-community/kickstart-nix.nvim or something similar to configure neovim.
     neovim = {
       enable = true;
       defaultEditor = true;
