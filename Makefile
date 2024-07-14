@@ -9,10 +9,16 @@ fmt:
 switch:
 	sudo nixos-rebuild --flake "path:#$(HOST)" switch
 
+# Creates `/persist/passwords/chris` with the hashed password.
+.PHONY: install-passwd
+install-passwd:
+	sudo mkdir -p /mnt/persist/passwords
+	mkpasswd -m sha-512 > /tmp/chris
+	sudo cp /tmp/chris /mnt/persist/passwords
+
 # Run after:
 # * Formatting with `disk-config.nix`.
-# * Creating `/persist/passwords/chris` with the hashed password.
-#   * Generate with `mkpasswd -m sha-512`.
+# * Running `make install-passwd`.
 # * Copying `secrets-example.nix` to `secrets.nix` and modifying secrets appropriately.
 # * Modifying `HOST` above to match desired host.
 .PHONY: install
