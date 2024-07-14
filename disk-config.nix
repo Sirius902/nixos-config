@@ -17,7 +17,7 @@
               content = {
                 type = "filesystem";
                 format = "vfat";
-                mountpoint = "/boot";
+                mountpoint = "/efi";
               };
             };
             swap = {
@@ -28,7 +28,7 @@
               size = "100%";
               content = {
                 type = "zfs";
-                pool = "zroot";
+                pool = "zpool";
               };
             };
           };
@@ -38,23 +38,25 @@
     # NOTE: Use legacy mountpoints to prevent a race condition when importing pools during boot.
     # If not using legacy mountpoints both systemd and zfs will attempt to import them.
     zpool = {
-      zroot = {
+      zpool = {
         type = "zpool";
         rootFsOptions = {
           acltype = "posixacl";
           compression = "on";
           xattr = "sa";
+          mountpoint = "none";
         };
-        options = {
-          ashift = "12";
-          mountpoint = "legacy";
-        };
+        options.ashift = "12";
         # TODO: Consider adding 10G reserved dataset to prevent performance deterioration.
         # https://nixos.wiki/wiki/ZFS#Mount_datasets_at_boot
-        mountpoint = "/";
-        postCreateHook = "zfs list -t snapshot -H -o name | grep -E '^zroot@blank$' || zfs snapshot zroot@blank";
 
         datasets = {
+          root = {
+            type = "zfs_fs";
+            mountpoint = "/";
+            options.mountpoint = "legacy";
+            postCreateHook = "zfs list -t snapshot -H -o name | grep -E '^zpool/root@blank$' || zfs snapshot zpool/root@blank";
+          };
           nix = {
             type = "zfs_fs";
             mountpoint = "/nix";
@@ -72,7 +74,7 @@
             type = "zfs_fs";
             mountpoint = "/home";
             options.mountpoint = "legacy";
-            postCreateHook = "zfs list -t snapshot -H -o name | grep -E '^zroot/home@blank$' || zfs snapshot zroot/home@blank";
+            postCreateHook = "zfs list -t snapshot -H -o name | grep -E '^zpool/home@blank$' || zfs snapshot zpool/home@blank";
           };
         };
       };
