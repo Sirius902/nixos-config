@@ -4,7 +4,7 @@ fmt:
 	nix --extra-experimental-features "nix-command flakes" fmt
 
 switch:
-	sudo nixos-rebuild --flake "path:{{ justfile_directory()}}#{{host }}" switch
+	sudo nixos-rebuild --flake "path:{{ justfile_directory() }}#{{ host }}" switch
 
 # Creates `/persist/passwords/chris` with the hashed password.
 install-passwd:
