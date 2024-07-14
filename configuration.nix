@@ -200,7 +200,9 @@ in
     gkraken
     keepassxc
     liquidctl
-    nautilus-python # Required for Open in WezTerm.
+    # TODO: Enable this once nixos stable catches up to unstable.
+    #nautilus-python # Required for Open in WezTerm.
+    gnome.nautilus-python # Required for Open in WezTerm.
     openrazer-daemon
     polychromatic
     (prismlauncher.override {
@@ -234,8 +236,10 @@ in
     #  wget
   ];
 
-  environment.gnome.excludePackages = with pkgs; [
-    gnome-tour
+  # TODO: Enable this once nixos stable catches up to unstable.
+  #environment.gnome.excludePackages = with pkgs; [
+  environment.gnome.excludePackages = with pkgs.gnome; [
+    pkgs.gnome-tour
     gnome-terminal # Console
     epiphany # Web Browser
     geary # Email Viewer
