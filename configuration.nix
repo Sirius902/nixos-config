@@ -164,6 +164,7 @@ in
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     fastfetch
+    fzf
     just
     qemu # Workaround for libvirtd efi not working.
     ripgrep
