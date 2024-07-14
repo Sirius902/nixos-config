@@ -17,7 +17,7 @@ install-passwd:
 # * Running `make install-passwd`.
 # * Copying `secrets-example.nix` to `secrets.nix` and modifying secrets appropriately.
 # * Modifying `host` above to match desired host.
-# * If installing on a VM, edit `boot.zfs.devNodes` in `vm.nix` to be the boot partition.
+# * If installing on a VM, edit `boot.zfs.devNodes` in `vm.nix` to be the zroot partition.
 install efi=(`df --output=source /mnt/efi | awk ' NR==2 '`):
 	# Mount `/efi` with root-only permissions to avoid systemd complaining about a security hole.
 	sudo umount "{{ efi }}"
