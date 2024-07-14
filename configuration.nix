@@ -30,6 +30,7 @@ in
   # Automatically scrub ZFS pools weekly.
   services.zfs.autoScrub.enable = true;
 
+  # TODO: Don't do this for a VM.
   boot.zfs.extraPools = [ "futomaki" "kappamaki" ];
 
   networking.hostId = secrets.hostId;
