@@ -1,16 +1,12 @@
-HOST := nixlee
-ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+host := "nixlee"
 
-.PHONY: fmt
 fmt:
 	nix --extra-experimental-features "nix-command flakes" fmt
 
-.PHONY: switch
 switch:
-	sudo nixos-rebuild --flake "path:#$(HOST)" switch
+	sudo nixos-rebuild --flake "path:{{ justfile_directory()}}#{{host }}" switch
 
 # Creates `/persist/passwords/chris` with the hashed password.
-.PHONY: install-passwd
 install-passwd:
 	sudo mkdir -p /mnt/persist/passwords
 	mkpasswd -m sha-512 > /tmp/chris
@@ -20,16 +16,14 @@ install-passwd:
 # * Formatting with `disk-config.nix`.
 # * Running `make install-passwd`.
 # * Copying `secrets-example.nix` to `secrets.nix` and modifying secrets appropriately.
-# * Modifying `HOST` above to match desired host.
+# * Modifying `host` above to match desired host.
 # * If installing on a VM, edit `boot.zfs.devNodes` in `vm.nix` to be the boot partition.
-.PHONY: install
-install:
+install efi=(`df --output=source /mnt/efi | awk ' NR==2 '`):
 	# Mount `/efi` with root-only permissions to avoid systemd complaining about a security hole.
-	$(eval EFI := $(shell df --output=source /mnt/efi | awk ' NR==2 '))
-	sudo umount "$(EFI)"
-	sudo mount -o umask=0077 "$(EFI)" /mnt/efi
+	sudo umount "{{ efi }}"
+	sudo mount -o umask=0077 "{{ efi }}" /mnt/efi
 
 	sudo chmod -R g-rx,o-rx /mnt/persist/passwords/
 	sudo nixos-generate-config --root /mnt
-	sudo rsync -a "$(ROOT_DIR)" /mnt/etc/nixos
-	sudo nixos-install --flake "path:/mnt/etc/nixos#$(HOST)" --no-root-passwd
+	sudo rsync -a "{{ justfile_directory() }}" /mnt/etc/nixos
+	sudo nixos-install --flake "path:/mnt/etc/nixos#{{ host }}" --no-root-passwd

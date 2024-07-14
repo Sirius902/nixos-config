@@ -163,13 +163,13 @@ in
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     fastfetch
+    just
     qemu # Workaround for libvirtd efi not working.
     ripgrep
     virtiofsd # For virtio support in QEMU.
     # TODO: Only use these packages on desktop with graphics.
     discord
     gkraken
-    gnumake
     keepassxc
     liquidctl
     nautilus-python # Required for Open in WezTerm.
