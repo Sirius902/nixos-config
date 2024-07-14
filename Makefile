@@ -22,9 +22,9 @@ install-passwd:
 # * Copying `secrets-example.nix` to `secrets.nix` and modifying secrets appropriately.
 # * Modifying `HOST` above to match desired host.
 .PHONY: install
-install: EFI := $(shell df --output=source /mnt/efi | awk ' NR==2 ')
 install:
 	# Mount `/efi` with root-only permissions to avoid systemd complaining about a security hole.
+	$(eval EFI := $(shell df --output=source /mnt/efi | awk ' NR==2 '))
 	sudo umount "$(EFI)"
 	sudo mount -o umask=0077 "$(EFI)" /mnt/efi
 
