@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, inputs, pkgs, ... }:
+{ config, inputs, outputs, pkgs, ... }:
 
 let
   secrets = import ./secrets.nix;
@@ -15,6 +15,8 @@ in
     ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  nixpkgs.overlays = [ (import ./overlays/default.nix { inherit inputs; }).unstable-packages ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -169,6 +171,7 @@ in
     neovim = {
       enable = true;
       defaultEditor = true;
+      package = pkgs.unstable.neovim-unwrapped;
     };
     steam = {
       enable = true;
