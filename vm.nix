@@ -1,6 +1,5 @@
 {
-  # TODO: Move this to configuration.nix if it turns out non-VMs require this to boot.
-  #boot.zfs.devNodes = "/dev/disk/by-partuuid";
+  boot.zfs.devNodes = "/dev/disk/by-partlabel/disk-vda-zfs";
 
   services.spice-vdagentd.enable = true;
   services.qemuGuest.enable = true;
