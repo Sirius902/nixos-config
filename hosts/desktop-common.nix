@@ -1,4 +1,4 @@
-{ config, inputs, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [ ];
@@ -8,7 +8,6 @@
     nautilus-python # Required for Open in WezTerm.
     qdirstat
     wl-clipboard
-    pure-prompt
     vscodium
   ];
 }

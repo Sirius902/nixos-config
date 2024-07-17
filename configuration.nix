@@ -77,10 +77,8 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  programs = {
-    git.enable = true;
-    zsh.enable = true;
-  };
+  programs.git.enable = true;
+  programs.zsh.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

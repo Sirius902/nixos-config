@@ -32,79 +32,36 @@
     };
   };
 
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-
-    viAlias = true;
-    vimAlias = true;
-    vimdiffAlias = true;
-
-    extraPackages = with pkgs; [
-      wl-clipboard
-
-      luajitPackages.lua-lsp
-      nixd
-
-      rust-analyzer
-      zls
-    ];
-
-    plugins = with pkgs.vimPlugins; [
-      nvim-lspconfig
-
-      comment-nvim
-
-      {
-        plugin = gruvbox-nvim;
-        config = "colorscheme gruvbox";
-      }
-
-      neodev-nvim
-
-      nvim-cmp
-
-      telescope-nvim
-
-      telescope-fzf-native-nvim
-
-      cmp_luasnip
-      cmp-nvim-lsp
-
-      luasnip
-      friendly-snippets
-
-      lualine-nvim
-      nvim-web-devicons
-
-      (nvim-treesitter.withPlugins (p: [
-        p.tree-sitter-nix
-        p.tree-sitter-vim
-        p.tree-sitter-bash
-        p.tree-sitter-lua
-        p.tree-sitter-python
-        p.tree-sitter-json
-
-        p.tree-sitter-rust
-        p.tree-sitter-zig
-        p.tree-sitter-just
-      ]))
-
-      vim-nix
-    ];
-  };
+  # TODO: Figure out how to override these on the nixvim-config package.
+  # programs.nixvim = {
+  #   enable = true;
+  #   defaultEditor = true;
+  #
+  #   viAlias = true;
+  #   vimAlias = true;
+  #   vimdiffAlias = true;
+  # };
 
   programs.wezterm = pkgs.lib.mkIf isDesktop {
     enable = true;
     enableBashIntegration = true;
     enableZshIntegration = true;
-    # TODO: Enable
-    #extraConfig = builtins.readFile ./dotfiles/wezterm/wezterm.lua
+    extraConfig = builtins.readFile ./dotfiles/wezterm/wezterm.lua;
+  };
+
+  programs.zsh = {
+    enable = true;
+    defaultKeymap = "viins"; # Use Vim keybinds
+    prezto = {
+      enable = true;
+      prompt.theme = "pure";
+    };
   };
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
+    inputs.nixvim-config.packages.${pkgs.system}.default
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello

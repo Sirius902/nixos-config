@@ -1,5 +1,3 @@
-{ config, inputs, pkgs, ... }:
-
 {
   imports = [ ];
 

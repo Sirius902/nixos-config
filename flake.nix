@@ -19,6 +19,10 @@
       url = "git+ssh://git@github.com/Sirius902/nixos-secrets.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixvim-config = {
+      url = "github:Sirius902/nixvim-config";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, disko, ... }@inputs:
