@@ -32,7 +32,7 @@
     };
   };
 
-  # TODO: Figure out how to override these on the nixvim-config package.
+  # TODO: Figure out how to override these on the nixvim-config package. For now, define these manually.
   # programs.nixvim = {
   #   enable = true;
   #   defaultEditor = true;
@@ -41,6 +41,21 @@
   #   vimAlias = true;
   #   vimdiffAlias = true;
   # };
+  home.sessionVariables.EDITOR = "nvim";
+  programs.bash.shellAliases.vi = "nvim";
+  programs.fish.shellAliases.vi = "nvim";
+  programs.zsh.shellAliases.vi = "nvim";
+  programs.bash.shellAliases.vim = "nvim";
+  programs.fish.shellAliases.vim = "nvim";
+  programs.zsh.shellAliases.vim = "nvim";
+  programs.bash.shellAliases.vimdiff = "nvim -d";
+  programs.fish.shellAliases.vimdiff = "nvim -d";
+  programs.zsh.shellAliases.vimdiff = "nvim -d";
+
+  # Allow above aliases to work with doas.
+  programs.bash.shellAliases.doas = "doas ";
+  programs.fish.shellAliases.doas = "doas ";
+  programs.zsh.shellAliases.doas = "doas ";
 
   programs.wezterm = pkgs.lib.mkIf isDesktop {
     enable = true;
