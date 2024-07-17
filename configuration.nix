@@ -9,6 +9,7 @@
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      inputs.secrets.nixosModules.secrets
     ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
