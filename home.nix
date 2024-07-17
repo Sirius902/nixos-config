@@ -32,6 +32,68 @@
     };
   };
 
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+
+    viAlias = true;
+    vimAlias = true;
+    vimdiffAlias = true;
+
+    extraPackages = with pkgs; [
+      wl-clipboard
+
+      luajitPackages.lua-lsp
+      nixd
+
+      rust-analyzer
+      zls
+    ];
+
+    plugins = with pkgs.vimPlugins; [
+      nvim-lspconfig
+
+      comment-nvim
+
+      {
+        plugin = gruvbox-nvim;
+        config = "colorscheme gruvbox";
+      }
+
+      neodev-nvim
+
+      nvim-cmp
+
+      telescope-nvim
+
+      telescope-fzf-native-nvim
+
+      cmp_luasnip
+      cmp-nvim-lsp
+
+      luasnip
+      friendly-snippets
+
+      lualine-nvim
+      nvim-web-devicons
+
+      (nvim-treesitter.withPlugins (p: [
+        p.tree-sitter-nix
+        p.tree-sitter-vim
+        p.tree-sitter-bash
+        p.tree-sitter-lua
+        p.tree-sitter-python
+        p.tree-sitter-json
+
+        p.tree-sitter-rust
+        p.tree-sitter-zig
+        p.tree-sitter-just
+      ]))
+
+      vim-nix
+    ];
+  };
+
   programs.wezterm = pkgs.lib.mkIf isDesktop {
     enable = true;
     enableBashIntegration = true;
