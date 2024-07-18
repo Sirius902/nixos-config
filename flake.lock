@@ -332,11 +332,11 @@
         "nixvim": "nixvim"
       },
       "locked": {
-        "lastModified": 1721207397,
-        "narHash": "sha256-FcucRWsB0BrqH0OCDNutiiliuGq+to5qOixOP9ZEFXo=",
+        "lastModified": 1721248832,
+        "narHash": "sha256-Y5u33pFaXLC+YQy6soT5d+KM9slEkdCLfzwpwArMkjE=",
         "owner": "Sirius902",
         "repo": "nixvim-config",
-        "rev": "ec969e93588bd477e636835c077d25a6e5c8c8ea",
+        "rev": "7e9f8e3033229c1a5e7954d171dbcf563f4f7bc8",
         "type": "github"
       },
       "original": {
@@ -363,11 +363,11 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1721247039,
-        "narHash": "sha256-ROR5QEONXWFLdNH9lWEE4D+9gIvr1+V1KbkAxk8l/QE=",
+        "lastModified": 1721256342,
+        "narHash": "sha256-jqu3mJSzK3G+/QENevmsNmuZxuLWK9YB3/2XLCW4f2M=",
         "ref": "refs/heads/main",
-        "rev": "381d7f931d5866ba5b01a7e21ca6a7a0716938bf",
-        "revCount": 3,
+        "rev": "62aae1173f8fbca4e1c2ca95a1bacf92c9c00d6a",
+        "revCount": 4,
         "type": "git",
         "url": "ssh://git@github.com/Sirius902/nixos-secrets.git"
       },
