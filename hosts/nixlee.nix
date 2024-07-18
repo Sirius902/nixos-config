@@ -108,6 +108,7 @@
     gkraken
     keepassxc
     liquidctl
+    lm_sensors
     openrazer-daemon
     polychromatic
     (prismlauncher.override {
