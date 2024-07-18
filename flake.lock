@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1721007199,
-        "narHash": "sha256-Gof4Lj1rgTrX59bNu5b/uS/3X/marUGM7LYw31NoXEA=",
+        "lastModified": 1721266288,
+        "narHash": "sha256-MsyTzXu9CJVcBr44ct8ILKF/Ro7VlF+tVZTylzAoXSs=",
         "owner": "nix-community",
         "repo": "disko",
-        "rev": "bad376945de7033c7adc424c02054ea3736cf7c4",
+        "rev": "e8e8d9a3a9c1d0e654ccda7834bf0288a9d15c47",
         "type": "github"
       },
       "original": {
@@ -82,6 +82,24 @@
           "nixvim",
           "nixpkgs"
         ]
+      },
+      "locked": {
+        "lastModified": 1719994518,
+        "narHash": "sha256-pQMhCCHyQGRzdfAkdJ4cIWiw+JNuWsTX7f0ZYSyz0VY=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "9227223f6d922fee3c7b190b2cc238a99527bbb7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flake-parts_3": {
+      "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib_2"
       },
       "locked": {
         "lastModified": 1719994518,
@@ -263,6 +281,18 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/5daf0514482af3f97abaefc78a6606365c9108e2.tar.gz"
       }
     },
+    "nixpkgs-lib_2": {
+      "locked": {
+        "lastModified": 1719876945,
+        "narHash": "sha256-Fm2rDDs86sHy0/1jxTOKB1118Q0O3Uc7EC0iXvXKpbI=",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/5daf0514482af3f97abaefc78a6606365c9108e2.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/5daf0514482af3f97abaefc78a6606365c9108e2.tar.gz"
+      }
+    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1720915306,
@@ -332,11 +362,11 @@
         "nixvim": "nixvim"
       },
       "locked": {
-        "lastModified": 1721248832,
-        "narHash": "sha256-Y5u33pFaXLC+YQy6soT5d+KM9slEkdCLfzwpwArMkjE=",
+        "lastModified": 1721285203,
+        "narHash": "sha256-Ioc1dEgkLZRU85fo3xsIeUGZG6zaAd+4CGBRGE8nHEE=",
         "owner": "Sirius902",
         "repo": "nixvim-config",
-        "rev": "7e9f8e3033229c1a5e7954d171dbcf563f4f7bc8",
+        "rev": "5e877d54bf2930800f33acd974488603bef30456",
         "type": "github"
       },
       "original": {
@@ -357,17 +387,18 @@
     },
     "secrets": {
       "inputs": {
+        "flake-parts": "flake-parts_3",
         "nixpkgs": [
           "nixpkgs"
         ],
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1721256342,
-        "narHash": "sha256-jqu3mJSzK3G+/QENevmsNmuZxuLWK9YB3/2XLCW4f2M=",
+        "lastModified": 1721284251,
+        "narHash": "sha256-jU1IpeVtV5yYUK8BvuiPlJnc4+zdcjQAMsjR8eYhAlY=",
         "ref": "refs/heads/main",
-        "rev": "62aae1173f8fbca4e1c2ca95a1bacf92c9c00d6a",
-        "revCount": 4,
+        "rev": "3e71a3224fa4343268cce5a41733028e8b012c39",
+        "revCount": 7,
         "type": "git",
         "url": "ssh://git@github.com/Sirius902/nixos-secrets.git"
       },
