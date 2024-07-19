@@ -32,31 +32,6 @@
     };
   };
 
-  # TODO: Figure out how to override these on the nixvim-config package. For now, define these manually.
-  # programs.nixvim = {
-  #   enable = true;
-  #   defaultEditor = true;
-  #
-  #   viAlias = true;
-  #   vimAlias = true;
-  #   vimdiffAlias = true;
-  # };
-  home.sessionVariables.EDITOR = "nvim";
-  programs.bash.shellAliases.vi = "nvim";
-  programs.fish.shellAliases.vi = "nvim";
-  programs.zsh.shellAliases.vi = "nvim";
-  programs.bash.shellAliases.vim = "nvim";
-  programs.fish.shellAliases.vim = "nvim";
-  programs.zsh.shellAliases.vim = "nvim";
-  programs.bash.shellAliases.vimdiff = "nvim -d";
-  programs.fish.shellAliases.vimdiff = "nvim -d";
-  programs.zsh.shellAliases.vimdiff = "nvim -d";
-
-  # Allow above aliases to work with doas.
-  programs.bash.shellAliases.doas = "doas ";
-  programs.fish.shellAliases.doas = "doas ";
-  programs.zsh.shellAliases.doas = "doas ";
-
   programs.wezterm = pkgs.lib.mkIf isDesktop {
     enable = true;
     enableBashIntegration = true;
@@ -78,10 +53,19 @@
     nix-direnv.enable = true;
   };
 
+  home.sessionVariables.VISUAL = "nvim";
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
-    inputs.nixvim-config.packages.${pkgs.system}.default
+    (pkgs.nvim-pkg.override {
+      defaultEditor = true;
+
+      viAlias = true;
+      vimAlias = true;
+      vimdiffAlias = true;
+    })
+
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello

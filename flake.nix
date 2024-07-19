@@ -20,8 +20,8 @@
       url = "git+ssh://git@github.com/Sirius902/nixos-secrets.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixvim-config = {
-      url = "github:Sirius902/nixvim-config";
+    nix-nvim-config = {
+      url = "github:Sirius902/nix-nvim-config";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -31,11 +31,19 @@
       flake = {
         nixosConfigurations =
           let
+            system = "x86_64-linux";
+            pkgs = import nixpkgs {
+              inherit system;
+              overlays = [
+                inputs.nix-nvim-config.overlays.default
+              ];
+              config.allowUnfree = true;
+            };
             home-manager = inputs.home-manager.nixosModules;
           in
           {
             nixlee = nixpkgs.lib.nixosSystem {
-              system = "x86_64-linux";
+              inherit pkgs system;
               specialArgs = {
                 inherit inputs;
                 hostname = "nixlee";
@@ -58,7 +66,7 @@
             };
 
             vm = nixpkgs.lib.nixosSystem {
-              system = "x86_64-linux";
+              inherit pkgs system;
               specialArgs = {
                 inherit inputs;
                 hostname = "vm";
@@ -85,7 +93,7 @@
             };
 
             server = nixpkgs.lib.nixosSystem {
-              system = "x86_64-linux";
+              inherit pkgs system;
               specialArgs = {
                 inherit inputs;
                 hostname = "nixlee-server";
@@ -108,7 +116,7 @@
             };
 
             vm-server = nixpkgs.lib.nixosSystem {
-              system = "x86_64-linux";
+              inherit pkgs system;
               specialArgs = {
                 inherit inputs;
                 hostname = "vm-server";
