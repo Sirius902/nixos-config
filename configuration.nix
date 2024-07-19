@@ -8,6 +8,7 @@
   imports =
     [
       # Include the results of the hardware scan.
+      # TODO: Probably just store hardware configs for all hosts instead of manually managing.
       ./hardware-configuration.nix
       inputs.secrets.nixosModules.secrets
     ];

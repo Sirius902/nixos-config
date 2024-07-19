@@ -79,6 +79,7 @@
                 disko.nixosModules.disko
 
                 ./disk-config.nix
+                { disko.devices.disk.primary.device = "/dev/vda"; }
 
                 home-manager.home-manager
                 {
@@ -125,10 +126,12 @@
               };
               modules = [
                 ./configuration.nix
+                ./hosts/server.nix
                 ./hosts/vm.nix
                 disko.nixosModules.disko
 
                 ./disk-config.nix
+                { disko.devices.disk.primary.device = "/dev/vda"; }
 
                 home-manager.home-manager
                 {

@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1721266288,
-        "narHash": "sha256-MsyTzXu9CJVcBr44ct8ILKF/Ro7VlF+tVZTylzAoXSs=",
+        "lastModified": 1721417620,
+        "narHash": "sha256-6q9b1h8fI3hXg2DG6/vrKWCeG8c5Wj2Kvv22RCgedzg=",
         "owner": "nix-community",
         "repo": "disko",
-        "rev": "e8e8d9a3a9c1d0e654ccda7834bf0288a9d15c47",
+        "rev": "bec6e3cde912b8acb915fecdc509eda7c973fb42",
         "type": "github"
       },
       "original": {
@@ -273,11 +273,11 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1721336596,
-        "narHash": "sha256-TPEdDdCC6Zo72zmgH7v09XYRfFVpIEVHvEgrtIO1KOs=",
+        "lastModified": 1721430103,
+        "narHash": "sha256-fNG0kkEB+BnEJ2QdxEn3cnPf92oIOENWpPt7gsR5J2Q=",
         "ref": "refs/heads/main",
-        "rev": "e0589469829ef23d41e3fa2936e06345f4dbc1a0",
-        "revCount": 8,
+        "rev": "89c2e6bb54ec1dfb942351956ceb4affe1f5f2df",
+        "revCount": 11,
         "type": "git",
         "url": "ssh://git@github.com/Sirius902/nixos-secrets.git"
       },
