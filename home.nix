@@ -41,11 +41,12 @@
 
   programs.zsh = {
     enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+
     defaultKeymap = "viins"; # Use Vim keybinds
-    prezto = {
-      enable = true;
-      prompt.theme = "pure";
-    };
+    initExtra = "prompt pure";
   };
 
   programs.direnv = {
@@ -58,6 +59,7 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
+    pkgs.pure-prompt
     (pkgs.nvim-pkg.override {
       defaultEditor = true;
 
