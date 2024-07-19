@@ -83,8 +83,9 @@
     fastfetch
     fzf
     just
+    liquidctl
+    lm_sensors
     ripgrep
-    sticky
     sops
   ];
 

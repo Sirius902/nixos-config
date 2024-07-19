@@ -107,8 +107,6 @@
     inkscape
     gkraken
     keepassxc
-    liquidctl
-    lm_sensors
     openrazer-daemon
     polychromatic
     (prismlauncher.override {
@@ -119,6 +117,7 @@
       ];
     })
     spotify
+    sticky
     xivlauncher
     qemu # Workaround for libvirtd efi not working.
     virtiofsd # For virtio support in QEMU.
