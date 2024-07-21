@@ -3,11 +3,16 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    flake-parts.url = "github:hercules-ci/flake-parts";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixpkgs-stable.url = "github:nixos/nixpkgs?ref=nixos-24.05";
+    home-manager-stable = {
+      url = "github:nix-community/home-manager?ref=release-24.05";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+    flake-parts.url = "github:hercules-ci/flake-parts";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -26,7 +31,7 @@
     };
   };
 
-  outputs = { nixpkgs, disko, flake-parts, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-stable, disko, flake-parts, ... }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
       flake = {
         nixosConfigurations =
@@ -40,6 +45,15 @@
               config.allowUnfree = true;
             };
             home-manager = inputs.home-manager.nixosModules;
+            pkgs-stable = import nixpkgs-stable {
+              inherit system;
+              overlays = [
+                inputs.nix-nvim-config.overlays.default
+              ];
+              config.allowUnfree = true;
+            };
+            home-manager-stable = inputs.home-manager-stable.nixosModules;
+            inputs-stable = inputs // { nixpkgs = nixpkgs-stable; home-manager = home-manager-stable; };
             hw-config-or = cfg:
               if (builtins.pathExists ./hardware-configuration.nix) then
                 ./hardware-configuration.nix
@@ -71,10 +85,11 @@
               ];
             };
 
-            hee-ho = nixpkgs.lib.nixosSystem {
-              inherit pkgs system;
+            hee-ho = nixpkgs-stable.lib.nixosSystem {
+              inherit system;
+              pkgs = pkgs-stable;
               specialArgs = {
-                inherit inputs;
+                inputs = inputs-stable;
                 hostname = "hee-ho";
                 hostId = "b0e08309";
               };
@@ -87,12 +102,12 @@
                 ./disk-config.nix
                 { disko.devices.disk.primary.device = "/dev/nvme2n1"; }
 
-                home-manager.home-manager
+                home-manager-stable.home-manager
                 {
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.users.chris = import ./home.nix {
-                    inherit inputs;
+                    inputs = inputs-stable;
                     isDesktop = false;
                   };
                 }
@@ -128,10 +143,11 @@
               ];
             };
 
-            qemu-server = nixpkgs.lib.nixosSystem {
-              inherit pkgs system;
+            qemu-server = nixpkgs-stable.lib.nixosSystem {
+              inherit system;
+              pkgs = pkgs-stable;
               specialArgs = {
-                inherit inputs;
+                inputs = inputs-stable;
                 hostname = "vm-server";
                 # TODO: Change these.
                 hostId = "1763015d";
@@ -146,12 +162,12 @@
                 ./disk-config.nix
                 { disko.devices.disk.primary.device = "/dev/vda"; }
 
-                home-manager.home-manager
+                home-manager-stable.home-manager
                 {
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.users.chris = import ./home.nix {
-                    inherit inputs;
+                    inputs = inputs-stable;
                     isDesktop = false;
                   };
                 }
