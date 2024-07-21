@@ -82,6 +82,11 @@
                 ./configuration.nix
                 ./hosts/server.nix
                 (hw-config-or ./hardware/nixlee-server.nix)
+
+                disko.nixosModules.disko
+                ./disk-config.nix
+                { disko.devices.disk.primary.device = "/dev/nvme2n1"; }
+
                 home-manager.home-manager
                 {
                   home-manager.useGlobalPkgs = true;
@@ -106,8 +111,8 @@
                 ./hosts/qemu.nix
                 (hw-config-or ./hardware/qemu.nix)
                 ./modules/desktop-common.nix
-                disko.nixosModules.disko
 
+                disko.nixosModules.disko
                 ./disk-config.nix
                 { disko.devices.disk.primary.device = "/dev/vda"; }
 
@@ -136,8 +141,8 @@
                 ./hosts/server.nix
                 ./hosts/qemu.nix
                 (hw-config-or ./hardware/qemu.nix)
-                disko.nixosModules.disko
 
+                disko.nixosModules.disko
                 ./disk-config.nix
                 { disko.devices.disk.primary.device = "/dev/vda"; }
 
