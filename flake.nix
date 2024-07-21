@@ -71,17 +71,17 @@
               ];
             };
 
-            nixlee-server = nixpkgs.lib.nixosSystem {
+            hee-ho = nixpkgs.lib.nixosSystem {
               inherit pkgs system;
               specialArgs = {
                 inherit inputs;
-                hostname = "nixlee-server";
+                hostname = "hee-ho";
                 hostId = "b0e08309";
               };
               modules = [
                 ./configuration.nix
                 ./hosts/server.nix
-                (hw-config-or ./hardware/nixlee-server.nix)
+                (hw-config-or ./hardware/hee-ho.nix)
 
                 disko.nixosModules.disko
                 ./disk-config.nix
