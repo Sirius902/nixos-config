@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./desktop-common.nix
+    ../modules/desktop-common.nix
   ];
 
   boot.zfs.extraPools = [ "futomaki" "kappamaki" ];

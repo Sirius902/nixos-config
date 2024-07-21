@@ -40,6 +40,11 @@
               config.allowUnfree = true;
             };
             home-manager = inputs.home-manager.nixosModules;
+            hw-config-or = cfg:
+              if (builtins.pathExists ./hardware-configuration.nix) then
+                ./hardware-configuration.nix
+              else
+                cfg;
           in
           {
             nixlee = nixpkgs.lib.nixosSystem {
@@ -52,6 +57,7 @@
               modules = [
                 ./configuration.nix
                 ./hosts/nixlee.nix
+                (hw-config-or ./hardware/nixlee.nix)
                 ./modules/nvidia.nix
                 home-manager.home-manager
                 {
@@ -65,7 +71,31 @@
               ];
             };
 
-            vm = nixpkgs.lib.nixosSystem {
+            nixlee-server = nixpkgs.lib.nixosSystem {
+              inherit pkgs system;
+              specialArgs = {
+                inherit inputs;
+                hostname = "nixlee-server";
+                # TODO: Change these.
+                hostId = "1763015d";
+              };
+              modules = [
+                ./configuration.nix
+                ./hosts/server.nix
+                (hw-config-or ./hardware/nixlee-server.nix)
+                home-manager.home-manager
+                {
+                  home-manager.useGlobalPkgs = true;
+                  home-manager.useUserPackages = true;
+                  home-manager.users.chris = import ./home.nix {
+                    inherit inputs;
+                    isDesktop = false;
+                  };
+                }
+              ];
+            };
+
+            qemu = nixpkgs.lib.nixosSystem {
               inherit pkgs system;
               specialArgs = {
                 inherit inputs;
@@ -74,8 +104,9 @@
               };
               modules = [
                 ./configuration.nix
-                ./hosts/vm.nix
-                ./hosts/desktop-common.nix
+                ./hosts/qemu.nix
+                (hw-config-or ./hardware/qemu.nix)
+                ./modules/desktop-common.nix
                 disko.nixosModules.disko
 
                 ./disk-config.nix
@@ -93,30 +124,7 @@
               ];
             };
 
-            server = nixpkgs.lib.nixosSystem {
-              inherit pkgs system;
-              specialArgs = {
-                inherit inputs;
-                hostname = "nixlee-server";
-                # TODO: Change these.
-                hostId = "1763015d";
-              };
-              modules = [
-                ./configuration.nix
-                ./hosts/server.nix
-                home-manager.home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.users.chris = import ./home.nix {
-                    inherit inputs;
-                    isDesktop = false;
-                  };
-                }
-              ];
-            };
-
-            vm-server = nixpkgs.lib.nixosSystem {
+            qemu-server = nixpkgs.lib.nixosSystem {
               inherit pkgs system;
               specialArgs = {
                 inherit inputs;
@@ -127,7 +135,8 @@
               modules = [
                 ./configuration.nix
                 ./hosts/server.nix
-                ./hosts/vm.nix
+                ./hosts/qemu.nix
+                (hw-config-or ./hardware/qemu.nix)
                 disko.nixosModules.disko
 
                 ./disk-config.nix
