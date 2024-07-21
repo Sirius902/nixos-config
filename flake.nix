@@ -76,8 +76,7 @@
               specialArgs = {
                 inherit inputs;
                 hostname = "nixlee-server";
-                # TODO: Change these.
-                hostId = "1763015d";
+                hostId = "b0e08309";
               };
               modules = [
                 ./configuration.nix
