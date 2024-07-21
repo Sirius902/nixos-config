@@ -100,7 +100,7 @@
 
                 disko.nixosModules.disko
                 ./disk-config.nix
-                { disko.devices.disk.primary.device = "/dev/nvme2n1"; }
+                { disko.devices.disk.primary.device = "/dev/nvme1n1"; }
 
                 home-manager-stable.home-manager
                 {
