@@ -16,7 +16,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/efi";
-  boot.supportedFilesystems = [ "zfs" ];
 
   # Only use kernel versions supported by ZFS.
   boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
