@@ -149,8 +149,7 @@
               specialArgs = {
                 inputs = inputs-stable;
                 hostname = "vm-server";
-                # TODO: Change these.
-                hostId = "1763015d";
+                hostId = "f531a5e3";
               };
               modules = [
                 ./configuration.nix
