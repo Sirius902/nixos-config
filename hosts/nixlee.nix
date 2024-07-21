@@ -118,6 +118,7 @@
     })
     spotify
     sticky
+    vlc
     xivlauncher
     zed-editor
     qemu # Workaround for libvirtd efi not working.
