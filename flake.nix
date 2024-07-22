@@ -96,11 +96,12 @@
               modules = [
                 ./configuration.nix
                 ./hosts/server.nix
+                ./hosts/hee-ho.nix
                 (hw-config-or ./hardware/hee-ho.nix)
 
                 disko.nixosModules.disko
                 ./disk-config.nix
-                { disko.devices.disk.primary.device = "/dev/nvme1n1"; }
+                { disko.devices.disk.primary.device = "/dev/nvme0n1"; }
 
                 home-manager-stable.home-manager
                 {

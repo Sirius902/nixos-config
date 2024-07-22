@@ -23,6 +23,11 @@
               mountpoint = "/efi";
             };
           };
+          swap = {
+            name = "swap";
+            size = "8G";
+            content.type = "swap";
+          };
           root = {
             name = "root";
             size = "100%";
