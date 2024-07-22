@@ -25,6 +25,7 @@
           };
           swap = {
             name = "swap";
+            # TODO: Find a way to use mkDefault for swap size.
             size = "8G";
             content.type = "swap";
           };
