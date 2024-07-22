@@ -10,9 +10,44 @@
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "sd_mod" ];
-  boot.initrd.kernelModules = [ "dm-snapshot" ];
+  boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
+
+  # TODO: Filesystems should only be configured if not using nixos-anywhere.
+  fileSystems."/" =
+    {
+      device = "zroot";
+      fsType = "zfs";
+    };
+
+  fileSystems."/nix" =
+    {
+      device = "zroot/nix";
+      fsType = "zfs";
+    };
+
+  fileSystems."/persist" =
+    {
+      device = "zroot/persist";
+      fsType = "zfs";
+    };
+
+  fileSystems."/home" =
+    {
+      device = "zroot/home";
+      fsType = "zfs";
+    };
+
+  fileSystems."/efi" =
+    {
+      device = "/dev/disk/by-uuid/D148-3498";
+      fsType = "vfat";
+      options = [ "fmask=0077" "dmask=0077" ];
+    };
+
+  swapDevices =
+    [{ device = "/dev/disk/by-uuid/88c52564-218b-44a1-a2c9-a17c7182022a"; }];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -22,6 +57,7 @@
   # networking.interfaces.eno2.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp8s0.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp9s0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.wlo1.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

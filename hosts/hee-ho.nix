@@ -1,3 +1,3 @@
 {
-  boot.supportedFilesystems = [ "ntfs" ];
+  boot.zfs.extraPools = [ "data" ];
 }
