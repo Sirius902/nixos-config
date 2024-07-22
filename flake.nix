@@ -99,9 +99,10 @@
                 ./hosts/hee-ho.nix
                 (hw-config-or ./hardware/hee-ho.nix)
 
-                disko.nixosModules.disko
-                ./disk-config.nix
-                { disko.devices.disk.primary.device = "/dev/nvme0n1"; }
+                # TODO: This conflicts with the manual hardware config. Decide which to use.
+                # disko.nixosModules.disko
+                # ./disk-config.nix
+                # { disko.devices.disk.primary.device = "/dev/nvme0n1"; }
 
                 home-manager-stable.home-manager
                 {
@@ -128,9 +129,10 @@
                 (hw-config-or ./hardware/qemu.nix)
                 ./modules/desktop-common.nix
 
-                disko.nixosModules.disko
-                ./disk-config.nix
-                { disko.devices.disk.primary.device = "/dev/vda"; }
+                # TODO: This conflicts with the manual hardware config. Decide which to use.
+                # disko.nixosModules.disko
+                # ./disk-config.nix
+                # { disko.devices.disk.primary.device = "/dev/vda"; }
 
                 home-manager.home-manager
                 {
@@ -158,9 +160,10 @@
                 ./hosts/qemu.nix
                 (hw-config-or ./hardware/qemu.nix)
 
-                disko.nixosModules.disko
-                ./disk-config.nix
-                { disko.devices.disk.primary.device = "/dev/vda"; }
+                # TODO: This conflicts with the manual hardware config. Decide which to use.
+                # disko.nixosModules.disko
+                # ./disk-config.nix
+                # { disko.devices.disk.primary.device = "/dev/vda"; }
 
                 home-manager-stable.home-manager
                 {
