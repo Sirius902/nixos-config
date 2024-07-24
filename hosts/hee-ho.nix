@@ -4,8 +4,8 @@
   boot.zfs.extraPools = [ "data" ];
 
   # Allow ports for mc.
-  networking.firewall.allowedTCPPorts = [ 25565 ];
-  networking.firewall.allowedUDPPorts = [ 25565 ];
+  networking.firewall.allowedTCPPorts = [ 25565 25566 ];
+  networking.firewall.allowedUDPPorts = [ 25565 25566 ];
 
   services.cron = {
     enable = true;
