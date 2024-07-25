@@ -15,27 +15,29 @@
   boot.extraModulePackages = [ ];
 
   # TODO: Filesystems should only be configured if not using nixos-anywhere.
+  # TODO: Use the name rpool for now, it seems there's some metadata for the name zroot somewhere
+  # causing the system to fail to boot since it recognizes multiple.
   fileSystems."/" =
     {
-      device = "zroot";
+      device = "rpool";
       fsType = "zfs";
     };
 
   fileSystems."/nix" =
     {
-      device = "zroot/nix";
+      device = "rpool/nix";
       fsType = "zfs";
     };
 
   fileSystems."/persist" =
     {
-      device = "zroot/persist";
+      device = "rpool/persist";
       fsType = "zfs";
     };
 
   fileSystems."/home" =
     {
-      device = "zroot/home";
+      device = "rpool/home";
       fsType = "zfs";
     };
 
