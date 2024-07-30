@@ -5,8 +5,6 @@
     ../modules/desktop-common.nix
   ];
 
-  boot.zfs.extraPools = [ "futomaki" "kappamaki" ];
-
   i18n.inputMethod = {
     enable = true;
     type = "ibus";

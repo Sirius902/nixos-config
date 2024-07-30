@@ -14,6 +14,8 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
+  boot.zfs.extraPools = [ "data" ];
+
   # TODO: Filesystems should only be configured if not using nixos-anywhere.
   fileSystems."/" =
     {
