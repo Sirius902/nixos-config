@@ -82,6 +82,7 @@
     just
     liquidctl
     lm_sensors
+    parted
     ripgrep
     sops
   ];
