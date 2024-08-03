@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   # Allow ports for mc.
@@ -45,4 +45,7 @@
     screen
     temurin-jre-bin
   ];
+
+  # Fix waiting for WiFi on rebuild.
+  systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
 }
