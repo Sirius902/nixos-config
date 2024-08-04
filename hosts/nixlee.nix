@@ -14,6 +14,8 @@
     ];
   };
 
+  services.openssh.enable = true;
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
@@ -81,8 +83,23 @@
         ];
       };
     };
+    # TODO: Use hooks.qemu instead of symlinking in libvirtd service.
+    #hooks.qemu = { };
   };
   programs.virt-manager.enable = true;
+
+  systemd.services.libvirtd = {
+    preStart = ''
+      mkdir -p /var/lib/libvirt/hooks/
+      mkdir -p /var/lib/libvirt/hooks/qemu.d/win11-vfio/prepare/begin/
+      mkdir -p /var/lib/libvirt/hooks/qemu.d/win11-vfio/release/end/
+
+      ln -sf /persist/qemu-hooks/qemu /var/lib/libvirt/hooks/qemu
+      ln -sf /persist/qemu-hooks/kvm.conf /var/lib/libvirt/hooks/kvm.conf
+      ln -sf /persist/qemu-hooks/vfio/start.sh /var/lib/libvirt/hooks/qemu.d/win11-vfio/prepare/begin/start.sh
+      ln -sf /persist/qemu-hooks/vfio/stop.sh /var/lib/libvirt/hooks/qemu.d/win11-vfio/release/end/stop.sh
+    '';
+  };
 
   users.users.chris.extraGroups = [ "libvirtd" "openrazer" ];
 
