@@ -42,6 +42,12 @@
       fsType = "zfs";
     };
 
+  fileSystems."/media/vm" =
+    {
+      device = "/dev/zvol/zroot/vm";
+      fsType = "ext4";
+    };
+
   fileSystems."/efi" =
     {
       device = "/dev/disk/by-uuid/38F5-4027";
