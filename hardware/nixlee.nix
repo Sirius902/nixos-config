@@ -44,8 +44,8 @@
 
   fileSystems."/media/vm" =
     {
-      device = "/dev/zvol/zroot/vm";
-      fsType = "ext4";
+      device = "zroot/vm";
+      fsType = "zfs";
     };
 
   fileSystems."/efi" =
