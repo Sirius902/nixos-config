@@ -123,6 +123,7 @@
     inkscape
     gkraken
     keepassxc
+    obs-studio
     openrazer-daemon
     polychromatic
     (prismlauncher.override {
