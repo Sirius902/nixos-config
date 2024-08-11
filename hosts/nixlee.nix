@@ -112,6 +112,11 @@
     };
   };
 
+  fonts.packages = with pkgs; [
+    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    noto-fonts-cjk
+  ];
+
   services.udev.extraRules = ''
     #GameCube Controller Adapter
     SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0337", TAG+="uaccess"
@@ -123,6 +128,7 @@
     inkscape
     gkraken
     keepassxc
+    lunar-client
     obs-studio
     openrazer-daemon
     polychromatic
