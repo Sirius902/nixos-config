@@ -62,14 +62,9 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
+    # TODO: Add vimdiff alias somehow.
+    pkgs.nvim
     pkgs.pure-prompt
-    (pkgs.nvim-pkg.override {
-      defaultEditor = true;
-
-      viAlias = true;
-      vimAlias = true;
-      vimdiffAlias = true;
-    })
 
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
