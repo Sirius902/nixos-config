@@ -120,6 +120,29 @@
               ];
             };
 
+            nixpad = nixpkgs.lib.nixosSystem {
+              inherit pkgs system;
+              specialArgs = {
+                inherit inputs;
+                hostname = "nixpad";
+                hostId = "1c029249";
+              };
+              modules = [
+                ./configuration.nix
+                ./hosts/nixpad.nix
+                (hw-config-or ./hardware/nixpad.nix)
+                home-manager.home-manager
+                {
+                  home-manager.useGlobalPkgs = true;
+                  home-manager.useUserPackages = true;
+                  home-manager.users.chris = import ./home.nix {
+                    inherit inputs;
+                    isDesktop = true;
+                  };
+                }
+              ];
+            };
+
             qemu = nixpkgs.lib.nixosSystem {
               inherit pkgs system;
               specialArgs = {

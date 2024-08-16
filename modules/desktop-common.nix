@@ -3,7 +3,7 @@
 {
   environment.systemPackages = with pkgs; [
     gparted
-    jetbrains-mono
+    krita
     nautilus-python # Required for Open in WezTerm.
     qdirstat
     wl-clipboard
