@@ -1,4 +1,4 @@
-host := "nixlee"
+host := `cat ./host`
 
 default:
     just --list
