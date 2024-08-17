@@ -1,6 +1,6 @@
 { inputs, isDesktop, ... }:
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Home Manager needs a bit of information about you and the paths it should
@@ -17,38 +17,46 @@
   # release notes.
   home.stateVersion = "23.11"; # Please read the comment before changing.
 
-  dconf = pkgs.lib.mkIf isDesktop {
-    enable = true;
-    settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
-    settings."org/gnome/shell" = {
-      disable-user-extensions = false;
-      enabled-extensions = with pkgs.gnomeExtensions; [
-        gsconnect.extensionUuid
+  dconf = pkgs.lib.mkIf isDesktop (
+    let mkTuple = lib.hm.gvariant.mkTuple; in {
+      enable = true;
+      settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+      settings."org/gnome/shell" = {
+        disable-user-extensions = false;
+        enabled-extensions = with pkgs.gnomeExtensions; [
+          gsconnect.extensionUuid
+        ];
+      };
+      settings."org/gnome/shell".favorite-apps = [
+        "firefox.desktop"
+        "org.wezfurlong.wezterm.desktop"
+        "codium.desktop"
+        "dev.zed.Zed.desktop"
+        "org.gnome.Nautilus.desktop"
+        "discord.desktop"
+        "org.prismlauncher.PrismLauncher.desktop"
+        "steam.desktop"
+        "xivlauncher.desktop"
+        "virt-manager.desktop"
       ];
-    };
-    settings."org/gnome/shell/favorite-apps" = [
-      "firefox.desktop"
-      "org.wezfurlong.wezterm.desktop"
-      "codium.desktop"
-      "dev.zed.Zed.desktop"
-      "org.gnome.Nautilus.desktop"
-      "discord.desktop"
-      "org.prismlauncher.PrismLauncher.desktop"
-      "steam.desktop"
-      "xivlauncher.desktop"
-      "virt-manager.desktop"
-    ];
-    settings."org/gnome/desktop/interface/clock-format" = "12h";
-    settings."org/gtk/settings/file-chooser/clock-format" = "12h";
-    settings."org/gnome/mutter/edge-tiling" = "true";
-    settings."org/gnome/mutter/dynamic-workspaces" = "true";
-    settings."org/gnome/mutter/workspaces-only-on-primary" = "true";
-    settings."org/gnome/desktop/input-sources/sources" = "[('xkb', 'us'), ('ibus', 'mozc-on')]";
-    settings."org/virt-manager/virt-manager/connections" = {
-      autoconnect = [ "qemu:///system" ];
-      uris = [ "qemu:///system" ];
-    };
-  };
+      settings."org/gnome/desktop/interface".clock-format = "12h";
+      settings."org/gtk/settings/file-chooser".clock-format = "12h";
+      settings."org/gnome/mutter" = {
+        edge-tiling = true;
+        dynamic-workspaces = true;
+        workspaces-only-on-primary = true;
+      };
+      settings."org/gnome/desktop/input-sources".sources = [ (mkTuple [ "xkb" "us" ]) (mkTuple [ "ibus" "mozc-on" ]) ];
+      settings."org/gnome/desktop/background" = {
+        picture-uri = "file:///home/chris/Pictures/Backgrounds/Screenshot from 2024-07-07 23-23-16.png";
+        picture-uri-dark = "file:///home/chris/Pictures/Backgrounds/Screenshot from 2024-07-07 23-23-16.png";
+      };
+      settings."org/virt-manager/virt-manager/connections" = {
+        autoconnect = [ "qemu:///system" ];
+        uris = [ "qemu:///system" ];
+      };
+    }
+  );
 
   programs.wezterm = pkgs.lib.mkIf isDesktop {
     enable = true;
@@ -79,7 +87,7 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
+  home.packages = (if isDesktop then [ pkgs.gnomeExtensions.gsconnect ] else [ ]) ++ [
     # TODO: Add vimdiff alias somehow.
     pkgs.nvim
     pkgs.pure-prompt
