@@ -51,6 +51,7 @@
         picture-uri = "file:///home/chris/Pictures/Backgrounds/Screenshot from 2024-07-07 23-23-16.png";
         picture-uri-dark = "file:///home/chris/Pictures/Backgrounds/Screenshot from 2024-07-07 23-23-16.png";
       };
+      settings."org/gnome/settings-daemon/plugins/color".night-light-enabled = true;
       settings."org/virt-manager/virt-manager/connections" = {
         autoconnect = [ "qemu:///system" ];
         uris = [ "qemu:///system" ];
