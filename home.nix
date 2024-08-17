@@ -87,7 +87,7 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = (if isDesktop then [ pkgs.gnomeExtensions.gsconnect ] else [ ]) ++ [
+  home.packages = [
     # TODO: Add vimdiff alias somehow.
     pkgs.nvim
     pkgs.pure-prompt

@@ -72,8 +72,8 @@
                 hostname = "nixlee";
                 hostId = "ff835154";
               };
-              modules = [
-                ./configuration.nix
+              modules = let isDesktop = true; in [
+                (import ./configuration.nix { inherit isDesktop; })
                 ./hosts/nixlee.nix
                 (hw-config-or ./hardware/nixlee.nix)
                 ./modules/nvidia.nix
@@ -82,8 +82,7 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.users.chris = import ./home.nix {
-                    inherit inputs;
-                    isDesktop = true;
+                    inherit inputs isDesktop;
                   };
                 }
               ];
@@ -97,8 +96,8 @@
                 hostname = "hee-ho";
                 hostId = "b0e08309";
               };
-              modules = [
-                ./configuration.nix
+              modules = let isDesktop = false; in [
+                (import ./configuration.nix { inherit isDesktop; })
                 ./hosts/server.nix
                 ./hosts/hee-ho.nix
                 (hw-config-or ./hardware/hee-ho.nix)
@@ -113,8 +112,8 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.users.chris = import ./home.nix {
+                    inherit isDesktop;
                     inputs = inputs-stable;
-                    isDesktop = false;
                   };
                 }
               ];
@@ -127,8 +126,8 @@
                 hostname = "nixpad";
                 hostId = "1c029249";
               };
-              modules = [
-                ./configuration.nix
+              modules = let isDesktop = true; in [
+                (import ./configuration.nix { inherit isDesktop; })
                 ./hosts/nixpad.nix
                 (hw-config-or ./hardware/nixpad.nix)
                 home-manager.home-manager
@@ -136,8 +135,7 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.users.chris = import ./home.nix {
-                    inherit inputs;
-                    isDesktop = true;
+                    inherit inputs isDesktop;
                   };
                 }
               ];
@@ -150,8 +148,8 @@
                 hostname = "vm";
                 hostId = "1763015d";
               };
-              modules = [
-                ./configuration.nix
+              modules = let isDesktop = true; in [
+                (import ./configuration.nix { inherit isDesktop; })
                 ./hosts/qemu.nix
                 (hw-config-or ./hardware/qemu.nix)
                 ./modules/desktop-common.nix
@@ -166,8 +164,7 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.users.chris = import ./home.nix {
-                    inherit inputs;
-                    isDesktop = true;
+                    inherit inputs isDesktop;
                   };
                 }
               ];
@@ -181,8 +178,8 @@
                 hostname = "vm-server";
                 hostId = "f531a5e3";
               };
-              modules = [
-                ./configuration.nix
+              modules = let isDesktop = false; in [
+                (import ./configuration.nix { inherit isDesktop; })
                 ./hosts/server.nix
                 ./hosts/qemu.nix
                 (hw-config-or ./hardware/qemu.nix)
@@ -197,8 +194,8 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.users.chris = import ./home.nix {
+                    inherit isDesktop;
                     inputs = inputs-stable;
-                    isDesktop = false;
                   };
                 }
               ];

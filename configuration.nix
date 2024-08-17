@@ -2,7 +2,9 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, inputs, pkgs, hostname, hostId, ... }:
+{ isDesktop }:
+
+{ config, inputs, pkgs, hostname, hostId, lib, ... }:
 
 {
   imports =
@@ -73,6 +75,11 @@
 
   programs.git.enable = true;
   programs.zsh.enable = true;
+
+  programs.kdeconnect = lib.mkIf isDesktop {
+    enable = true;
+    package = pkgs.gnomeExtensions.gsconnect;
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
