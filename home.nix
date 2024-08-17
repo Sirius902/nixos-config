@@ -26,6 +26,24 @@
         gsconnect.extensionUuid
       ];
     };
+    settings."org/gnome/shell/favorite-apps" = [
+      "firefox.desktop"
+      "org.wezfurlong.wezterm.desktop"
+      "codium.desktop"
+      "dev.zed.Zed.desktop"
+      "org.gnome.Nautilus.desktop"
+      "discord.desktop"
+      "org.prismlauncher.PrismLauncher.desktop"
+      "steam.desktop"
+      "xivlauncher.desktop"
+      "virt-manager.desktop"
+    ];
+    settings."org/gnome/desktop/interface/clock-format" = "12h";
+    settings."org/gtk/settings/file-chooser/clock-format" = "12h";
+    settings."org/gnome/mutter/edge-tiling" = "true";
+    settings."org/gnome/mutter/dynamic-workspaces" = "true";
+    settings."org/gnome/mutter/workspaces-only-on-primary" = "true";
+    settings."org/gnome/desktop/input-sources/sources" = "[('xkb', 'us'), ('ibus', 'mozc-on')]";
     settings."org/virt-manager/virt-manager/connections" = {
       autoconnect = [ "qemu:///system" ];
       uris = [ "qemu:///system" ];
