@@ -146,5 +146,6 @@
     zed-editor
     qemu # Workaround for libvirtd efi not working.
     virtiofsd # For virtio support in QEMU.
+    wineWowPackages.stable
   ];
 }
