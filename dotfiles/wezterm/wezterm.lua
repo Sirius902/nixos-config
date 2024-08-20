@@ -19,6 +19,9 @@ config.hide_mouse_cursor_when_typing = false
 -- TODO: Uncomment once blur is added for background
 --config.window_background_opacity = 0.8
 
+-- TODO: Workaround to fix font rendering on NixOS unstable.
+config.front_end = 'WebGpu'
+
 -- Use GNOME cursor style
 local success, stdout, _ = wezterm.run_child_process({"gsettings", "get", "org.gnome.desktop.interface", "cursor-theme"})
 if success then
