@@ -33,7 +33,7 @@
         "codium.desktop"
         "dev.zed.Zed.desktop"
         "org.gnome.Nautilus.desktop"
-        "discord.desktop"
+        "vesktop.desktop"
         "org.prismlauncher.PrismLauncher.desktop"
         "steam.desktop"
         "xivlauncher.desktop"

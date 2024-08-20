@@ -123,7 +123,6 @@
   '';
 
   environment.systemPackages = with pkgs; [
-    discord
     gimp
     inkscape
     gkraken
@@ -141,6 +140,7 @@
     })
     spotify
     sticky
+    vesktop # Discord alternative with better support on Linux.
     vlc
     xivlauncher
     zed-editor
