@@ -138,6 +138,7 @@
         temurin-bin-17
       ];
     })
+    protontricks
     spotify
     sticky
     vesktop # Discord alternative with better support on Linux.
