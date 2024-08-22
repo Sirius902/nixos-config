@@ -8,6 +8,7 @@
     nautilus-python # Required for Open in WezTerm.
     qdirstat
     wl-clipboard
+    xclip
     vscodium
   ];
 }
