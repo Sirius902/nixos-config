@@ -7,9 +7,8 @@
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = [ "nvidia" ];
 
-  # TODO: Remove once this is fixed.
-  # Workaround for Firefox crashing with explicit sync
-  environment.variables."MOZ_ENABLE_WAYLAND" = "0";
+  # Use Wayland natively for Firefox.
+  environment.variables."MOZ_ENABLE_WAYLAND" = 1;
 
   # TODO: Make VSCodium open properly without using command line. --disable-gpu works currently.
 
