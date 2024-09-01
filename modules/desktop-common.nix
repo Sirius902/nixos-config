@@ -10,5 +10,7 @@
     wl-clipboard
     xclip
     vscodium
+    libreoffice-qt
+    hunspell
   ];
 }
