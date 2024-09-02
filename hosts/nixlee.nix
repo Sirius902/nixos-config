@@ -142,6 +142,7 @@
       ];
     })
     protontricks
+    scarab
     spotify
     sticky
     vesktop # Discord alternative with better support on Linux.
