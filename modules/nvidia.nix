@@ -11,8 +11,7 @@
   environment.variables."MOZ_ENABLE_WAYLAND" = 1;
 
   # https://github.com/ValveSoftware/Proton/issues/5294
-  # https://gitlab.gnome.org/GNOME/mutter/-/issues/2663
-  environment.variables."IBUS_ENABLE_SYNC_MODE" = 1;
+  environment.variables."IBUS_ENABLE_SYNC_MODE" = 2;
 
   # TODO: Make VSCodium open properly without using command line. --disable-gpu works currently.
 
