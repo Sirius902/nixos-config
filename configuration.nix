@@ -76,6 +76,8 @@
   programs.git.enable = true;
   programs.zsh.enable = true;
 
+  programs.nix-ld.enable = true;
+
   programs.kdeconnect = lib.mkIf isDesktop {
     enable = true;
     package = pkgs.gnomeExtensions.gsconnect;
