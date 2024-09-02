@@ -30,6 +30,7 @@
       settings."org/gnome/shell".favorite-apps = [
         "firefox.desktop"
         "org.wezfurlong.wezterm.desktop"
+        "org.gnome.Console.desktop"
         "codium.desktop"
         "dev.zed.Zed.desktop"
         "org.gnome.Nautilus.desktop"
