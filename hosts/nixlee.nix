@@ -132,6 +132,7 @@
     keepassxc
     lunar-client
     obs-studio
+    openmw
     openrazer-daemon
     polychromatic
     (prismlauncher.override {
