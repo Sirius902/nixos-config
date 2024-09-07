@@ -44,6 +44,7 @@
   environment.systemPackages = with pkgs; [
     screen
     temurin-jre-bin
+    openmw-tes3mp
   ];
 
   # Fix waiting for WiFi on rebuild.
