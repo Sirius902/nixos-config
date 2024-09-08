@@ -124,6 +124,9 @@
     SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0337", TAG+="uaccess"
   '';
 
+  # For wgnord
+  services.resolved.enable = true;
+
   environment.systemPackages = with pkgs; [
     gimp
     inkscape
@@ -141,6 +144,7 @@
     sticky
     vesktop # Discord alternative with better support on Linux.
     vlc
+    wgnord
     xivlauncher
     zed-editor
     qemu # Workaround for libvirtd efi not working.
