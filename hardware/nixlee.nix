@@ -36,6 +36,12 @@
       fsType = "zfs";
     };
 
+  fileSystems."/home/chris/.local/share/openmw" =
+    {
+      device = "zroot/home/openmw";
+      fsType = "zfs";
+    };
+
   fileSystems."/persist" =
     {
       device = "zroot/persist";
@@ -45,6 +51,12 @@
   fileSystems."/media/vm" =
     {
       device = "zroot/vm";
+      fsType = "zfs";
+    };
+
+  fileSystems."/media/vm/shared" =
+    {
+      device = "zroot/vm/shared";
       fsType = "zfs";
     };
 
