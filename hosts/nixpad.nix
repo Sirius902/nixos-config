@@ -142,6 +142,7 @@
     })
     spotify
     sticky
+    transmission_4-qt
     vesktop # Discord alternative with better support on Linux.
     vlc
     wgnord
