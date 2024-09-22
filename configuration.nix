@@ -4,7 +4,7 @@
 
 { isDesktop }:
 
-{ config, inputs, pkgs, hostname, hostId, lib, ... }:
+{ inputs, pkgs, hostname, hostId, lib, ... }:
 
 {
   imports =
@@ -20,7 +20,7 @@
   boot.loader.efi.efiSysMountPoint = "/efi";
 
   # Only use kernel versions supported by ZFS.
-  boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
+  boot.kernelPackages = pkgs.linuxPackages_6_10;
   # Disable hibernation.
   #boot.kernelParams = [ "nohibernate" ];
 
