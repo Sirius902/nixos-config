@@ -128,6 +128,7 @@
   services.resolved.enable = true;
 
   environment.systemPackages = with pkgs; [
+    dolphin-emu-beta
     gimp
     inkscape
     keepassxc
