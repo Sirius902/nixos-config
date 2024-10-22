@@ -118,7 +118,7 @@
 
   fonts.packages = with pkgs; [
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-    noto-fonts-cjk
+    noto-fonts-cjk-sans
   ];
 
   services.udev.extraRules = ''
