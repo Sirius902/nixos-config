@@ -122,10 +122,12 @@
       enable = true;
       remotePlay.openFirewall = true;
       localNetworkGameTransfers.openFirewall = true;
+      gamescopeSession.enable = true;
       extraCompatPackages = with pkgs; [
         proton-ge-bin
       ];
     };
+    gamescope.enable = true;
   };
 
   fonts.packages = with pkgs; [
