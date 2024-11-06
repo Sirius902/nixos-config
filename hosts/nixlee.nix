@@ -151,6 +151,7 @@
     keepassxc
     lunar-client
     obs-studio
+    obs-studio-plugins.obs-pipewire-audio-capture
     openmw
     openrazer-daemon
     polychromatic
