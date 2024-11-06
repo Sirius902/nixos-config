@@ -133,8 +133,12 @@
     inkscape
     keepassxc
     lunar-client
-    obs-studio
-    obs-studio-plugins.obs-pipewire-audio-capture
+    (wrapOBS {
+      plugins = with pkgs.obs-studio-plugins; [
+        wlrobs
+        obs-pipewire-audio-capture
+      ];
+    })
     (prismlauncher.override {
       jdks = [
         temurin-bin-21

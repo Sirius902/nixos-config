@@ -150,8 +150,12 @@
     gkraken
     keepassxc
     lunar-client
-    obs-studio
-    obs-studio-plugins.obs-pipewire-audio-capture
+    (wrapOBS {
+      plugins = with pkgs.obs-studio-plugins; [
+        wlrobs
+        obs-pipewire-audio-capture
+      ];
+    })
     openmw
     openrazer-daemon
     polychromatic
