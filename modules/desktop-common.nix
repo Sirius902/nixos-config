@@ -146,6 +146,7 @@
   environment.systemPackages = with pkgs; [
     dolphin-emu-beta
     gimp
+    godot_4
     gparted
     inkscape
     jetbrains.idea-community
