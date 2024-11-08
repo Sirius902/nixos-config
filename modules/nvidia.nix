@@ -10,7 +10,15 @@
   # Use Wayland natively for Firefox.
   environment.variables."MOZ_ENABLE_WAYLAND" = 1;
 
-  # TODO: Make VSCodium open properly without using command line. --disable-gpu works currently.
+  # Not sure if this is NVIDIA or just systemd but causes suspend to fail. Possibly fixed by kernel 6.11.
+  # https://github.com/systemd/systemd/issues/33626
+  systemd.services.systemd-suspend.serviceConfig.Environment = [
+    "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false"
+  ];
+
+  systemd.services.systemd-homed.serviceConfig.Environment = [
+    "SYSTEMD_HOME_LOCK_FREEZE_SESSION=false"
+  ];
 
   hardware.nvidia = {
     # Modesetting is required.
