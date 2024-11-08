@@ -82,4 +82,30 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+  # iommu causes USB controller unbind to fail on suspend. Disable it when suspending and re-enable it after.
+  # https://bbs.archlinux.org/viewtopic.php?id=242236
+  systemd.services.unbind-suspend-failing-device = {
+    description = "Unbind device which causes suspend to fail";
+    before = [ "sleep.target" ];
+    wantedBy = [ "sleep.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = ''
+        -/bin/sh -c '/usr/bin/env echo -n "0000:00:14.0" > /sys/bus/pci/drivers/xhci_hcd/unbind'
+      '';
+    };
+  };
+
+  systemd.services.rebind-suspend-failing-device = {
+    description = "Rebind device which causes suspend to fail";
+    after = [ "suspend.target" ];
+    wantedBy = [ "suspend.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = ''
+        -/bin/sh -c '/usr/bin/env echo -n "0000:00:14.0" > /sys/bus/pci/drivers/xhci_hcd/bind'
+      '';
+    };
+  };
 }
