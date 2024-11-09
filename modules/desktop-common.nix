@@ -148,6 +148,7 @@
 
   environment.systemPackages = with pkgs; [
     dolphin-emu-beta
+    ffmpeg-full
     gimp
     godot_4
     gparted
