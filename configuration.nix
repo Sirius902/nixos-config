@@ -22,8 +22,11 @@
   # Only use kernel versions supported by ZFS.
   boot.kernelPackages =
     if (lib.versionAtLeast config.system.nixos.release "24.11")
-    then pkgs.linuxPackages_6_10
+    then pkgs.linuxPackages_6_11
     else config.boot.zfs.package.latestCompatibleLinuxPackages;
+
+  # TODO: Remove once ZFS 2.3.0 releases.
+  boot.zfs.package = pkgs.zfs_unstable;
 
   # Disable hibernation.
   #boot.kernelParams = [ "nohibernate" ];
