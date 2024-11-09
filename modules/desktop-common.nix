@@ -151,6 +151,7 @@
     gimp
     godot_4
     gparted
+    imagemagick
     inkscape
     jetbrains.idea-community
     gkraken
