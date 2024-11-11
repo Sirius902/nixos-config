@@ -147,6 +147,7 @@
   services.resolved.enable = true;
 
   environment.systemPackages = with pkgs; [
+    bottles
     dolphin-emu-beta
     ffmpeg-full
     gimp
