@@ -140,7 +140,7 @@
     SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0337", TAG+="uaccess"
 
     # Nintendo Switch
-    SUBSYSTEM=="usb", ATTR{idVendor}=="0955", MODE="0664", GROUP="plugdev"
+    SUBSYSTEM=="usb", ATTR{idVendor}=="0955", MODE="0664", TAG+="uaccess"
   '';
 
   # For wgnord
