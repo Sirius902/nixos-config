@@ -10,6 +10,7 @@
   imports =
     [
       inputs.secrets.nixosModules.secrets
+      inputs.nix-index-database.nixosModules.nix-index
     ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
