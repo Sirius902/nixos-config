@@ -7,7 +7,9 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs-stable.url = "github:nixos/nixpkgs?ref=nixos-24.05";
+    # TODO: Switch back once ZFS 2.3.0 stable comes out.
+    #nixpkgs-stable.url = "github:nixos/nixpkgs?ref=nixos-24.05";
+    nixpkgs-stable.url = "github:nixos/nixpkgs?rev=32e940c7c420600ef0d1ef396dc63b04ee9cad37";
     home-manager-stable = {
       url = "github:nix-community/home-manager?ref=release-24.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
