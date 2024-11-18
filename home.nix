@@ -25,6 +25,7 @@
         disable-user-extensions = false;
         enabled-extensions = with pkgs.gnomeExtensions; [
           gsconnect.extensionUuid
+          appindicator.extensionUuid
         ];
       };
       settings."org/gnome/shell".favorite-apps = [
@@ -93,6 +94,7 @@
     # TODO: Add vimdiff alias somehow.
     pkgs.nvim
     pkgs.pure-prompt
+    pkgs.gnomeExtensions.appindicator
 
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
