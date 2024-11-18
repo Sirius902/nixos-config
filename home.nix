@@ -94,7 +94,6 @@
     # TODO: Add vimdiff alias somehow.
     pkgs.nvim
     pkgs.pure-prompt
-    pkgs.gnomeExtensions.appindicator
 
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
@@ -112,7 +111,7 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-  ];
+  ] ++ (lib.lists.optional isDesktop pkgs.gnomeExtensions.appindicator);
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
