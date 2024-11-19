@@ -83,6 +83,12 @@
 
   programs.git.enable = true;
   programs.zsh.enable = true;
+  programs.tmux = {
+    enable = true;
+    extraConfig = ''
+      set -g default-terminal "screen-256color"
+    '';
+  };
 
   programs.nix-ld.enable = true;
 
