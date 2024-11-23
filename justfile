@@ -9,6 +9,9 @@ fmt:
 switch:
     nixos-rebuild --flake "path:.#{{ host }}" switch
 
+switch-darwin:
+    darwin-rebuild switch --flake "path:.#{{ host }}"
+
 anywhere host ip:
     #!/usr/bin/env bash
     temp=$(mktemp -d)

@@ -39,9 +39,13 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, nixpkgs-stable, disko, flake-parts, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-stable, nix-darwin, disko, flake-parts, ... }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
       flake = {
         nixosConfigurations =
@@ -78,20 +82,21 @@
                 hostname = "nixlee";
                 hostId = "ff835154";
               };
-              modules = let isDesktop = true; in [
-                (import ./configuration.nix { inherit isDesktop; })
-                ./hosts/nixlee.nix
-                (hw-config-or ./hardware/nixlee.nix)
-                ./modules/nvidia.nix
-                home-manager.home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.users.chris = import ./home.nix {
-                    inherit inputs isDesktop;
-                  };
-                }
-              ];
+              modules = let isDesktop = true; in
+                [
+                  (import ./configuration.nix { inherit isDesktop; })
+                  ./hosts/nixlee.nix
+                  (hw-config-or ./hardware/nixlee.nix)
+                  ./modules/nvidia.nix
+                  home-manager.home-manager
+                  {
+                    home-manager.useGlobalPkgs = true;
+                    home-manager.useUserPackages = true;
+                    home-manager.users.chris = import ./home.nix {
+                      inherit inputs isDesktop;
+                    };
+                  }
+                ];
             };
 
             hee-ho = nixpkgs-stable.lib.nixosSystem {
@@ -102,27 +107,28 @@
                 hostname = "hee-ho";
                 hostId = "b0e08309";
               };
-              modules = let isDesktop = false; in [
-                (import ./configuration.nix { inherit isDesktop; })
-                ./hosts/server.nix
-                ./hosts/hee-ho.nix
-                (hw-config-or ./hardware/hee-ho.nix)
+              modules = let isDesktop = false; in
+                [
+                  (import ./configuration.nix { inherit isDesktop; })
+                  ./hosts/server.nix
+                  ./hosts/hee-ho.nix
+                  (hw-config-or ./hardware/hee-ho.nix)
 
-                # TODO: This conflicts with the manual hardware config. Decide which to use.
-                # disko.nixosModules.disko
-                # ./disk-config.nix
-                # { disko.devices.disk.primary.device = "/dev/nvme0n1"; }
+                  # TODO: This conflicts with the manual hardware config. Decide which to use.
+                  # disko.nixosModules.disko
+                  # ./disk-config.nix
+                  # { disko.devices.disk.primary.device = "/dev/nvme0n1"; }
 
-                home-manager-stable.home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.users.chris = import ./home.nix {
-                    inherit isDesktop;
-                    inputs = inputs-stable;
-                  };
-                }
-              ];
+                  home-manager-stable.home-manager
+                  {
+                    home-manager.useGlobalPkgs = true;
+                    home-manager.useUserPackages = true;
+                    home-manager.users.chris = import ./home.nix {
+                      inherit isDesktop;
+                      inputs = inputs-stable;
+                    };
+                  }
+                ];
             };
 
             nixpad = nixpkgs.lib.nixosSystem {
@@ -132,19 +138,20 @@
                 hostname = "nixpad";
                 hostId = "1c029249";
               };
-              modules = let isDesktop = true; in [
-                (import ./configuration.nix { inherit isDesktop; })
-                ./hosts/nixpad.nix
-                (hw-config-or ./hardware/nixpad.nix)
-                home-manager.home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.users.chris = import ./home.nix {
-                    inherit inputs isDesktop;
-                  };
-                }
-              ];
+              modules = let isDesktop = true; in
+                [
+                  (import ./configuration.nix { inherit isDesktop; })
+                  ./hosts/nixpad.nix
+                  (hw-config-or ./hardware/nixpad.nix)
+                  home-manager.home-manager
+                  {
+                    home-manager.useGlobalPkgs = true;
+                    home-manager.useUserPackages = true;
+                    home-manager.users.chris = import ./home.nix {
+                      inherit inputs isDesktop;
+                    };
+                  }
+                ];
             };
 
             qemu = nixpkgs.lib.nixosSystem {
@@ -154,26 +161,27 @@
                 hostname = "vm";
                 hostId = "1763015d";
               };
-              modules = let isDesktop = true; in [
-                (import ./configuration.nix { inherit isDesktop; })
-                ./hosts/qemu.nix
-                (hw-config-or ./hardware/qemu.nix)
-                ./modules/desktop-common.nix
+              modules = let isDesktop = true; in
+                [
+                  (import ./configuration.nix { inherit isDesktop; })
+                  ./hosts/qemu.nix
+                  (hw-config-or ./hardware/qemu.nix)
+                  ./modules/desktop-common.nix
 
-                # TODO: This conflicts with the manual hardware config. Decide which to use.
-                # disko.nixosModules.disko
-                # ./disk-config.nix
-                # { disko.devices.disk.primary.device = "/dev/vda"; }
+                  # TODO: This conflicts with the manual hardware config. Decide which to use.
+                  # disko.nixosModules.disko
+                  # ./disk-config.nix
+                  # { disko.devices.disk.primary.device = "/dev/vda"; }
 
-                home-manager.home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.users.chris = import ./home.nix {
-                    inherit inputs isDesktop;
-                  };
-                }
-              ];
+                  home-manager.home-manager
+                  {
+                    home-manager.useGlobalPkgs = true;
+                    home-manager.useUserPackages = true;
+                    home-manager.users.chris = import ./home.nix {
+                      inherit inputs isDesktop;
+                    };
+                  }
+                ];
             };
 
             qemu-server = nixpkgs-stable.lib.nixosSystem {
@@ -184,28 +192,58 @@
                 hostname = "vm-server";
                 hostId = "f531a5e3";
               };
-              modules = let isDesktop = false; in [
-                (import ./configuration.nix { inherit isDesktop; })
-                ./hosts/server.nix
-                ./hosts/qemu.nix
-                (hw-config-or ./hardware/qemu.nix)
+              modules = let isDesktop = false; in
+                [
+                  (import ./configuration.nix { inherit isDesktop; })
+                  ./hosts/server.nix
+                  ./hosts/qemu.nix
+                  (hw-config-or ./hardware/qemu.nix)
 
-                # TODO: This conflicts with the manual hardware config. Decide which to use.
-                # disko.nixosModules.disko
-                # ./disk-config.nix
-                # { disko.devices.disk.primary.device = "/dev/vda"; }
+                  # TODO: This conflicts with the manual hardware config. Decide which to use.
+                  # disko.nixosModules.disko
+                  # ./disk-config.nix
+                  # { disko.devices.disk.primary.device = "/dev/vda"; }
 
-                home-manager-stable.home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.users.chris = import ./home.nix {
-                    inherit isDesktop;
-                    inputs = inputs-stable;
-                  };
-                }
-              ];
+                  home-manager-stable.home-manager
+                  {
+                    home-manager.useGlobalPkgs = true;
+                    home-manager.useUserPackages = true;
+                    home-manager.users.chris = import ./home.nix {
+                      inherit isDesktop;
+                      inputs = inputs-stable;
+                    };
+                  }
+                ];
             };
+          };
+
+        # Build darwin flake using:
+        # $ darwin-rebuild build --flake .#Tralsebook
+        darwinConfigurations."Tralsebook" =
+          let
+            system = "aarch64-darwin";
+            pkgs = import nixpkgs {
+              inherit system;
+              overlays = [
+                inputs.nix-nvim-config.overlays.default
+              ];
+              config.allowUnfree = true;
+            };
+            home-manager = inputs.home-manager.darwinModules;
+          in
+          nix-darwin.lib.darwinSystem {
+            inherit system pkgs;
+            specialArgs = inputs;
+            modules = [
+              ./darwin/configuration.nix
+
+              home-manager.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.users.chris = import ./darwin/home.nix;
+              }
+            ];
           };
       };
 
