@@ -217,9 +217,7 @@
             };
           };
 
-        # Build darwin flake using:
-        # $ darwin-rebuild build --flake .#Tralsebook
-        darwinConfigurations."Tralsebook" =
+        darwinConfigurations =
           let
             system = "aarch64-darwin";
             pkgs = import nixpkgs {
@@ -230,20 +228,27 @@
               config.allowUnfree = true;
             };
             home-manager = inputs.home-manager.darwinModules;
-          in
-          nix-darwin.lib.darwinSystem {
-            inherit system pkgs;
-            specialArgs = inputs;
-            modules = [
-              ./darwin/configuration.nix
 
-              home-manager.home-manager
-              {
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.users.chris = import ./darwin/home.nix;
-              }
-            ];
+            darwinConfig = nix-darwin.lib.darwinSystem {
+              inherit system pkgs;
+              specialArgs = inputs;
+              modules = [
+                ./darwin/configuration.nix
+
+                home-manager.home-manager
+                {
+                  home-manager.useGlobalPkgs = true;
+                  home-manager.useUserPackages = true;
+                  home-manager.users.chris = import ./darwin/home.nix;
+                }
+              ];
+            };
+          in
+          {
+            # Build darwin flake using:
+            # $ darwin-rebuild build --flake .#Tralsebook
+            "Tralsebook" = darwinConfig;
+            "The-Rekening" = darwinConfig;
           };
       };
 
