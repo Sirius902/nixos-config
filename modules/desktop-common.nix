@@ -195,7 +195,9 @@
     qdirstat
     qemu # Workaround for libvirtd efi not working.
     virtiofsd # For virtio support in QEMU.
-    wineWowPackages.stable
+    (wineWowPackages.unstable.override {
+      waylandSupport = true;
+    })
     winetricks
     xclip
   ];
