@@ -12,7 +12,7 @@ config.color_scheme = 'Gruvbox Dark (Gogh)'
 -- config.font_size = 14.0
 
 -- Disable font ligatures
-config.harfbuzz_features = {'calt=0', 'clig=0', 'liga=0'}
+config.harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }
 
 config.hide_mouse_cursor_when_typing = false
 
@@ -22,15 +22,19 @@ config.hide_mouse_cursor_when_typing = false
 -- TODO: Workaround to fix font rendering on NixOS unstable.
 config.front_end = 'WebGpu'
 
--- Use GNOME cursor style
-local success, stdout, _ = wezterm.run_child_process({"gsettings", "get", "org.gnome.desktop.interface", "cursor-theme"})
-if success then
-  config.xcursor_theme = stdout:gsub("'(.+)'\n", "%1")
-end
+if os.getenv('DESKTOP_SESSION') == 'gnome' then
+    -- Use GNOME cursor style
+    local success, stdout, _ = wezterm.run_child_process({ 'gsettings', 'get', 'org.gnome.desktop.interface',
+        'cursor-theme' })
+    if success then
+        config.xcursor_theme = stdout:gsub(''(.+)'\n', '%1')
+    end
 
-local success, stdout, _ = wezterm.run_child_process({"gsettings", "get", "org.gnome.desktop.interface", "cursor-size"})
-if success then
-  config.xcursor_size = tonumber(stdout)
+    success, stdout, _ = wezterm.run_child_process({ 'gsettings', 'get', 'org.gnome.desktop.interface',
+        'cursor-size' })
+    if success then
+        config.xcursor_size = tonumber(stdout)
+    end
 end
 
 -- and finally, return the configuration to wezterm

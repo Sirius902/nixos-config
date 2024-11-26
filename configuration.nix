@@ -93,11 +93,6 @@
 
   programs.nix-ld.enable = true;
 
-  programs.kdeconnect = lib.mkIf isDesktop {
-    enable = true;
-    package = pkgs.gnomeExtensions.gsconnect;
-  };
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [

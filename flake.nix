@@ -259,7 +259,7 @@
         "aarch64-darwin"
       ];
 
-      perSystem = { pkgs, system, ... }: {
+      perSystem = { pkgs, ... }: {
         formatter = pkgs.nixpkgs-fmt;
         packages.default = pkgs.mkShell {
           packages = [ pkgs.just ];
