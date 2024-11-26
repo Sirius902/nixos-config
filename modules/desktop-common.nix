@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./kde.nix
+    ./gnome.nix
   ];
 
   services.openssh.enable = true;
