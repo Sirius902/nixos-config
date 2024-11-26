@@ -61,6 +61,11 @@
     }
   );
 
+  gtk = pkgs.lib.mkIf isDesktop {
+    enable = true;
+    gtk3.extraConfig."gtk-application-prefer-dark-theme" = 1;
+  };
+
   programs.wezterm = pkgs.lib.mkIf isDesktop {
     enable = true;
     enableBashIntegration = true;
