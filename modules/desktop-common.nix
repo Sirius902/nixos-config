@@ -157,6 +157,7 @@
     inkscape
     jetbrains.idea-community
     gkraken
+    heroic
     hunspell
     keepassxc
     keymapp
