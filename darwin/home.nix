@@ -41,6 +41,11 @@
     nix-direnv.enable = true;
   };
 
+  # TODO: For some reason setting defaultEditor below isn't working.
+  # Set editor to neovim.
+  home.sessionVariables.EDITOR = "nvim";
+  home.sessionVariables.VISUAL = "nvim";
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
