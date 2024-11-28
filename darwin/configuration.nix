@@ -29,4 +29,6 @@
     name = "chris";
     home = "/Users/chris";
   };
+
+  security.pam.enableSudoTouchIdAuth = true;
 }
