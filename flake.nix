@@ -56,7 +56,17 @@
               overlays = [
                 inputs.nix-nvim-config.overlays.default
               ];
-              config.allowUnfree = true;
+              config = {
+                allowUnfree = true;
+                permittedInsecurePackages = [
+                  # TODO(Sirius902) Required by scarab
+                  "dotnet-runtime-6.0.36"
+                  "dotnet-sdk-6.0.428"
+                  "dotnet-sdk-wrapped-6.0.428"
+                  # TODO(Sirius902) Required by jetbrains.rider
+                  "dotnet-sdk-7.0.410"
+                ];
+              };
             };
             home-manager = inputs.home-manager.nixosModules;
             pkgs-stable = import nixpkgs-stable {

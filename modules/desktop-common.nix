@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   imports = [
@@ -121,7 +121,10 @@
   };
 
   fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    (if (lib.versionAtLeast config.system.nixos.release "24.11")
+    then nerd-fonts.jetbrains-mono
+    else (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }))
+
     noto-fonts-cjk-sans
   ];
 
