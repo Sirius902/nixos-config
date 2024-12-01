@@ -2,15 +2,21 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ isDesktop }:
-
-{ config, inputs, pkgs, hostname, hostId, lib, ... }:
+{ config
+, pkgs
+, lib
+, secrets
+, nix-index-database
+, hostname
+, hostId
+, ...
+}:
 
 {
   imports =
     [
-      inputs.secrets.nixosModules.secrets
-      inputs.nix-index-database.nixosModules.nix-index
+      secrets.nixosModules.secrets
+      nix-index-database.nixosModules.nix-index
     ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];

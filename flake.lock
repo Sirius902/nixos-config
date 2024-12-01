@@ -21,26 +21,6 @@
         "type": "github"
       }
     },
-    "disko": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1732988076,
-        "narHash": "sha256-2uMaVAZn7fiyTUGhKgleuLYe5+EAAYB/diKxrM7g3as=",
-        "owner": "nix-community",
-        "repo": "disko",
-        "rev": "2814a5224a47ca19e858e027f7e8bff74a8ea9f1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "disko",
-        "type": "github"
-      }
-    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -161,11 +141,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1733081709,
-        "narHash": "sha256-OV33TZY6M0FSjhjJbF55qCq4jVVG2ROAiTV5f5vC3dU=",
+        "lastModified": 1733085484,
+        "narHash": "sha256-dVmNuUajnU18oHzBQWZm1BQtANCHaqNuxTHZQ+GN0r8=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "863273505016a1e88e4ffaec48d1b767104c5652",
+        "rev": "c1fee8d4a60b89cae12b288ba9dbc608ff298163",
         "type": "github"
       },
       "original": {
@@ -401,7 +381,6 @@
     },
     "root": {
       "inputs": {
-        "disko": "disko",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "home-manager-stable": "home-manager-stable",
@@ -449,11 +428,11 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1733033662,
-        "narHash": "sha256-vR1zKGgY4mfiUC+hOrZgUhCxW4ZLm84ctFoV9hvJ2eM=",
+        "lastModified": 1733089012,
+        "narHash": "sha256-gM9Mn7msXdeijenRJe5O7Tz0Pv722OlgWCF0ng+yFAQ=",
         "ref": "refs/heads/main",
-        "rev": "a5c36d46190f4fa4a103095a41e5b690a6b1e622",
-        "revCount": 26,
+        "rev": "87e6ba7074fdea3da2864a7b66da218df2106d02",
+        "revCount": 28,
         "type": "git",
         "url": "ssh://git@github.com/Sirius902/nixos-secrets.git"
       },

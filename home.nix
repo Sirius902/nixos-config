@@ -1,6 +1,4 @@
-{ isDesktop, ... }:
-
-{ pkgs, ... }:
+{ pkgs, isDesktop, ... }:
 
 {
   imports = [
