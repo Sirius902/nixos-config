@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
       ../modules/vfio.nix
     ];
 
@@ -15,48 +16,57 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "zroot";
+    {
+      device = "zroot";
       fsType = "zfs";
     };
 
   fileSystems."/home" =
-    { device = "zroot/home";
+    {
+      device = "zroot/home";
       fsType = "zfs";
     };
 
   fileSystems."/nix" =
-    { device = "zroot/nix";
+    {
+      device = "zroot/nix";
       fsType = "zfs";
     };
 
   fileSystems."/persist" =
-    { device = "zroot/persist";
+    {
+      device = "zroot/persist";
       fsType = "zfs";
     };
 
   fileSystems."/media/vm" =
-    { device = "zroot/vm";
+    {
+      device = "zroot/vm";
       fsType = "zfs";
     };
 
   fileSystems."/media/vm/shared" =
-    { device = "zroot/vm/shared";
+    {
+      device = "zroot/vm/shared";
       fsType = "zfs";
     };
 
   fileSystems."/media/steam" =
-    { device = "zroot/steam";
+    {
+      device = "zroot/steam";
       fsType = "zfs";
     };
 
   fileSystems."/efi" =
-    { device = "/dev/disk/by-uuid/DB2C-20CA";
+    {
+      device = "/dev/disk/by-uuid/DB2C-20CA";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
   fileSystems."/home/chris/.local/share/openmw" =
-    { device = "zroot/home/openmw";
+    {
+      device = "zroot/home/openmw";
       fsType = "zfs";
     };
 
