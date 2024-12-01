@@ -99,6 +99,30 @@
                 ];
             };
 
+            nixtower = nixpkgs.lib.nixosSystem {
+              inherit pkgs system;
+              specialArgs = {
+                inherit inputs;
+                hostname = "nixtower";
+                hostId = "1a14084a";
+              };
+              modules = let isDesktop = true; in
+                [
+                  (import ./configuration.nix { inherit isDesktop; })
+                  ./hosts/nixtower.nix
+                  (hw-config-or ./hardware/nixtower.nix)
+                  ./modules/nvidia.nix
+                  home-manager.home-manager
+                  {
+                    home-manager.useGlobalPkgs = true;
+                    home-manager.useUserPackages = true;
+                    home-manager.users.chris = import ./home.nix {
+                      inherit inputs isDesktop;
+                    };
+                  }
+                ];
+            };
+
             hee-ho = nixpkgs-stable.lib.nixosSystem {
               inherit system;
               pkgs = pkgs-stable;
