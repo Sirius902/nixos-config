@@ -83,6 +83,14 @@
   };
   programs.virt-manager.enable = true;
 
+  # Symlink /persist/etc/libvirt to /etc/libvirt
+  environment.etc."libvirt".source = "/persist/etc/libvirt";
+
+  # Symlink /persist/var/lib/libvirt to /var/lib/libvirt
+  systemd.tmpfiles.rules = [
+    "L /var/lib/libvirt - - - - /persist/var/lib/libvirt"
+  ];
+
   systemd.services.libvirtd = {
     preStart = ''
       mkdir -p /var/lib/libvirt/hooks/
