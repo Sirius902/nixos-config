@@ -118,6 +118,10 @@
       ];
     };
     gamescope.enable = true;
+    coolercontrol = {
+      enable = true;
+      nvidiaSupport = true;
+    };
   };
 
   fonts.packages = with pkgs; [
@@ -150,7 +154,6 @@
     inkscape
     jetbrains.idea-community
     jetbrains.rider
-    gkraken
     heroic
     hunspell
     keepassxc
