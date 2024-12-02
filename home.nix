@@ -65,6 +65,7 @@
     # TODO: Add vimdiff alias somehow.
     pkgs.nvim
     pkgs.pure-prompt
+    pkgs.nixd
 
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
