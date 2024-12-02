@@ -1,9 +1,7 @@
-{ pkgs, isDesktop, ... }:
+{ pkgs, lib, isDesktop, ... }:
 
 {
-  imports = [
-    ./home-modules/gnome.nix
-  ];
+  imports = lib.lists.optional isDesktop ./home-modules/gnome.nix;
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
