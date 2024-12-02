@@ -51,6 +51,7 @@
   home.packages = [
     pkgs.nvim
     pkgs.pure-prompt
+    pkgs.nixd
   ];
 
   # Let Home Manager install and manage itself.
