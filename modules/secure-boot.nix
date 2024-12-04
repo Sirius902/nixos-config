@@ -1,7 +1,10 @@
-{ pkgs, lib, lanzaboote, ... }:
-
 {
-  imports = [ lanzaboote.nixosModules.lanzaboote ];
+  pkgs,
+  lib,
+  lanzaboote,
+  ...
+}: {
+  imports = [lanzaboote.nixosModules.lanzaboote];
 
   environment.systemPackages = with pkgs; [
     # For debugging and troubleshooting Secure Boot.

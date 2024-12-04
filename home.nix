@@ -1,6 +1,9 @@
-{ pkgs, lib, isDesktop, ... }:
-
 {
+  pkgs,
+  lib,
+  isDesktop,
+  ...
+}: {
   imports = lib.lists.optional isDesktop ./home-modules/gnome.nix;
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -17,15 +20,15 @@
   # release notes.
   home.stateVersion = "23.11"; # Please read the comment before changing.
 
-  dconf = pkgs.lib.mkIf isDesktop
+  dconf =
+    pkgs.lib.mkIf isDesktop
     {
       enable = true;
       settings."org/virt-manager/virt-manager/connections" = {
-        autoconnect = [ "qemu:///system" ];
-        uris = [ "qemu:///system" ];
+        autoconnect = ["qemu:///system"];
+        uris = ["qemu:///system"];
       };
-    }
-  ;
+    };
 
   gtk = pkgs.lib.mkIf isDesktop {
     enable = true;

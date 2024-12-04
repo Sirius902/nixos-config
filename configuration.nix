@@ -1,25 +1,22 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config
-, pkgs
-, lib
-, secrets
-, nix-index-database
-, hostname
-, hostId
-, ...
-}:
-
 {
-  imports =
-    [
-      secrets.nixosModules.secrets
-      nix-index-database.nixosModules.nix-index
-    ];
+  config,
+  pkgs,
+  lib,
+  secrets,
+  nix-index-database,
+  hostname,
+  hostId,
+  ...
+}: {
+  imports = [
+    secrets.nixosModules.secrets
+    nix-index-database.nixosModules.nix-index
+  ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -43,13 +40,15 @@
 
   security.doas.enable = true;
   security.sudo.enable = false;
-  security.doas.extraRules = [{
-    users = [ "chris" ];
-    # Optional, retains environment variables while running commands
-    # e.g. retains your NIX_PATH when applying your config
-    keepEnv = true;
-    persist = true; # Optional, only require password verification a single time
-  }];
+  security.doas.extraRules = [
+    {
+      users = ["chris"];
+      # Optional, retains environment variables while running commands
+      # e.g. retains your NIX_PATH when applying your config
+      keepEnv = true;
+      persist = true; # Optional, only require password verification a single time
+    }
+  ];
 
   networking.hostId = hostId;
 
@@ -83,7 +82,7 @@
 
   users.users.chris = {
     isNormalUser = true;
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = ["networkmanager" "wheel"];
     shell = pkgs.zsh;
   };
 

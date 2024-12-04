@@ -1,9 +1,7 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   systemd.timers."generate-dev-cert-timer" = {
     description = "Regenerate self-signed SSL certificate annually";
-    wantedBy = [ "timers.target" ];
+    wantedBy = ["timers.target"];
     timerConfig = {
       OnCalendar = "yearly";
       Unit = "generate-dev-cert.service";
@@ -12,7 +10,7 @@
 
   systemd.services."generate-dev-cert" = {
     description = "Generate self-signed SSL certificate for localhost";
-    path = [ pkgs.openssl ];
+    path = [pkgs.openssl];
     script = ''
       mkdir -p /persist/ssl/
       ${pkgs.openssl}/bin/openssl req -x509 -nodes -days 365 \
@@ -24,7 +22,7 @@
     '';
 
     # Ensure the certificate exists before other services start
-    before = [ "network.target" ];
+    before = ["network.target"];
   };
 
   security.pki.certificates = [

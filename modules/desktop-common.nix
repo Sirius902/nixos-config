@@ -1,6 +1,8 @@
-{ pkgs, config, ... }:
-
 {
+  pkgs,
+  config,
+  ...
+}: {
   imports = [
     ./gnome.nix
   ];
@@ -74,7 +76,8 @@
           (pkgs.OVMF.override {
             secureBoot = true;
             tpmSupport = true;
-          }).fd
+          })
+          .fd
         ];
       };
     };
@@ -104,7 +107,7 @@
     '';
   };
 
-  users.users.chris.extraGroups = [ "libvirtd" "openrazer" ];
+  users.users.chris.extraGroups = ["libvirtd" "openrazer"];
 
   programs = {
     firefox.enable = true;
@@ -125,9 +128,11 @@
   };
 
   fonts.packages = with pkgs; [
-    (if (lib.versionAtLeast config.system.nixos.release "24.11")
-    then nerd-fonts.jetbrains-mono
-    else (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }))
+    (
+      if (lib.versionAtLeast config.system.nixos.release "24.11")
+      then nerd-fonts.jetbrains-mono
+      else (nerdfonts.override {fonts = ["JetBrainsMono"];})
+    )
 
     noto-fonts-cjk-sans
   ];

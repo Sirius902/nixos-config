@@ -1,6 +1,4 @@
-{ lib, ... }:
-
-{
+{lib, ...}: {
   disko.devices = {
     disk.primary = {
       device = lib.mkDefault "/dev/sda";

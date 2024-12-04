@@ -1,13 +1,15 @@
-{ self, nix-index-database, ... }:
-
 {
+  self,
+  nix-index-database,
+  ...
+}: {
   imports = [
     nix-index-database.darwinModules.nix-index
   ];
 
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
-  environment.systemPackages = [ ];
+  environment.systemPackages = [];
 
   # Necessary for using flakes on this system.
   nix.settings.experimental-features = "nix-command flakes";

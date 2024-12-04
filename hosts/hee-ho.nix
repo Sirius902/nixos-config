@@ -1,13 +1,15 @@
-{ pkgs, lib, ... }:
-
 {
+  pkgs,
+  lib,
+  ...
+}: {
   imports = [
     ../modules/documentation.nix
   ];
 
   # Allow ports for mc and hkmp.
-  networking.firewall.allowedTCPPorts = [ 25565 25566 32069 ];
-  networking.firewall.allowedUDPPorts = [ 25565 25566 32069 ];
+  networking.firewall.allowedTCPPorts = [25565 25566 32069];
+  networking.firewall.allowedUDPPorts = [25565 25566 32069];
 
   services.cron = {
     enable = true;
