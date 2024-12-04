@@ -79,6 +79,7 @@
             nixpkgs,
             home-manager,
           }: {
+            inherit nixpkgs;
             pkgs = import nixpkgs {
               inherit system;
               overlays = [
@@ -121,14 +122,15 @@
           nixlee = let
             system = "x86_64-linux";
             inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
-            args = lib.attrsets.unionOfDisjoint inputs {
+            args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "nixlee";
               hostId = "ff835154";
               isDesktop = true;
+              isVm = false;
             };
           in
             nixpkgs.lib.nixosSystem {
-              inherit system pkgs home-manager;
+              inherit system pkgs;
               specialArgs = args;
               modules = [
                 ./configuration.nix
@@ -148,14 +150,15 @@
           nixtower = let
             system = "x86_64-linux";
             inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
-            args = lib.attrsets.unionOfDisjoint inputs {
+            args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "nixtower";
               hostId = "1a14084a";
               isDesktop = true;
+              isVm = false;
             };
           in
             nixpkgs.lib.nixosSystem {
-              inherit system pkgs home-manager;
+              inherit system pkgs;
               specialArgs = args;
               modules = [
                 ./configuration.nix
@@ -175,14 +178,15 @@
           hee-ho = let
             system = "x86_64-linux";
             inherit (stableDeps system) pkgs nixpkgs home-manager inputs;
-            args = lib.attrsets.unionOfDisjoint inputs {
+            args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "hee-ho";
               hostId = "b0e08309";
               isDesktop = false;
+              isVm = false;
             };
           in
             nixpkgs.lib.nixosSystem {
-              inherit system pkgs home-manager;
+              inherit system pkgs;
               specialArgs = args;
               modules = [
                 ./configuration.nix
@@ -208,20 +212,21 @@
           nixpad = let
             system = "x86_64-linux";
             inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
-            args = lib.attrsets.unionOfDisjoint inputs {
+            args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "nixpad";
               hostId = "1c029249";
               isDesktop = true;
+              isVm = false;
             };
           in
             nixpkgs.lib.nixosSystem {
-              inherit system pkgs home-manager;
+              inherit system pkgs;
               specialArgs = args;
               modules = [
                 /configuration.nix
                 ./hosts/nixpad.nix
                 (hardwareConfigOr ./hardware/nixpad.nix)
-                home-manager.home-manager
+                home-manager
                 {
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
@@ -234,14 +239,15 @@
           qemu = let
             system = "x86_64-linux";
             inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
-            args = lib.attrsets.unionOfDisjoint inputs {
+            args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "vm";
               hostId = "1763015d";
               isDesktop = true;
+              isVm = true;
             };
           in
             nixpkgs.lib.nixosSystem {
-              inherit system pkgs home-manager;
+              inherit system pkgs;
               specialArgs = args;
               modules = [
                 ./configuration.nix
@@ -253,34 +259,7 @@
                 # ./disk-config.nix
                 # { disko.devices.disk.primary.device = "/dev/vda"; }
 
-                home-manager.home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = import ./home.nix;
-                }
-              ];
-            };
-
-          qemu-aarch64 = let
-            system = "aarch64-linux";
-            inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
-            args = lib.attrsets.unionOfDisjoint inputs {
-              hostname = "vm";
-              hostId = "c5cb7a32";
-              isDesktop = true;
-            };
-          in
-            nixpkgs.lib.nixosSystem {
-              inherit system pkgs home-manager;
-              specialArgs = args;
-              modules = [
-                ./configuration.nix
-                ./hosts/qemu.nix
-                (hardwareConfigOr ./hardware/qemu.nix)
-
-                home-manager.home-manager
+                home-manager
                 {
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
@@ -293,14 +272,15 @@
           qemu-server = let
             system = "x86_64-linux";
             inherit (stableDeps system) pkgs nixpkgs home-manager inputs;
-            args = lib.attrsets.unionOfDisjoint inputs {
+            args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "vm-server";
               hostId = "f531a5e3";
               isDesktop = false;
+              isVm = true;
             };
           in
             nixpkgs.lib.nixosSystem {
-              inherit system pkgs home-manager;
+              inherit system pkgs;
               specialArgs = args;
               modules = [
                 ./configuration.nix
@@ -322,6 +302,34 @@
                 }
               ];
             };
+
+          vmware-aarch64 = let
+            system = "aarch64-linux";
+            inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
+            args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
+              hostname = "vm";
+              hostId = "c5cb7a32";
+              isDesktop = true;
+              isVm = true;
+            };
+          in
+            nixpkgs.lib.nixosSystem {
+              inherit system pkgs;
+              specialArgs = args;
+              modules = [
+                ./configuration.nix
+                ./hosts/vmware.nix
+                ./hardware-configuration.nix
+
+                home-manager
+                {
+                  home-manager.useGlobalPkgs = true;
+                  home-manager.useUserPackages = true;
+                  home-manager.extraSpecialArgs = args;
+                  home-manager.users.chris = import ./home.nix;
+                }
+              ];
+            };
         };
 
         darwinConfigurations = let
@@ -333,7 +341,7 @@
             ];
             config.allowUnfree = true;
           };
-          home-manager = inputs.home-manager.darwinModules;
+          home-manager = inputs.home-manager.darwinModules.home-manager;
 
           args = inputs;
 
@@ -343,7 +351,7 @@
             modules = [
               ./darwin/configuration.nix
 
-              home-manager.home-manager
+              home-manager
               {
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;

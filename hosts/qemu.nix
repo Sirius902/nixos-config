@@ -3,7 +3,7 @@
   isDesktop,
   ...
 }: {
-  imports = lib.lists.optional isDesktop ./modules/desktop-common.nix;
+  imports = lib.lists.optional isDesktop ../modules/desktop-common.nix;
 
   boot.zfs.devNodes = lib.mkForce "/dev/disk/by-partuuid";
 
