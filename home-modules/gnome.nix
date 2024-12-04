@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  isVm,
   ...
 }: {
   dconf = let
@@ -10,10 +11,10 @@
     settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
     settings."org/gnome/shell" = {
       disable-user-extensions = false;
-      enabled-extensions = with pkgs.gnomeExtensions; [
-        gsconnect.extensionUuid
-        appindicator.extensionUuid
-      ];
+      enabled-extensions = with pkgs.gnomeExtensions; ([
+          appindicator.extensionUuid
+        ]
+        ++ lib.lists.optional (!isVm) gsconnect.extensionUuid);
     };
     settings."org/gnome/shell".favorite-apps = [
       "firefox.desktop"

@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  isVm,
+  ...
+}: {
   i18n.inputMethod = {
     enable = true;
     type = "ibus";
@@ -21,7 +25,7 @@
     geary # Email Viewer
   ];
 
-  programs.kdeconnect = {
+  programs.kdeconnect = lib.mkIf (!isVm) {
     enable = true;
     package = pkgs.gnomeExtensions.gsconnect;
   };
