@@ -45,7 +45,7 @@
     };
   };
 
-  outputs = { nixpkgs, nixpkgs-stable, nix-darwin, flake-parts, ... }@inputs:
+  outputs = { nixpkgs, home-manager, nixpkgs-stable, home-manager-stable, nix-darwin, flake-parts, ... }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
         "x86_64-linux"
@@ -64,40 +64,36 @@
       flake = {
         nixosConfigurations =
           let
-            system = "x86_64-linux";
-            pkgs = import nixpkgs {
-              inherit system;
-              overlays = [
-                inputs.nix-nvim-config.overlays.default
-              ];
-              config = {
-                allowUnfree = true;
-                permittedInsecurePackages = [
-                  # FUTURE(Sirius902) Required by scarab
-                  "dotnet-runtime-6.0.36"
-                  "dotnet-sdk-6.0.428"
-                  "dotnet-sdk-wrapped-6.0.428"
-                  # FUTURE(Sirius902) Required by jetbrains.rider
-                  "dotnet-sdk-7.0.410"
-                ];
+            lib = nixpkgs.legacyPackages.lib;
+
+            systemDeps = { system, nixpkgs, home-manager }:
+              let
+              in {
+                pkgs = import nixpkgs {
+                  inherit system;
+                  overlays = [
+                    inputs.nix-nvim-config.overlays.default
+                  ];
+                  config = {
+                    allowUnfree = true;
+                    permittedInsecurePackages = [
+                      # FUTURE(Sirius902) Required by scarab
+                      "dotnet-runtime-6.0.36"
+                      "dotnet-sdk-6.0.428"
+                      "dotnet-sdk-wrapped-6.0.428"
+                      # FUTURE(Sirius902) Required by jetbrains.rider
+                      "dotnet-sdk-7.0.410"
+                    ];
+                  };
+                };
+                home-manager = home-manager.nixosModules.home-manager;
+                inputs = inputs // { inherit nixpkgs; home-manager = home-manager.nixosModules.home-manager; };
               };
-            };
-            home-manager = inputs.home-manager.nixosModules;
 
-            inherit (pkgs) lib;
+            unstableDeps = system: systemDeps { inherit system nixpkgs home-manager; };
+            stableDeps = system: systemDeps { inherit system; nixpkgs = nixpkgs-stable; home-manager = home-manager-stable; };
 
-            pkgs-stable = import nixpkgs-stable {
-              inherit system;
-              overlays = [
-                inputs.nix-nvim-config.overlays.default
-              ];
-              config.allowUnfree = true;
-            };
-            home-manager-stable = inputs.home-manager-stable.nixosModules;
-
-            inputs-stable = inputs // { nixpkgs = nixpkgs-stable; home-manager = home-manager-stable; };
-
-            hw-config-or = cfg:
+            hardwareConfigOr = cfg:
               if (builtins.pathExists ./hardware-configuration.nix) then
                 ./hardware-configuration.nix
               else
@@ -106,6 +102,8 @@
           {
             nixlee =
               let
+                system = "x86_64-linux";
+                inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
                 args = lib.attrsets.unionOfDisjoint inputs {
                   hostname = "nixlee";
                   hostId = "ff835154";
@@ -113,14 +111,14 @@
                 };
               in
               nixpkgs.lib.nixosSystem {
-                inherit pkgs system;
+                inherit system pkgs home-manager;
                 specialArgs = args;
                 modules = [
                   ./configuration.nix
                   ./hosts/nixlee.nix
-                  (hw-config-or ./hardware/nixlee.nix)
+                  (hardwareConfigOr ./hardware/nixlee.nix)
                   ./modules/nvidia.nix
-                  home-manager.home-manager
+                  home-manager
                   {
                     home-manager.useGlobalPkgs = true;
                     home-manager.useUserPackages = true;
@@ -132,6 +130,8 @@
 
             nixtower =
               let
+                system = "x86_64-linux";
+                inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
                 args = lib.attrsets.unionOfDisjoint inputs {
                   hostname = "nixtower";
                   hostId = "1a14084a";
@@ -139,15 +139,15 @@
                 };
               in
               nixpkgs.lib.nixosSystem {
-                inherit pkgs system;
+                inherit system pkgs home-manager;
                 specialArgs = args;
                 modules =
                   [
                     ./configuration.nix
                     ./hosts/nixtower.nix
-                    (hw-config-or ./hardware/nixtower.nix)
+                    (hardwareConfigOr ./hardware/nixtower.nix)
                     ./modules/nvidia.nix
-                    home-manager.home-manager
+                    home-manager
                     {
                       home-manager.useGlobalPkgs = true;
                       home-manager.useUserPackages = true;
@@ -159,29 +159,30 @@
 
             hee-ho =
               let
-                args = lib.attrsets.unionOfDisjoint inputs-stable {
+                system = "x86_64-linux";
+                inherit (stableDeps system) pkgs nixpkgs home-manager inputs;
+                args = lib.attrsets.unionOfDisjoint inputs {
                   hostname = "hee-ho";
                   hostId = "b0e08309";
                   isDesktop = false;
                 };
               in
-              nixpkgs-stable.lib.nixosSystem {
-                inherit system;
-                pkgs = pkgs-stable;
+              nixpkgs.lib.nixosSystem {
+                inherit system pkgs home-manager;
                 specialArgs = args;
                 modules =
                   [
                     ./configuration.nix
                     ./hosts/server.nix
                     ./hosts/hee-ho.nix
-                    (hw-config-or ./hardware/hee-ho.nix)
+                    (hardwareConfigOr ./hardware/hee-ho.nix)
 
                     # TODO: This conflicts with the manual hardware config. Decide which to use.
                     # disko.nixosModules.disko
                     # ./disk-config.nix
                     # { disko.devices.disk.primary.device = "/dev/nvme0n1"; }
 
-                    home-manager-stable.home-manager
+                    home-manager
                     {
                       home-manager.useGlobalPkgs = true;
                       home-manager.useUserPackages = true;
@@ -193,6 +194,8 @@
 
             nixpad =
               let
+                system = "x86_64-linux";
+                inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
                 args = lib.attrsets.unionOfDisjoint inputs {
                   hostname = "nixpad";
                   hostId = "1c029249";
@@ -200,13 +203,13 @@
                 };
               in
               nixpkgs.lib.nixosSystem {
-                inherit pkgs system;
+                inherit system pkgs home-manager;
                 specialArgs = args;
                 modules =
                   [
                     /configuration.nix
                     ./hosts/nixpad.nix
-                    (hw-config-or ./hardware/nixpad.nix)
+                    (hardwareConfigOr ./hardware/nixpad.nix)
                     home-manager.home-manager
                     {
                       home-manager.useGlobalPkgs = true;
@@ -219,6 +222,8 @@
 
             qemu =
               let
+                system = "x86_64-linux";
+                inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
                 args = lib.attrsets.unionOfDisjoint inputs {
                   hostname = "vm";
                   hostId = "1763015d";
@@ -226,18 +231,47 @@
                 };
               in
               nixpkgs.lib.nixosSystem {
-                inherit pkgs system;
+                inherit system pkgs home-manager;
                 specialArgs = args;
                 modules =
                   [
                     ./configuration.nix
                     ./hosts/qemu.nix
-                    (hw-config-or ./hardware/qemu.nix)
+                    (hardwareConfigOr ./hardware/qemu.nix)
 
                     # TODO: This conflicts with the manual hardware config. Decide which to use.
                     # disko.nixosModules.disko
                     # ./disk-config.nix
                     # { disko.devices.disk.primary.device = "/dev/vda"; }
+
+                    home-manager.home-manager
+                    {
+                      home-manager.useGlobalPkgs = true;
+                      home-manager.useUserPackages = true;
+                      home-manager.extraSpecialArgs = args;
+                      home-manager.users.chris = import ./home.nix;
+                    }
+                  ];
+              };
+
+            qemu-aarch64 =
+              let
+                system = "aarch64-linux";
+                inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
+                args = lib.attrsets.unionOfDisjoint inputs {
+                  hostname = "vm";
+                  hostId = "c5cb7a32";
+                  isDesktop = true;
+                };
+              in
+              nixpkgs.lib.nixosSystem {
+                inherit system pkgs home-manager;
+                specialArgs = args;
+                modules =
+                  [
+                    ./configuration.nix
+                    ./hosts/qemu.nix
+                    (hardwareConfigOr ./hardware/qemu.nix)
 
                     home-manager.home-manager
                     {
@@ -251,29 +285,30 @@
 
             qemu-server =
               let
-                args = lib.attrsets.unionOfDisjoint inputs-stable {
+                system = "x86_64-linux";
+                inherit (stableDeps system) pkgs nixpkgs home-manager inputs;
+                args = lib.attrsets.unionOfDisjoint inputs {
                   hostname = "vm-server";
                   hostId = "f531a5e3";
                   isDesktop = false;
                 };
               in
-              nixpkgs-stable.lib.nixosSystem {
-                inherit system;
-                pkgs = pkgs-stable;
+              nixpkgs.lib.nixosSystem {
+                inherit system pkgs home-manager;
                 specialArgs = args;
                 modules =
                   [
                     ./configuration.nix
                     ./hosts/server.nix
                     ./hosts/qemu.nix
-                    (hw-config-or ./hardware/qemu.nix)
+                    (hardwareConfigOr ./hardware/qemu.nix)
 
                     # TODO: This conflicts with the manual hardware config. Decide which to use.
                     # disko.nixosModules.disko
                     # ./disk-config.nix
                     # { disko.devices.disk.primary.device = "/dev/vda"; }
 
-                    home-manager-stable.home-manager
+                    home-manager
                     {
                       home-manager.useGlobalPkgs = true;
                       home-manager.useUserPackages = true;
