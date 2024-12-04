@@ -125,7 +125,7 @@
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "nixlee";
               hostId = "ff835154";
-              isDesktop = true;
+              isHeadless = false;
               isVm = false;
             };
           in
@@ -153,7 +153,7 @@
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "nixtower";
               hostId = "1a14084a";
-              isDesktop = true;
+              isHeadless = false;
               isVm = false;
             };
           in
@@ -181,7 +181,7 @@
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "hee-ho";
               hostId = "b0e08309";
-              isDesktop = false;
+              isHeadless = true;
               isVm = false;
             };
           in
@@ -215,7 +215,7 @@
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "nixpad";
               hostId = "1c029249";
-              isDesktop = true;
+              isHeadless = false;
               isVm = false;
             };
           in
@@ -242,7 +242,7 @@
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "vm";
               hostId = "1763015d";
-              isDesktop = true;
+              isHeadless = false;
               isVm = true;
             };
           in
@@ -275,7 +275,7 @@
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "vm-server";
               hostId = "f531a5e3";
-              isDesktop = false;
+              isHeadless = true;
               isVm = true;
             };
           in
@@ -309,7 +309,7 @@
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "vm";
               hostId = "c5cb7a32";
-              isDesktop = true;
+              isHeadless = false;
               isVm = true;
             };
           in

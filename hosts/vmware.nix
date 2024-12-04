@@ -1,9 +1,9 @@
 {
   lib,
-  isDesktop,
+  isHeadless,
   ...
 }: {
-  imports = [../modules/ssl-dev.nix] ++ (lib.lists.optional isDesktop ../modules/desktop-common.nix);
+  imports = [../modules/ssl-dev.nix] ++ (lib.lists.optional (!isHeadless) ../modules/desktop-common.nix);
 
   virtualisation.vmware.guest.enable = true;
 }

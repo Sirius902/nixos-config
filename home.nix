@@ -1,10 +1,10 @@
 {
   pkgs,
   lib,
-  isDesktop,
+  isHeadless,
   ...
 }: {
-  imports = lib.lists.optional isDesktop ./home-modules/gnome.nix;
+  imports = lib.lists.optional (!isHeadless) ./home-modules/gnome.nix;
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -21,7 +21,7 @@
   home.stateVersion = "23.11"; # Please read the comment before changing.
 
   dconf =
-    pkgs.lib.mkIf isDesktop
+    pkgs.lib.mkIf (!isHeadless)
     {
       enable = true;
       settings."org/virt-manager/virt-manager/connections" = {
@@ -30,12 +30,12 @@
       };
     };
 
-  gtk = pkgs.lib.mkIf isDesktop {
+  gtk = pkgs.lib.mkIf (!isHeadless) {
     enable = true;
     gtk3.extraConfig."gtk-application-prefer-dark-theme" = 1;
   };
 
-  programs.wezterm = pkgs.lib.mkIf isDesktop {
+  programs.wezterm = pkgs.lib.mkIf (!isHeadless) {
     enable = true;
     enableBashIntegration = true;
     enableZshIntegration = true;
