@@ -2,14 +2,21 @@
   pkgs,
   lib,
   isHeadless,
+  isVm,
   ...
-}: {
-  imports = lib.lists.optional (!isHeadless) ./home-modules/gnome.nix;
+}: let
+  inherit (pkgs) stdenv;
+  isLinuxDesktop = stdenv.isLinux && !isHeadless;
+in {
+  imports = [./home-modules/gnome.nix];
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "chris";
-  home.homeDirectory = "/home/chris";
+  home.homeDirectory =
+    if stdenv.isDarwin
+    then "/Users/chris"
+    else "/home/chris";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -21,7 +28,7 @@
   home.stateVersion = "23.11"; # Please read the comment before changing.
 
   dconf =
-    pkgs.lib.mkIf (!isHeadless)
+    pkgs.lib.mkIf isLinuxDesktop
     {
       enable = true;
       settings."org/virt-manager/virt-manager/connections" = {
@@ -30,12 +37,12 @@
       };
     };
 
-  gtk = pkgs.lib.mkIf (!isHeadless) {
+  gtk = pkgs.lib.mkIf isLinuxDesktop {
     enable = true;
     gtk3.extraConfig."gtk-application-prefer-dark-theme" = 1;
   };
 
-  programs.wezterm = pkgs.lib.mkIf (!isHeadless) {
+  programs.wezterm = lib.mkIf (!isHeadless) {
     enable = true;
     enableBashIntegration = true;
     enableZshIntegration = true;
@@ -50,6 +57,10 @@
 
     defaultKeymap = "viins"; # Use Vim keybinds
     initExtra = "prompt pure";
+
+    envExtra = lib.mkIf stdenv.isDarwin ''
+      . "$HOME/.cargo/env"
+    '';
   };
 
   programs.direnv = {

@@ -356,7 +356,7 @@
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
                 home-manager.extraSpecialArgs = args;
-                home-manager.users.chris = import ./darwin/home.nix;
+                home-manager.users.chris = import ./home.nix;
               }
             ];
           };

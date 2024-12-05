@@ -1,9 +1,11 @@
 {
   pkgs,
   lib,
+  isHeadless,
   isVm,
   ...
-}: {
+}:
+lib.mkIf (pkgs.stdenv.isLinux && !isHeadless) {
   dconf = let
     mkTuple = lib.hm.gvariant.mkTuple;
   in {
