@@ -1,4 +1,11 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  isHeadless,
+  isVm,
+  ...
+}:
+lib.mkIf (!isHeadless && !isVm) {
   hardware = {
     openrazer = {
       enable = true;

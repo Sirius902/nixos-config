@@ -1,5 +1,3 @@
 {
-  imports = [
-    ./nixlee.nix
-  ];
+  imports = [./nixlee.nix];
 }

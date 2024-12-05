@@ -2,15 +2,16 @@
   pkgs,
   lib,
   config,
-  isVm,
+  isHeadless,
   ...
-}: {
-  imports =
-    [
-      ./gnome.nix
-    ]
-    ++ (lib.lists.optional (!isVm) ./desktop-full.nix);
-
+}:
+{
+  imports = [
+    ./gnome.nix
+    ./desktop-full.nix
+  ];
+}
+// lib.mkIf (!isHeadless) {
   services.openssh.enable = true;
 
   # Configure keymap in X11

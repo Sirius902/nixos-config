@@ -1,9 +1,11 @@
 {
   pkgs,
   lib,
+  isHeadless,
   isVm,
   ...
-}: {
+}:
+lib.mkIf (!isHeadless) {
   i18n.inputMethod = {
     enable = true;
     type = "ibus";

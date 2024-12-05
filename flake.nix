@@ -343,7 +343,10 @@
           };
           home-manager = inputs.home-manager.darwinModules.home-manager;
 
-          args = inputs;
+          args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
+            isHeadless = false;
+            isVm = false;
+          };
 
           darwinConfig = nix-darwin.lib.darwinSystem {
             inherit system pkgs;

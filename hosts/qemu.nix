@@ -1,9 +1,5 @@
-{
-  lib,
-  isHeadless,
-  ...
-}: {
-  imports = lib.lists.optional (!isHeadless) ../modules/desktop-common.nix;
+{lib, ...}: {
+  imports = [../modules/desktop-common.nix];
 
   boot.zfs.devNodes = lib.mkForce "/dev/disk/by-partuuid";
 

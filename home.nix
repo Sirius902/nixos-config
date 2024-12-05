@@ -2,7 +2,6 @@
   pkgs,
   lib,
   isHeadless,
-  isVm,
   ...
 }: let
   inherit (pkgs) stdenv;
