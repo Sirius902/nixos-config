@@ -76,7 +76,6 @@
     imagemagick
     hunspell
     keepassxc
-    nautilus-python # Required for Open in WezTerm.
     vscodium
     wl-clipboard
     zed-editor

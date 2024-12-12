@@ -20,8 +20,7 @@ lib.mkIf (pkgs.stdenv.isLinux && !isHeadless) {
     };
     settings."org/gnome/shell".favorite-apps = [
       "firefox.desktop"
-      "org.wezfurlong.wezterm.desktop"
-      "org.gnome.Console.desktop"
+      "com.mitchellh.ghostty.desktop"
       "codium.desktop"
       "dev.zed.Zed.desktop"
       "org.gnome.Nautilus.desktop"
