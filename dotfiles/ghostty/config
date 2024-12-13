@@ -1,0 +1,10 @@
+theme = GruvboxDark
+font-family = JetBrainsMonoNL Nerd Font
+
+keybind = super+d=new_split:right
+keybind = super+shift+d=new_split:down
+
+keybind = super+ctrl+up=goto_split:top
+keybind = super+ctrl+down=goto_split:bottom
+keybind = super+ctrl+left=goto_split:left
+keybind = super+ctrl+right=goto_split:right
