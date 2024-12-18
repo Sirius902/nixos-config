@@ -19,12 +19,7 @@
   boot.extraModulePackages = [];
 
   fileSystems."/" = {
-    device = "zroot";
-    fsType = "zfs";
-  };
-
-  fileSystems."/home" = {
-    device = "zroot/home";
+    device = "zroot/ROOT";
     fsType = "zfs";
   };
 
@@ -38,23 +33,18 @@
     fsType = "zfs";
   };
 
-  fileSystems."/media/vm" = {
-    device = "zroot/vm";
+  fileSystems."/home" = {
+    device = "zroot/home";
     fsType = "zfs";
   };
 
-  fileSystems."/media/vm/shared" = {
-    device = "zroot/vm/shared";
-    fsType = "zfs";
-  };
-
-  fileSystems."/media/steam" = {
-    device = "zroot/steam";
+  fileSystems."/media" = {
+    device = "zroot/media";
     fsType = "zfs";
   };
 
   fileSystems."/efi" = {
-    device = "/dev/disk/by-uuid/DB2C-20CA";
+    device = "/dev/disk/by-uuid/A372-85B0";
     fsType = "vfat";
     options = ["fmask=0077" "dmask=0077"];
   };
@@ -64,7 +54,29 @@
     fsType = "zfs";
   };
 
-  swapDevices = [];
+  fileSystems."/media/steam" = {
+    device = "zroot/media/steam";
+    fsType = "zfs";
+  };
+
+  fileSystems."/media/vm" = {
+    device = "zroot/media/vm";
+    fsType = "zfs";
+  };
+
+  fileSystems."/media/vm/images" = {
+    device = "zroot/media/vm/images";
+    fsType = "zfs";
+  };
+
+  fileSystems."/media/vm/shared" = {
+    device = "zroot/media/vm/shared";
+    fsType = "zfs";
+  };
+
+  swapDevices = [
+    {device = "/dev/disk/by-uuid/8c186b40-83ac-45e7-81de-d26b348b7175";}
+  ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -72,6 +84,7 @@
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp111s0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.virbr0.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp112s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
