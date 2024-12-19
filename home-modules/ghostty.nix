@@ -25,7 +25,7 @@ in
     programs.zsh.initExtra = lib.mkIf stdenv.isDarwin ''
       if [[ "$TERM_PROGRAM" = ghostty ]]; then
         if [[ -n "$GHOSTTY_RESOURCES_DIR" ]]; then
-          source "$GHOSTTY_RESOURCES_DIR"/shell-integration/bash/ghostty.bash
+          source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
         fi
         if [[ -n "$GHOSTTY_BIN_DIR" &&  :"$PATH": != *:"$GHOSTTY_BIN_DIR":* ]]; then
           PATH=$GHOSTTY_BIN_DIR''${PATH:+:$PATH}
