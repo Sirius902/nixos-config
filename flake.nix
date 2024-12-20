@@ -77,8 +77,6 @@
 
       flake = {
         nixosConfigurations = let
-          lib = nixpkgs.legacyPackages.lib;
-
           systemDeps = {
             system,
             nixpkgs,
