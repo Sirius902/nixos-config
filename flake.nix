@@ -56,9 +56,40 @@
     nixpkgs-stable,
     home-manager-stable,
     nix-darwin,
+    ghostty,
     flake-parts,
     ...
-  } @ inputs:
+  } @ inputs: let
+    importPkgs = {
+      system,
+      nixpkgs,
+    }:
+      import nixpkgs {
+        inherit system;
+        overlays = [
+          inputs.nix-nvim-config.overlays.default
+
+          (final: prev: {
+            ghostty = ghostty.packages.${system}.default;
+          })
+
+          (final: prev: {
+            ghostty-nautilus = prev.callPackage ./packages/ghostty-nautilus/default.nix {};
+          })
+        ];
+        config = {
+          allowUnfree = true;
+          permittedInsecurePackages = [
+            # FUTURE(Sirius902) Required by scarab
+            "dotnet-runtime-6.0.36"
+            "dotnet-sdk-6.0.428"
+            "dotnet-sdk-wrapped-6.0.428"
+            # FUTURE(Sirius902) Required by jetbrains.rider
+            "dotnet-sdk-7.0.410"
+          ];
+        };
+      };
+  in
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = [
         "x86_64-linux"
@@ -67,9 +98,12 @@
         "aarch64-darwin"
       ];
 
-      perSystem = {pkgs, ...}:
-        with pkgs; {
+      perSystem = {system, ...}:
+        with (importPkgs {inherit system nixpkgs;}); {
           formatter = alejandra;
+
+          packages.ghostty-nautilus = ghostty-nautilus;
+
           devShells.default = mkShell {
             packages = [just];
           };
@@ -83,23 +117,7 @@
             home-manager,
           }: {
             inherit nixpkgs;
-            pkgs = import nixpkgs {
-              inherit system;
-              overlays = [
-                inputs.nix-nvim-config.overlays.default
-              ];
-              config = {
-                allowUnfree = true;
-                permittedInsecurePackages = [
-                  # FUTURE(Sirius902) Required by scarab
-                  "dotnet-runtime-6.0.36"
-                  "dotnet-sdk-6.0.428"
-                  "dotnet-sdk-wrapped-6.0.428"
-                  # FUTURE(Sirius902) Required by jetbrains.rider
-                  "dotnet-sdk-7.0.410"
-                ];
-              };
-            };
+            pkgs = importPkgs {inherit system nixpkgs;};
             home-manager = home-manager.nixosModules.home-manager;
             inputs =
               inputs
