@@ -1,4 +1,4 @@
-{...}: {
+{
   # Disable Bluetooth headset HSP/HFP profile.
   environment.etc."wireplumber/wireplumber.conf.d/51-mitigate-annoying-profile-switch.conf".text = ''
     ## In WirePlumber there's a bug where some applications trigger switching to Headset Profile
