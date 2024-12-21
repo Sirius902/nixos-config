@@ -38,40 +38,10 @@
     fsType = "zfs";
   };
 
-  fileSystems."/media" = {
-    device = "zroot/media";
-    fsType = "zfs";
-  };
-
   fileSystems."/efi" = {
     device = "/dev/disk/by-uuid/A372-85B0";
     fsType = "vfat";
     options = ["fmask=0077" "dmask=0077"];
-  };
-
-  fileSystems."/home/chris/.local/share/openmw" = {
-    device = "zroot/home/openmw";
-    fsType = "zfs";
-  };
-
-  fileSystems."/media/steam" = {
-    device = "zroot/media/steam";
-    fsType = "zfs";
-  };
-
-  fileSystems."/media/vm" = {
-    device = "zroot/media/vm";
-    fsType = "zfs";
-  };
-
-  fileSystems."/media/vm/images" = {
-    device = "zroot/media/vm/images";
-    fsType = "zfs";
-  };
-
-  fileSystems."/media/vm/shared" = {
-    device = "zroot/media/vm/shared";
-    fsType = "zfs";
   };
 
   swapDevices = [
