@@ -122,7 +122,7 @@ lib.mkIf (!isHeadless && !isVm) {
     protontricks
     scarab
     spotify
-    sticky
+    sticky-notes
     transmission_4-qt
     vesktop # Discord alternative with better support on Linux.
     vlc
