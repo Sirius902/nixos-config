@@ -9,6 +9,7 @@
   imports = [
     ./gnome.nix
     ./desktop-full.nix
+    ./disable-hsp.nix
   ];
 }
 // lib.mkIf (!isHeadless) {
