@@ -21,7 +21,7 @@
 
   # TODO: Filesystems should only be configured if not using nixos-anywhere.
   fileSystems."/" = {
-    device = "zroot";
+    device = "zroot/ROOT";
     fsType = "zfs";
   };
 
