@@ -96,7 +96,8 @@ lib.mkIf (!isHeadless && !isVm) {
     gimp
     godot_4
     inkscape
-    jetbrains.idea-community
+    # TODO(Sirius902) This doesn't build on newest nixpkgs.
+    # jetbrains.idea-community
     jetbrains.rider
     heroic
     keymapp
