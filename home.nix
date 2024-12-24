@@ -65,8 +65,8 @@ in {
 
   # TODO: For some reason setting defaultEditor below isn't working.
   # Set editor to neovim.
-  home.sessionVariables.EDITOR = "nvim";
-  home.sessionVariables.VISUAL = "nvim";
+  home.sessionVariables.EDITOR = "${pkgs.nvim}/bin/nvim";
+  home.sessionVariables.VISUAL = "${pkgs.nvim}/bin/nvim";
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
