@@ -49,13 +49,18 @@ lib.mkIf (!isHeadless && !isVm) {
   systemd.services.libvirtd = {
     preStart = ''
       mkdir -p /var/lib/libvirt/hooks/
-      mkdir -p /var/lib/libvirt/hooks/qemu.d/win11-vfio/prepare/begin/
-      mkdir -p /var/lib/libvirt/hooks/qemu.d/win11-vfio/release/end/
-
       ln -sf /persist/qemu-hooks/qemu /var/lib/libvirt/hooks/qemu
       ln -sf /persist/qemu-hooks/kvm.conf /var/lib/libvirt/hooks/kvm.conf
+
+      mkdir -p /var/lib/libvirt/hooks/qemu.d/win11-vfio/prepare/begin/
+      mkdir -p /var/lib/libvirt/hooks/qemu.d/win11-vfio/release/end/
       ln -sf /persist/qemu-hooks/vfio/start.sh /var/lib/libvirt/hooks/qemu.d/win11-vfio/prepare/begin/start.sh
       ln -sf /persist/qemu-hooks/vfio/stop.sh /var/lib/libvirt/hooks/qemu.d/win11-vfio/release/end/stop.sh
+
+      mkdir -p /var/lib/libvirt/hooks/qemu.d/win10-vfio/prepare/begin/
+      mkdir -p /var/lib/libvirt/hooks/qemu.d/win10-vfio/release/end/
+      ln -sf /persist/qemu-hooks/vfio/start.sh /var/lib/libvirt/hooks/qemu.d/win10-vfio/prepare/begin/start.sh
+      ln -sf /persist/qemu-hooks/vfio/stop.sh /var/lib/libvirt/hooks/qemu.d/win10-vfio/release/end/stop.sh
     '';
   };
 
@@ -104,6 +109,7 @@ lib.mkIf (!isHeadless && !isVm) {
     krita
     libreoffice-qt
     lunar-client
+    ntfs3g
     (wrapOBS {
       plugins = with pkgs.obs-studio-plugins; [
         obs-pipewire-audio-capture
