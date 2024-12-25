@@ -33,19 +33,19 @@
     fsType = "zfs";
   };
 
+  fileSystems."/efi" = {
+    device = "/dev/disk/by-uuid/8D9D-634A";
+    fsType = "vfat";
+    options = ["fmask=0077" "dmask=0077"];
+  };
+
   fileSystems."/home" = {
     device = "zroot/home";
     fsType = "zfs";
   };
 
-  fileSystems."/efi" = {
-    device = "/dev/disk/by-uuid/A372-85B0";
-    fsType = "vfat";
-    options = ["fmask=0077" "dmask=0077"];
-  };
-
   swapDevices = [
-    {device = "/dev/disk/by-uuid/8c186b40-83ac-45e7-81de-d26b348b7175";}
+    {device = "/dev/disk/by-uuid/87f48f72-8aca-48bf-b7c6-c70f33f5eef8";}
   ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
