@@ -40,6 +40,11 @@
     fsType = "zfs";
   };
 
+  fileSystems."/persist/secrets" = {
+    device = "zroot/persist/secrets";
+    fsType = "zfs";
+  };
+
   fileSystems."/efi" = {
     device = "/dev/disk/by-uuid/38F5-4027";
     fsType = "vfat";

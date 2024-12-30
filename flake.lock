@@ -509,11 +509,11 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1733461429,
-        "narHash": "sha256-tO2o3chHhgxD/Jv7vUWvSLHnjBio2Qt6Zqef9ayulIM=",
+        "lastModified": 1735527948,
+        "narHash": "sha256-fquVregEmjQcVbLuFevriA5oIz3iIbUb1jIej4ZerwU=",
         "ref": "refs/heads/main",
-        "rev": "bbdee292503b3cb180a21cb865b37588c64a9857",
-        "revCount": 29,
+        "rev": "6adb9f552a0cca0b45ecbe8539c77f9cecf425ac",
+        "revCount": 30,
         "type": "git",
         "url": "ssh://git@github.com/Sirius902/nixos-secrets.git"
       },
