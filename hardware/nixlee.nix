@@ -20,14 +20,8 @@
 
   boot.zfs.extraPools = ["futomaki" "kappamaki"];
 
-  # TODO: Filesystems should only be configured if not using nixos-anywhere.
   fileSystems."/" = {
-    device = "zroot";
-    fsType = "zfs";
-  };
-
-  fileSystems."/nix" = {
-    device = "zroot/nix";
+    device = "zroot/ROOT";
     fsType = "zfs";
   };
 
@@ -36,23 +30,13 @@
     fsType = "zfs";
   };
 
-  fileSystems."/home/chris/.local/share/openmw" = {
-    device = "zroot/home/openmw";
+  fileSystems."/nix" = {
+    device = "zroot/nix";
     fsType = "zfs";
   };
 
   fileSystems."/persist" = {
     device = "zroot/persist";
-    fsType = "zfs";
-  };
-
-  fileSystems."/media/vm" = {
-    device = "zroot/vm";
-    fsType = "zfs";
-  };
-
-  fileSystems."/media/vm/shared" = {
-    device = "zroot/vm/shared";
     fsType = "zfs";
   };
 
