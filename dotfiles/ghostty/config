@@ -1,5 +1,5 @@
 theme = GruvboxDark
-font-size = 15
+font-size = 14
 font-family = JetBrainsMonoNL Nerd Font
 
 keybind = super+d=new_split:right
