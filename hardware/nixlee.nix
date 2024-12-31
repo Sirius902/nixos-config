@@ -43,6 +43,7 @@
   fileSystems."/persist/secrets" = {
     device = "zroot/persist/secrets";
     fsType = "zfs";
+    depends = ["/persist"];
   };
 
   fileSystems."/efi" = {
