@@ -38,11 +38,13 @@
   fileSystems."/persist" = {
     device = "zroot/persist";
     fsType = "zfs";
+    neededForBoot = true;
   };
 
   fileSystems."/persist/secrets" = {
     device = "zroot/persist/secrets";
     fsType = "zfs";
+    neededForBoot = true;
     depends = ["/persist"];
   };
 
