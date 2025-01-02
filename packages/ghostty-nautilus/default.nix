@@ -1,3 +1,5 @@
+# `nautilus-python` must be installed in system packages or else the context menu will
+# not appear.
 {
   lib,
   stdenvNoCC,
