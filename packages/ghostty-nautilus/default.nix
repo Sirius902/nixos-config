@@ -1,7 +1,6 @@
 {
   lib,
   stdenvNoCC,
-  nautilus-python,
   ghostty,
   ...
 }:
@@ -16,10 +15,7 @@ stdenvNoCC.mkDerivation {
     ];
   };
 
-  buildInputs = [
-    nautilus-python
-    ghostty
-  ];
+  buildInputs = [ghostty];
 
   installPhase = ''
     install -Dm644 "ghostty-nautilus.py" -t "$out/share/nautilus-python/extensions"

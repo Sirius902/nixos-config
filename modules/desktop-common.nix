@@ -77,6 +77,7 @@
     imagemagick
     hunspell
     keepassxc
+    nautilus-python # Needed for ghostty-nautilus
     vscodium
     wl-clipboard
     zed-editor
