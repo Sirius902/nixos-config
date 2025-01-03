@@ -2,9 +2,8 @@
   description = "nixlee flake";
 
   inputs = {
-    # TODO: Switch back once intellij, bottles, and openmw and friends build again. ;(
-    # nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    nixpkgs.url = "github:nixos/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs-master.url = "github:nixos/nixpkgs";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -54,6 +53,7 @@
 
   outputs = {
     nixpkgs,
+    nixpkgs-master,
     home-manager,
     nixpkgs-stable,
     home-manager-stable,
@@ -65,31 +65,53 @@
     importPkgs = {
       system,
       nixpkgs,
+      isUnstable ? false,
     }:
       import nixpkgs {
         inherit system;
-        overlays = [
-          inputs.nix-nvim-config.overlays.default
+        overlays =
+          [
+            inputs.nix-nvim-config.overlays.default
 
-          (final: prev: {
-            ghostty = ghostty.packages.${system}.default;
-          })
+            (final: prev: {
+              ghostty = ghostty.packages.${system}.default;
+            })
 
-          (final: prev: {
-            ghostty-nautilus = prev.callPackage ./packages/ghostty-nautilus/default.nix {};
-          })
-        ];
+            (final: prev: {
+              ghostty-nautilus = final.callPackage ./packages/ghostty-nautilus/default.nix {};
+            })
+          ]
+          ++ (
+            nixpkgs.legacyPackages.${system}.lib.optional isUnstable
+            (final: prev: {
+              # TODO(Sirius902) Overlay until https://github.com/NixOS/nixpkgs/pull/370126 makes it to nixos-unstable.
+              openmw = nixpkgs-master.legacyPackages.${system}.openmw;
+
+              # TODO(Sirius902) Overlay until https://github.com/NixOS/nixpkgs/pull/370350 makes it to nixos-unstable.
+              jetbrains =
+                prev.jetbrains
+                // {
+                  idea-community = nixpkgs-master.legacyPackages.${system}.jetbrains.idea-community;
+                };
+            })
+          );
         config = {
           allowUnfree = true;
           permittedInsecurePackages = [
-            # FUTURE(Sirius902) Required by scarab
+            # TODO(Sirius902) Required by scarab. Remove if no longer necessary.
             "dotnet-runtime-6.0.36"
             "dotnet-sdk-6.0.428"
             "dotnet-sdk-wrapped-6.0.428"
-            # FUTURE(Sirius902) Required by jetbrains.rider
+            # TODO(Sirius902) Required by jetbrains.rider. Remove if no longer necessary.
             "dotnet-sdk-7.0.410"
           ];
         };
+      };
+
+    importPkgsUnstable = system:
+      importPkgs {
+        inherit system nixpkgs;
+        isUnstable = true;
       };
   in
     flake-parts.lib.mkFlake {inherit inputs;} {
@@ -101,7 +123,7 @@
       ];
 
       perSystem = {system, ...}:
-        with (importPkgs {inherit system nixpkgs;}); {
+        with (importPkgsUnstable system); {
           formatter = alejandra;
 
           packages.ghostty-nautilus = ghostty-nautilus;
@@ -117,9 +139,10 @@
             system,
             nixpkgs,
             home-manager,
+            isUnstable ? false,
           }: {
             inherit nixpkgs;
-            pkgs = importPkgs {inherit system nixpkgs;};
+            pkgs = importPkgs {inherit system nixpkgs isUnstable;};
             home-manager = home-manager.nixosModules.home-manager;
             inputs =
               inputs
@@ -129,7 +152,11 @@
               };
           };
 
-          unstableDeps = system: systemDeps {inherit system nixpkgs home-manager;};
+          unstableDeps = system:
+            systemDeps {
+              inherit system nixpkgs home-manager;
+              isUnstable = true;
+            };
           stableDeps = system:
             systemDeps {
               inherit system;
