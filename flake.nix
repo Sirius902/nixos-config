@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    nixpkgs-master.url = "github:nixos/nixpkgs";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -25,7 +24,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     secrets = {
-      url = "git+ssh://git@github.com/Sirius902/nixos-secrets.git";
+      url = "git+ssh://git@github.com/Sirius902/nixos-secrets";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-nvim-config = {
@@ -44,21 +43,14 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    ghostty = {
-      url = "git+ssh://git@github.com/ghostty-org/ghostty";
-      inputs.nixpkgs-stable.follows = "nixpkgs";
-      inputs.nixpkgs-unstable.follows = "nixpkgs";
-    };
   };
 
   outputs = {
     nixpkgs,
-    nixpkgs-master,
     home-manager,
     nixpkgs-stable,
     home-manager-stable,
     nix-darwin,
-    ghostty,
     flake-parts,
     ...
   } @ inputs: let
@@ -69,32 +61,13 @@
     }:
       import nixpkgs {
         inherit system;
-        overlays =
-          [
-            inputs.nix-nvim-config.overlays.default
+        overlays = [
+          inputs.nix-nvim-config.overlays.default
 
-            (final: prev: {
-              ghostty = ghostty.packages.${system}.default;
-            })
-
-            (final: prev: {
-              ghostty-nautilus = final.callPackage ./packages/ghostty-nautilus/default.nix {};
-            })
-          ]
-          ++ (
-            nixpkgs.legacyPackages.${system}.lib.optional isUnstable
-            (final: prev: {
-              # TODO(Sirius902) Overlay until https://github.com/NixOS/nixpkgs/pull/370126 makes it to nixos-unstable.
-              openmw = nixpkgs-master.legacyPackages.${system}.openmw;
-
-              # TODO(Sirius902) Overlay until https://github.com/NixOS/nixpkgs/pull/370350 makes it to nixos-unstable.
-              jetbrains =
-                prev.jetbrains
-                // {
-                  idea-community = nixpkgs-master.legacyPackages.${system}.jetbrains.idea-community;
-                };
-            })
-          );
+          (final: prev: {
+            ghostty-nautilus = final.callPackage ./packages/ghostty-nautilus/default.nix {};
+          })
+        ];
         config = {
           allowUnfree = true;
           permittedInsecurePackages = [
