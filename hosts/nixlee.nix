@@ -5,6 +5,7 @@
     ../modules/documentation.nix
     ../modules/ssl-dev.nix
     ../modules/xrdp.nix
+    ../modules/tailscale.nix
   ];
 
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
