@@ -68,17 +68,7 @@
             ghostty-nautilus = final.callPackage ./packages/ghostty-nautilus/default.nix {};
           })
         ];
-        config = {
-          allowUnfree = true;
-          permittedInsecurePackages = [
-            # TODO(Sirius902) Required by scarab. Remove if no longer necessary.
-            "dotnet-runtime-6.0.36"
-            "dotnet-sdk-6.0.428"
-            "dotnet-sdk-wrapped-6.0.428"
-            # TODO(Sirius902) Required by jetbrains.rider. Remove if no longer necessary.
-            "dotnet-sdk-7.0.410"
-          ];
-        };
+        config.allowUnfree = true;
       };
 
     importPkgsUnstable = system:
