@@ -26,6 +26,7 @@
     secrets = {
       url = "git+ssh://git@github.com/Sirius902/nixos-secrets";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.sops-nix.follows = "sops-nix";
     };
     nix-nvim-config = {
       url = "github:Sirius902/nix-nvim-config";
