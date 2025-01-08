@@ -54,23 +54,6 @@
     options = ["fmask=0077" "dmask=0077"];
   };
 
-  systemd.services."bind-media-vm-shared-steam" = {
-    description = "Bind mount /media/steam to /media/vm/shared/steam";
-    after = ["zfs-mount.service"];
-    requires = ["zfs-mount.service"];
-    wantedBy = ["local-fs.target"];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = [
-        "${pkgs.util-linux}/bin/mount --rbind /media/steam /media/vm/shared/steam"
-      ];
-      ExecStop = [
-        "${pkgs.util-linux}/bin/umount /media/vm/shared/steam"
-      ];
-      RemainAfterExit = true; # Keeps the mount active after the unit runs.
-    };
-  };
-
   swapDevices = [{device = "/dev/disk/by-uuid/f96c7bfb-7277-4e10-9b15-e2686209589b";}];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
