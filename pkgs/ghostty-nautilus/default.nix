@@ -4,7 +4,6 @@
   lib,
   stdenvNoCC,
   ghostty,
-  ...
 }:
 stdenvNoCC.mkDerivation {
   pname = "ghostty-nautilus";

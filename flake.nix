@@ -66,7 +66,7 @@
           inputs.nix-nvim-config.overlays.default
 
           (final: prev: {
-            ghostty-nautilus = final.callPackage ./packages/ghostty-nautilus/default.nix {};
+            ghostty-nautilus = final.callPackage ./pkgs/ghostty-nautilus/default.nix {};
           })
         ];
         config.allowUnfree = true;

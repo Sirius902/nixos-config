@@ -1,4 +1,6 @@
-/hardware-configuration.nix
+/result
+
 /host
+/hardware-configuration.nix
 
 .direnv/
