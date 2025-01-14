@@ -21,28 +21,6 @@
         "type": "github"
       }
     },
-    "fenix": {
-      "inputs": {
-        "nixpkgs": [
-          "nix-nvim-config",
-          "nixpkgs"
-        ],
-        "rust-analyzer-src": "rust-analyzer-src"
-      },
-      "locked": {
-        "lastModified": 1736750189,
-        "narHash": "sha256-R8z7Z3jiA1+5MAi9SrY35SSeJKEwlRvS3MMljMkPuag=",
-        "owner": "nix-community",
-        "repo": "fenix",
-        "rev": "adbc678ea2850981c363f0531c710baa191e269d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "fenix",
-        "type": "github"
-      }
-    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -231,11 +209,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1736631212,
-        "narHash": "sha256-mG9lRZBcPiAGiVJ9B97BJoIGQcSBWIVlBiN30QYCtG0=",
+        "lastModified": 1736819234,
+        "narHash": "sha256-deQVtIH4UJueELJqluAICUtX7OosD9paTP+5FgbiSwI=",
         "owner": "LnL7",
         "repo": "nix-darwin",
-        "rev": "6ace2f2d12bdf74235d5cbf9fbd34a71c9716685",
+        "rev": "bd921223ba7cdac346477d7ea5204d6f4736fcc6",
         "type": "github"
       },
       "original": {
@@ -266,18 +244,17 @@
     },
     "nix-nvim-config": {
       "inputs": {
-        "fenix": "fenix",
         "nixCats": "nixCats",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1736810814,
-        "narHash": "sha256-4XbI4XbN9TzOwUv+OF+uEbwHFzT/OJ+0bsl26NuLnB0=",
+        "lastModified": 1736826104,
+        "narHash": "sha256-zerX8XSCkn6qLj30PXPdFlx/DDWQqGDB/LcU++9Din8=",
         "owner": "Sirius902",
         "repo": "nix-nvim-config",
-        "rev": "23f0415fec0c73d69c5976330ef87c8b38f7f2af",
+        "rev": "e9881cc1696d5d8c6fbe6584df2d5a939c9c55fc",
         "type": "github"
       },
       "original": {
@@ -413,23 +390,6 @@
         "nixpkgs-stable": "nixpkgs-stable_2",
         "secrets": "secrets",
         "sops-nix": "sops-nix"
-      }
-    },
-    "rust-analyzer-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1736690231,
-        "narHash": "sha256-g9gyxX+F6CrkT5gRIMKPnCPom0o9ZDzYnzzeNF86D6Q=",
-        "owner": "rust-lang",
-        "repo": "rust-analyzer",
-        "rev": "8364ef299790cb6ec22b9e09e873c97dbe9f2cb5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "rust-lang",
-        "ref": "nightly",
-        "repo": "rust-analyzer",
-        "type": "github"
       }
     },
     "rust-overlay": {
