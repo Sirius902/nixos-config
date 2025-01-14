@@ -52,7 +52,13 @@ in {
     syntaxHighlighting.enable = true;
 
     defaultKeymap = "viins"; # Use Vim keybinds
-    initExtra = "prompt pure";
+    initExtra =
+      ''
+        prompt pure
+      ''
+      + (lib.optionalString stdenv.isDarwin ''
+        export PATH="/opt/homebrew/bin:$PATH"
+      '');
 
     envExtra = lib.mkIf stdenv.isDarwin ''
       . "$HOME/.cargo/env"
