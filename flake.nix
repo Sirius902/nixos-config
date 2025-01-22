@@ -28,10 +28,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.sops-nix.follows = "sops-nix";
     };
-    nix-nvim-config = {
-      url = "github:Sirius902/nix-nvim-config";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nix-nvim-config.url = "github:Sirius902/nix-nvim-config";
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.1";
       inputs.nixpkgs.follows = "nixpkgs";
