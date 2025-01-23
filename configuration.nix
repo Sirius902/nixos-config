@@ -2,9 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 {
-  config,
   pkgs,
-  lib,
   secrets,
   nix-index-database,
   hostname,
@@ -29,13 +27,8 @@
   boot.loader.efi.efiSysMountPoint = "/efi";
 
   # Only use kernel versions supported by ZFS.
-  boot.kernelPackages =
-    if (lib.versionAtLeast config.system.nixos.release "24.11")
-    then pkgs.linuxPackages_6_11
-    else config.boot.zfs.package.latestCompatibleLinuxPackages;
-
-  # TODO: Remove once ZFS 2.3.0 releases.
-  boot.zfs.package = pkgs.zfs_unstable;
+  boot.kernelPackages = pkgs.linuxPackages_6_12;
+  boot.zfs.package = pkgs.zfs_2_3;
 
   # Disable hibernation.
   #boot.kernelParams = [ "nohibernate" ];
