@@ -26,8 +26,9 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/efi";
 
+  # FUTURE(Sirius902) Upgrade to 6.12 when NVIDIA drivers aren't having problems.
   # Only use kernel versions supported by ZFS.
-  boot.kernelPackages = pkgs.linuxPackages_6_12;
+  boot.kernelPackages = pkgs.linuxPackages_6_11;
   boot.zfs.package = pkgs.zfs_2_3;
 
   # Disable hibernation.
