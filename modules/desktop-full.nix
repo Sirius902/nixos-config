@@ -44,7 +44,7 @@ lib.mkIf (!isHeadless && !isVm) {
   fileSystems."/var/lib/libvirt" = {
     device = "/persist/var/lib/libvirt";
     fsType = "none";
-    options = ["bind" "x-systemd.automount"];
+    options = ["bind" "noauto"];
   };
 
   systemd.services.libvirtd = {
