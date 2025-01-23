@@ -41,10 +41,11 @@ lib.mkIf (!isHeadless && !isVm) {
   # Symlink /persist/etc/libvirt to /etc/libvirt
   environment.etc."libvirt".source = "/persist/etc/libvirt";
 
-  # Symlink /persist/var/lib/libvirt to /var/lib/libvirt
-  systemd.tmpfiles.rules = [
-    "L /var/lib/libvirt - - - - /persist/var/lib/libvirt"
-  ];
+  fileSystems."/var/lib/libvirt" = {
+    device = "/persist/var/lib/libvirt";
+    fsType = "none";
+    options = ["bind" "x-systemd.automount"];
+  };
 
   systemd.services.libvirtd = {
     preStart = ''
