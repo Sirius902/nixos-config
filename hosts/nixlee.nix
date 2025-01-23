@@ -18,6 +18,11 @@
   fileSystems."/media/vm/shared/steam" = {
     device = "/media/steam";
     fsType = "none";
-    options = ["rbind" "x-systemd.automount"];
+    options = [
+      "rbind"
+      "x-systemd.automount"
+      "x-systemd.after=zfs-mount.service"
+      "x-systemd.requires=zfs-mount.service"
+    ];
   };
 }
