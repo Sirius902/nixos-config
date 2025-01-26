@@ -10,8 +10,9 @@
 
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
-  environment.systemPackages = with pkgs; [
-    shipwright
+  environment.systemPackages = [
+    pkgs.shipwright
+    pkgs._2ship2harkinian
   ];
 
   # Mount Steam under shared directory for VMs to access
