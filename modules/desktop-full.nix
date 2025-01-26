@@ -84,13 +84,26 @@ lib.mkIf (!isHeadless && !isVm) {
     };
   };
 
-  services.udev.extraRules = ''
-    # GameCube Controller Adapter
-    SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0337", TAG+="uaccess"
-
-    # Nintendo Switch
-    SUBSYSTEM=="usb", ATTR{idVendor}=="0955", MODE="0664", TAG+="uaccess"
-  '';
+  # NOTE(Sirius902) We can't use `services.udev.extraRules` here as `uaccess` won't work properly.
+  # https://github.com/NixOS/nixpkgs/issues/210856
+  services.udev.packages = [
+    (pkgs.writeTextFile {
+      name = "gamecube-adapter-rules";
+      text = ''
+        # GameCube Controller Adapter
+        SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="057e", ATTR{idProduct}=="0337", TAG+="uaccess"
+      '';
+      destination = "/etc/udev/rules.d/50-gamecube-adapter.rules";
+    })
+    (pkgs.writeTextFile {
+      name = "switch-rules";
+      text = ''
+        # Nintendo Switch
+        SUBSYSTEM=="usb", ATTR{idVendor}=="0955", TAG+="uaccess"
+      '';
+      destination = "/etc/udev/rules.d/50-switch.rules";
+    })
+  ];
 
   # For wgnord
   services.resolved.enable = true;
