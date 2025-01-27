@@ -73,6 +73,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    chromium
     gparted
     imagemagick
     hunspell
