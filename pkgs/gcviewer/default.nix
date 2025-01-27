@@ -41,6 +41,7 @@ rustPlatform.buildRustPackage rec {
     xorg.libXi
   ];
 
+  # FUTURE(Sirius902) Custom shader option that can be overriden?
   postInstall = ''
     wrapProgram $out/bin/gcviewer \
       --suffix LD_LIBRARY_PATH : ${lib.makeLibraryPath buildInputs}
