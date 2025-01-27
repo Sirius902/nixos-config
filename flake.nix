@@ -62,6 +62,10 @@
 
           (final: prev: {
             ghostty-nautilus = final.callPackage ./pkgs/ghostty-nautilus/default.nix {};
+
+            gcfeeder = final.callPackage ./pkgs/gcfeeder/default.nix {};
+
+            gcviewer = final.callPackage ./pkgs/gcviewer/default.nix {};
           })
         ];
         config.allowUnfree = true;
@@ -86,6 +90,8 @@
           formatter = alejandra;
 
           packages.ghostty-nautilus = ghostty-nautilus;
+          packages.gcfeeder = gcfeeder;
+          packages.gcviewer = gcviewer;
 
           devShells.default = mkShell {
             packages = [just];

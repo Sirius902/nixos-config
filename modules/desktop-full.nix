@@ -112,6 +112,8 @@ lib.mkIf (!isHeadless && !isVm) {
     bottles
     dolphin-emu-beta
     ffmpeg-full
+    gcfeeder
+    gcviewer
     gimp
     godot_4
     inkscape
