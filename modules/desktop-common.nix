@@ -72,6 +72,9 @@
     noto-fonts-cjk-sans
   ];
 
+  # Enable wayland for electron apps.
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
   environment.systemPackages = with pkgs; [
     chromium
     gparted
