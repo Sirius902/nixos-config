@@ -3,7 +3,10 @@
   nix-index-database,
   ...
 }: {
-  imports = [nix-index-database.darwinModules.nix-index];
+  imports = [
+    nix-index-database.darwinModules.nix-index
+    ../modules/tmux.nix
+  ];
 
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget

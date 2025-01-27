@@ -12,6 +12,7 @@
   imports = [
     secrets.nixosModules.secrets
     nix-index-database.nixosModules.nix-index
+    ../modules/tmux.nix
   ];
 
   nix.settings = {
