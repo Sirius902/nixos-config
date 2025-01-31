@@ -13,17 +13,18 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "gcviewer";
-  version = "c3d36e6";
+  version = "74c76cd";
 
   src = fetchFromGitHub {
     owner = "Sirius902";
     repo = pname;
+    # TODO(Sirius902) Change to tag when release comes out.
     rev = version;
-    sha256 = "sha256-ATbUBmxjniRIIpNuEAFC7kp1O2Jnv7xnaMb2T8t2+uk=";
+    sha256 = "sha256-iAti0xBFElu1pFuz0qunH3N/4kBol373GIfOr1MHYCc=";
   };
 
   useFetchCargoVendor = true;
-  cargoHash = "sha256-k9lHnJnjHn/5Obo51I5ErpOLy0pGXCNmye87TsTe3Po=";
+  cargoHash = "sha256-qSjo/tWEHSwd3sYOIs77cGaG5AOyvtZroxqzKdielQI=";
 
   nativeBuildInputs = [
     copyDesktopItems
@@ -49,21 +50,23 @@ rustPlatform.buildRustPackage rec {
     install -Dm644 resource/icon.png $out/share/pixmaps/gcviewer.png
   '';
 
-  VERSION = "g${version}";
+  GCVIEWER_VERSION = "v0.1.0-${version}";
 
   desktopItems = [
     (makeDesktopItem {
       name = "gcviewer";
       icon = "gcviewer";
       exec = "gcviewer %U";
+      comment = meta.description;
       desktopName = "gcviewer";
       categories = ["Utility"];
     })
   ];
 
   meta = with lib; {
+    description = "GameCube input viewer for use with gcfeeder.";
     homepage = "https://github.com/Sirius902/gcviewer";
-    platforms = platforms.linux;
+    platforms = platforms.linux ++ platforms.darwin;
     mainProgram = "gcviewer";
   };
 }

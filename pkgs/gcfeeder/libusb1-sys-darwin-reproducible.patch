@@ -1,0 +1,14 @@
+diff --git a/Cargo.lock b/Cargo.lock
+index 8402d60..95eb46b 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -1800,8 +1800,7 @@ dependencies = [
+ [[package]]
+ name = "libusb1-sys"
+ version = "0.7.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "da050ade7ac4ff1ba5379af847a10a10a8e284181e060105bf8d86960ce9ce0f"
++source = "git+https://github.com/Sirius902/rusb.git?branch=nix-reproducible#2d4545fa0367d8f34517a45591ae52d2d23894a0"
+ dependencies = [
+  "cc",
+  "libc",
