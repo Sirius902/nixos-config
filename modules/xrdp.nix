@@ -3,6 +3,7 @@
   # machine otherwise you'll arrive at a black screen.
 
   services.xrdp.enable = true;
+  # TODO(Sirius902) GNOME only.
   services.xrdp.defaultWindowManager = "${pkgs.gnome-session}/bin/gnome-session";
   services.xrdp.openFirewall = true;
 }

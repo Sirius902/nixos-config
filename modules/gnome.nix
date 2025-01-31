@@ -5,6 +5,7 @@
   isVm,
   ...
 }:
+# TODO(Sirius902) GNOME only.
 lib.mkIf (!isHeadless) {
   i18n.inputMethod = {
     enable = true;

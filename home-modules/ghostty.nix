@@ -11,6 +11,7 @@ in
     # NOTE(Sirius902) ghostty currently can't build on macOS from the flake.
     home.packages = lib.mkIf stdenv.isLinux [
       pkgs.ghostty
+      # TODO(Sirius902) GNOME only.
       pkgs.ghostty-nautilus
     ];
 
