@@ -1,4 +1,4 @@
-{lib, ...}: {
+{
   imports = [
     ../modules/ssl-dev.nix
     ../modules/desktop-common.nix

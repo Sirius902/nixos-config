@@ -15,12 +15,7 @@
     ./modules/tmux.nix
   ];
 
-  nix.settings = {
-    experimental-features = ["nix-command" "flakes"];
-
-    trusted-substituters = ["https://ghostty.cachix.org"];
-    trusted-public-keys = ["ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="];
-  };
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
