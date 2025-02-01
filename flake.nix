@@ -4,7 +4,8 @@
   inputs = {
     nixpkgs = {
       url = "github:nixos/nixpkgs?ref=nixos-unstable";
-      follows = "nixos-cosmic/nixpkgs";
+      # NOTE(Sirius902) This should be enabled when using cosmic.
+      # follows = "nixos-cosmic/nixpkgs";
     };
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -147,7 +148,7 @@
               hostId = "ff835154";
               isHeadless = false;
               isVm = false;
-              desktopEnv = "cosmic";
+              desktopEnv = "gnome";
             };
           in
             nixpkgs.lib.nixosSystem {
