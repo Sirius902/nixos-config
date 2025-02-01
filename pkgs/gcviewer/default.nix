@@ -13,18 +13,18 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "gcviewer";
-  version = "74c76cd";
+  version = "858d48e";
 
   src = fetchFromGitHub {
     owner = "Sirius902";
     repo = pname;
     # TODO(Sirius902) Change to tag when release comes out.
     rev = version;
-    sha256 = "sha256-iAti0xBFElu1pFuz0qunH3N/4kBol373GIfOr1MHYCc=";
+    sha256 = "sha256-QFwfh+CX/RS0TAc1cKyMxXNeBStvy1dsgPa8pXoh9qQ=";
   };
 
   useFetchCargoVendor = true;
-  cargoHash = "sha256-qSjo/tWEHSwd3sYOIs77cGaG5AOyvtZroxqzKdielQI=";
+  cargoHash = "sha256-KRQb8DkwmOX4pIWQo4nfTBfjLnRk9pkw2Z6QtVccvvA=";
 
   nativeBuildInputs = [
     copyDesktopItems
