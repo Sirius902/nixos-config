@@ -5,7 +5,7 @@
   ...
 }: let
   inherit (pkgs) stdenv;
-  os = builtins.elemAt (lib.splitString "-" stdenv.system) 1;
+  os = (lib.systems.parse.mkSystemFromString stdenv.system).kernel.name;
 in
   lib.mkIf (!isHeadless) {
     # NOTE(Sirius902) ghostty currently can't build on macOS from the flake.
