@@ -12,4 +12,8 @@
     pkgs.epiphany # Web Browser
     pkgs.geary # Email Viewer
   ];
+
+  environment.systemPackages = [
+    pkgs.nautilus-python # Needed for ghostty-nautilus
+  ];
 }
