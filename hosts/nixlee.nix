@@ -25,8 +25,8 @@
     ${config.boot.zfs.package}/bin/zfs rollback -r zroot/tmp@blank
   '';
 
-  # Disable cosmic greeter since we can only have one greeter. Use gdm instead.
-  services.displayManager.cosmic-greeter.enable = lib.mkForce false;
+  # Disable gdm since we can only have one greeter. Use cosmic greeter instead.
+  services.xserver.displayManager.gdm.enable = lib.mkForce false;
 
   environment.systemPackages = [
     pkgs.shipwright
