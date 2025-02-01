@@ -417,7 +417,12 @@
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
                 home-manager.extraSpecialArgs = args;
-                home-manager.users.chris = import ./modules/home/default.nix;
+                home-manager.users.chris = {
+                  imports = [
+                    ./modules/home/default.nix
+                    ./modules/home/ghostty/default.nix
+                  ];
+                };
               }
             ];
           };
