@@ -2,7 +2,10 @@
   description = "nixlee flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs = {
+      url = "github:nixos/nixpkgs?ref=nixos-unstable";
+      follows = "nixos-cosmic/nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -39,6 +42,7 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
   };
 
   outputs = {
@@ -47,6 +51,7 @@
     nixpkgs-stable,
     home-manager-stable,
     nix-darwin,
+    nixos-cosmic,
     flake-parts,
     ...
   } @ inputs: let
@@ -152,6 +157,7 @@
                 ./hosts/nixlee.nix
                 (hardwareConfigOr ./hardware/nixlee.nix)
                 ./modules/nvidia.nix
+                nixos-cosmic.nixosModules.default
                 home-manager
                 {
                   home-manager.useGlobalPkgs = true;

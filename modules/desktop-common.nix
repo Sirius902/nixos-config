@@ -7,7 +7,8 @@
 }:
 {
   imports = [
-    ./gnome.nix
+    # ./gnome.nix
+    ./cosmic.nix
     ./desktop-full.nix
     ./disable-hsp.nix
   ];
