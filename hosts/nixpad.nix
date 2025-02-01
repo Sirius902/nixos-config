@@ -1,6 +1,6 @@
 {
   imports = [
-    ../modules/desktop-common.nix
+    ../modules/desktop-full.nix
     ../modules/secure-boot.nix
   ];
 

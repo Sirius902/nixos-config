@@ -147,6 +147,7 @@
               hostId = "ff835154";
               isHeadless = false;
               isVm = false;
+              desktopEnv = "cosmic";
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -176,6 +177,7 @@
               hostId = "1a14084a";
               isHeadless = false;
               isVm = false;
+              desktopEnv = "gnome";
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -204,6 +206,7 @@
               hostId = "b0e08309";
               isHeadless = true;
               isVm = false;
+              desktopEnv = null;
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -238,6 +241,7 @@
               hostId = "1c029249";
               isHeadless = false;
               isVm = false;
+              desktopEnv = "gnome";
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -265,6 +269,7 @@
               hostId = "1763015d";
               isHeadless = false;
               isVm = true;
+              desktopEnv = "gnome";
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -298,6 +303,7 @@
               hostId = "f531a5e3";
               isHeadless = true;
               isVm = true;
+              desktopEnv = null;
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -332,6 +338,7 @@
               hostId = "c5cb7a32";
               isHeadless = false;
               isVm = true;
+              desktopEnv = "gnome";
             };
           in
             nixpkgs.lib.nixosSystem {

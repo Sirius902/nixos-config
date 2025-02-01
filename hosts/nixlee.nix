@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   imports = [
-    ../modules/desktop-common.nix
+    ../modules/desktop-full.nix
     ../modules/secure-boot.nix
     ../modules/documentation.nix
     ../modules/ssl-dev.nix

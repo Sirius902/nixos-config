@@ -5,7 +5,10 @@
   isVm,
   ...
 }:
-lib.mkIf (!isHeadless && !isVm) {
+{
+  imports = [./desktop-common.nix];
+}
+// lib.mkIf (!isHeadless && !isVm) {
   hardware = {
     openrazer = {
       enable = true;

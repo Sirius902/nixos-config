@@ -2,6 +2,7 @@
   pkgs,
   lib,
   isHeadless,
+  desktopEnv,
   ...
 }: let
   inherit (pkgs) stdenv;
@@ -9,11 +10,10 @@
 in
   lib.mkIf (!isHeadless) {
     # NOTE(Sirius902) ghostty currently can't build on macOS from the flake.
-    home.packages = lib.mkIf stdenv.isLinux [
-      pkgs.ghostty
-      # TODO(Sirius902) GNOME only.
-      pkgs.ghostty-nautilus
-    ];
+    home.packages = lib.mkIf stdenv.isLinux ([
+        pkgs.ghostty
+      ]
+      ++ lib.optional (desktopEnv == "gnome") pkgs.ghostty-nautilus);
 
     home.file.".config/ghostty/config".source =
       {

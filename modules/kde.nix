@@ -1,4 +1,10 @@
-{pkgs, ...}: {
+{
+  lib,
+  pkgs,
+  desktopEnv,
+  ...
+}:
+lib.mkIf (desktopEnv == "kde") {
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";
