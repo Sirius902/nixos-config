@@ -1,5 +1,6 @@
 {
   lib,
+  stdenv,
   rustPlatform,
   fetchFromGitHub,
   copyDesktopItems,
@@ -10,31 +11,42 @@
   vulkan-loader,
   wayland,
   xorg,
+  pkg-config,
+  gdk-pixbuf,
+  glib,
+  gtk3,
+  libappindicator-gtk3,
+  xdotool,
+  zlib,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "gcfeeder";
-  version = "a0d774f";
+  version = "13422e3";
 
   src = fetchFromGitHub {
     owner = "Sirius902";
     repo = pname;
     # TODO(Sirius902) Change to tag when release comes out.
     rev = version;
-    sha256 = "sha256-izXhteD4aFfeoVG5GE63GagIFf57ZoXfQky8j32bSeI=";
+    sha256 = "sha256-a3H9+aYRVRjLXhf9bNXxJbjDV2XGO2PuiiV/nDIbrkI=";
   };
 
   cargoPatches = [./libusb1-sys-darwin-reproducible.patch];
 
   useFetchCargoVendor = true;
-  cargoHash = "sha256-Fwo2eJX9XzoboxmF05ZqxrG5W5+M15uAfaejacDup/4=";
+  cargoHash = "sha256-1JlcrUF4LiN+7qYO1kdk96kPncC0GQU3HHbmss4muhE=";
 
-  nativeBuildInputs = [
-    copyDesktopItems
-    makeWrapper
-  ];
+  nativeBuildInputs =
+    [
+      copyDesktopItems
+      makeWrapper
+    ]
+    ++ lib.optionals stdenv.isLinux [
+      pkg-config
+    ];
 
   # TODO(Sirius902) Figure out why tf this is working without libusb1 and pkg-config.
-  buildInputs = [
+  buildInputs = lib.optionals stdenv.isLinux [
     libGL
     libxkbcommon
     vulkan-loader
@@ -43,6 +55,12 @@ rustPlatform.buildRustPackage rec {
     xorg.libXcursor
     xorg.libxcb
     xorg.libXi
+    gdk-pixbuf
+    glib
+    gtk3
+    libappindicator-gtk3
+    xdotool
+    zlib
   ];
 
   postInstall = ''
