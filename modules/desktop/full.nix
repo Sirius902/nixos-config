@@ -82,14 +82,7 @@
   # NOTE(Sirius902) We can't use `services.udev.extraRules` here as `uaccess` won't work properly.
   # https://github.com/NixOS/nixpkgs/issues/210856
   services.udev.packages = [
-    (pkgs.writeTextFile {
-      name = "gamecube-adapter-rules";
-      text = ''
-        # GameCube Controller Adapter
-        SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="057e", ATTR{idProduct}=="0337", TAG+="uaccess"
-      '';
-      destination = "/etc/udev/rules.d/50-gamecube-adapter.rules";
-    })
+    pkgs.gcfeeder
     (pkgs.writeTextFile {
       name = "switch-rules";
       text = ''
