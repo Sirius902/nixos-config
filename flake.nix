@@ -5,7 +5,7 @@
     nixpkgs = {
       url = "github:nixos/nixpkgs?ref=nixos-unstable";
       # NOTE(Sirius902) This should be enabled when using cosmic.
-      # follows = "nixos-cosmic/nixpkgs";
+      follows = "nixos-cosmic/nixpkgs";
     };
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -148,7 +148,6 @@
               hostId = "ff835154";
               isHeadless = false;
               isVm = false;
-              desktopEnv = "gnome";
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -159,13 +158,19 @@
                 ./hosts/nixlee.nix
                 (hardwareConfigOr ./hardware/nixlee.nix)
                 ./modules/nvidia.nix
-                nixos-cosmic.nixosModules.default
                 home-manager
                 {
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = import ./home.nix;
+                  home-manager.users.chris = {
+                    imports = [
+                      ./modules/home/default.nix
+                      ./modules/home/gnome.nix
+                      ./modules/home/ghostty/default.nix
+                      ./modules/home/ghostty/gnome.nix
+                    ];
+                  };
                 }
               ];
             };
@@ -178,7 +183,6 @@
               hostId = "1a14084a";
               isHeadless = false;
               isVm = false;
-              desktopEnv = "gnome";
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -194,7 +198,14 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = import ./home.nix;
+                  home-manager.users.chris = {
+                    imports = [
+                      ./modules/home/default.nix
+                      ./modules/home/gnome.nix
+                      ./modules/home/ghostty/default.nix
+                      ./modules/home/ghostty/gnome.nix
+                    ];
+                  };
                 }
               ];
             };
@@ -207,7 +218,6 @@
               hostId = "b0e08309";
               isHeadless = true;
               isVm = false;
-              desktopEnv = null;
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -229,7 +239,7 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = import ./home.nix;
+                  home-manager.users.chris = import ./modules/home/default.nix;
                 }
               ];
             };
@@ -242,7 +252,6 @@
               hostId = "1c029249";
               isHeadless = false;
               isVm = false;
-              desktopEnv = "gnome";
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -257,7 +266,14 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = import ./home.nix;
+                  home-manager.users.chris = {
+                    imports = [
+                      ./modules/home/default.nix
+                      ./modules/home/gnome.nix
+                      ./modules/home/ghostty/default.nix
+                      ./modules/home/ghostty/gnome.nix
+                    ];
+                  };
                 }
               ];
             };
@@ -270,7 +286,6 @@
               hostId = "1763015d";
               isHeadless = false;
               isVm = true;
-              desktopEnv = "gnome";
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -291,7 +306,14 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = import ./home.nix;
+                  home-manager.users.chris = {
+                    imports = [
+                      ./modules/home/default.nix
+                      ./modules/home/gnome.nix
+                      ./modules/home/ghostty/default.nix
+                      ./modules/home/ghostty/gnome.nix
+                    ];
+                  };
                 }
               ];
             };
@@ -304,7 +326,6 @@
               hostId = "f531a5e3";
               isHeadless = true;
               isVm = true;
-              desktopEnv = null;
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -326,7 +347,7 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = import ./home.nix;
+                  home-manager.users.chris = import ./modules/home/default.nix;
                 }
               ];
             };
@@ -339,7 +360,6 @@
               hostId = "c5cb7a32";
               isHeadless = false;
               isVm = true;
-              desktopEnv = "gnome";
             };
           in
             nixpkgs.lib.nixosSystem {
@@ -355,7 +375,14 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = import ./home.nix;
+                  home-manager.users.chris = {
+                    imports = [
+                      ./modules/home/default.nix
+                      ./modules/home/gnome.nix
+                      ./modules/home/ghostty/default.nix
+                      ./modules/home/ghostty/gnome.nix
+                    ];
+                  };
                 }
               ];
             };
@@ -388,7 +415,7 @@
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
                 home-manager.extraSpecialArgs = args;
-                home-manager.users.chris = import ./home.nix;
+                home-manager.users.chris = import ./modules/home/default.nix;
               }
             ];
           };

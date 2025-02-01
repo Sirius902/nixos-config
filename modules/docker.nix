@@ -1,10 +1,4 @@
-{
-  lib,
-  pkgs,
-  isVm,
-  ...
-}:
-lib.mkIf (!isVm) {
+{pkgs, ...}: {
   virtualisation.docker = {
     enable = true;
 

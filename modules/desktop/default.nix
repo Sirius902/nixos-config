@@ -2,19 +2,10 @@
   pkgs,
   lib,
   config,
-  isHeadless,
   ...
-}:
-{
-  imports = [
-    ./gnome.nix
-    ./cosmic.nix
-    ./ibus.nix
-    ./kde.nix
-    ./disable-hsp.nix
-  ];
-}
-// lib.mkIf (!isHeadless) {
+}: {
+  imports = [../disable-hsp.nix];
+
   services.openssh.enable = true;
 
   # Configure keymap in X11

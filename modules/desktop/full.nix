@@ -1,14 +1,6 @@
-{
-  pkgs,
-  lib,
-  isHeadless,
-  isVm,
-  ...
-}:
-{
-  imports = [./desktop-common.nix];
-}
-// lib.mkIf (!isHeadless && !isVm) {
+{pkgs, ...}: {
+  imports = [./default.nix];
+
   hardware = {
     openrazer = {
       enable = true;

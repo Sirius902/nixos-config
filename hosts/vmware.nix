@@ -1,6 +1,8 @@
 {
   imports = [
-    ../modules/desktop-common.nix
+    ../modules/desktop/default.nix
+    ../modules/desktop/gnome/default.nix
+
     ../modules/ssl-dev.nix
   ];
 

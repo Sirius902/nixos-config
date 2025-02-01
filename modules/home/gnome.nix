@@ -1,12 +1,9 @@
 {
   pkgs,
   lib,
-  isHeadless,
   isVm,
-  desktopEnv,
   ...
-}:
-lib.mkIf (pkgs.stdenv.isLinux && desktopEnv == "gnome" && !isHeadless) {
+}: {
   dconf = let
     mkTuple = lib.hm.gvariant.mkTuple;
   in {

@@ -8,11 +8,6 @@
   inherit (pkgs) stdenv;
   isLinuxDesktop = stdenv.isLinux && !isHeadless;
 in {
-  imports = [
-    ./home-modules/gnome.nix
-    ./home-modules/ghostty.nix
-  ];
-
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "chris";

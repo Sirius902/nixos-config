@@ -20,10 +20,6 @@
 
   boot.zfs.extraPools = ["futomaki" "kappamaki"];
 
-  boot.initrd.postMountCommands = ''
-    ${config.boot.zfs.package}/bin/zfs rollback -r zroot/tmp@blank
-  '';
-
   fileSystems."/" = {
     device = "zroot/ROOT";
     fsType = "zfs";

@@ -1,15 +1,32 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   imports = [
-    ../modules/desktop-full.nix
+    ../modules/desktop/full.nix
+    ../modules/desktop/gnome/full.nix
+    ../modules/desktop/cosmic/full.nix
+
+    ../modules/programs/xrdp/default.nix
+    ../modules/programs/xrdp/gnome.nix
+
     ../modules/secure-boot.nix
     ../modules/documentation.nix
     ../modules/ssl-dev.nix
-    ../modules/xrdp.nix
     ../modules/tailscale.nix
     ../modules/docker.nix
   ];
 
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
+
+  boot.initrd.postMountCommands = ''
+    ${config.boot.zfs.package}/bin/zfs rollback -r zroot/tmp@blank
+  '';
+
+  # Disable cosmic greeter since we can only have one greeter. Use gdm instead.
+  services.displayManager.cosmic-greeter.enable = lib.mkForce false;
 
   environment.systemPackages = [
     pkgs.shipwright
