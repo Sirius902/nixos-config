@@ -2,6 +2,7 @@
   imports = [
     ../modules/desktop/full.nix
     ../modules/desktop/gnome/full.nix
+    ../modules/desktop/ibus.nix
 
     ../modules/secure-boot.nix
   ];

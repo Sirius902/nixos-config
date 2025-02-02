@@ -2,6 +2,7 @@
   imports = [
     ../modules/desktop/default.nix
     ../modules/desktop/gnome/default.nix
+    ../modules/desktop/ibus.nix
   ];
 
   boot.zfs.devNodes = lib.mkForce "/dev/disk/by-partuuid";

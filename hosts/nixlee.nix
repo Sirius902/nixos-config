@@ -7,7 +7,9 @@
   imports = [
     ../modules/desktop/full.nix
     ../modules/desktop/gnome/full.nix
+    # ../modules/desktop/ibus.nix
     ../modules/desktop/cosmic/full.nix
+    ../modules/desktop/fcitx.nix
 
     ../modules/programs/xrdp/default.nix
     ../modules/programs/xrdp/gnome.nix
