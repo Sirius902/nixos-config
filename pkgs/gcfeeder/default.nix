@@ -45,7 +45,6 @@ rustPlatform.buildRustPackage rec {
       pkg-config
     ];
 
-  # TODO(Sirius902) Figure out why tf this is working without libusb1 and pkg-config.
   buildInputs = lib.optionals stdenv.isLinux [
     libGL
     libxkbcommon
