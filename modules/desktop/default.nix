@@ -68,13 +68,14 @@
   environment.systemPackages = with pkgs; [
     chromium
     gparted
-    imagemagick
     hunspell
+    imagemagick
     keepassxc
-    vscodium
-    wl-clipboard
-    zed-editor
+    popsicle
     qdirstat
+    wl-clipboard
     xclip
+    vscodium
+    zed-editor
   ];
 }
