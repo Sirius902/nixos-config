@@ -1,5 +1,7 @@
 {
   imports = [
+    ../modules/rollback-tmp.nix
+
     ../modules/desktop/default.nix
     # NOTE(Sirius902) GNOME seems to randomly locking up with graphics
     # acceleration enabled. Use COSMIC for now I guess. :)

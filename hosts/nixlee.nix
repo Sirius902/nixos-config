@@ -5,6 +5,8 @@
   ...
 }: {
   imports = [
+    ../modules/rollback-tmp.nix
+
     ../modules/desktop/full.nix
     ../modules/desktop/gnome/full.nix
     ../modules/desktop/ibus.nix
@@ -22,10 +24,6 @@
   ];
 
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
-
-  boot.initrd.postMountCommands = ''
-    ${config.boot.zfs.package}/bin/zfs rollback -r zroot/tmp@blank
-  '';
 
   # Disable gdm since we can only have one greeter. Use cosmic greeter instead.
   services.xserver.displayManager.gdm.enable = lib.mkForce false;
