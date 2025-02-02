@@ -5,6 +5,7 @@
 }: {
   imports = [
     ../modules/documentation.nix
+    ../modules/tailscale.nix
   ];
 
   # Allow ports for mc and hkmp.
