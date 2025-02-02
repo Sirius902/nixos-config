@@ -52,7 +52,6 @@
     nixpkgs-stable,
     home-manager-stable,
     nix-darwin,
-    nixos-cosmic,
     flake-parts,
     ...
   } @ inputs: let
@@ -380,9 +379,9 @@
                   home-manager.users.chris = {
                     imports = [
                       ./modules/home/default.nix
-                      ./modules/home/gnome.nix
+                      # ./modules/home/gnome.nix
                       ./modules/home/ghostty/default.nix
-                      ./modules/home/ghostty/gnome.nix
+                      # ./modules/home/ghostty/gnome.nix
                     ];
                   };
                 }
