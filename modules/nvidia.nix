@@ -9,9 +9,6 @@
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];
 
-  # Use Wayland natively for Firefox.
-  environment.variables."MOZ_ENABLE_WAYLAND" = 1;
-
   # Not sure if this is NVIDIA, KVM, or systemd but something causes suspend to fail without this.
   # https://github.com/systemd/systemd/issues/33626
   systemd.services.systemd-suspend.serviceConfig.Environment = [
