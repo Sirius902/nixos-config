@@ -44,6 +44,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
+    moonlight = {
+      url = "github:moonlight-mod/moonlight";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -52,6 +56,8 @@
     nixpkgs-stable,
     home-manager-stable,
     nix-darwin,
+    nix-nvim-config,
+    moonlight,
     flake-parts,
     ...
   } @ inputs: let
@@ -63,7 +69,8 @@
       import nixpkgs {
         inherit system;
         overlays = [
-          inputs.nix-nvim-config.overlays.default
+          nix-nvim-config.overlays.default
+          moonlight.overlays.default
 
           (final: prev: {
             ghostty-nautilus = final.callPackage ./pkgs/ghostty-nautilus/default.nix {};

@@ -134,7 +134,7 @@
     spotify
     sticky-notes
     transmission_4-qt
-    vesktop # Discord alternative with better support on Linux.
+    discord
     vlc
     (wineWowPackages.unstable.override {
       waylandSupport = true;
