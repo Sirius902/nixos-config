@@ -1,5 +1,8 @@
 {pkgs, ...}: {
-  imports = [./default.nix];
+  imports = [
+    ./default.nix
+    ./rnnoise.nix
+  ];
 
   hardware = {
     openrazer = {
