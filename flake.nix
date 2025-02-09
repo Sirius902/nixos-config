@@ -173,6 +173,7 @@
                     imports = [
                       ./modules/home/default.nix
                       # ./modules/home/gnome.nix
+                      ./modules/home/cosmic.nix
                       ./modules/home/ghostty/default.nix
                       # ./modules/home/ghostty/gnome.nix
                       ./modules/home/gcviewer.nix
@@ -208,9 +209,10 @@
                   home-manager.users.chris = {
                     imports = [
                       ./modules/home/default.nix
-                      ./modules/home/gnome.nix
+                      # ./modules/home/gnome.nix
+                      ./modules/home/cosmic.nix
                       ./modules/home/ghostty/default.nix
-                      ./modules/home/ghostty/gnome.nix
+                      # ./modules/home/ghostty/gnome.nix
                       ./modules/home/gcviewer.nix
                     ];
                   };
