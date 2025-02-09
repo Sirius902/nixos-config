@@ -1,20 +1,18 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ../modules/rollback-tmp.nix
 
     ../modules/desktop/full.nix
-    ../modules/desktop/gnome/full.nix
-    ../modules/desktop/ibus.nix
+    # ../modules/desktop/gnome/full.nix
+    # ../modules/desktop/ibus.nix
     ../modules/desktop/cosmic/full.nix
     # ../modules/desktop/fcitx.nix
+    ../modules/desktop/i3/default.nix
 
     ../modules/programs/xrdp/default.nix
-    ../modules/programs/xrdp/gnome.nix
+    # ../modules/programs/xrdp/gnome.nix
+    # ../modules/programs/xrdp/cosmic.nix
+    ../modules/programs/xrdp/i3.nix
 
     ../modules/secure-boot.nix
     ../modules/documentation.nix
@@ -26,7 +24,7 @@
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
   # Disable gdm since we can only have one greeter. Use cosmic greeter instead.
-  services.xserver.displayManager.gdm.enable = lib.mkForce false;
+  # services.xserver.displayManager.gdm.enable = lib.mkForce false;
 
   environment.systemPackages = [
     pkgs.shipwright
