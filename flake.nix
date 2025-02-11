@@ -180,6 +180,7 @@
                       ./modules/home/cosmic.nix
                       ./modules/home/ghostty/default.nix
                       # ./modules/home/ghostty/gnome.nix
+                      ./modules/home/gcfeeder.nix
                       ./modules/home/gcviewer.nix
                     ];
                   };
@@ -217,6 +218,7 @@
                       ./modules/home/cosmic.nix
                       ./modules/home/ghostty/default.nix
                       # ./modules/home/ghostty/gnome.nix
+                      ./modules/home/gcfeeder.nix
                       ./modules/home/gcviewer.nix
                     ];
                   };
