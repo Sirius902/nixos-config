@@ -11,7 +11,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs-stable.url = "github:nixos/nixpkgs?ref=nixos-24.11";
+    nixpkgs-stable = {
+      url = "github:nixos/nixpkgs?ref=nixos-24.11";
+      # NOTE(Sirius902) This should be enabled when using cosmic.
+      follows = "nixos-cosmic/nixpkgs-stable";
+    };
     home-manager-stable = {
       url = "github:nix-community/home-manager?ref=release-24.11";
       inputs.nixpkgs.follows = "nixpkgs-stable";
