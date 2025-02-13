@@ -107,6 +107,7 @@
     gcviewer
     gimp
     godot_4
+    imhex
     inkscape
     jetbrains.idea-community
     jetbrains.rider
