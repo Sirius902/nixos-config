@@ -31,18 +31,6 @@
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
     #media-session.enable = true;
-
-    extraConfig.pipewire-pulse = {
-      # Fixes Wine audio crackling.
-      # https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/3098#note_1823699
-      "20-pulse-properties" = {
-        "pulse.properties" = {
-          "pulse.min.req" = "256/48000";
-          "pulse.min.frag" = "256/48000";
-          "pulse.min.quantum" = "256/48000";
-        };
-      };
-    };
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
