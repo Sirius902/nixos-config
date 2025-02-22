@@ -8,6 +8,7 @@
     # ../modules/desktop/gnome/default.nix
     # ../modules/desktop/ibus.nix
     ../modules/desktop/cosmic/default.nix
+    ../modules/desktop/fcitx.nix
 
     ../modules/ssl-dev.nix
   ];

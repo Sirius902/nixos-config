@@ -6,7 +6,7 @@
     # ../modules/desktop/gnome/full.nix
     # ../modules/desktop/ibus.nix
     ../modules/desktop/cosmic/full.nix
-    # ../modules/desktop/fcitx.nix
+    ../modules/desktop/fcitx.nix
     ../modules/desktop/i3/default.nix
 
     ../modules/programs/xrdp/default.nix
