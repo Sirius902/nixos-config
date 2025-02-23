@@ -21,20 +21,20 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "gcfeeder";
-  version = "13422e3";
+  version = "d73b0ca";
 
   src = fetchFromGitHub {
     owner = "Sirius902";
     repo = pname;
     # TODO(Sirius902) Change to tag when release comes out.
     rev = version;
-    sha256 = "sha256-a3H9+aYRVRjLXhf9bNXxJbjDV2XGO2PuiiV/nDIbrkI=";
+    sha256 = "sha256-jdkHNgepqXlu0JPFKxL7V1LgvFgeUG+3SlQ3cRixbWM=";
   };
 
   cargoPatches = [./libusb1-sys-darwin-reproducible.patch];
 
   useFetchCargoVendor = true;
-  cargoHash = "sha256-1JlcrUF4LiN+7qYO1kdk96kPncC0GQU3HHbmss4muhE=";
+  cargoHash = "sha256-/wb2X7FWWkNxUWt2lTN8chDDNYf4qUO2jJdQoAZNPvk=";
 
   nativeBuildInputs =
     [
