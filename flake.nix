@@ -52,6 +52,8 @@
       url = "github:moonlight-mod/moonlight";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # FUTURE(Sirius902) Remove once idea is fixed on NixOS unstable.
+    nixpkgs-idea-fix.url = "github:nixos/nixpkgs?rev=0196c0175e9191c474c26ab5548db27ef5d34b05";
   };
 
   outputs = {
@@ -63,6 +65,7 @@
     nix-nvim-config,
     moonlight,
     flake-parts,
+    nixpkgs-idea-fix,
     ...
   } @ inputs: let
     importPkgs = {
@@ -82,6 +85,12 @@
             gcfeeder = final.callPackage ./pkgs/gcfeeder/default.nix {};
 
             gcviewer = final.callPackage ./pkgs/gcviewer/default.nix {};
+
+            jetbrains =
+              prev.jetbrains
+              // {
+                idea-community = nixpkgs-idea-fix.legacyPackages.${system}.jetbrains.idea-community;
+              };
           })
         ];
         config.allowUnfree = true;
