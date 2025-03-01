@@ -40,6 +40,20 @@ in {
     gtk3.extraConfig."gtk-application-prefer-dark-theme" = 1;
   };
 
+  programs.librewolf =
+    lib.mkIf isLinuxDesktop
+    {
+      enable = true;
+      settings = {
+        "identity.fxaccounts.enabled" = true;
+        "webgl.disabled" = false;
+        "privacy.resistFingerprinting" = false;
+        "privacy.clearOnShutdown.history" = false;
+        "privacy.clearOnShutdown.cookies" = false;
+        "network.cookie.lifetimePolicy" = 0;
+      };
+    };
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;

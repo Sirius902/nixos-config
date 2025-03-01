@@ -41,7 +41,14 @@
     binfmt = true;
   };
 
-  programs.firefox.enable = true;
+  programs.firefox = {
+    enable = true;
+    package = pkgs.librewolf;
+    policies = {
+      DisableTelemetry = true;
+      DisableFirefoxStudies = true;
+    };
+  };
 
   fonts.packages = with pkgs; [
     (
