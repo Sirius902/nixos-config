@@ -111,6 +111,7 @@
     inkscape
     jetbrains.idea-community
     jetbrains.rider
+    ghidra
     heroic
     keymapp
     krita
