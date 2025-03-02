@@ -111,7 +111,7 @@
     inkscape
     jetbrains.idea-community
     jetbrains.rider
-    ghidra
+    (ghidra.withExtensions (_: [ghidra-extensions.gamecube-loader]))
     heroic
     keymapp
     krita
