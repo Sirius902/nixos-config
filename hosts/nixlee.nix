@@ -19,6 +19,8 @@
     ../modules/ssl-dev.nix
     ../modules/tailscale.nix
     ../modules/docker.nix
+
+    ../modules/low-latency-audio.nix
   ];
 
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
