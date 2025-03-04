@@ -53,6 +53,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # FUTURE(Sirius902) Remove once idea is fixed on NixOS unstable.
+    # https://github.com/NixOS/nixpkgs/pull/386275
     nixpkgs-idea-fix.url = "github:nixos/nixpkgs?rev=0196c0175e9191c474c26ab5548db27ef5d34b05";
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
   };
