@@ -53,6 +53,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
+    # FUTURE(Sirius902) Remove this once librewolf builds on NixOS unstable.
+    # https://github.com/NixOS/nixpkgs/issues/387606
+    nixpkgs-librewolf-fix.url = "github:nixos/nixpkgs?rev=bffc22eb12172e6db3c5dde9e3e5628f8e3e7912";
   };
 
   outputs = {
@@ -65,6 +68,7 @@
     moonlight,
     flake-parts,
     nixpkgs-ghidra_11_2_1,
+    nixpkgs-librewolf-fix,
     ...
   } @ inputs: let
     importPkgs = {
@@ -90,6 +94,8 @@
               // {
                 gamecube-loader = nixpkgs-ghidra_11_2_1.legacyPackages.${system}.callPackage ./pkgs/ghidra-extensions/gamecube-loader/default.nix {};
               };
+
+            librewolf = nixpkgs-librewolf-fix.legacyPackages.${system}.librewolf;
           })
         ];
         config.allowUnfree = true;

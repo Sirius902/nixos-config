@@ -400,6 +400,22 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/072a6db25e947df2f31aab9eccd0ab75d5b2da11.tar.gz"
       }
     },
+    "nixpkgs-librewolf-fix": {
+      "locked": {
+        "lastModified": 1736344531,
+        "narHash": "sha256-8YVQ9ZbSfuUk2bUf2KRj60NRraLPKPS0Q4QFTbc+c2c=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "bffc22eb12172e6db3c5dde9e3e5628f8e3e7912",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "bffc22eb12172e6db3c5dde9e3e5628f8e3e7912",
+        "type": "github"
+      }
+    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1741048562,
@@ -509,6 +525,7 @@
           "nixpkgs"
         ],
         "nixpkgs-ghidra_11_2_1": "nixpkgs-ghidra_11_2_1",
+        "nixpkgs-librewolf-fix": "nixpkgs-librewolf-fix",
         "nixpkgs-stable": [
           "nixos-cosmic",
           "nixpkgs-stable"
