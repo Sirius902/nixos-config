@@ -101,6 +101,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     fastfetch
+    file
     fzf
     just
     liquidctl
@@ -111,6 +112,7 @@
     ripgrep
     sops
     usbutils
+    xxd
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
