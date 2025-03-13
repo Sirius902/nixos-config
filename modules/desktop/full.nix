@@ -141,9 +141,7 @@
     transmission_4-qt
     discord
     vlc
-    (wineWowPackages.unstable.override {
-      waylandSupport = true;
-    })
+    wineWowPackages.stableFull
     winetricks
     wgnord
     xivlauncher
