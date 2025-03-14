@@ -7,12 +7,12 @@
     # ../modules/desktop/ibus.nix
     ../modules/desktop/cosmic/full.nix
     ../modules/desktop/fcitx.nix
-    ../modules/desktop/i3/default.nix
+    # ../modules/desktop/i3/default.nix
 
     ../modules/programs/xrdp/default.nix
     # ../modules/programs/xrdp/gnome.nix
-    # ../modules/programs/xrdp/cosmic.nix
-    ../modules/programs/xrdp/i3.nix
+    ../modules/programs/xrdp/cosmic.nix
+    # ../modules/programs/xrdp/i3.nix
 
     ../modules/secure-boot.nix
     ../modules/documentation.nix

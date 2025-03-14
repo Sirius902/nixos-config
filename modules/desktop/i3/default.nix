@@ -1,4 +1,5 @@
 {pkgs, ...}: {
+  # FUTURE(Sirius902) Fix i3.
   services.xserver = {
     enable = true;
     windowManager.i3 = {
