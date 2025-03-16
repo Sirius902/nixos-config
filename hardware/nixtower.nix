@@ -28,20 +28,21 @@
     fsType = "zfs";
   };
 
+  fileSystems."/tmp" = {
+    device = "zroot/tmp";
+    fsType = "zfs";
+  };
+
   fileSystems."/persist" = {
     device = "zroot/persist";
     fsType = "zfs";
+    neededForBoot = true;
   };
 
   fileSystems."/efi" = {
     device = "/dev/disk/by-uuid/8D9D-634A";
     fsType = "vfat";
     options = ["fmask=0077" "dmask=0077"];
-  };
-
-  fileSystems."/home" = {
-    device = "zroot/home";
-    fsType = "zfs";
   };
 
   swapDevices = [
