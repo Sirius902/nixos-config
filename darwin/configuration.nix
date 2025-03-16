@@ -33,5 +33,5 @@
     home = "/Users/chris";
   };
 
-  security.pam.enableSudoTouchIdAuth = true;
+  security.pam.services.sudo_local.touchIdAuth = true;
 }
