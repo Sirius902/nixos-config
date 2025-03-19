@@ -12,6 +12,7 @@
     ../modules/programs/xrdp/default.nix
     # ../modules/programs/xrdp/gnome.nix
     ../modules/programs/xrdp/cosmic.nix
+    # ../modules/programs/xrdp/kde.nix
     # ../modules/programs/xrdp/i3.nix
 
     ../modules/secure-boot.nix
