@@ -109,6 +109,7 @@
     nvd
     parted
     pciutils
+    pv
     ripgrep
     sops
     usbutils
