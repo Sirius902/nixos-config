@@ -94,6 +94,14 @@
       '';
       destination = "/etc/udev/rules.d/50-switch.rules";
     })
+    (pkgs.writeTextFile {
+      name = "electromodder-rules";
+      text = ''
+        # Electromodder Adapter V2
+        SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", TAG+="uaccess"
+      '';
+      destination = "/etc/udev/rules.d/50-electromodder.rules";
+    })
   ];
 
   # For wgnord
