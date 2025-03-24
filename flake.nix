@@ -90,6 +90,10 @@
               // {
                 gamecube-loader = nixpkgs-ghidra_11_2_1.legacyPackages.${system}.callPackage ./pkgs/ghidra-extensions/gamecube-loader/default.nix {};
               };
+
+            shipwright = final.callPackage ./pkgs/shipwright/default.nix {};
+
+            _2ship2harkinian = final.callPackage ./pkgs/_2ship2harkinian/default.nix {};
           })
         ];
         config.allowUnfree = true;
@@ -117,6 +121,8 @@
           packages.gcfeeder = gcfeeder;
           packages.gcviewer = gcviewer;
           packages.gamecube-loader = ghidra-extensions.gamecube-loader;
+          packages.shipwright = shipwright;
+          packages._2ship2harkinian = _2ship2harkinian;
 
           devShells.default = mkShell {
             packages = [just];

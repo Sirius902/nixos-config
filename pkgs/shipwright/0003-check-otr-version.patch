@@ -1,0 +1,13 @@
+diff --git a/soh/soh/OTRGlobals.cpp b/soh/soh/OTRGlobals.cpp
+index 3690e8648..646e1033f 100644
+--- a/soh/soh/OTRGlobals.cpp
++++ b/soh/soh/OTRGlobals.cpp
+@@ -1107,8 +1107,6 @@ extern "C" void InitOTR() {
+     CheckAndCreateModFolder();
+ #endif
+ 
+-    CheckSoHOTRVersion(Ship::Context::GetPathRelativeToAppBundle("soh.otr"));
+-
+     if (!std::filesystem::exists(Ship::Context::LocateFileAcrossAppDirs("oot-mq.otr", appShortName)) &&
+         !std::filesystem::exists(Ship::Context::LocateFileAcrossAppDirs("oot.otr", appShortName))){
+ 
