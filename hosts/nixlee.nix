@@ -24,6 +24,7 @@
     ../modules/realtime.nix
 
     ../modules/pipewire/low-latency.nix
+    ../modules/pipewire/realtime.nix
   ];
 
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
