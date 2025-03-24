@@ -21,6 +21,8 @@
     ../modules/tailscale.nix
     ../modules/docker.nix
 
+    ../modules/realtime.nix
+
     ../modules/pipewire/low-latency.nix
   ];
 
