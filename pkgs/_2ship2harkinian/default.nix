@@ -145,6 +145,7 @@ in
         url = "https://raw.githubusercontent.com/NixOS/nixpkgs/e36aedc39401266c6aa5b2a9774290938a823c7d/pkgs/by-name/_2/_2ship2harkinian/0001-deps.patch";
         hash = "sha256-77nzCh/0N5EDXw7o5BoBaAiav13N+q8/geWd9ybp1Hc=";
       })
+      ./0001-Enhancement-Underwater-Ocarina.patch
     ];
 
     nativeBuildInputs = [

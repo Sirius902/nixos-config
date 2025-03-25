@@ -1,0 +1,115 @@
+From 64918e956512c2390908b7a398098e30dffead30 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Tue, 25 Mar 2025 00:50:22 -0700
+Subject: [PATCH] [Enhancement] Underwater Ocarina
+
+---
+ mm/2s2h/BenGui/BenMenu.cpp                    |  3 +++
+ .../Enhancements/Player/UnderwaterOcarina.cpp | 21 +++++++++++++++++++
+ mm/2s2h/GameInteractor/GameInteractor.h       |  2 ++
+ mm/2s2h/PresetManager/PresetManager.cpp       |  3 ++-
+ mm/src/code/z_parameter.c                     | 12 +++++++----
+ 5 files changed, 36 insertions(+), 5 deletions(-)
+ create mode 100644 mm/2s2h/Enhancements/Player/UnderwaterOcarina.cpp
+
+diff --git a/mm/2s2h/BenGui/BenMenu.cpp b/mm/2s2h/BenGui/BenMenu.cpp
+index 95f69b7cb..901ed5b38 100644
+--- a/mm/2s2h/BenGui/BenMenu.cpp
++++ b/mm/2s2h/BenGui/BenMenu.cpp
+@@ -719,6 +719,9 @@ void BenMenu::AddEnhancements() {
+     AddWidget(path, "Prevent Diving Over Water", WIDGET_CVAR_CHECKBOX)
+         .CVar("gEnhancements.Player.PreventDiveOverWater")
+         .Options(CheckboxOptions().Tooltip("Prevents Link from automatically diving over bodies of water."));
++    AddWidget(path, "Underwater Ocarina", WIDGET_CVAR_CHECKBOX)
++        .CVar("gEnhancements.Player.UnderwaterOcarina")
++        .Options(CheckboxOptions().Tooltip("Allows Zora to use the Ocarina of Time when grounded underwater."));
+     AddWidget(path, "Manual Jump", WIDGET_CVAR_CHECKBOX)
+         .CVar("gEnhancements.Player.ManualJump")
+         .Options(CheckboxOptions().Tooltip("Z + A to Jump and B while midair to Jump Attack"));
+diff --git a/mm/2s2h/Enhancements/Player/UnderwaterOcarina.cpp b/mm/2s2h/Enhancements/Player/UnderwaterOcarina.cpp
+new file mode 100644
+index 000000000..5d8a9918f
+--- /dev/null
++++ b/mm/2s2h/Enhancements/Player/UnderwaterOcarina.cpp
+@@ -0,0 +1,21 @@
++#include <libultraship/bridge.h>
++#include "2s2h/GameInteractor/GameInteractor.h"
++#include "2s2h/ShipInit.hpp"
++
++extern "C" {
++#include "z64item.h"
++}
++
++#define CVAR_NAME "gEnhancements.Player.UnderwaterOcarina"
++#define CVAR CVarGetInteger(CVAR_NAME, 0)
++
++void RegisterUnderwaterOcarina() {
++    COND_VB_SHOULD(VB_ENABLE_ITEM_UNDERWATER_FLOOR, CVAR, {
++        const auto item = va_arg(args, std::int32_t);
++        if (item == ITEM_OCARINA_OF_TIME) {
++            *should = true;
++        }
++    });
++}
++
++static RegisterShipInitFunc initFunc(RegisterUnderwaterOcarina, { CVAR_NAME });
+diff --git a/mm/2s2h/GameInteractor/GameInteractor.h b/mm/2s2h/GameInteractor/GameInteractor.h
+index 7f857f9da..7d164c206 100644
+--- a/mm/2s2h/GameInteractor/GameInteractor.h
++++ b/mm/2s2h/GameInteractor/GameInteractor.h
+@@ -237,6 +237,8 @@ typedef enum {
+     VB_SNOWBALL_SET_FLAG,
+     VB_START_JUMPSLASH,
+     VB_LOAD_PLAYER_ANIMATION_FRAME,
++    // Vanilla Condition: (GET_CUR_FORM_BTN_ITEM(i) >= ITEM_BOTTLE) && (GET_CUR_FORM_BTN_ITEM(i) <= ITEM_OBABA_DRINK)
++    VB_ENABLE_ITEM_UNDERWATER_FLOOR,
+ } GIVanillaBehavior;
+ 
+ typedef enum {
+diff --git a/mm/2s2h/PresetManager/PresetManager.cpp b/mm/2s2h/PresetManager/PresetManager.cpp
+index 52e8800c8..5afad6d2a 100644
+--- a/mm/2s2h/PresetManager/PresetManager.cpp
++++ b/mm/2s2h/PresetManager/PresetManager.cpp
+@@ -147,7 +147,8 @@ nlohmann::json curatedPresetJ = R"(
+                 "FierceDeityPutaway": 1,
+                 "InfiniteDekuHopping": 1,
+                 "InstantPutaway": 1,
+-                "PreventDiveOverWater": 1
++                "PreventDiveOverWater": 1,
++                "UnderwaterOcarina": 1
+             },
+             "PlayerActions": {
+                 "ArrowCycle": 1,
+diff --git a/mm/src/code/z_parameter.c b/mm/src/code/z_parameter.c
+index 7292b5460..72a6b0b7d 100644
+--- a/mm/src/code/z_parameter.c
++++ b/mm/src/code/z_parameter.c
+@@ -2583,8 +2583,10 @@ void Interface_UpdateButtonsPart2(PlayState* play) {
+         for (i = EQUIP_SLOT_C_LEFT; i <= EQUIP_SLOT_C_RIGHT; i++) {
+             if (GET_CUR_FORM_BTN_ITEM(i) != ITEM_MASK_ZORA) {
+                 if (Player_GetEnvironmentalHazard(play) == PLAYER_ENV_HAZARD_UNDERWATER_FLOOR) {
+-                    if (!((GET_CUR_FORM_BTN_ITEM(i) >= ITEM_BOTTLE) &&
+-                          (GET_CUR_FORM_BTN_ITEM(i) <= ITEM_OBABA_DRINK))) {
++                    if (!GameInteractor_Should(VB_ENABLE_ITEM_UNDERWATER_FLOOR,
++                                               (GET_CUR_FORM_BTN_ITEM(i) >= ITEM_BOTTLE) &&
++                                                   (GET_CUR_FORM_BTN_ITEM(i) <= ITEM_OBABA_DRINK),
++                                               (s32)GET_CUR_FORM_BTN_ITEM(i))) {
+                         if (gSaveContext.buttonStatus[i] == BTN_ENABLED) {
+                             restoreHudVisibility = true;
+                         }
+@@ -2610,8 +2612,10 @@ void Interface_UpdateButtonsPart2(PlayState* play) {
+         for (s16 j = EQUIP_SLOT_D_RIGHT; j <= EQUIP_SLOT_D_UP; j++) {
+             if (DPAD_GET_CUR_FORM_BTN_ITEM(j) != ITEM_MASK_ZORA) {
+                 if (Player_GetEnvironmentalHazard(play) == PLAYER_ENV_HAZARD_UNDERWATER_FLOOR) {
+-                    if (!((DPAD_GET_CUR_FORM_BTN_ITEM(j) >= ITEM_BOTTLE) &&
+-                          (DPAD_GET_CUR_FORM_BTN_ITEM(j) <= ITEM_OBABA_DRINK))) {
++                    if (!GameInteractor_Should(VB_ENABLE_ITEM_UNDERWATER_FLOOR,
++                                               (DPAD_GET_CUR_FORM_BTN_ITEM(j) >= ITEM_BOTTLE) &&
++                                                   (DPAD_GET_CUR_FORM_BTN_ITEM(j) <= ITEM_OBABA_DRINK),
++                                               (s32)DPAD_GET_CUR_FORM_BTN_ITEM(j))) {
+                         if (gSaveContext.shipSaveContext.dpad.status[j] == BTN_ENABLED) {
+                             restoreHudVisibility = true;
+                         }
+-- 
+2.48.1
+
