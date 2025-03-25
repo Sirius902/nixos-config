@@ -127,13 +127,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright";
-    version = "22e23af";
+    version = "c5d17d8";
 
     src = fetchFromGitHub {
       owner = "Sirius902";
       repo = "shipwright";
       rev = finalAttrs.version;
-      hash = "sha256-XhTYa1AOX6e+UDjKbiL3m7xmhqhhFIvs/5CoKtByVKk=";
+      hash = "sha256-UETqLiSbT0mlXk4xzaAY41DACotkv5YsAZT3ZxspaX0=";
       fetchSubmodules = true;
     };
 
@@ -152,9 +152,6 @@ in
         url = "https://raw.githubusercontent.com/NixOS/nixpkgs/e36aedc39401266c6aa5b2a9774290938a823c7d/pkgs/by-name/_2/_2ship2harkinian/0001-deps.patch";
         hash = "sha256-77nzCh/0N5EDXw7o5BoBaAiav13N+q8/geWd9ybp1Hc=";
       })
-      ./0002-paths.patch
-      # FUTURE(Sirius902) See if this can be removed.
-      ./0003-check-otr-version.patch
     ];
 
     nativeBuildInputs =
@@ -201,6 +198,7 @@ in
 
     cmakeFlags = [
       (lib.cmakeBool "NON_PORTABLE" true)
+      (lib.cmakeFeature "CMAKE_PROJECT_VERSION" "${finalAttrs.version}")
       (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/soh")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}/src")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
@@ -229,9 +227,7 @@ in
 
     postBuild = ''
       cp ${finalAttrs.gamecontrollerdb} ${finalAttrs.gamecontrollerdb.name}
-      pushd ../OTRExporter
-      python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../soh/assets/xml --custom-assets-path ../soh/assets/custom --custom-otr-file soh.otr --port-ver ${finalAttrs.version}
-      popd
+      ${cmake}/bin/cmake --build "$PWD" --target GenerateSohOtr
     '';
 
     preInstall = ''

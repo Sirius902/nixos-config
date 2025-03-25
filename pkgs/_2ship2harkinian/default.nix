@@ -128,13 +128,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "2ship2harkinian";
-    version = "313bb7d";
+    version = "e66bf6e";
 
     src = fetchFromGitHub {
       owner = "Sirius902";
       repo = "2ship2harkinian";
       rev = finalAttrs.version;
-      hash = "sha256-WIzTpyJyRhvABiffkq/pxSCeSt/BvDCusX+1j8INpJ8=";
+      hash = "sha256-Vw17ivAK7oswcXl95FEeEwG7a1xzH19c+Z72WqPu4sQ=";
       fetchSubmodules = true;
     };
 
@@ -177,6 +177,7 @@ in
 
     cmakeFlags = [
       (lib.cmakeBool "NON_PORTABLE" true)
+      (lib.cmakeFeature "CMAKE_PROJECT_VERSION" "${finalAttrs.version}")
       (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/2s2h")
       (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${libopus.dev}/include/opus")
       (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${opusfile.dev}/include/opus")
@@ -208,9 +209,7 @@ in
 
     postBuild = ''
       cp ${gamecontrollerdb} ${gamecontrollerdb.name}
-      pushd ../OTRExporter
-      python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../mm/assets/xml --custom-assets-path ../mm/assets/custom --custom-otr-file 2ship.o2r --port-ver ${finalAttrs.version}
-      popd
+      ${cmake}/bin/cmake --build "$PWD" --target Generate2ShipOtr
     '';
 
     preInstall = ''
