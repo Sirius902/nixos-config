@@ -152,6 +152,12 @@ in
         url = "https://raw.githubusercontent.com/NixOS/nixpkgs/e36aedc39401266c6aa5b2a9774290938a823c7d/pkgs/by-name/_2/_2ship2harkinian/0001-deps.patch";
         hash = "sha256-77nzCh/0N5EDXw7o5BoBaAiav13N+q8/geWd9ybp1Hc=";
       })
+      # TODO(Sirius902) Remove once weird frames PR gets merged.
+      (fetchpatch {
+        name = "fix-unhandled-opcode.patch";
+        url = "https://github.com/HarbourMasters/Shipwright/commit/5bf1dc8285abede08a669d4b21f2355c1fc1e8e1.patch";
+        hash = "sha256-XC6Zho6iVK6Gc2sagodt3JFdDKEAqEl6SyX8aVcHyqc=";
+      })
     ];
 
     nativeBuildInputs =
