@@ -128,13 +128,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "2ship2harkinian";
-    version = "e66bf6e";
+    version = "01e8004";
 
     src = fetchFromGitHub {
-      owner = "Sirius902";
+      owner = "HarbourMasters";
       repo = "2ship2harkinian";
       rev = finalAttrs.version;
-      hash = "sha256-Vw17ivAK7oswcXl95FEeEwG7a1xzH19c+Z72WqPu4sQ=";
+      hash = "sha256-Z7SNYATuwA2sfPnZFOVX+XdGHkKMtkWCGDagkOtbAE0=";
       fetchSubmodules = true;
     };
 
@@ -145,7 +145,19 @@ in
         url = "https://raw.githubusercontent.com/NixOS/nixpkgs/e36aedc39401266c6aa5b2a9774290938a823c7d/pkgs/by-name/_2/_2ship2harkinian/0001-deps.patch";
         hash = "sha256-77nzCh/0N5EDXw7o5BoBaAiav13N+q8/geWd9ybp1Hc=";
       })
-      ./0001-Enhancement-Underwater-Ocarina.patch
+      # TODO(Sirius902) Remove once weird frames PR gets merged.
+      (fetchpatch {
+        name = "0002-fix-opus-include.patch";
+        url = "https://github.com/Sirius902/2ship2harkinian/commit/3792abcc5f22022bc17bb58260b8ffbba552f35e.patch";
+        hash = "sha256-TtdMbbzRKJKmOaMA6DCiVc5R2tBbdKejNs8jh5d+nPo=";
+      })
+      (fetchpatch {
+        name = "0003-n64-weird-frames.patch";
+        url = "https://github.com/Sirius902/2ship2harkinian/commit/ac98824ce7a299a6c7e8ed3527d826169dfe6ced.patch";
+        hash = "sha256-5Z5qtIsPYgqR8JinkIjHSL8N/Hz1uVWvfN30hBg67r0=";
+      })
+      # TODO(Sirius902) Remove once underwater ocarina PR gets merged.
+      ./0004-Enhancement-Underwater-Ocarina.patch
     ];
 
     nativeBuildInputs = [

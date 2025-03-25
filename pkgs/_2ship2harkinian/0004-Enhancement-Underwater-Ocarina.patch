@@ -1,4 +1,4 @@
-From 64918e956512c2390908b7a398098e30dffead30 Mon Sep 17 00:00:00 2001
+From 65cd193a7565b6d4c4a65157768a333b47e9a0ac Mon Sep 17 00:00:00 2001
 From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
 Date: Tue, 25 Mar 2025 00:50:22 -0700
 Subject: [PATCH] [Enhancement] Underwater Ocarina
@@ -13,10 +13,10 @@ Subject: [PATCH] [Enhancement] Underwater Ocarina
  create mode 100644 mm/2s2h/Enhancements/Player/UnderwaterOcarina.cpp
 
 diff --git a/mm/2s2h/BenGui/BenMenu.cpp b/mm/2s2h/BenGui/BenMenu.cpp
-index 95f69b7cb..901ed5b38 100644
+index e84184a5b..ee8df2df6 100644
 --- a/mm/2s2h/BenGui/BenMenu.cpp
 +++ b/mm/2s2h/BenGui/BenMenu.cpp
-@@ -719,6 +719,9 @@ void BenMenu::AddEnhancements() {
+@@ -708,6 +708,9 @@ void BenMenu::AddEnhancements() {
      AddWidget(path, "Prevent Diving Over Water", WIDGET_CVAR_CHECKBOX)
          .CVar("gEnhancements.Player.PreventDiveOverWater")
          .Options(CheckboxOptions().Tooltip("Prevents Link from automatically diving over bodies of water."));
