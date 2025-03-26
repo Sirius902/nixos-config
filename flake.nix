@@ -53,6 +53,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
+    ghostty = {
+      url = "github:ghostty-org/ghostty";
+      inputs.nixpkgs-unstable.follows = "nixpkgs";
+      inputs.nixpkgs-stable.follows = "nixpkgs-stable";
+    };
   };
 
   outputs = {
@@ -65,6 +70,7 @@
     moonlight,
     flake-parts,
     nixpkgs-ghidra_11_2_1,
+    ghostty,
     ...
   } @ inputs: let
     importPkgs = {
@@ -95,6 +101,7 @@
 
             _2ship2harkinian = final.callPackage ./pkgs/_2ship2harkinian/default.nix {};
           })
+          ghostty.overlays.default
         ];
         config.allowUnfree = true;
       };
