@@ -85,7 +85,7 @@
   # NOTE(Sirius902) We can't use `services.udev.extraRules` here as `uaccess` won't work properly.
   # https://github.com/NixOS/nixpkgs/issues/210856
   services.udev.packages = [
-    pkgs.gcfeeder
+    pkgs.gcfeederd
     (pkgs.writeTextFile {
       name = "switch-rules";
       text = ''
@@ -113,6 +113,7 @@
     ffmpeg-full
     gcfeeder
     gcviewer
+    gcfeederd
     gimp
     godot_4
     imhex

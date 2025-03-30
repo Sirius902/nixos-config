@@ -89,6 +89,8 @@
 
             gcfeeder = final.callPackage ./pkgs/gcfeeder/default.nix {};
 
+            gcfeederd = final.callPackage ./pkgs/gcfeederd/default.nix {};
+
             gcviewer = final.callPackage ./pkgs/gcviewer/default.nix {};
 
             ghidra-extensions =
@@ -127,6 +129,7 @@
           packages.ghostty-nautilus = ghostty-nautilus;
           packages.gcfeeder = gcfeeder;
           packages.gcviewer = gcviewer;
+          packages.gcfeederd = gcfeederd;
           packages.gamecube-loader = ghidra-extensions.gamecube-loader;
           packages.shipwright = shipwright;
           packages._2ship2harkinian = _2ship2harkinian;
@@ -203,6 +206,7 @@
                       ./modules/home/ghostty/default.nix
                       # ./modules/home/ghostty/gnome.nix
                       ./modules/home/gcviewer.nix
+                      ./modules/home/gcfeederd.nix
                     ];
                   };
                 }
@@ -240,6 +244,7 @@
                       ./modules/home/ghostty/default.nix
                       # ./modules/home/ghostty/gnome.nix
                       ./modules/home/gcviewer.nix
+                      ./modules/home/gcfeederd.nix
                     ];
                   };
                 }
