@@ -14,14 +14,14 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "gcfeederd";
-  version = "f357fd2";
+  version = "4effe30";
 
   src = fetchFromGitHub {
     owner = "Sirius902";
     repo = "gcfeeder";
     # TODO(Sirius902) Change to tag when release comes out.
     rev = version;
-    sha256 = "sha256-TuhaMBMnTr6K+XwEjdmgdxBGcfI6ZtUYMW+gIfnHtgw=";
+    sha256 = "sha256-+rGfE64T7xpdAj2u/GeWPLqj9kK/fhvPXGL0aRD+w4s=";
   };
 
   cargoBuildFlags = "-p gcfeederd";
