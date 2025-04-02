@@ -34,7 +34,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.sops-nix.follows = "sops-nix";
     };
-    nix-nvim-config.url = "github:Sirius902/nix-nvim-config";
+    nvim-conf.url = "github:Sirius902/nvim-conf";
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -66,7 +66,7 @@
     nixpkgs-stable,
     home-manager-stable,
     nix-darwin,
-    nix-nvim-config,
+    nvim-conf,
     moonlight,
     flake-parts,
     nixpkgs-ghidra_11_2_1,
@@ -81,7 +81,7 @@
       import nixpkgs {
         inherit system;
         overlays = [
-          nix-nvim-config.overlays.default
+          nvim-conf.overlays.default
           moonlight.overlays.default
 
           (final: prev: {
@@ -434,7 +434,7 @@
           pkgs = import nixpkgs {
             inherit system;
             overlays = [
-              inputs.nix-nvim-config.overlays.default
+              inputs.nvim-conf.overlays.default
             ];
             config.allowUnfree = true;
           };

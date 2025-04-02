@@ -351,32 +351,13 @@
         "type": "github"
       }
     },
-    "nix-nvim-config": {
-      "inputs": {
-        "nixCats": "nixCats",
-        "nixpkgs": "nixpkgs_2"
-      },
-      "locked": {
-        "lastModified": 1741222301,
-        "narHash": "sha256-6pr4GdJ1YiQn7R3Esg5R0lUogmoZPRhQkjKLDdBa8u4=",
-        "owner": "Sirius902",
-        "repo": "nix-nvim-config",
-        "rev": "561e474acb05cac2a765322ede2697a54221e691",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Sirius902",
-        "repo": "nix-nvim-config",
-        "type": "github"
-      }
-    },
     "nixCats": {
       "locked": {
-        "lastModified": 1737586685,
-        "narHash": "sha256-0a4JQjD+hqU/5hgOZJ84axTt1j/7/3ZVLR7H9/JpF5Y=",
+        "lastModified": 1743541817,
+        "narHash": "sha256-3zB4EGsiJryeV7Sjwymqz87brcC+GJp30j7Z4pvuuc4=",
         "owner": "BirdeeHub",
         "repo": "nixCats-nvim",
-        "rev": "42178f95ec5698cb157ade86cc16ee36681a95fd",
+        "rev": "ead577004c93e0828c7922a10d5dace4b42d1042",
         "type": "github"
       },
       "original": {
@@ -388,16 +369,16 @@
     "nixos-cosmic": {
       "inputs": {
         "flake-compat": "flake-compat_3",
-        "nixpkgs": "nixpkgs_3",
+        "nixpkgs": "nixpkgs_2",
         "nixpkgs-stable": "nixpkgs-stable",
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1743589597,
-        "narHash": "sha256-fUTd0BMMlHUG+9E/2fvIJuXKCqSpweY7NetQXZndKPk=",
+        "lastModified": 1743628093,
+        "narHash": "sha256-ZCM8KtSXOhOqeVSuVnw/nZBYVot0N9Ew+JWaxoAqzY0=",
         "owner": "lilyinstarlight",
         "repo": "nixos-cosmic",
-        "rev": "760c3a4173ff62ab0ad0925cbb39ac166e23803c",
+        "rev": "c71233846b56851fc774deefd4e8f9861ea132c9",
         "type": "github"
       },
       "original": {
@@ -483,22 +464,6 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1737525964,
-        "narHash": "sha256-3wFonKmNRWKq1himW9N3TllbeGIHFACI5vmLpk6moF8=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "5757bbb8bd7c0630a0cc4bb19c47e588db30b97c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_3": {
-      "locked": {
         "lastModified": 1743315132,
         "narHash": "sha256-6hl6L/tRnwubHcA4pfUUtk542wn2Om+D4UnDhlDW9BE=",
         "owner": "NixOS",
@@ -510,6 +475,41 @@
         "owner": "NixOS",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
+        "lastModified": 1743568003,
+        "narHash": "sha256-ZID5T65E8ruHqWRcdvZLsczWDOAWIE7om+vQOREwiX0=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "b7ba7f9f45c5cd0d8625e9e217c28f8eb6a19a76",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nvim-conf": {
+      "inputs": {
+        "nixCats": "nixCats",
+        "nixpkgs": "nixpkgs_3"
+      },
+      "locked": {
+        "lastModified": 1743638038,
+        "narHash": "sha256-Td6L5fNtb2AwO8eRJyneBjZIe8JbGfOYHUh3HLgUtv4=",
+        "owner": "Sirius902",
+        "repo": "nvim-conf",
+        "rev": "18d733a28052882e0f12a0350d0295171b8fb151",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Sirius902",
+        "repo": "nvim-conf",
         "type": "github"
       }
     },
@@ -568,7 +568,6 @@
         "moonlight": "moonlight",
         "nix-darwin": "nix-darwin",
         "nix-index-database": "nix-index-database",
-        "nix-nvim-config": "nix-nvim-config",
         "nixos-cosmic": "nixos-cosmic",
         "nixpkgs": [
           "nixos-cosmic",
@@ -579,6 +578,7 @@
           "nixos-cosmic",
           "nixpkgs-stable"
         ],
+        "nvim-conf": "nvim-conf",
         "secrets": "secrets",
         "sops-nix": "sops-nix"
       }
