@@ -49,7 +49,9 @@
     };
     nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
     moonlight = {
-      url = "github:moonlight-mod/moonlight";
+      # TODO(Sirius902) Put back after pnpm 10 ends up in COSMIC nixpkgs.
+      # url = "github:moonlight-mod/moonlight";
+      url = "github:moonlight-mod/moonlight?rev=188b595ba267761d0e5fad0d943766042d680875";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
