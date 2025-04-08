@@ -127,13 +127,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright";
-    version = "554379f";
+    version = "f37c3aa";
 
     src = fetchFromGitHub {
       owner = "HarbourMasters";
       repo = "shipwright";
       rev = finalAttrs.version;
-      hash = "sha256-A1XzBjh4pF9+zo7Gt5FndhTMPYNbZX/nrjdsj2T0LWE=";
+      hash = "sha256-paW0lvM3xYuksOM7vG4oXk0mwF65j1ycZDWx/UYX00U=";
       fetchSubmodules = true;
     };
 
@@ -141,8 +141,8 @@ in
     # https://github.com/HarbourMasters/2ship2harkinian/blob/1.0.2/mm/CMakeLists.txt#L708
     gamecontrollerdb = fetchurl {
       name = "gamecontrollerdb.txt";
-      url = "https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/f12b7db2f47a6204c09497c1d633c8a930b955fa/gamecontrollerdb.txt";
-      hash = "sha256-YqNyXCqOtHT5ZHi3OnNNlSO24RuTPoMXE/hZpzOaUjs=";
+      url = "https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/eb76d847669c93ddfbc0d3556b0abebef791f8e6/gamecontrollerdb.txt";
+      hash = "sha256-sIlcJL4mvRlhmvx0fe6pEu2wrFfxRDZjNaYK2H5GEZc=";
     };
 
     patches = [
@@ -155,8 +155,8 @@ in
       # TODO(Sirius902) Remove once weird frames PR gets merged.
       (fetchpatch {
         name = "0002-n64-weird-frames.patch";
-        url = "https://github.com/Sirius902/Shipwright/commit/de6f7fc417057addb0f24776105811cb136d449c.patch";
-        hash = "sha256-xE3W7RvZ3qQLXs2PfT+XeMm+82+FTEL65AVp7uoyYco=";
+        url = "https://github.com/Sirius902/Shipwright/commit/55f27347cca49f01b209bb85eb10dd58c378a23c.patch";
+        hash = "sha256-dBnVMg1yuUvXEwzVn76yxqInVTzziO/fDH+NQJ/Mdig=";
       })
     ];
 

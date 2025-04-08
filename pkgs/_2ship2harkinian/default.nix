@@ -33,8 +33,8 @@
   # https://github.com/HarbourMasters/2ship2harkinian/blob/1.0.2/mm/CMakeLists.txt#L708
   gamecontrollerdb = fetchurl {
     name = "gamecontrollerdb.txt";
-    url = "https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/f12b7db2f47a6204c09497c1d633c8a930b955fa/gamecontrollerdb.txt";
-    hash = "sha256-YqNyXCqOtHT5ZHi3OnNNlSO24RuTPoMXE/hZpzOaUjs=";
+    url = "https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/eb76d847669c93ddfbc0d3556b0abebef791f8e6/gamecontrollerdb.txt";
+    hash = "sha256-sIlcJL4mvRlhmvx0fe6pEu2wrFfxRDZjNaYK2H5GEZc=";
   };
 
   # 2ship needs a specific imgui version
@@ -128,13 +128,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "2ship2harkinian";
-    version = "b905115";
+    version = "63f2c89";
 
     src = fetchFromGitHub {
       owner = "HarbourMasters";
       repo = "2ship2harkinian";
       rev = finalAttrs.version;
-      hash = "sha256-55ZEtcEYsE/Tjad0hhuUvkLzmn1UhVowC349oM7Okus=";
+      hash = "sha256-UKGgPjlShwxAkT7WCqxu/OIQ0I568jyuAwIdtuWl5+o=";
       fetchSubmodules = true;
     };
 
@@ -148,13 +148,13 @@ in
       # TODO(Sirius902) Remove once weird frames PR gets merged.
       (fetchpatch {
         name = "0002-fix-opus-include.patch";
-        url = "https://github.com/Sirius902/2ship2harkinian/commit/3792abcc5f22022bc17bb58260b8ffbba552f35e.patch";
+        url = "https://github.com/Sirius902/2ship2harkinian/commit/7ce88f8f77bf96cefd5afeba0cf47f41754c1921.patch";
         hash = "sha256-TtdMbbzRKJKmOaMA6DCiVc5R2tBbdKejNs8jh5d+nPo=";
       })
       (fetchpatch {
         name = "0003-n64-weird-frames.patch";
-        url = "https://github.com/Sirius902/2ship2harkinian/commit/ac98824ce7a299a6c7e8ed3527d826169dfe6ced.patch";
-        hash = "sha256-5Z5qtIsPYgqR8JinkIjHSL8N/Hz1uVWvfN30hBg67r0=";
+        url = "https://github.com/Sirius902/2ship2harkinian/commit/126624575082aa68c369661d5d2066a5ffb0f3b7.patch";
+        hash = "sha256-Hh65mBTLmQx0J07RswOsCFCpNIQyU0sM5taC3i2nib4=";
       })
       # TODO(Sirius902) Remove once underwater ocarina PR gets merged.
       ./0004-Enhancement-Underwater-Ocarina.patch
