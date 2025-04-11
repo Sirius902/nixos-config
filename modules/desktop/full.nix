@@ -150,7 +150,7 @@
     transmission_4-qt
     discord
     vlc
-    wineWowPackages.stableFull
+    wineWowPackages.stagingFull
     winetricks
     wgnord
     xivlauncher
