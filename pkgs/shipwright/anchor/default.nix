@@ -52,6 +52,11 @@ stdenv.mkDerivation (finalAttrs: {
       url = "https://github.com/HarbourMasters/Shipwright/commit/1bc15d5bf3042d4fd64e1952eb68c47a7d5d8061.patch";
       hash = "sha256-OpjP+rGqx56DB4W8yzLkxuxSAQa6oXQqtbQ2cNcFjYQ=";
     })
+    (fetchpatch {
+      name = "any-cursor-equip-swap-fix.patch";
+      url = "https://github.com/HarbourMasters/Shipwright/commit/bfe13906e9c1e21e06f7afa1313b0ee4de825d32.patch";
+      hash = "sha256-1rtQLoKSufVhRvDrQwV2GoYUqtd1fPFsSQ7xX45F9/c=";
+    })
     ./boost_custom.patch
     ./app-name.patch
   ];
