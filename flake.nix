@@ -98,6 +98,8 @@
             shipwright = final.callPackage ./pkgs/shipwright/default.nix {};
 
             _2ship2harkinian = final.callPackage ./pkgs/_2ship2harkinian/default.nix {};
+
+            shipwright-anchor = final.callPackage ./pkgs/shipwright/anchor/default.nix {};
           })
         ];
         config.allowUnfree = true;
@@ -128,6 +130,7 @@
           packages.gamecube-loader = ghidra-extensions.gamecube-loader;
           packages.shipwright = shipwright;
           packages._2ship2harkinian = _2ship2harkinian;
+          packages.shipwright-anchor = shipwright-anchor;
 
           devShells.default = mkShell {
             packages = [just];

@@ -39,6 +39,7 @@
   environment.systemPackages = [
     pkgs.shipwright
     pkgs._2ship2harkinian
+    pkgs.shipwright-anchor
   ];
 
   # Mount Steam under shared directory for VMs to access

@@ -1,0 +1,13 @@
+diff --git a/soh/soh/OTRGlobals.h b/soh/soh/OTRGlobals.h
+index 48cd0cd48..ea9468b91 100644
+--- a/soh/soh/OTRGlobals.h
++++ b/soh/soh/OTRGlobals.h
+@@ -22,7 +22,7 @@
+ #include <vector>
+ 
+ const std::string customMessageTableID = "BaseGameOverrides";
+-const std::string appShortName = "soh";
++const std::string appShortName = "soh-anchor";
+ 
+ #ifdef __WIIU__
+ const uint32_t defaultImGuiScale = 3;
