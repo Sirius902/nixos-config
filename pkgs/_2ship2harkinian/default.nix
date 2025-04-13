@@ -128,13 +128,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "2ship2harkinian";
-    version = "3d0feab";
+    version = "27fe6ca";
 
     src = fetchFromGitHub {
       owner = "HarbourMasters";
       repo = "2ship2harkinian";
       rev = finalAttrs.version;
-      hash = "sha256-fab1w/lYIZlBhM1YgSBM2W78idGvYfrHP7RGFcHz6pc=";
+      hash = "sha256-jOyb9R23DIFw+X9dqTjVtnxh5MByiLWYG1fxWx+KpYk=";
       fetchSubmodules = true;
     };
 
