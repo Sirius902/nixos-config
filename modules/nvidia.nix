@@ -12,16 +12,6 @@
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];
 
-  # Not sure if this is NVIDIA, KVM, or systemd but something causes suspend to fail without this.
-  # https://github.com/systemd/systemd/issues/33626
-  systemd.services.systemd-suspend.serviceConfig.Environment = [
-    "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false"
-  ];
-
-  systemd.services.systemd-homed.serviceConfig.Environment = [
-    "SYSTEMD_HOME_LOCK_FREEZE_SESSION=false"
-  ];
-
   hardware.nvidia = {
     # Modesetting is required.
     modesetting.enable = true;
