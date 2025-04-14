@@ -16,7 +16,9 @@ in {
       "linux" = ../../../dotfiles/ghostty/config;
       "darwin" = ../../../dotfiles/ghostty/config-darwin;
     }
-    .${os};
+    .${
+      os
+    };
 
   # NOTE(Sirius902) Workaround for ghostty's PATH not being respected with nix-darwin.
   programs.zsh.initExtra = lib.mkIf stdenv.isDarwin ''
