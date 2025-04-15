@@ -34,4 +34,8 @@
   };
 
   security.pam.services.sudo_local.touchIdAuth = true;
+
+  programs.zsh.shellInit = ''
+    export SSH_AUTH_SOCK=/Users/chris/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
+  '';
 }
