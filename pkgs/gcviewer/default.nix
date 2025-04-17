@@ -10,25 +10,30 @@
   vulkan-loader,
   wayland,
   xorg,
+  pkg-config,
+  libudev-zero,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "gcviewer";
-  version = "707ecc4";
+  version = "1e5a382";
 
   src = fetchFromGitHub {
     owner = "Sirius902";
     repo = pname;
     # TODO(Sirius902) Change to tag when release comes out.
     rev = version;
-    sha256 = "sha256-qQ+12ADIAhWjUC63GVcALmFlMm5Qd29fvK86F62dmB0=";
+    sha256 = "sha256-z2DETlkZvU+oIbKVTgn+mfjK3kxS4A6GB39Hke7P5sE=";
   };
 
+  cargoBuildFlags = "--no-default-features";
+
   useFetchCargoVendor = true;
-  cargoHash = "sha256-Ql6wjU7L8genCqqisv+3B/XsG8e3UibdelN2oOASKP8=";
+  cargoHash = "sha256-+g0jT0pDyJBNlEi2SoaFoRvSlP91tE4vBXIq54uL8cQ=";
 
   nativeBuildInputs = [
     copyDesktopItems
     makeWrapper
+    pkg-config
   ];
 
   buildInputs = [
@@ -40,6 +45,7 @@ rustPlatform.buildRustPackage rec {
     xorg.libXcursor
     xorg.libxcb
     xorg.libXi
+    libudev-zero
   ];
 
   postInstall = ''

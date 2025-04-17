@@ -14,17 +14,17 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "gcfeederd";
-  version = "aa46a84";
+  version = "a626419";
 
   src = fetchFromGitHub {
     owner = "Sirius902";
     repo = "gcfeeder";
     # TODO(Sirius902) Change to tag when release comes out.
     rev = version;
-    sha256 = "sha256-08bRyYbilyU2JA6DORLuvUMLzWIICkE7f8hDHBfiRWU=";
+    sha256 = "sha256-xNkFl+V848P5DjbL561P9cwOEPvqXkiDOUdE1rk4MRc=";
   };
 
-  cargoBuildFlags = "-p gcfeederd";
+  cargoBuildFlags = "-p gcfeederd --no-default-features";
   # TODO(Sirius902) Enable this once tests pass.
   doCheck = false;
 
