@@ -4,9 +4,10 @@
   config,
   ...
 }: {
-  imports = [../disable-hsp.nix];
-
-  services.openssh.enable = true;
+  imports = [
+    ../openssh.nix
+    ../disable-hsp.nix
+  ];
 
   # Configure keymap in X11
   services.xserver.xkb = {
