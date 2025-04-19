@@ -1,4 +1,5 @@
 {
+  apple-sdk_13,
   stdenv,
   cmake,
   lsb-release,
@@ -6,16 +7,9 @@
   lib,
   fetchFromGitHub,
   fetchurl,
-  fetchpatch,
   copyDesktopItems,
   makeDesktopItem,
   python3,
-  libX11,
-  libXrandr,
-  libXinerama,
-  libXcursor,
-  libXi,
-  libXext,
   glew,
   boost,
   SDL2,
@@ -28,190 +22,286 @@
   makeWrapper,
   darwin,
   libicns,
-}:
-stdenv.mkDerivation (finalAttrs: {
-  pname = "shipwright-anchor";
-  version = "533109d";
-
-  src = fetchFromGitHub {
-    owner = "garrettjoecox";
-    repo = "OOT";
-    rev = finalAttrs.version;
-    hash = "sha256-xzaTuBeGtTfux59pWk/U7LQimv9WiXC4L8NeQNUvVZc=";
-    fetchSubmodules = true;
+  libzip,
+  nlohmann_json,
+  tinyxml-2,
+  spdlog,
+  writeTextFile,
+  fixDarwinDylibNames,
+  applyPatches,
+  shipwright,
+  fetchpatch,
+  libvorbis,
+}: let
+  # The following would normally get fetched at build time, or a specific version is required
+  gamecontrollerdb = fetchFromGitHub {
+    owner = "mdqinc";
+    repo = "SDL_GameControllerDB";
+    rev = "a74711e1e87733ccdf02d7020d8fa9e4fa67176e";
+    hash = "sha256-rXC4akz9BaKzr/C2CryZC6RGk6+fGVG7RsQryUFUUk0=";
   };
 
-  patches = [
-    (fetchpatch {
-      name = "darwin-fixes.patch";
-      url = "https://raw.githubusercontent.com/NixOS/nixpkgs/e36aedc39401266c6aa5b2a9774290938a823c7d/pkgs/by-name/sh/shipwright/darwin-fixes.patch";
-      hash = "sha256-mf/XMkelAkDJ+rGYu9OPzXLC1OaHwAjZRoLe1As7GoA=";
-    })
-    (fetchpatch {
-      name = "gcc14.patch";
-      url = "https://github.com/HarbourMasters/Shipwright/commit/1bc15d5bf3042d4fd64e1952eb68c47a7d5d8061.patch";
-      hash = "sha256-OpjP+rGqx56DB4W8yzLkxuxSAQa6oXQqtbQ2cNcFjYQ=";
-    })
-    (fetchpatch {
-      name = "any-cursor-equip-swap-fix.patch";
-      url = "https://github.com/HarbourMasters/Shipwright/commit/bfe13906e9c1e21e06f7afa1313b0ee4de825d32.patch";
-      hash = "sha256-1rtQLoKSufVhRvDrQwV2GoYUqtd1fPFsSQ7xX45F9/c=";
-    })
-    ./boost_custom.patch
-    ./app-name.patch
-  ];
-
-  # This would get fetched at build time otherwise, see:
-  # https://github.com/HarbourMasters/Shipwright/blob/e46c60a7a1396374e23f7a1f7122ddf9efcadff7/soh/CMakeLists.txt#L736
-  gamecontrollerdb = fetchurl {
-    name = "gamecontrollerdb.txt";
-    url = "https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/075c1549075ef89a397fd7e0663d21e53a2485fd/gamecontrollerdb.txt";
-    hash = "sha256-atjc0t921l6JSUAd/Yk7uup2R7mCp5ivAh6Dr7HBY7I=";
+  imgui' = applyPatches {
+    src = fetchFromGitHub {
+      owner = "ocornut";
+      repo = "imgui";
+      tag = "v1.91.6-docking";
+      hash = "sha256-28wyzzwXE02W5vbEdRCw2iOF8ONkb3M3Al8XlYBvz1A=";
+    };
+    patches = [
+      "${shipwright.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
+    ];
   };
 
-  nativeBuildInputs =
-    [
-      cmake
-      ninja
-      pkg-config
-      python3
-      imagemagick
-      makeWrapper
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isLinux [
-      lsb-release
-      copyDesktopItems
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isDarwin [
-      libicns
-      darwin.sigtool
+  libgfxd = fetchFromGitHub {
+    owner = "glankk";
+    repo = "libgfxd";
+    rev = "008f73dca8ebc9151b205959b17773a19c5bd0da";
+    hash = "sha256-AmHAa3/cQdh7KAMFOtz5TQpcM6FqO9SppmDpKPTjTt8=";
+  };
+
+  prism = fetchFromGitHub {
+    owner = "KiritoDv";
+    repo = "prism-processor";
+    rev = "fb3f8b4a2d14dfcbae654d0f0e59a73b6f6ca850";
+    hash = "sha256-gGdQSpX/TgCNZ0uyIDdnazgVHpAQhl30e+V0aVvTFMM=";
+  };
+
+  stb_impl = writeTextFile {
+    name = "stb_impl.c";
+    text = ''
+      #define STB_IMAGE_IMPLEMENTATION
+      #include "stb_image.h"
+    '';
+  };
+
+  stb' = fetchurl {
+    name = "stb_image.h";
+    url = "https://raw.githubusercontent.com/nothings/stb/0bc88af4de5fb022db643c2d8e549a0927749354/stb_image.h";
+    hash = "sha256-xUsVponmofMsdeLsI6+kQuPg436JS3PBl00IZ5sg3Vw=";
+  };
+
+  stormlib' = applyPatches {
+    src = fetchFromGitHub {
+      owner = "ladislav-zezula";
+      repo = "StormLib";
+      tag = "v9.25";
+      hash = "sha256-HTi2FKzKCbRaP13XERUmHkJgw8IfKaRJvsK3+YxFFdc=";
+    };
+    patches = [
+      "${shipwright.src}/libultraship/cmake/dependencies/patches/stormlib-optimizations.patch"
+    ];
+  };
+
+  thread_pool = fetchFromGitHub {
+    owner = "bshoshany";
+    repo = "thread-pool";
+    tag = "v4.1.0";
+    hash = "sha256-zhRFEmPYNFLqQCfvdAaG5VBNle9Qm8FepIIIrT9sh88=";
+  };
+
+  dr_libs = fetchFromGitHub {
+    owner = "mackron";
+    repo = "dr_libs";
+    rev = "da35f9d6c7374a95353fd1df1d394d44ab66cf01";
+    hash = "sha256-ydFhQ8LTYDBnRTuETtfWwIHZpRciWfqGsZC6SuViEn0=";
+  };
+
+  metalcpp = fetchFromGitHub {
+    owner = "briaguya-ai";
+    repo = "single-header-metal-cpp";
+    tag = "macOS13_iOS16";
+    hash = "sha256-CSYIpmq478bla2xoPL/cGYKIWAeiORxyFFZr0+ixd7I";
+  };
+in
+  stdenv.mkDerivation (finalAttrs: {
+    pname = "shipwright-anchor";
+    version = "deed712";
+
+    src = fetchFromGitHub {
+      owner = "lilacLunatic";
+      repo = "shipwright";
+      rev = finalAttrs.version;
+      hash = "sha256-StsniOGD5RMdV1+Q1mhMm6OvzUawQ4ZUh0giVpjKu3U=";
+      fetchSubmodules = true;
+      deepClone = true;
+      postFetch = ''
+        cd $out
+        git branch --show-current > GIT_BRANCH
+        git rev-parse --short=7 HEAD > GIT_COMMIT_HASH
+        (git describe --tags --abbrev=0 --exact-match HEAD 2>/dev/null || echo "") > GIT_COMMIT_TAG
+        rm -rf .git
+      '';
+    };
+
+    patches = [
+      ../darwin-fixes.patch
+      ../disable-downloading-stb_image.patch
+      ./app-name.patch
+      # TODO(Sirius902) Remove once weird frames PR gets merged.
+      (fetchpatch {
+        name = "n64-weird-frames.patch";
+        url = "https://github.com/Sirius902/Shipwright/commit/28f3fed5c5596e67369139e05498eaa165e9a101.patch";
+        hash = "sha256-pQybaM1ZaLdUX0gqC03RIfcGlMyeu+KxNpyAcQpdmNY=";
+      })
     ];
 
-  buildInputs =
-    [
-      boost
-      glew
-      SDL2
-      SDL2_net
-      libpng
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isLinux [
-      libX11
-      libXrandr
-      libXinerama
-      libXcursor
-      libXi
-      libXext
-      libpulseaudio
-      zenity
-    ];
+    nativeBuildInputs =
+      [
+        cmake
+        ninja
+        pkg-config
+        python3
+        imagemagick
+        makeWrapper
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isLinux [
+        lsb-release
+        copyDesktopItems
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isDarwin [
+        libicns
+        darwin.sigtool
+        fixDarwinDylibNames
+      ];
 
-  cmakeFlags = [
-    (lib.cmakeBool "NON_PORTABLE" true)
-    (lib.cmakeFeature "CMAKE_PROJECT_VERSION" "${finalAttrs.version}")
-    (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/lib")
-    (lib.cmakeBool "BUILD_REMOTE_CONTROL" true)
-  ];
+    buildInputs =
+      [
+        boost
+        glew
+        SDL2
+        SDL2_net
+        libpng
+        libzip
+        nlohmann_json
+        tinyxml-2
+        spdlog
+        libvorbis
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isLinux [
+        libpulseaudio
+        zenity
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isDarwin [
+        # Metal.hpp requires macOS 13.x min.
+        apple-sdk_13
+      ];
 
-  env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int";
+    cmakeFlags =
+      [
+        (lib.cmakeBool "BUILD_REMOTE_CONTROL" true)
+        (lib.cmakeBool "NON_PORTABLE" true)
+        (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/lib")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isDarwin [
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SPDLOG" "${spdlog}")
+      ];
 
-  dontAddPrefix = true;
+    env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
 
-  # Linking fails without this
-  hardeningDisable = ["format"];
+    dontAddPrefix = true;
 
-  postBuild = ''
-    cp ${finalAttrs.gamecontrollerdb} ${finalAttrs.gamecontrollerdb.name}
-    ${cmake}/bin/cmake --build "$PWD" --target GenerateSohOtr
-  '';
+    # Linking fails without this
+    hardeningDisable = ["format"];
 
-  preInstall =
-    lib.optionalString stdenv.hostPlatform.isLinux ''
+    preConfigure = ''
+      mkdir stb
+      cp ${stb'} ./stb/${stb'.name}
+      cp ${stb_impl} ./stb/${stb_impl.name}
+      substituteInPlace libultraship/cmake/dependencies/common.cmake \
+        --replace-fail "\''${STB_DIR}" "$(readlink -f ./stb)"
+    '';
+
+    postPatch = ''
+      substituteInPlace soh/src/boot/build.c.in \
+      --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
+      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
+      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
+    '';
+
+    postBuild = ''
+      port_ver=$(grep CMAKE_PROJECT_VERSION: "$PWD/CMakeCache.txt" | cut -d= -f2)
+      cp ${gamecontrollerdb}/gamecontrollerdb.txt gamecontrollerdb.txt
+      mv ../libultraship/src/graphic/Fast3D/shaders ../soh/assets/custom
+      pushd ../OTRExporter
+      python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../soh/assets/xml --custom-assets-path ../soh/assets/custom --custom-otr-file soh.otr --port-ver $port_ver
+      popd
+    '';
+
+    preInstall = ''
       # Cmake likes it here for its install paths
-      cp ../OTRExporter/soh.otr ..
-    ''
-    + lib.optionalString stdenv.hostPlatform.isDarwin ''
       cp ../OTRExporter/soh.otr soh/soh.otr
     '';
 
-  postInstall =
-    lib.optionalString stdenv.hostPlatform.isLinux ''
-      mkdir -p $out/bin
-      ln -s $out/lib/soh.elf $out/bin/soh-anchor
-      install -Dm644 ../soh/macosx/sohIcon.png $out/share/pixmaps/soh.png
-    ''
-    + lib.optionalString stdenv.hostPlatform.isDarwin ''
-      # Recreate the macOS bundle (without using cpack)
-      # We mirror the structure of the bundle distributed by the project
+    postInstall =
+      lib.optionalString stdenv.hostPlatform.isLinux ''
+        mkdir -p $out/bin
+        ln -s $out/lib/soh.elf $out/bin/soh-anchor
+        install -Dm644 ../soh/macosx/sohIcon.png $out/share/pixmaps/soh-anchor.png
+      ''
+      + lib.optionalString stdenv.hostPlatform.isDarwin ''
+        # Recreate the macOS bundle (without using cpack)
+        # We mirror the structure of the bundle distributed by the project
 
-      mkdir -p $out/Applications/soh.app/Contents
-      cp $src/soh/macosx/Info.plist.in $out/Applications/soh.app/Contents/Info.plist
-      substituteInPlace $out/Applications/soh.app/Contents/Info.plist \
-        --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}"
+        mkdir -p $out/Applications/soh-anchor.app/Contents
+        cp $src/soh/macosx/Info.plist.in $out/Applications/soh-anchor.app/Contents/Info.plist
+        substituteInPlace $out/Applications/soh-anchor.app/Contents/Info.plist \
+          --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}"
 
-      mv $out/MacOS $out/Applications/soh.app/Contents/MacOS
+        mv $out/MacOS $out/Applications/soh-anchor.app/Contents/MacOS
 
-      # Wrapper
-      cp $src/soh/macosx/soh-macos.sh.in $out/Applications/soh.app/Contents/MacOS/soh
-      chmod +x $out/Applications/soh.app/Contents/MacOS/soh
-      patchShebangs $out/Applications/soh.app/Contents/MacOS/soh
+        # "lib" contains all resources that are in "Resources" in the official bundle.
+        # We move them to the right place and symlink them back to $out/lib,
+        # as that's where the game expects them.
+        mv $out/Resources $out/Applications/soh-anchor.app/Contents/Resources
+        mv $out/lib/** $out/Applications/soh-anchor.app/Contents/Resources
+        rm -rf $out/lib
+        ln -s $out/Applications/soh-anchor.app/Contents/Resources $out/lib
 
-      # "lib" contains all resources that are in "Resources" in the official bundle.
-      # We move them to the right place and symlink them back to $out/lib,
-      # as that's where the game expects them.
-      mv $out/Resources $out/Applications/soh.app/Contents/Resources
-      mv $out/lib/** $out/Applications/soh.app/Contents/Resources
-      rm -rf $out/lib
-      ln -s $out/Applications/soh.app/Contents/Resources $out/lib
+        # Copy icons
+        cp -r ../build/macosx/soh.icns $out/Applications/soh-anchor.app/Contents/Resources/soh.icns
 
-      # Copy icons
-      cp -r ../build/macosx/soh.icns $out/Applications/soh.app/Contents/Resources/soh.icns
+        # Codesign (ad-hoc)
+        codesign -f -s - $out/Applications/soh-anchor.app/Contents/MacOS/soh
+      '';
 
-      # Fix executable
-      install_name_tool -change @executable_path/../Frameworks/libSDL2-2.0.0.dylib \
-                        ${SDL2}/lib/libSDL2-2.0.0.dylib \
-                        $out/Applications/soh.app/Contents/Resources/soh-macos
-      install_name_tool -change @executable_path/../Frameworks/libGLEW.2.2.0.dylib \
-                        ${glew}/lib/libGLEW.2.2.0.dylib \
-                        $out/Applications/soh.app/Contents/Resources/soh-macos
-      install_name_tool -change @executable_path/../Frameworks/libpng16.16.dylib \
-                        ${libpng}/lib/libpng16.16.dylib \
-                        $out/Applications/soh.app/Contents/Resources/soh-macos
-
-      # Codesign (ad-hoc)
-      codesign -f -s - $out/Applications/soh.app/Contents/Resources/soh-macos
+    fixupPhase = lib.optionalString stdenv.hostPlatform.isLinux ''
+      wrapProgram $out/lib/soh.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
     '';
 
-  fixupPhase = lib.optionalString stdenv.hostPlatform.isLinux ''
-    wrapProgram $out/lib/soh.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
-  '';
-
-  desktopItems = [
-    (makeDesktopItem {
-      name = "soh-anchor";
-      icon = "soh";
-      exec = "soh-anchor";
-      comment = finalAttrs.meta.description;
-      genericName = "Ship of Harkinian";
-      desktopName = "soh-anchor";
-      categories = ["Game"];
-    })
-  ];
-
-  meta = {
-    homepage = "https://github.com/HarbourMasters/Shipwright";
-    description = "A PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
-    mainProgram = "soh";
-    platforms = ["x86_64-linux"] ++ lib.platforms.darwin;
-    maintainers = with lib.maintainers; [
-      j0lol
-      matteopacini
+    desktopItems = [
+      (makeDesktopItem {
+        name = "soh-anchor";
+        icon = "soh-anchor";
+        exec = "soh-anchor";
+        comment = finalAttrs.meta.description;
+        genericName = "Ship of Harkinian";
+        desktopName = "soh-anchor";
+        categories = ["Game"];
+      })
     ];
-    license = with lib.licenses; [
-      # OTRExporter, OTRGui, ZAPDTR, libultraship
-      mit
-      # Ship of Harkinian itself
-      unfree
-    ];
-  };
-})
+
+    meta = {
+      homepage = "https://github.com/HarbourMasters/Shipwright";
+      description = "A PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
+      mainProgram = "soh-anchor";
+      platforms = ["x86_64-linux"] ++ lib.platforms.darwin;
+      maintainers = with lib.maintainers; [
+        j0lol
+        matteopacini
+      ];
+      license = with lib.licenses; [
+        # OTRExporter, OTRGui, ZAPDTR, libultraship
+        mit
+        # Ship of Harkinian itself
+        unfree
+      ];
+    };
+  })

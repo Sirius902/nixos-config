@@ -1,17 +1,3 @@
-From ebb864d7f2277a6387ca8f6dc0cfee97db01279a Mon Sep 17 00:00:00 2001
-From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
-Date: Tue, 25 Mar 2025 00:50:22 -0700
-Subject: [PATCH] [Enhancement] Underwater Ocarina
-
----
- mm/2s2h/BenGui/BenMenu.cpp                    |  3 +++
- .../Enhancements/Player/UnderwaterOcarina.cpp | 21 +++++++++++++++++++
- mm/2s2h/GameInteractor/GameInteractor.h       |  2 ++
- mm/2s2h/PresetManager/PresetManager.cpp       |  3 ++-
- mm/src/code/z_parameter.c                     | 12 +++++++----
- 5 files changed, 36 insertions(+), 5 deletions(-)
- create mode 100644 mm/2s2h/Enhancements/Player/UnderwaterOcarina.cpp
-
 diff --git a/mm/2s2h/BenGui/BenMenu.cpp b/mm/2s2h/BenGui/BenMenu.cpp
 index f84cd6426..b16c4224f 100644
 --- a/mm/2s2h/BenGui/BenMenu.cpp
@@ -110,6 +96,3 @@ index 8dec3f0b6..86d716093 100644
                          if (gSaveContext.shipSaveContext.dpad.status[j] == BTN_ENABLED) {
                              restoreHudVisibility = true;
                          }
--- 
-2.48.1
-
