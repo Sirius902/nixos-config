@@ -127,13 +127,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright";
-    version = "f37c3aa";
+    version = "52a3058";
 
     src = fetchFromGitHub {
       owner = "HarbourMasters";
       repo = "shipwright";
       rev = finalAttrs.version;
-      hash = "sha256-paW0lvM3xYuksOM7vG4oXk0mwF65j1ycZDWx/UYX00U=";
+      hash = "sha256-ZNIucS1HzkzG4TWjnaM7xqvdLfcaPnM8CtgVJpt9eXg=";
       fetchSubmodules = true;
     };
 
@@ -155,8 +155,8 @@ in
       # TODO(Sirius902) Remove once weird frames PR gets merged.
       (fetchpatch {
         name = "0002-n64-weird-frames.patch";
-        url = "https://github.com/Sirius902/Shipwright/commit/55f27347cca49f01b209bb85eb10dd58c378a23c.patch";
-        hash = "sha256-dBnVMg1yuUvXEwzVn76yxqInVTzziO/fDH+NQJ/Mdig=";
+        url = "https://github.com/Sirius902/Shipwright/commit/28f3fed5c5596e67369139e05498eaa165e9a101.patch";
+        hash = "sha256-pQybaM1ZaLdUX0gqC03RIfcGlMyeu+KxNpyAcQpdmNY=";
       })
     ];
 

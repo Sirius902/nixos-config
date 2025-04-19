@@ -128,13 +128,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "2ship2harkinian";
-    version = "27fe6ca";
+    version = "1e0102b";
 
     src = fetchFromGitHub {
       owner = "HarbourMasters";
       repo = "2ship2harkinian";
       rev = finalAttrs.version;
-      hash = "sha256-jOyb9R23DIFw+X9dqTjVtnxh5MByiLWYG1fxWx+KpYk=";
+      hash = "sha256-pFYxlIVeX8XiYFG+gIe/jzUWTmSBIAfiYInUp+CZmIA=";
       fetchSubmodules = true;
     };
 
@@ -148,8 +148,8 @@ in
       # TODO(Sirius902) Remove once weird frames PR gets merged.
       (fetchpatch {
         name = "0002-n64-weird-frames.patch";
-        url = "https://github.com/Sirius902/2ship2harkinian/commit/fb594dcf56305cf0f5c1ade0ff819eef85419215.patch";
-        hash = "sha256-pmcQPDxvbBYQdNlAiKY32LmtbOxh6lCVL4vwxJk82N4=";
+        url = "https://github.com/Sirius902/2ship2harkinian/commit/765d528b334ab33be39fb7f0d3e1f22a29255958.patch";
+        hash = "sha256-F4v207lObWfgyd8rRmIA29daqskrrPmpdNYuO15yLWo=";
       })
       # TODO(Sirius902) Remove once underwater ocarina PR gets merged.
       ./0003-Enhancement-Underwater-Ocarina.patch
@@ -218,11 +218,6 @@ in
     postBuild = ''
       cp ${gamecontrollerdb} ${gamecontrollerdb.name}
       ${cmake}/bin/cmake --build "$PWD" --target Generate2ShipOtr
-    '';
-
-    preInstall = ''
-      # Cmake likes it here for its install paths
-      cp ../OTRExporter/2ship.o2r mm/
     '';
 
     postInstall = ''
