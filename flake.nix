@@ -429,13 +429,7 @@
 
         darwinConfigurations = let
           system = "aarch64-darwin";
-          pkgs = import nixpkgs {
-            inherit system;
-            overlays = [
-              inputs.nvim-conf.overlays.default
-            ];
-            config.allowUnfree = true;
-          };
+          pkgs = importPkgsUnstable system;
           home-manager = inputs.home-manager.darwinModules.home-manager;
 
           args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
@@ -443,31 +437,47 @@
             isVm = false;
           };
 
-          darwinConfig = nix-darwin.lib.darwinSystem {
-            inherit system pkgs;
-            specialArgs = args;
-            modules = [
-              ./darwin/configuration.nix
+          darwinConfig = extraHomeModules:
+            nix-darwin.lib.darwinSystem {
+              inherit system pkgs;
+              specialArgs = args;
+              modules = [
+                ./darwin/configuration.nix
 
-              home-manager
-              {
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.extraSpecialArgs = args;
-                home-manager.users.chris = {
-                  imports = [
-                    ./modules/home/default.nix
-                    ./modules/home/ghostty/default.nix
-                  ];
-                };
-              }
-            ];
-          };
+                home-manager
+                {
+                  home-manager.useGlobalPkgs = true;
+                  home-manager.useUserPackages = true;
+                  home-manager.extraSpecialArgs = args;
+                  home-manager.users.chris = {
+                    imports =
+                      [
+                        ./modules/home/default.nix
+                        ./modules/home/ghostty/default.nix
+                      ]
+                      ++ extraHomeModules;
+                  };
+                }
+              ];
+            };
         in {
-          # Build darwin flake using:
-          # $ darwin-rebuild build --flake .#Tralsebook
-          "Tralsebook" = darwinConfig;
-          "The-Rekening" = darwinConfig;
+          "Tralsebook" = darwinConfig [
+            ({pkgs, ...}: {
+              home.packages = [
+                # Avoid attempting to link `/lib` since it would conflict.
+                (pkgs.buildEnv {
+                  name = "ship";
+                  paths = [
+                    pkgs.shipwright
+                    pkgs._2ship2harkinian
+                    pkgs.shipwright-anchor
+                  ];
+                  pathsToLink = ["/Applications"];
+                })
+              ];
+            })
+          ];
+          "The-Rekening" = darwinConfig [];
         };
       };
     };
