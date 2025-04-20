@@ -33,7 +33,9 @@
     # https://github.com/NVIDIA/open-gpu-kernel-modules#compatible-gpus
     # Only available from driver 515.43.04+
     # Currently alpha-quality/buggy, so false is currently the recommended setting.
-    open = true;
+    # TODO(Sirius902) Switch back to open once there is a tagged release.
+    # https://github.com/NVIDIA/open-gpu-kernel-modules
+    open = false;
 
     # Enable the Nvidia settings menu,
     # accessible via `nvidia-settings`.
@@ -41,11 +43,11 @@
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-      version = "575.51.02";
-      sha256_64bit = "sha256-XZ0N8ISmoAC8p28DrGHk/YN1rJsInJ2dZNL8O+Tuaa0=";
+      version = "570.144";
+      sha256_64bit = "sha256-wLjX7PLiC4N2dnS6uP7k0TI9xVWAJ02Ok0Y16JVfO+Y=";
       sha256_aarch64 = lib.fakeSha256;
-      openSha256 = "sha256-NQg+QDm9Gt+5bapbUO96UFsPnz1hG1dtEwT/g/vKHkw=";
-      settingsSha256 = "sha256-6n9mVkEL39wJj5FB1HBml7TTJhNAhS/j5hqpNGFQE4w=";
+      openSha256 = lib.fakeSha256;
+      settingsSha256 = "sha256-VcCa3P/v3tDRzDgaY+hLrQSwswvNhsm93anmOhUymvM=";
       persistencedSha256 = lib.fakeSha256;
     };
   };
