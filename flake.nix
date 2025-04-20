@@ -437,43 +437,36 @@
             isVm = false;
           };
 
-          darwinConfig = extraHomeModules:
+          darwinConfig = extraModules:
             nix-darwin.lib.darwinSystem {
               inherit system pkgs;
               specialArgs = args;
-              modules = [
-                ./darwin/configuration.nix
+              modules =
+                [
+                  ./darwin/configuration.nix
 
-                home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = {
-                    imports =
-                      [
+                  home-manager
+                  {
+                    home-manager.useGlobalPkgs = true;
+                    home-manager.useUserPackages = true;
+                    home-manager.extraSpecialArgs = args;
+                    home-manager.users.chris = {
+                      imports = [
                         ./modules/home/default.nix
                         ./modules/home/ghostty/default.nix
-                      ]
-                      ++ extraHomeModules;
-                  };
-                }
-              ];
+                      ];
+                    };
+                  }
+                ]
+                ++ extraModules;
             };
         in {
           "Tralsebook" = darwinConfig [
             ({pkgs, ...}: {
-              home.packages = [
-                # Avoid attempting to link `/lib` since it would conflict.
-                (pkgs.buildEnv {
-                  name = "ship";
-                  paths = [
-                    pkgs.shipwright
-                    pkgs._2ship2harkinian
-                    pkgs.shipwright-anchor
-                  ];
-                  pathsToLink = ["/Applications"];
-                })
+              environment.systemPackages = [
+                pkgs.shipwright
+                pkgs._2ship2harkinian
+                pkgs.shipwright-anchor
               ];
             })
           ];
