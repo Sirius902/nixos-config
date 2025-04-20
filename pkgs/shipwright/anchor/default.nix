@@ -253,7 +253,13 @@ in
         mkdir -p $out/Applications/soh-anchor.app/Contents
         cp $src/soh/macosx/Info.plist.in $out/Applications/soh-anchor.app/Contents/Info.plist
         substituteInPlace $out/Applications/soh-anchor.app/Contents/Info.plist \
-          --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}"
+          --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}" \
+          --replace-fail \
+            "<string>com.shipofharkinian.ShipOfHarkinian</string>" \
+            "<string>com.shipofharkinian.ShipOfHarkinian.Anchor</string>" \
+          --replace-fail \
+            "<string>~/Library/Application Support/com.shipofharkinian.soh</string>" \
+            "<string>~/Library/Application Support/com.shipofharkinian.soh-anchor</string>"
 
         mv $out/MacOS $out/Applications/soh-anchor.app/Contents/MacOS
 
