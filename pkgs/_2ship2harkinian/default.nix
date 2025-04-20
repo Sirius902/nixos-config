@@ -301,7 +301,7 @@ in
       homepage = "https://github.com/HarbourMasters/2ship2harkinian";
       description = "A PC port of Majora's Mask with modern controls, widescreen, high-resolution, and more";
       mainProgram = "2s2h";
-      platforms = ["x86_64-linux"];
+      platforms = ["x86_64-linux"] ++ lib.platforms.darwin;
       maintainers = with lib.maintainers; [qubitnano];
       license = with lib.licenses; [
         # OTRExporter, OTRGui, ZAPDTR, libultraship
