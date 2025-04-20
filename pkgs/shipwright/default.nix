@@ -114,7 +114,7 @@ in
       owner = "harbourmasters";
       repo = "shipwright";
       rev = finalAttrs.version;
-      hash = "sha256-rETiczj7Wq8J+zPSzxZA65ZuoP6ClvmeZl8Mi+Pla8k=";
+      hash = "sha256-DjhKC8LUOPes7tbZaiu7LDSLyURSfpQ6a6b9Ehjcx1o=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
