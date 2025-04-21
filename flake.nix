@@ -81,25 +81,25 @@
           moonlight.overlays.default
 
           (final: prev: {
-            ghostty-nautilus = final.callPackage ./pkgs/ghostty-nautilus/default.nix {};
+            ghostty-nautilus = final.callPackage ./pkgs/ghostty-nautilus/package.nix {};
 
-            gcfeeder = final.callPackage ./pkgs/gcfeeder/default.nix {};
+            gcfeeder = final.callPackage ./pkgs/gcfeeder/package.nix {};
 
-            gcfeederd = final.callPackage ./pkgs/gcfeederd/default.nix {};
+            gcfeederd = final.callPackage ./pkgs/gcfeederd/package.nix {};
 
-            gcviewer = final.callPackage ./pkgs/gcviewer/default.nix {};
+            gcviewer = final.callPackage ./pkgs/gcviewer/package.nix {};
 
             ghidra-extensions =
               prev.ghidra-extensions
               // {
-                gamecube-loader = nixpkgs-ghidra_11_2_1.legacyPackages.${system}.callPackage ./pkgs/ghidra-extensions/gamecube-loader/default.nix {};
+                gamecube-loader = nixpkgs-ghidra_11_2_1.legacyPackages.${system}.callPackage ./pkgs/ghidra-extensions/gamecube-loader/package.nix {};
               };
 
-            shipwright = final.callPackage ./pkgs/shipwright/default.nix {};
+            shipwright = final.callPackage ./pkgs/shipwright/package.nix {};
 
-            _2ship2harkinian = final.callPackage ./pkgs/_2ship2harkinian/default.nix {};
+            _2ship2harkinian = final.callPackage ./pkgs/_2ship2harkinian/package.nix {};
 
-            shipwright-anchor = final.callPackage ./pkgs/shipwright/anchor/default.nix {};
+            shipwright-anchor = final.callPackage ./pkgs/shipwright/anchor/package.nix {};
           })
         ];
         config.allowUnfree = true;
