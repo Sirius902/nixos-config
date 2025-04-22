@@ -255,6 +255,9 @@ in
         substituteInPlace $out/Applications/soh-anchor.app/Contents/Info.plist \
           --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}" \
           --replace-fail \
+            "<string>Ship of Harkinian</string>" \
+            "<string>Ship of Harkinian Anchor</string>" \
+          --replace-fail \
             "<string>com.shipofharkinian.ShipOfHarkinian</string>" \
             "<string>com.shipofharkinian.ShipOfHarkinian.Anchor</string>" \
           --replace-fail \
