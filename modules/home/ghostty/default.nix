@@ -21,7 +21,7 @@ in {
     };
 
   # NOTE(Sirius902) Workaround for ghostty's PATH not being respected with nix-darwin.
-  programs.zsh.initExtra = lib.mkIf stdenv.isDarwin ''
+  programs.zsh.initContent = lib.mkIf stdenv.isDarwin ''
     if [[ "$TERM_PROGRAM" = ghostty ]]; then
       if [[ -n "$GHOSTTY_RESOURCES_DIR" ]]; then
         source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration

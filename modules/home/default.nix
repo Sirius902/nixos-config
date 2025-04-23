@@ -61,7 +61,7 @@ in {
     syntaxHighlighting.enable = true;
 
     defaultKeymap = "viins"; # Use Vim keybinds
-    initExtra =
+    initContent =
       ''
         prompt pure
       ''
