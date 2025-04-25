@@ -115,9 +115,7 @@
     gcviewer
     gcfeederd
     gimp
-    # FUTURE(Sirius902) Godot is brokeded.
-    # https://github.com/NixOS/nixpkgs/issues/399818
-    # godot_4
+    godot_4
     imhex
     inkscape
     jetbrains.idea-community
