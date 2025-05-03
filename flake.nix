@@ -2,20 +2,12 @@
   description = "nixlee flake";
 
   inputs = {
-    nixpkgs = {
-      url = "github:nixos/nixpkgs?ref=nixos-unstable";
-      # NOTE(Sirius902) This should be enabled when using cosmic.
-      follows = "nixos-cosmic/nixpkgs";
-    };
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs-stable = {
-      url = "github:nixos/nixpkgs?ref=nixos-24.11";
-      # NOTE(Sirius902) This should be enabled when using cosmic.
-      follows = "nixos-cosmic/nixpkgs-stable";
-    };
+    nixpkgs-stable.url = "github:nixos/nixpkgs?ref=nixos-24.11";
     home-manager-stable = {
       url = "github:nix-community/home-manager?ref=release-24.11";
       inputs.nixpkgs.follows = "nixpkgs-stable";
@@ -47,12 +39,12 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
     moonlight = {
       url = "github:moonlight-mod/moonlight";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
+    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
   };
 
   outputs = {
@@ -65,6 +57,7 @@
     moonlight,
     flake-parts,
     nixpkgs-ghidra_11_2_1,
+    nixos-cosmic,
     ...
   } @ inputs: let
     importPkgs = {
@@ -98,6 +91,8 @@
             _2ship2harkinian = final.callPackage ./pkgs/_2ship2harkinian/package.nix {};
 
             shipwright-anchor = final.callPackage ./pkgs/shipwright/anchor/package.nix {};
+
+            observatory = nixos-cosmic.outputs.packages.${system}.observatory;
           })
         ];
         config.allowUnfree = true;

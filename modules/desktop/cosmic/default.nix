@@ -1,12 +1,7 @@
-{
-  nixos-cosmic,
-  pkgs,
-  ...
-}: {
-  imports = [nixos-cosmic.nixosModules.default];
-
+{pkgs, ...}: {
   services.displayManager.cosmic-greeter.enable = true;
   services.desktopManager.cosmic.enable = true;
+  services.desktopManager.cosmic.xwayland.enable = true;
 
   environment.sessionVariables.COSMIC_DATA_CONTROL_ENABLED = 1;
 
