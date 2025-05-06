@@ -22,7 +22,7 @@
       "codium.desktop"
       "dev.zed.Zed.desktop"
       "org.gnome.Nautilus.desktop"
-      "discord.desktop"
+      "discord-canary.desktop"
       "org.prismlauncher.PrismLauncher.desktop"
       "steam.desktop"
       "xivlauncher.desktop"

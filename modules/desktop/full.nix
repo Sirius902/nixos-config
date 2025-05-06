@@ -147,7 +147,7 @@
     spotify
     sticky-notes
     transmission_4-qt
-    discord
+    discord-canary
     vlc
     wineWowPackages.stagingFull
     # TODO(Sirius902) Super janky hack and I hate it but I want to use bottles.
