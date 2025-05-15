@@ -28,7 +28,7 @@
   boot.loader.efi.efiSysMountPoint = "/efi";
 
   # Only use kernel versions supported by ZFS.
-  boot.kernelPackages = pkgs.linuxPackages_6_13;
+  boot.kernelPackages = pkgs.linuxPackages_6_14;
   boot.zfs.package = pkgs.zfs_2_3;
 
   # Disable hibernation.
