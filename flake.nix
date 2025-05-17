@@ -89,6 +89,30 @@
               zelda64recomp = pkgs.zelda64recomp;
             }
           )
+
+          # Provide extra libs to zelda64recomp for Archipelago mod.
+          (final: prev: {
+            zelda64recomp = prev.zelda64recomp.overrideAttrs (
+              prevAttrs: let
+                libs = [
+                  prev.openssl_3
+                  prev.zlib
+                  prev.stdenv.cc.cc.lib
+                ];
+              in {
+                buildInputs =
+                  (prevAttrs.buildInputs or [])
+                  ++ libs;
+
+                postFixup =
+                  (prevAttrs.postFixup or "")
+                  + ''
+                    wrapProgram $out/bin/Zelda64Recompiled \
+                      --prefix LD_LIBRARY_PATH : "${prev.lib.makeLibraryPath libs}"
+                  '';
+              }
+            );
+          })
         ];
         config.allowUnfree = true;
       };
