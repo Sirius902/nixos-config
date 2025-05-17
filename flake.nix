@@ -266,7 +266,7 @@
               inherit system pkgs;
               specialArgs = args;
               modules = [
-                /configuration.nix
+                ./configuration.nix
                 ./hosts/nixpad.nix
                 (hardwareConfigOr ./hardware/nixpad.nix)
                 home-manager
