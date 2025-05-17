@@ -45,6 +45,8 @@
     };
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
     nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
+    # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
+    nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?ref=pr/recomp";
   };
 
   outputs = {
@@ -58,6 +60,7 @@
     flake-parts,
     nixpkgs-ghidra_11_2_1,
     nixos-cosmic,
+    nixpkgs-zelda64recomp,
     ...
   } @ inputs: let
     importPkgs = {
@@ -65,7 +68,7 @@
       nixpkgs,
       isUnstable ? false,
     }:
-      import nixpkgs {
+      import nixpkgs rec {
         inherit system;
         overlays = [
           (import ./pkgs/overlay.nix {inherit nixpkgs-ghidra_11_2_1;})
@@ -76,6 +79,16 @@
           (final: prev: {
             observatory = nixos-cosmic.outputs.packages.${system}.observatory;
           })
+
+          (
+            final: prev: let
+              pkgs = import nixpkgs-zelda64recomp {inherit system config;};
+            in {
+              n64recomp = pkgs.n64recomp;
+              z64decompress = pkgs.z64decompress;
+              zelda64recomp = pkgs.zelda64recomp;
+            }
+          )
         ];
         config.allowUnfree = true;
       };
@@ -99,9 +112,15 @@
       in {
         formatter = pkgs.alejandra;
 
-        packages = import ./pkgs/all-packages.nix {
-          inherit pkgs nixpkgs-ghidra_11_2_1;
-        };
+        packages =
+          import ./pkgs/all-packages.nix {
+            inherit pkgs nixpkgs-ghidra_11_2_1;
+          }
+          // {
+            n64recomp = nixpkgs-zelda64recomp.legacyPackages.${system}.n64recomp;
+            z64decompress = nixpkgs-zelda64recomp.legacyPackages.${system}.z64decompress;
+            zelda64recomp = nixpkgs-zelda64recomp.legacyPackages.${system}.zelda64recomp;
+          };
 
         devShells.default = pkgs.mkShell {
           packages = [pkgs.just];
