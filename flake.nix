@@ -68,30 +68,12 @@
       import nixpkgs {
         inherit system;
         overlays = [
+          (import ./pkgs/overlay.nix {inherit nixpkgs-ghidra_11_2_1;})
+
           nvim-conf.overlays.default
           moonlight.overlays.default
 
           (final: prev: {
-            ghostty-nautilus = final.callPackage ./pkgs/ghostty-nautilus/package.nix {};
-
-            gcfeeder = final.callPackage ./pkgs/gcfeeder/package.nix {};
-
-            gcfeederd = final.callPackage ./pkgs/gcfeederd/package.nix {};
-
-            gcviewer = final.callPackage ./pkgs/gcviewer/package.nix {};
-
-            ghidra-extensions =
-              prev.ghidra-extensions
-              // {
-                gamecube-loader = nixpkgs-ghidra_11_2_1.legacyPackages.${system}.callPackage ./pkgs/ghidra-extensions/gamecube-loader/package.nix {};
-              };
-
-            shipwright = final.callPackage ./pkgs/shipwright/package.nix {};
-
-            _2ship2harkinian = final.callPackage ./pkgs/_2ship2harkinian/package.nix {};
-
-            shipwright-anchor = final.callPackage ./pkgs/shipwright/anchor/package.nix {};
-
             observatory = nixos-cosmic.outputs.packages.${system}.observatory;
           })
         ];
@@ -112,23 +94,19 @@
         "aarch64-darwin"
       ];
 
-      perSystem = {system, ...}:
-        with (importPkgsUnstable system); {
-          formatter = alejandra;
+      perSystem = {system, ...}: let
+        pkgs = importPkgsUnstable system;
+      in {
+        formatter = pkgs.alejandra;
 
-          packages.ghostty-nautilus = ghostty-nautilus;
-          packages.gcfeeder = gcfeeder;
-          packages.gcviewer = gcviewer;
-          packages.gcfeederd = gcfeederd;
-          packages.gamecube-loader = ghidra-extensions.gamecube-loader;
-          packages.shipwright = shipwright;
-          packages._2ship2harkinian = _2ship2harkinian;
-          packages.shipwright-anchor = shipwright-anchor;
-
-          devShells.default = mkShell {
-            packages = [just];
-          };
+        packages = import ./pkgs/all-packages.nix {
+          inherit pkgs nixpkgs-ghidra_11_2_1;
         };
+
+        devShells.default = pkgs.mkShell {
+          packages = [pkgs.just];
+        };
+      };
 
       flake = {
         nixosConfigurations = let
