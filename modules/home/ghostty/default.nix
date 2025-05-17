@@ -21,6 +21,7 @@ in {
     };
 
   # NOTE(Sirius902) Workaround for ghostty's PATH not being respected with nix-darwin.
+  # TODO(Sirius902) On stable home-manager this should be `initExtra`.
   programs.zsh.initContent = lib.mkIf stdenv.isDarwin ''
     if [[ "$TERM_PROGRAM" = ghostty ]]; then
       if [[ -n "$GHOSTTY_RESOURCES_DIR" ]]; then

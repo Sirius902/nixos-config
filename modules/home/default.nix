@@ -63,6 +63,7 @@ in {
     syntaxHighlighting.enable = true;
 
     defaultKeymap = "viins"; # Use Vim keybinds
+    # TODO(Sirius902) On stable home-manager this should be `initExtra`.
     initContent =
       ''
         prompt pure
