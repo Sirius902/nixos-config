@@ -150,13 +150,6 @@
     discord-canary
     vlc
     wineWowPackages.stagingFull
-    # TODO(Sirius902) Super janky hack and I hate it but I want to use bottles.
-    # Remove this once bottles is updated in nixpkgs.
-    # https://github.com/NixOS/nixpkgs/issues/394421
-    (pkgs.runCommand "wine64-symlink" {} ''
-      mkdir -p $out/bin
-      ln -s ${wineWowPackages.stagingFull}/bin/wine $out/bin/wine64
-    '')
     winetricks
     wgnord
     xivlauncher
