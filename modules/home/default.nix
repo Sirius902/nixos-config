@@ -68,6 +68,9 @@ in {
       ''
         prompt pure
       ''
+      + (lib.optionalString stdenv.isLinux ''
+        alias open='xdg-open 2>/dev/null'
+      '')
       + (lib.optionalString stdenv.isDarwin ''
         export PATH="/opt/homebrew/bin:$PATH"
       '');
