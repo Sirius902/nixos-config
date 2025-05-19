@@ -46,9 +46,9 @@
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
     nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
-    nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?ref=pr/recomp";
-    # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/408450 gets in.
-    nixpkgs-bottles.url = "github:Gliczy/nixpkgs?ref=bottles-fix";
+    nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=529fb9abd291092dbb6e7b9dec8d06e0f7cb4ad2";
+    # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/commit/3ed788d7b34745291e859767d9f7c76ef09d08b9 makes it to nixos-unstable.
+    nixpkgs-bottles.url = "github:nixos/nixpkgs?rev=3ed788d7b34745291e859767d9f7c76ef09d08b9";
   };
 
   outputs = {
