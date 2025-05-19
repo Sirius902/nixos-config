@@ -108,7 +108,9 @@
   services.resolved.enable = true;
 
   environment.systemPackages = with pkgs; [
-    bottles
+    (bottles.override {
+      removeWarningPopup = true;
+    })
     dolphin-emu-beta
     ffmpeg-full
     gcfeeder
