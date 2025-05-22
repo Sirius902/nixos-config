@@ -385,6 +385,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-sdl-fix": {
+      "locked": {
+        "lastModified": 1747179050,
+        "narHash": "sha256-qhFMmDkeJX9KJwr5H32f1r7Prs7XbQWtO0h3V0a0rFY=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "adaa24fbf46737f3f1b5497bf64bae750f82942e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "adaa24fbf46737f3f1b5497bf64bae750f82942e",
+        "type": "github"
+      }
+    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1747676747,
@@ -523,6 +539,7 @@
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-bottles": "nixpkgs-bottles",
         "nixpkgs-ghidra_11_2_1": "nixpkgs-ghidra_11_2_1",
+        "nixpkgs-sdl-fix": "nixpkgs-sdl-fix",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixpkgs-zelda64recomp": "nixpkgs-zelda64recomp",
         "nvim-conf": "nvim-conf",

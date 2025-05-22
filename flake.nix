@@ -49,6 +49,7 @@
     nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=529fb9abd291092dbb6e7b9dec8d06e0f7cb4ad2";
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/commit/3ed788d7b34745291e859767d9f7c76ef09d08b9 makes it to nixos-unstable.
     nixpkgs-bottles.url = "github:nixos/nixpkgs?rev=3ed788d7b34745291e859767d9f7c76ef09d08b9";
+    nixpkgs-sdl-fix.url = "github:nixos/nixpkgs?rev=adaa24fbf46737f3f1b5497bf64bae750f82942e";
   };
 
   outputs = {
@@ -64,6 +65,7 @@
     nixos-cosmic,
     nixpkgs-zelda64recomp,
     nixpkgs-bottles,
+    nixpkgs-sdl-fix,
     ...
   } @ inputs: let
     importPkgs = {
@@ -98,6 +100,21 @@
               pkgs = import nixpkgs-bottles {inherit system config;};
             in {
               bottles-unwrapped = pkgs.bottles-unwrapped;
+            }
+          )
+
+          # TODO(Sirius902) Something broke with this diff, using the old SDL2 derivation fixes it.
+          # [C.]  #252  sdl2-compat                    2.32.52, 2.32.54 x2 -> 2.32.52, 2.32.56 x2
+          # [C.]  #253  sdl3                           3.2.10-lib x3 -> 3.2.10-lib, 3.2.12-lib x2
+          (
+            final: prev: let
+              pkgs = import nixpkgs-sdl-fix {inherit system config;};
+              SDL2 = pkgs.SDL2;
+            in {
+              shipwright = prev.shipwright.override {inherit SDL2;};
+              _2ship2harkinian = prev._2ship2harkinian.override {inherit SDL2;};
+              shipwright-anchor = prev.shipwright-anchor.override {inherit SDL2;};
+              zelda64recompiled = prev.zelda64recompiled.override {inherit SDL2;};
             }
           )
         ];
