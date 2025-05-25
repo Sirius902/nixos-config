@@ -323,22 +323,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-bottles": {
-      "locked": {
-        "lastModified": 1747658415,
-        "narHash": "sha256-XGA3tp4iXGiAE4mRnEDctWs/tf4ERNEY7YfcK3bKWOk=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "3ed788d7b34745291e859767d9f7c76ef09d08b9",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "3ed788d7b34745291e859767d9f7c76ef09d08b9",
-        "type": "github"
-      }
-    },
     "nixpkgs-ghidra_11_2_1": {
       "locked": {
         "lastModified": 1738868127,
@@ -521,7 +505,6 @@
         "nix-index-database": "nix-index-database",
         "nixos-cosmic": "nixos-cosmic",
         "nixpkgs": "nixpkgs_2",
-        "nixpkgs-bottles": "nixpkgs-bottles",
         "nixpkgs-ghidra_11_2_1": "nixpkgs-ghidra_11_2_1",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixpkgs-zelda64recomp": "nixpkgs-zelda64recomp",

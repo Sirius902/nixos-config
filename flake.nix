@@ -47,8 +47,6 @@
     nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
     nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=529fb9abd291092dbb6e7b9dec8d06e0f7cb4ad2";
-    # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/commit/3ed788d7b34745291e859767d9f7c76ef09d08b9 makes it to nixos-unstable.
-    nixpkgs-bottles.url = "github:nixos/nixpkgs?rev=3ed788d7b34745291e859767d9f7c76ef09d08b9";
   };
 
   outputs = {
@@ -63,7 +61,6 @@
     nixpkgs-ghidra_11_2_1,
     nixos-cosmic,
     nixpkgs-zelda64recomp,
-    nixpkgs-bottles,
     ...
   } @ inputs: let
     importPkgs = {
@@ -90,14 +87,6 @@
               n64recomp = pkgs.n64recomp;
               z64decompress = pkgs.z64decompress;
               zelda64recomp = pkgs.zelda64recomp;
-            }
-          )
-
-          (
-            final: prev: let
-              pkgs = import nixpkgs-bottles {inherit system config;};
-            in {
-              bottles-unwrapped = pkgs.bottles-unwrapped;
             }
           )
 
