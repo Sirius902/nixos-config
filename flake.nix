@@ -80,35 +80,31 @@
             observatory = nixos-cosmic.outputs.packages.${system}.observatory;
           })
 
-          (
-            final: prev: let
-              pkgs = import nixpkgs-zelda64recomp {inherit system config;};
-            in {
-              n64recomp = pkgs.n64recomp;
-              z64decompress = pkgs.z64decompress;
-              zelda64recomp = pkgs.zelda64recomp;
-            }
-          )
+          (final: prev: let
+            pkgs = import nixpkgs-zelda64recomp {inherit system config;};
+          in {
+            n64recomp = pkgs.n64recomp;
+            z64decompress = pkgs.z64decompress;
+            zelda64recomp = pkgs.zelda64recomp;
+          })
 
           # Use newer version of sdl3 with fix for https://github.com/libsdl-org/sdl2-compat/issues/491.
-          (
-            final: prev: let
-              sdl3 = prev.sdl3.overrideAttrs (finalAttrs: prevAttrs: {
-                version = "b70919e";
-                src = prevAttrs.src.override {
-                  tag = null;
-                  rev = finalAttrs.version;
-                  hash = "sha256-q5cLNtg5ZCRrrbngrVQhGG1lUOIZeSkaW35NIj6Eqso=";
-                };
-              });
-              SDL2 = prev.SDL2.override {inherit sdl3;};
-            in {
-              shipwright = prev.shipwright.override {inherit SDL2;};
-              _2ship2harkinian = prev._2ship2harkinian.override {inherit SDL2;};
-              shipwright-anchor = prev.shipwright-anchor.override {inherit SDL2;};
-              zelda64recompiled = prev.zelda64recompiled.override {inherit SDL2;};
-            }
-          )
+          (final: prev: let
+            sdl3 = prev.sdl3.overrideAttrs (finalAttrs: prevAttrs: {
+              version = "b70919e";
+              src = prevAttrs.src.override {
+                tag = null;
+                rev = finalAttrs.version;
+                hash = "sha256-q5cLNtg5ZCRrrbngrVQhGG1lUOIZeSkaW35NIj6Eqso=";
+              };
+            });
+            SDL2 = prev.SDL2.override {inherit sdl3;};
+          in {
+            shipwright = prev.shipwright.override {inherit SDL2;};
+            _2ship2harkinian = prev._2ship2harkinian.override {inherit SDL2;};
+            shipwright-anchor = prev.shipwright-anchor.override {inherit SDL2;};
+            zelda64recompiled = prev.zelda64recompiled.override {inherit SDL2;};
+          })
         ];
         config.allowUnfree = true;
       };
