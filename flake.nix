@@ -133,9 +133,9 @@
             inherit pkgs nixpkgs-ghidra_11_2_1;
           }
           // {
-            n64recomp = nixpkgs-zelda64recomp.legacyPackages.${system}.n64recomp;
-            z64decompress = nixpkgs-zelda64recomp.legacyPackages.${system}.z64decompress;
-            zelda64recomp = nixpkgs-zelda64recomp.legacyPackages.${system}.zelda64recomp;
+            n64recomp = pkgs.n64recomp;
+            z64decompress = pkgs.z64decompress;
+            zelda64recomp = pkgs.zelda64recomp;
           };
 
         devShells.default = pkgs.mkShell {
