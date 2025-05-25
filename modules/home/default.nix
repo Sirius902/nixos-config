@@ -1,4 +1,5 @@
 {
+  options,
   pkgs,
   lib,
   isHeadless,
@@ -56,15 +57,21 @@ in {
       };
     };
 
-  programs.zsh = {
+  programs.zsh = let
+    # TODO(Sirius902) Just use initContent when initExtra is deprecated in stable home-manager.
+    initAttr =
+      if lib.hasAttrByPath ["initContent"] options.programs.zsh
+      then "initContent"
+      else "initExtra";
+  in {
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
     defaultKeymap = "viins"; # Use Vim keybinds
-    # TODO(Sirius902) On stable home-manager this should be `initExtra`.
-    initContent =
+
+    ${initAttr} =
       ''
         prompt pure
       ''
