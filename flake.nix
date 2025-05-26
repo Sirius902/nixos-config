@@ -105,6 +105,27 @@
             shipwright-anchor = prev.shipwright-anchor.override {inherit SDL2;};
             zelda64recomp = prev.zelda64recomp.override {inherit SDL2;};
           })
+
+          # Add extra libs for MMRecompRando.
+          (final: prev: {
+            zelda64recomp = let
+              libs = [
+                final.openssl_3
+                final.zlib
+                final.stdenv.cc.cc.lib
+              ];
+            in
+              prev.zelda64recomp.overrideAttrs (_: prevAttrs: {
+                buildInputs = (prevAttrs.buildInputs or []) ++ libs;
+
+                postFixup =
+                  (prevAttrs.postFixup or "")
+                  + ''
+                    wrapProgram $out/bin/Zelda64Recompiled \
+                      --prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath libs}
+                  '';
+              });
+          })
         ];
         config.allowUnfree = true;
       };
