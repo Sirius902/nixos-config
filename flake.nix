@@ -103,7 +103,7 @@
             shipwright = prev.shipwright.override {inherit SDL2;};
             _2ship2harkinian = prev._2ship2harkinian.override {inherit SDL2;};
             shipwright-anchor = prev.shipwright-anchor.override {inherit SDL2;};
-            zelda64recompiled = prev.zelda64recompiled.override {inherit SDL2;};
+            zelda64recomp = prev.zelda64recomp.override {inherit SDL2;};
           })
         ];
         config.allowUnfree = true;
