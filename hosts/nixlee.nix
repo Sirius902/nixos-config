@@ -32,7 +32,7 @@
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
   # Disable other greeters since we can only have one.
-  services.xserver.displayManager.gdm.enable = lib.mkForce false;
+  services.displayManager.gdm.enable = lib.mkForce false;
   # services.displayManager.cosmic-greeter.enable = lib.mkForce false;
   services.displayManager.sddm.enable = lib.mkForce false;
 
