@@ -73,6 +73,7 @@ in {
 
     ${initAttr} =
       ''
+        bindkey '^R' history-incremental-search-backward
         prompt pure
       ''
       + (lib.optionalString stdenv.isLinux ''
