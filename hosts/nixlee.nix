@@ -36,7 +36,10 @@
   # services.displayManager.cosmic-greeter.enable = lib.mkForce false;
   services.displayManager.sddm.enable = lib.mkForce false;
 
+  services.flatpak.enable = true;
+
   environment.systemPackages = [
+    pkgs.flatpak
     pkgs.shipwright
     pkgs._2ship2harkinian
     pkgs.shipwright-anchor
