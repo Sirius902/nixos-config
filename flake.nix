@@ -217,7 +217,6 @@
                 ./configuration.nix
                 ./hosts/nixlee.nix
                 (hardwareConfigOr ./hardware/nixlee.nix)
-                ./modules/nvidia.nix
                 home-manager
                 {
                   home-manager.useGlobalPkgs = true;
@@ -254,7 +253,6 @@
                 ./configuration.nix
                 ./hosts/nixtower.nix
                 (hardwareConfigOr ./hardware/nixtower.nix)
-                ./modules/nvidia.nix
                 home-manager
                 {
                   home-manager.useGlobalPkgs = true;
