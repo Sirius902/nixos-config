@@ -87,6 +87,14 @@
   services.udev.packages = [
     pkgs.gcfeederd
     (pkgs.writeTextFile {
+      name = "switch2-gc-rules";
+      text = ''
+        # Nintendo GameCube Controller
+        SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="057e", ATTR{idProduct}=="2073", TAG+="uaccess"
+      '';
+      destination = "/etc/udev/rules.d/50-switch2-gc.rules";
+    })
+    (pkgs.writeTextFile {
       name = "switch-rules";
       text = ''
         # Nintendo Switch
