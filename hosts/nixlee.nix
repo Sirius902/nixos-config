@@ -29,7 +29,7 @@
     ../modules/pipewire/low-latency.nix
 
     ../modules/amd.nix
-    ../modules/nvidia.nix
+    # ../modules/nvidia.nix
   ];
 
   boot.binfmt.emulatedSystems = ["aarch64-linux"];

@@ -76,10 +76,7 @@
       ];
     };
     gamescope.enable = true;
-    coolercontrol = {
-      enable = true;
-      nvidiaSupport = true;
-    };
+    coolercontrol.enable = true;
   };
 
   # NOTE(Sirius902) We can't use `services.udev.extraRules` here as `uaccess` won't work properly.

@@ -3,6 +3,8 @@
   pkgs,
   ...
 }: {
+  programs.coolercontrol.nvidiaSupport = true;
+
   hardware.graphics = {
     enable = true;
     extraPackages = [pkgs.nvidia-vaapi-driver];
