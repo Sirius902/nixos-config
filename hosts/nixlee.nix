@@ -42,6 +42,7 @@
   services.flatpak.enable = true;
 
   environment.systemPackages = [
+    pkgs.archipelago
     pkgs.flatpak
     pkgs.shipwright
     pkgs._2ship2harkinian
