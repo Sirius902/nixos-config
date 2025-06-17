@@ -47,6 +47,7 @@
     nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
     nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=529fb9abd291092dbb6e7b9dec8d06e0f7cb4ad2";
+    nixpkgs-zfs-update.url = "github:nixos/nixpkgs?rev=c539ae8d21e49776966d714f82fba33b1fca78bc";
   };
 
   outputs = {
@@ -61,6 +62,7 @@
     nixpkgs-ghidra_11_2_1,
     nixos-cosmic,
     nixpkgs-zelda64recomp,
+    nixpkgs-zfs-update,
     ...
   } @ inputs: let
     importPkgs = {
@@ -125,6 +127,41 @@
                       --prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath libs}
                   '';
               });
+          })
+
+          # Overlay openrazer until https://github.com/NixOS/nixpkgs/pull/413803 makes it
+          # to nixos-unstable.
+          (final: prev: let
+            override = finalAttrs: prevAttrs: {
+              version = "3.10.3";
+              src = prevAttrs.src.override {
+                tag = "v${finalAttrs.version}";
+                hash = "sha256-M5g3Rn9WuyudhWQfDooopjexEgGVB0rzfJsPg+dqwn4=";
+              };
+            };
+          in {
+            openrazer = prev.openrazer.overrideAttrs override;
+            linuxPackages_6_15 = prev.linuxPackages_6_15.extend (_: lpprev: {
+              openrazer = lpprev.openrazer.overrideAttrs override;
+            });
+          })
+
+          # Overlay newer zfs until https://github.com/NixOS/nixpkgs/pull/416236 makes it
+          # to nixos-unstable.
+          (final: prev: let
+            pkgs = import nixpkgs-zfs-update {inherit system config;};
+          in {
+            zfs_2_2 = pkgs.zfs_2_2;
+            zfs_2_3 = pkgs.zfs_2_3;
+            zfs_unstable = pkgs.zfs_unstable;
+            linuxPackages_6_15 = prev.linuxPackages_6_15.extend (_: _: {
+              inherit
+                (pkgs.linuxPackages_6_15)
+                zfs_2_2
+                zfs_2_3
+                zfs_unstable
+                ;
+            });
           })
         ];
         config.allowUnfree = true;
