@@ -47,6 +47,7 @@
     nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
     nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=529fb9abd291092dbb6e7b9dec8d06e0f7cb4ad2";
+    nixpkgs-zfs-update.url = "github:nixos/nixpkgs?rev=0d757bb2cdd11cc018eb54bbadbb6c2a4d39b9e0";
   };
 
   outputs = {
@@ -61,6 +62,7 @@
     nixpkgs-ghidra_11_2_1,
     nixos-cosmic,
     nixpkgs-zelda64recomp,
+    nixpkgs-zfs-update,
     ...
   } @ inputs: let
     importPkgs = {
@@ -127,8 +129,8 @@
               });
           })
 
-          # Overlay openrazer until https://github.com/NixOS/nixpkgs/pull/413803 makes it
-          # to nixos-unstable.
+          # TODO(Sirius902) Overlay openrazer until https://github.com/NixOS/nixpkgs/pull/413803
+          # makes it to nixos-unstable.
           (final: prev: let
             override = finalAttrs: prevAttrs: {
               version = "3.10.3";
@@ -141,6 +143,17 @@
             openrazer = prev.openrazer.overrideAttrs override;
             linuxPackages_6_15 = prev.linuxPackages_6_15.extend (_: lpprev: {
               openrazer = lpprev.openrazer.overrideAttrs override;
+            });
+          })
+
+          # TODO(Sirius902) Overlay zfs update until https://github.com/NixOS/nixpkgs/pull/418264
+          # to nixos-unstable makes it.
+          (final: prev: let
+            pkgs = import nixpkgs-zfs-update {inherit system config;};
+          in {
+            inherit (pkgs) zfs_2_3 zfs_unstable;
+            linuxPackages_6_15 = prev.linuxPackages_6_15.extend (_: _: {
+              inherit (pkgs.linuxPackagesFor prev.linux_6_15) zfs_2_3 zfs_unstable;
             });
           })
         ];

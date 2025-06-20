@@ -29,7 +29,7 @@
 
   # Only use kernel versions supported by ZFS.
   boot.kernelPackages = pkgs.linuxPackages_6_15;
-  boot.zfs.package = pkgs.zfs_2_2;
+  boot.zfs.package = pkgs.zfs_2_3;
 
   # Disable hibernation.
   #boot.kernelParams = [ "nohibernate" ];
