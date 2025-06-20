@@ -129,25 +129,8 @@
               });
           })
 
-          # TODO(Sirius902) Overlay openrazer until https://github.com/NixOS/nixpkgs/pull/413803
-          # makes it to nixos-unstable.
-          (final: prev: let
-            override = finalAttrs: prevAttrs: {
-              version = "3.10.3";
-              src = prevAttrs.src.override {
-                tag = "v${finalAttrs.version}";
-                hash = "sha256-M5g3Rn9WuyudhWQfDooopjexEgGVB0rzfJsPg+dqwn4=";
-              };
-            };
-          in {
-            openrazer = prev.openrazer.overrideAttrs override;
-            linuxPackages_6_15 = prev.linuxPackages_6_15.extend (_: lpprev: {
-              openrazer = lpprev.openrazer.overrideAttrs override;
-            });
-          })
-
           # TODO(Sirius902) Overlay zfs update until https://github.com/NixOS/nixpkgs/pull/418264
-          # to nixos-unstable makes it.
+          # makes it to nixos-unstable.
           (final: prev: let
             pkgs = import nixpkgs-zfs-update {inherit system config;};
           in {
