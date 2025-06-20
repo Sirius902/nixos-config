@@ -39,8 +39,8 @@
   gamecontrollerdb = fetchFromGitHub {
     owner = "mdqinc";
     repo = "SDL_GameControllerDB";
-    rev = "a74711e1e87733ccdf02d7020d8fa9e4fa67176e";
-    hash = "sha256-rXC4akz9BaKzr/C2CryZC6RGk6+fGVG7RsQryUFUUk0=";
+    rev = "79b8ea1035256740c22fb1686fa0c77d201fe45f";
+    hash = "sha256-pFzIvTlcQW9wGiuMcH6chm6kzE2LLcPgPiSgWbDvgUk=";
   };
 
   imgui' = applyPatches {
@@ -65,8 +65,8 @@
   prism = fetchFromGitHub {
     owner = "KiritoDv";
     repo = "prism-processor";
-    rev = "fb3f8b4a2d14dfcbae654d0f0e59a73b6f6ca850";
-    hash = "sha256-gGdQSpX/TgCNZ0uyIDdnazgVHpAQhl30e+V0aVvTFMM=";
+    rev = "493974843e910d0fac4e3bb1ec52656728b875b4";
+    hash = "sha256-Bq1+deZ2BL1wNxw4qs53EEnc1IFsNyK4wpLimkzFK9w=";
   };
 
   stb_impl = writeTextFile {
@@ -118,13 +118,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "2ship2harkinian";
-    version = "d67eba5";
+    version = "6208594";
 
     src = fetchFromGitHub {
       owner = "harbourmasters";
       repo = "2ship2harkinian";
       rev = finalAttrs.version;
-      hash = "sha256-3MoSPMC0FeBhD9xegKoA+BzSyJ+impi+TCZHuVCiB0s=";
+      hash = "sha256-SQyk6LtFSAAAKbwgVc+g9x2QEkiPW5fmZ8F97bPg+YE=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
@@ -139,14 +139,12 @@ in
     patches = [
       ./darwin-fixes.patch
       ./disable-downloading-stb_image.patch
-      # TODO(Sirius902) Remove once weird frames PR gets merged.
-      (fetchpatch {
-        name = "n64-weird-frames.patch";
-        url = "https://github.com/Sirius902/2ship2harkinian/commit/765d528b334ab33be39fb7f0d3e1f22a29255958.patch";
-        hash = "sha256-F4v207lObWfgyd8rRmIA29daqskrrPmpdNYuO15yLWo=";
-      })
       # TODO(Sirius902) Remove once underwater ocarina PR gets merged.
-      ./underwater-ocarina.patch
+      (fetchpatch {
+        name = "underwater-ocarina.patch";
+        url = "https://github.com/Sirius902/2ship2harkinian/commit/af8fc4d106aa0eff111c63e32ed760bf9d5c873a.patch";
+        hash = "sha256-+MkUolY9v4KroxgO8y0iMTx9gRMrWeTB2EvYkgO6m2A=";
+      })
     ];
 
     nativeBuildInputs =

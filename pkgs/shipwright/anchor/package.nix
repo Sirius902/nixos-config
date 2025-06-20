@@ -29,7 +29,7 @@
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
-  shipwright,
+  shipwright-anchor,
   fetchpatch,
   libvorbis,
 }: let
@@ -37,8 +37,8 @@
   gamecontrollerdb = fetchFromGitHub {
     owner = "mdqinc";
     repo = "SDL_GameControllerDB";
-    rev = "a74711e1e87733ccdf02d7020d8fa9e4fa67176e";
-    hash = "sha256-rXC4akz9BaKzr/C2CryZC6RGk6+fGVG7RsQryUFUUk0=";
+    rev = "79b8ea1035256740c22fb1686fa0c77d201fe45f";
+    hash = "sha256-pFzIvTlcQW9wGiuMcH6chm6kzE2LLcPgPiSgWbDvgUk=";
   };
 
   imgui' = applyPatches {
@@ -49,7 +49,7 @@
       hash = "sha256-28wyzzwXE02W5vbEdRCw2iOF8ONkb3M3Al8XlYBvz1A=";
     };
     patches = [
-      "${shipwright.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
+      "${shipwright-anchor.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
     ];
   };
 
@@ -89,7 +89,7 @@
       hash = "sha256-HTi2FKzKCbRaP13XERUmHkJgw8IfKaRJvsK3+YxFFdc=";
     };
     patches = [
-      "${shipwright.src}/libultraship/cmake/dependencies/patches/stormlib-optimizations.patch"
+      "${shipwright-anchor.src}/libultraship/cmake/dependencies/patches/stormlib-optimizations.patch"
     ];
   };
 
@@ -138,7 +138,6 @@ in
       ../darwin-fixes.patch
       ../disable-downloading-stb_image.patch
       ./app-name.patch
-      # TODO(Sirius902) Remove once weird frames PR gets merged.
       (fetchpatch {
         name = "n64-weird-frames.patch";
         url = "https://github.com/Sirius902/Shipwright/commit/28f3fed5c5596e67369139e05498eaa165e9a101.patch";
