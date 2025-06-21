@@ -1,0 +1,36 @@
+From c0d45b5a75bf3838ea714b29f9246bf74005b669 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Fri, 20 Jun 2025 19:36:44 -0700
+Subject: [PATCH] Revert "Change soh.otr loading to use
+ `LocateFileAcrossAppDirs()` instead of just the app bundle path. (#5525)"
+
+This reverts commit 79b6719db3cc90edd1fa6f112fbf229a6a20a71a.
+---
+ soh/soh/OTRGlobals.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/soh/soh/OTRGlobals.cpp b/soh/soh/OTRGlobals.cpp
+index fdb2ed7c7..f1c381c1e 100644
+--- a/soh/soh/OTRGlobals.cpp
++++ b/soh/soh/OTRGlobals.cpp
+@@ -270,7 +270,7 @@ OTRGlobals::OTRGlobals() {
+     if (std::filesystem::exists(ootPath)) {
+         OTRFiles.push_back(ootPath);
+     }
+-    std::string sohOtrPath = Ship::Context::LocateFileAcrossAppDirs("soh.otr");
++    std::string sohOtrPath = Ship::Context::GetPathRelativeToAppBundle("soh.otr");
+     if (std::filesystem::exists(sohOtrPath)) {
+         OTRFiles.push_back(sohOtrPath);
+     }
+@@ -1155,7 +1155,7 @@ extern "C" void InitOTR() {
+     CheckAndCreateModFolder();
+ #endif
+ 
+-    CheckSoHOTRVersion(Ship::Context::LocateFileAcrossAppDirs("soh.otr"));
++    CheckSoHOTRVersion(Ship::Context::GetPathRelativeToAppBundle("soh.otr"));
+ 
+     if (!std::filesystem::exists(Ship::Context::LocateFileAcrossAppDirs("oot-mq.otr", appShortName)) &&
+         !std::filesystem::exists(Ship::Context::LocateFileAcrossAppDirs("oot.otr", appShortName))) {
+-- 
+2.49.0
+

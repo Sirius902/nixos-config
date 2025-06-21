@@ -30,7 +30,6 @@
   fixDarwinDylibNames,
   applyPatches,
   shipwright,
-  fetchpatch,
 }: let
   # The following would normally get fetched at build time, or a specific version is required
   gamecontrollerdb = fetchFromGitHub {
@@ -44,8 +43,8 @@
     src = fetchFromGitHub {
       owner = "ocornut";
       repo = "imgui";
-      tag = "v1.91.6-docking";
-      hash = "sha256-28wyzzwXE02W5vbEdRCw2iOF8ONkb3M3Al8XlYBvz1A=";
+      tag = "v1.91.9b-docking";
+      hash = "sha256-mQOJ6jCN+7VopgZ61yzaCnt4R1QLrW7+47xxMhFRHLQ=";
     };
     patches = [
       "${shipwright.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
@@ -62,8 +61,8 @@
   prism = fetchFromGitHub {
     owner = "KiritoDv";
     repo = "prism-processor";
-    rev = "fb3f8b4a2d14dfcbae654d0f0e59a73b6f6ca850";
-    hash = "sha256-gGdQSpX/TgCNZ0uyIDdnazgVHpAQhl30e+V0aVvTFMM=";
+    rev = "7ae724a6fb7df8cbf547445214a1a848aefef747";
+    hash = "sha256-G7koDUxD6PgZWmoJtKTNubDHg6Eoq8I+AxIJR0h3i+A=";
   };
 
   stb_impl = writeTextFile {
@@ -108,13 +107,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright";
-    version = "52a3058";
+    version = "2d59721";
 
     src = fetchFromGitHub {
       owner = "harbourmasters";
       repo = "shipwright";
       rev = finalAttrs.version;
-      hash = "sha256-DjhKC8LUOPes7tbZaiu7LDSLyURSfpQ6a6b9Ehjcx1o=";
+      hash = "sha256-JPSAi+ukBkKLF1Xp8jkairNeZ7eZBT9lFYBkvIrKUCA=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
@@ -129,12 +128,9 @@ in
     patches = [
       ./darwin-fixes.patch
       ./disable-downloading-stb_image.patch
-      # TODO(Sirius902) Remove once weird frames PR gets merged.
-      (fetchpatch {
-        name = "n64-weird-frames.patch";
-        url = "https://github.com/Sirius902/Shipwright/commit/28f3fed5c5596e67369139e05498eaa165e9a101.patch";
-        hash = "sha256-pQybaM1ZaLdUX0gqC03RIfcGlMyeu+KxNpyAcQpdmNY=";
-      })
+      # TODO(Sirius902) For some reason non-portable builds crash on this commit.
+      # https://github.com/HarbourMasters/Shipwright/issues/5602
+      ./0001-Revert-Change-soh.otr-loading-to-use-LocateFileAcros.patch
     ];
 
     nativeBuildInputs =
