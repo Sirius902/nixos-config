@@ -1,5 +1,19 @@
-{pkgs, ...}: {
-  services.pipewire.extraConfig.pipewire."99-input-denoising" = {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  micNodeName = config.my.rnnoise.micNodeName;
+in {
+  options.my.rnnoise.micNodeName = with lib;
+    mkOption {
+      type = types.str;
+      description = "The PipeWire node name of the microphone to apply rnnoise to.";
+      example = "alsa_input.usb-HP__Inc_HyperX_SoloCast-00.iec958-stereo";
+    };
+
+  config.services.pipewire.extraConfig.pipewire."99-input-denoising" = {
     "context.modules" = [
       {
         name = "libpipewire-module-filter-chain";
@@ -27,6 +41,7 @@
             "node.name" = "capture.rnnoise_source";
             "node.passive" = true;
             "audio.rate" = 48000;
+            "target.object" = micNodeName;
           };
 
           "playback.props" = {

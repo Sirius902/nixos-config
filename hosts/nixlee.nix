@@ -50,6 +50,8 @@
     pkgs.zelda64recomp
   ];
 
+  my.rnnoise.micNodeName = "alsa_input.usb-HP__Inc_HyperX_SoloCast-00.iec958-stereo";
+
   # Mount Steam under shared directory for VMs to access
   systemd.services."bind-media-vm-shared-steam" = {
     description = "Bind mount /media/steam to /media/vm/shared/steam";
