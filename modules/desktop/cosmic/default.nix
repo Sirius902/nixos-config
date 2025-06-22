@@ -15,7 +15,7 @@
   systemd.user.services.reset-dconf-cosmic = {
     enable = true;
     before = ["cosmic-session.target"];
-    wantedBy = ["default.target"];
+    wantedBy = ["graphical-session.target"];
     description = "Reset dconf for COSMIC";
     serviceConfig = {
       Type = "oneshot";
