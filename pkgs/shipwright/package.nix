@@ -30,6 +30,7 @@
   fixDarwinDylibNames,
   applyPatches,
   shipwright,
+  fetchpatch,
 }: let
   # The following would normally get fetched at build time, or a specific version is required
   gamecontrollerdb = fetchFromGitHub {
@@ -128,9 +129,13 @@ in
     patches = [
       ./darwin-fixes.patch
       ./disable-downloading-stb_image.patch
-      # TODO(Sirius902) For some reason non-portable builds crash on this commit.
-      # https://github.com/HarbourMasters/Shipwright/issues/5602
-      ./0001-Revert-Change-soh.otr-loading-to-use-LocateFileAcros.patch
+      # TODO(Sirius902) Fix for non-portable builds crashing. Remove once PR gets in.
+      # https://github.com/HarbourMasters/Shipwright/pull/5605
+      (fetchpatch {
+        name = "non-portable-crash-fix.patch";
+        url = "https://github.com/Malkierian/Shipwright/commit/b86109d2f515db517029711819b544d8d496b58d.patch";
+        hash = "sha256-AjLN7eoIVnTq8qXKrc1/KPMps/G1eri4b7cedSqudRA=";
+      })
     ];
 
     nativeBuildInputs =
