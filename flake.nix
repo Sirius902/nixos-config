@@ -65,6 +65,7 @@
     nvim-conf,
     moonlight,
     flake-parts,
+    secrets,
     nixpkgs-ghidra_11_2_1,
     nixos-cosmic,
     nixpkgs-zelda64recomp,
@@ -133,6 +134,13 @@
                       --prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath libs}
                   '';
               });
+          })
+
+          # Add extra patches for shipwright-anchor.
+          (final: prev: {
+            shipwright-anchor = prev.shipwright-anchor.overrideAttrs (_: prevAttrs: {
+              patches = (prevAttrs.patches or []) ++ secrets.patches.shipwright-anchor;
+            });
           })
 
           # TODO(Sirius902) Overlay zfs update until https://github.com/NixOS/nixpkgs/pull/418264
