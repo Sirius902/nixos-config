@@ -2,7 +2,9 @@
   description = "nixlee flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    # TODO(Sirius902) xdg-desktop-portal-cosmic is timing out xdg-desktop-portal.service on newer nixpkgs...
+    # nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?rev=08f22084e6085d19bcfb4be30d1ca76ecb96fe54";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -44,7 +46,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
-    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
+    nixos-cosmic = {
+      url = "github:lilyinstarlight/nixos-cosmic";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-stable.follows = "nixpkgs-stable";
+    };
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
     nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=529fb9abd291092dbb6e7b9dec8d06e0f7cb4ad2";
     nixpkgs-zfs-update.url = "github:nixos/nixpkgs?rev=0d757bb2cdd11cc018eb54bbadbb6c2a4d39b9e0";
