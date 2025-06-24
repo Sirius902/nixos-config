@@ -173,13 +173,18 @@
 
       perSystem = {system, ...}: let
         pkgs = importPkgsUnstable system;
+        inherit (pkgs) lib;
       in {
         formatter = pkgs.alejandra;
 
-        packages =
-          import ./pkgs/all-packages.nix {
+        packages = let
+          allPackages = import ./pkgs/all-packages.nix {
             inherit pkgs nixpkgs-ghidra_11_2_1;
-          }
+          };
+
+          overlayedAllPackages = lib.mapAttrs (name: _: pkgs.${name}) allPackages;
+        in
+          overlayedAllPackages
           // {
             n64recomp = pkgs.n64recomp;
             z64decompress = pkgs.z64decompress;
