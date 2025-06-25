@@ -52,7 +52,7 @@
       inputs.nixpkgs-stable.follows = "nixpkgs-stable";
     };
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
-    nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=529fb9abd291092dbb6e7b9dec8d06e0f7cb4ad2";
+    nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=679b3f608a6774719fa6dd9df711a0bdcbbdc515";
     nixpkgs-zfs-update.url = "github:nixos/nixpkgs?rev=0d757bb2cdd11cc018eb54bbadbb6c2a4d39b9e0";
   };
 
