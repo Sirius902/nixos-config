@@ -124,7 +124,7 @@
                 final.stdenv.cc.cc.lib
               ];
             in
-              prev.zelda64recomp.overrideAttrs (_: prevAttrs: {
+              prev.zelda64recomp.overrideAttrs (prevAttrs: {
                 buildInputs = (prevAttrs.buildInputs or []) ++ libs;
 
                 postFixup =
@@ -138,7 +138,7 @@
 
           # Add extra patches for shipwright-anchor.
           (final: prev: {
-            shipwright-anchor = prev.shipwright-anchor.overrideAttrs (_: prevAttrs: {
+            shipwright-anchor = prev.shipwright-anchor.overrideAttrs (prevAttrs: {
               patches = (prevAttrs.patches or []) ++ secrets.patches.shipwright-anchor;
             });
           })
