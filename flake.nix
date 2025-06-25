@@ -2,9 +2,7 @@
   description = "nixlee flake";
 
   inputs = {
-    # TODO(Sirius902) xdg-desktop-portal-cosmic is timing out xdg-desktop-portal.service on newer nixpkgs...
-    # nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    nixpkgs.url = "github:nixos/nixpkgs?rev=08f22084e6085d19bcfb4be30d1ca76ecb96fe54";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -54,6 +52,7 @@
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
     nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=679b3f608a6774719fa6dd9df711a0bdcbbdc515";
     nixpkgs-zfs-update.url = "github:nixos/nixpkgs?rev=0d757bb2cdd11cc018eb54bbadbb6c2a4d39b9e0";
+    nixpkgs-cosmic-fix.url = "github:HeitorAugustoLN/nixpkgs?rev=6e43f0037484025c107f1160bd4e14f67565d32f";
   };
 
   outputs = {
@@ -70,6 +69,7 @@
     nixos-cosmic,
     nixpkgs-zelda64recomp,
     nixpkgs-zfs-update,
+    nixpkgs-cosmic-fix,
     ...
   } @ inputs: let
     importPkgs = {
@@ -152,6 +152,25 @@
             linuxPackages_6_15 = prev.linuxPackages_6_15.extend (_: _: {
               inherit (pkgs.linuxPackagesFor prev.linux_6_15) zfs_2_3 zfs_unstable;
             });
+          })
+
+          # TODO(Sirius902) Brokeded. https://github.com/NixOS/nixpkgs/issues/419838
+          (final: prev: {
+            linux-firmware = prev.linux-firmware.overrideAttrs (finalAttrs: prevAttrs: {
+              version = "20250509";
+              src = final.fetchzip {
+                url = "https://cdn.kernel.org/pub/linux/kernel/firmware/linux-firmware-${finalAttrs.version}.tar.xz";
+                hash = "sha256-0FrhgJQyCeRCa3s0vu8UOoN0ZgVCahTQsSH0o6G6hhY=";
+              };
+            });
+          })
+
+          # TODO(Sirius902) Overlay fix until https://github.com/NixOS/nixpkgs/pull/419948 makes
+          # it to nixos-unstable.
+          (final: prev: let
+            pkgs = import nixpkgs-cosmic-fix {inherit system config;};
+          in {
+            cosmic-session = pkgs.cosmic-session;
           })
         ];
         config.allowUnfree = true;
