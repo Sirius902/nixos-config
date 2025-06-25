@@ -421,22 +421,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-zfs-update": {
-      "locked": {
-        "lastModified": 1750390619,
-        "narHash": "sha256-amNHQeUkARMXywL8pmNdwNIxVjZDJIivkN7jAYQN3k4=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "0d757bb2cdd11cc018eb54bbadbb6c2a4d39b9e0",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "0d757bb2cdd11cc018eb54bbadbb6c2a4d39b9e0",
-        "type": "github"
-      }
-    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1743568003,
@@ -513,7 +497,6 @@
         "nixpkgs-ghidra_11_2_1": "nixpkgs-ghidra_11_2_1",
         "nixpkgs-stable": "nixpkgs-stable",
         "nixpkgs-zelda64recomp": "nixpkgs-zelda64recomp",
-        "nixpkgs-zfs-update": "nixpkgs-zfs-update",
         "nvim-conf": "nvim-conf",
         "secrets": "secrets",
         "sops-nix": "sops-nix"
