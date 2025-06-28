@@ -144,6 +144,7 @@
     polychromatic
     (prismlauncher.override {
       jdks = [
+        graalvm-oracle
         temurin-bin-21
         temurin-bin-8
         temurin-bin-17

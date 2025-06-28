@@ -50,7 +50,7 @@
 
   environment.systemPackages = with pkgs; [
     screen
-    temurin-jre-bin
+    graalvm-oracle
     openmw-tes3mp
   ];
 
