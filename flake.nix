@@ -51,7 +51,6 @@
     };
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
     nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=679b3f608a6774719fa6dd9df711a0bdcbbdc515";
-    nixpkgs-cosmic-fix.url = "github:HeitorAugustoLN/nixpkgs?rev=6e43f0037484025c107f1160bd4e14f67565d32f";
   };
 
   outputs = {
@@ -67,7 +66,6 @@
     nixpkgs-ghidra_11_2_1,
     nixos-cosmic,
     nixpkgs-zelda64recomp,
-    nixpkgs-cosmic-fix,
     ...
   } @ inputs: let
     importPkgs = {
@@ -141,23 +139,15 @@
             });
           })
 
-          # TODO(Sirius902) Brokeded. https://github.com/NixOS/nixpkgs/issues/419838
+          # TODO(Sirius902) Workaround for https://github.com/NixOS/nixpkgs/issues/421442.
           (final: prev: {
-            linux-firmware = prev.linux-firmware.overrideAttrs (finalAttrs: prevAttrs: {
-              version = "20250509";
-              src = final.fetchzip {
-                url = "https://cdn.kernel.org/pub/linux/kernel/firmware/linux-firmware-${finalAttrs.version}.tar.xz";
-                hash = "sha256-0FrhgJQyCeRCa3s0vu8UOoN0ZgVCahTQsSH0o6G6hhY=";
-              };
+            ghostty = prev.ghostty.overrideAttrs (_: {
+              preBuild = ''
+                shopt -s globstar
+                sed -i 's/^const xev = @import("xev");$/const xev = @import("xev").Epoll;/' **/*.zig
+                shopt -u globstar
+              '';
             });
-          })
-
-          # TODO(Sirius902) Overlay fix until https://github.com/NixOS/nixpkgs/pull/419948 makes
-          # it to nixos-unstable.
-          (final: prev: let
-            pkgs = import nixpkgs-cosmic-fix {inherit system config;};
-          in {
-            cosmic-session = pkgs.cosmic-session;
           })
         ];
         config.allowUnfree = true;
