@@ -71,6 +71,7 @@
     qdirstat
     wl-clipboard
     xclip
+    vscode
     vscodium
     zed-editor
   ];
