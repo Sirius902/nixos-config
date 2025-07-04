@@ -149,6 +149,29 @@
               '';
             });
           })
+
+          # TODO(Sirius902) Overlay new cosmic-comp until https://github.com/pop-os/cosmic-comp/pull/1481 makes it to nixos-unstable.
+          (final: prev: {
+            cosmic-comp = prev.cosmic-comp.overrideAttrs (finalAttrs: prevAttrs: {
+              version = "1.0.0-alpha.7-unstable-${finalAttrs.env.VERGEN_GIT_COMMIT_DATE}";
+
+              src = prevAttrs.src.override {
+                tag = null;
+                rev = "7a52eff61ed211964d4db765ed2ad3b8769ea205";
+                hash = "sha256-tY0oee3s8rvwz3s3rxoTkhTpaLghvUSZWe+KCTjpZ1c=";
+              };
+
+              cargoHash = "sha256-B1Fknbivn2Vr5ZLucXLJ8//zHylNQogfFx7CtzRcU6Y=sha256-B1Fknbivn2Vr5ZLucXLJ8//zHylNQogfFx7CtzRcU6Y=";
+
+              cargoDeps = final.rustPlatform.fetchCargoVendor {
+                inherit (finalAttrs) pname src version;
+                hash = finalAttrs.cargoHash;
+              };
+
+              env.VERGEN_GIT_COMMIT_DATE = "2025-07-04";
+              env.VERGEN_GIT_SHA = finalAttrs.src.rev;
+            });
+          })
         ];
         config.allowUnfree = true;
       };
