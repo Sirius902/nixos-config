@@ -1,4 +1,5 @@
 {
+  config,
   options,
   pkgs,
   lib,
@@ -36,13 +37,14 @@ in {
       };
     };
 
-  gtk = lib.mkIf isLinuxDesktop {
-    enable = true;
-    # TODO(Sirius902) Stable home-manager doesn't play nicely with this...
-    # Workaround for KDE being annoying.
-    gtk2.force = true;
-    gtk3.extraConfig."gtk-application-prefer-dark-theme" = 1;
-  };
+  gtk = lib.mkIf isLinuxDesktop ({
+      enable = true;
+      gtk3.extraConfig."gtk-application-prefer-dark-theme" = 1;
+    }
+    // lib.optionalAttrs (lib.versionAtLeast config.home.version.release "25.11") {
+      # Workaround for KDE being annoying.
+      gtk2.force = true;
+    });
 
   programs.librewolf =
     lib.mkIf isLinuxDesktop
