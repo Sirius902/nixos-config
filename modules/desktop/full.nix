@@ -126,6 +126,7 @@
     imhex
     inkscape
     jetbrains.idea-community
+    idea-community-mc-dev
     jetbrains.rider
     (ghidra.withExtensions (_: [ghidra-extensions.gamecube-loader]))
     heroic

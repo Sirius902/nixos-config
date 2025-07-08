@@ -17,4 +17,6 @@
   _2ship2harkinian = pkgs.callPackage ./_2ship2harkinian/package.nix {};
 
   shipwright-anchor = pkgs.callPackage ./shipwright/anchor/package.nix {};
+
+  idea-community-mc-dev = pkgs.callPackage ./idea-community-mc-dev/package.nix {};
 }
