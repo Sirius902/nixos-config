@@ -121,8 +121,6 @@
               ];
             in
               prev.zelda64recomp.overrideAttrs (prevAttrs: {
-                buildInputs = (prevAttrs.buildInputs or []) ++ libs;
-
                 postFixup =
                   (prevAttrs.postFixup or "")
                   + ''
@@ -136,17 +134,6 @@
           (final: prev: {
             shipwright-anchor = prev.shipwright-anchor.overrideAttrs (prevAttrs: {
               patches = (prevAttrs.patches or []) ++ secrets.patches.shipwright-anchor;
-            });
-          })
-
-          # TODO(Sirius902) Workaround for https://github.com/NixOS/nixpkgs/issues/421442.
-          (final: prev: {
-            ghostty = prev.ghostty.overrideAttrs (_: {
-              preBuild = ''
-                shopt -s globstar
-                sed -i 's/^const xev = @import("xev");$/const xev = @import("xev").Epoll;/' **/*.zig
-                shopt -u globstar
-              '';
             });
           })
 
