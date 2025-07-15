@@ -159,6 +159,48 @@
               env.VERGEN_GIT_SHA = finalAttrs.src.rev;
             });
           })
+
+          # Update to graalvm-oracle 24.
+          (final: prev: let
+            srcs = {
+              "aarch64-linux" = {
+                hash = "sha256-dvJVfzLoz75ti3u/Mx8PCS674cw2omeOCYMFiSB2KYs=";
+                url = "https://download.oracle.com/graalvm/24/archive/graalvm-jdk-24.0.2_linux-aarch64_bin.tar.gz";
+              };
+              "x86_64-linux" = {
+                hash = "sha256-sBYaSbvB0PQGl1Mt36u4BSpaFeRjd15pRf4+SSAlm64=";
+                url = "https://download.oracle.com/graalvm/24/archive/graalvm-jdk-24.0.2_linux-x64_bin.tar.gz";
+              };
+              "x86_64-darwin" = {
+                hash = "sha256-3w+eXRASAcUL+muqPGV6gaKIPFtQl6n1q5PauG9+O6I=";
+                url = "https://download.oracle.com/graalvm/24/archive/graalvm-jdk-24.0.2_macos-x64_bin.tar.gz";
+              };
+              "aarch64-darwin" = {
+                hash = "sha256-LcdjTtk5xyXUGjU/c0Q/8y5w8vtXc2fxKmk2EH40lNw=";
+                url = "https://download.oracle.com/graalvm/24/archive/graalvm-jdk-24.0.2_macos-aarch64_bin.tar.gz";
+              };
+            };
+          in {
+            graalvm-oracle =
+              (prev.graalvm-oracle.override {
+                version = "24";
+              }).overrideAttrs (prevAttrs: {
+                src = final.fetchurl srcs.${final.stdenv.system};
+                meta =
+                  prevAttrs.meta
+                  // {
+                    platforms = builtins.attrNames srcs;
+                  };
+
+                # Fix from https://github.com/NixOS/nixpkgs/pull/423224.
+                propagatedBuildInputs = (prevAttrs.propagatedBuildInputs or []) ++ [final.onnxruntime];
+                postFixup =
+                  (prevAttrs.postFixup or "")
+                  + ''
+                    patchelf --replace-needed libonnxruntime.so.1.18.0 libonnxruntime.so.1 $out/lib/svm/profile_inference/onnx/native/libonnxruntime4j_jni.so
+                  '';
+              });
+          })
         ];
         config.allowUnfree = true;
       };
