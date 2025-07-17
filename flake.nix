@@ -39,10 +39,6 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    moonlight = {
-      url = "github:moonlight-mod/moonlight";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
     nixos-cosmic = {
       url = "github:lilyinstarlight/nixos-cosmic";
@@ -60,7 +56,6 @@
     home-manager-stable,
     nix-darwin,
     nvim-conf,
-    moonlight,
     flake-parts,
     secrets,
     nixpkgs-ghidra_11_2_1,
@@ -79,7 +74,6 @@
           (import ./pkgs/overlay.nix {inherit nixpkgs-ghidra_11_2_1;})
 
           nvim-conf.overlays.default
-          moonlight.overlays.default
 
           (final: prev: {
             observatory = nixos-cosmic.outputs.packages.${system}.observatory;
@@ -200,6 +194,23 @@
                     patchelf --replace-needed libonnxruntime.so.1.18.0 libonnxruntime.so.1 $out/lib/svm/profile_inference/onnx/native/libonnxruntime4j_jni.so
                   '';
               });
+          })
+
+          # TODO(Sirius902) Somehow `__structuredAttrs` breaks the `idea-community-mc-dev` derivation...
+          (final: prev: {
+            jetbrains = let
+              override = pkg:
+                pkg.overrideAttrs (_: {
+                  separateDebugInfo = false;
+                  __structuredAttrs = false;
+                });
+            in
+              prev.jetbrains
+              // {
+                jdk = override prev.jetbrains.jdk;
+                jdk-no-jcef = override prev.jetbrains.jdk-no-jcef;
+                jdk-no-jcef-17 = override prev.jetbrains.jdk-no-jcef-17;
+              };
           })
         ];
         config.allowUnfree = true;

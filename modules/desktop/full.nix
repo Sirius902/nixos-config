@@ -121,7 +121,7 @@
     gcfeeder
     gcviewer
     gcfeederd
-    gimp
+    gimp3
     godot_4
     imhex
     inkscape
@@ -156,7 +156,7 @@
     spotify
     sticky-notes
     transmission_4-qt
-    discord-canary
+    (discord-canary.override {withMoonlight = true;})
     vlc
     wineWowPackages.stagingFull
     winetricks
