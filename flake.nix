@@ -47,6 +47,7 @@
     };
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
     nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=679b3f608a6774719fa6dd9df711a0bdcbbdc515";
+    nixpkgs-jetbrains-jdk-fix.url = "github:Janrupf/nixpkgs?rev=6895a8b63bbdcbdeac7d8f0a332893c2ebbc2498";
   };
 
   outputs = {
@@ -61,6 +62,7 @@
     nixpkgs-ghidra_11_2_1,
     nixos-cosmic,
     nixpkgs-zelda64recomp,
+    nixpkgs-jetbrains-jdk-fix,
     ...
   } @ inputs: let
     importPkgs = {
@@ -218,21 +220,11 @@
               });
           })
 
-          # TODO(Sirius902) Somehow `__structuredAttrs` breaks the `idea-community-mc-dev` derivation...
-          (final: prev: {
-            jetbrains = let
-              override = pkg:
-                pkg.overrideAttrs (_: {
-                  separateDebugInfo = false;
-                  __structuredAttrs = false;
-                });
-            in
-              prev.jetbrains
-              // {
-                jdk = override prev.jetbrains.jdk;
-                jdk-no-jcef = override prev.jetbrains.jdk-no-jcef;
-                jdk-no-jcef-17 = override prev.jetbrains.jdk-no-jcef-17;
-              };
+          # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/426285 makes it to nixos-unstable.
+          (final: prev: let
+            pkgs = import nixpkgs-jetbrains-jdk-fix {inherit system config;};
+          in {
+            inherit (pkgs) jetbrains;
           })
         ];
         config.allowUnfree = true;

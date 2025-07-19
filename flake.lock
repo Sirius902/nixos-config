@@ -304,6 +304,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-jetbrains-jdk-fix": {
+      "locked": {
+        "lastModified": 1752862078,
+        "narHash": "sha256-0D0c1BddL/W6ct+3BUUuuga9HoISOfCy7NDD+kWgVEQ=",
+        "owner": "Janrupf",
+        "repo": "nixpkgs",
+        "rev": "6895a8b63bbdcbdeac7d8f0a332893c2ebbc2498",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Janrupf",
+        "repo": "nixpkgs",
+        "rev": "6895a8b63bbdcbdeac7d8f0a332893c2ebbc2498",
+        "type": "github"
+      }
+    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1751159883,
@@ -438,6 +454,7 @@
         "nixos-cosmic": "nixos-cosmic",
         "nixpkgs": "nixpkgs",
         "nixpkgs-ghidra_11_2_1": "nixpkgs-ghidra_11_2_1",
+        "nixpkgs-jetbrains-jdk-fix": "nixpkgs-jetbrains-jdk-fix",
         "nixpkgs-stable": "nixpkgs-stable",
         "nixpkgs-zelda64recomp": "nixpkgs-zelda64recomp",
         "nvim-conf": "nvim-conf",
