@@ -138,18 +138,40 @@
 
               src = prevAttrs.src.override {
                 tag = null;
-                rev = "7a52eff61ed211964d4db765ed2ad3b8769ea205";
-                hash = "sha256-tY0oee3s8rvwz3s3rxoTkhTpaLghvUSZWe+KCTjpZ1c=";
+                rev = "7f814a445c40234211fc194d1f9ac9341f823d76";
+                hash = "sha256-Rzb8kkX8iaXPVklAG5D78hNNl2SbTBoDh/q4Z0nyEOE=";
               };
 
-              cargoHash = "sha256-B1Fknbivn2Vr5ZLucXLJ8//zHylNQogfFx7CtzRcU6Y=sha256-B1Fknbivn2Vr5ZLucXLJ8//zHylNQogfFx7CtzRcU6Y=";
+              cargoHash = "sha256-B1Fknbivn2Vr5ZLucXLJ8//zHylNQogfFx7CtzRcU6Y=";
 
               cargoDeps = final.rustPlatform.fetchCargoVendor {
                 inherit (finalAttrs) pname src version;
                 hash = finalAttrs.cargoHash;
               };
 
-              env.VERGEN_GIT_COMMIT_DATE = "2025-07-04";
+              env.VERGEN_GIT_COMMIT_DATE = "2025-07-18";
+              env.VERGEN_GIT_SHA = finalAttrs.src.rev;
+            });
+          })
+
+          (final: prev: {
+            xdg-desktop-portal-cosmic = prev.xdg-desktop-portal-cosmic.overrideAttrs (finalAttrs: prevAttrs: {
+              version = "1.0.0-alpha.7-unstable-${finalAttrs.env.VERGEN_GIT_COMMIT_DATE}";
+
+              src = prevAttrs.src.override {
+                tag = null;
+                rev = "8621e06f7e2e3cbb17e219c2c32e85797f32c068";
+                hash = "sha256-qyGJheRKk551UzCsvRwVtybq4Dmpvph4v0IiARcfgwI=";
+              };
+
+              cargoHash = "sha256-lzBfqp/B3ET3sBARY9KanJ729bWkndx7P4WMEgMu+JU=";
+
+              cargoDeps = final.rustPlatform.fetchCargoVendor {
+                inherit (finalAttrs) pname src version;
+                hash = finalAttrs.cargoHash;
+              };
+
+              env.VERGEN_GIT_COMMIT_DATE = "2025-07-15";
               env.VERGEN_GIT_SHA = finalAttrs.src.rev;
             });
           })
