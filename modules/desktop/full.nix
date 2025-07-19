@@ -146,7 +146,7 @@
     (prismlauncher.override {
       jdks = [
         graalvm-oracle
-        graalvm-ce_8
+        temurin-bin-8
       ];
     })
     protontricks
