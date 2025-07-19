@@ -198,8 +198,8 @@
                 hash = "sha256-LcdjTtk5xyXUGjU/c0Q/8y5w8vtXc2fxKmk2EH40lNw=";
               };
             };
-          in {
-            graalvm-oracle =
+          in rec {
+            graalvm-oracle_24 =
               (prev.graalvm-oracle.override {
                 version = "24";
               }).overrideAttrs (finalAttrs: prevAttrs:
@@ -219,6 +219,65 @@
                       patchelf --replace-needed libonnxruntime.so.1.18.0 libonnxruntime.so.1 $out/lib/svm/profile_inference/onnx/native/libonnxruntime4j_jni.so
                     '';
                 });
+            graalvm-oracle = graalvm-oracle_24;
+          })
+
+          # Add graalvm-ce_8.
+          (final: prev: let
+            srcs = {
+              "x86_64-linux" = {
+                url = "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.3.1/graalvm-ce-java8-linux-amd64-21.3.1.tar.gz";
+                hash = "sha256-uey9VC3h7Qo9pGpinyJmqIIDJpj1/LxU2JI3K5GJsO0=";
+              };
+            };
+          in {
+            graalvm-ce_8 = prev.graalvm-ce.overrideAttrs (prevAttrs: {
+              version = "8";
+              src = final.fetchurl srcs.${final.stdenv.system};
+              meta =
+                prevAttrs.meta
+                // {
+                  platforms = builtins.attrNames srcs;
+                };
+
+              postInstall = ''
+                # jni.h expects jni_md.h to be in the header search path.
+                ln -sf $out/include/linux/*_md.h $out/include/
+
+                mkdir -p $out/share
+                # move files in $out like LICENSE.txt
+                find $out/ -maxdepth 1 -type f -exec mv {} $out/share \;
+                # symbolic link to $out/lib/svm/LICENSE_NATIVEIMAGE.txt
+                rm -f $out/LICENSE_NATIVEIMAGE.txt
+
+                # copy-paste openjdk's preFixup
+                # Set JAVA_HOME automatically.
+                mkdir -p $out/nix-support
+                cat > $out/nix-support/setup-hook << EOF
+                if [ -z "\''${JAVA_HOME-}" ]; then export JAVA_HOME=$out; fi
+                EOF
+              '';
+              preFixup = null;
+
+              installCheckPhase = ''
+                runHook preInstallCheck
+
+                echo ${final.lib.escapeShellArg ''
+                  public class HelloWorld {
+                    public static void main(String[] args) {
+                      System.out.println("Hello World");
+                    }
+                  }
+                ''} > HelloWorld.java
+                $out/bin/javac HelloWorld.java
+
+                # run on JVM with Graal Compiler
+                echo "Testing GraalVM"
+                $out/bin/java -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI -XX:+UseJVMCICompiler HelloWorld | fgrep 'Hello World'
+
+                runHook postInstallCheck
+              '';
+            });
           })
 
           # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/426285 makes it to nixos-unstable.
