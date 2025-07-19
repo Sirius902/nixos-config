@@ -255,7 +255,6 @@
                 if [ -z "\''${JAVA_HOME-}" ]; then export JAVA_HOME=$out; fi
                 EOF
               '';
-              preFixup = null;
 
               installCheckPhase = ''
                 runHook preInstallCheck
