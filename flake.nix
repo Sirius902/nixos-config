@@ -156,28 +156,6 @@
             });
           })
 
-          (final: prev: {
-            xdg-desktop-portal-cosmic = prev.xdg-desktop-portal-cosmic.overrideAttrs (finalAttrs: prevAttrs: {
-              version = "1.0.0-alpha.7-unstable-${finalAttrs.env.VERGEN_GIT_COMMIT_DATE}";
-
-              src = prevAttrs.src.override {
-                tag = null;
-                rev = "8621e06f7e2e3cbb17e219c2c32e85797f32c068";
-                hash = "sha256-qyGJheRKk551UzCsvRwVtybq4Dmpvph4v0IiARcfgwI=";
-              };
-
-              cargoHash = "sha256-lzBfqp/B3ET3sBARY9KanJ729bWkndx7P4WMEgMu+JU=";
-
-              cargoDeps = final.rustPlatform.fetchCargoVendor {
-                inherit (finalAttrs) pname src version;
-                hash = finalAttrs.cargoHash;
-              };
-
-              env.VERGEN_GIT_COMMIT_DATE = "2025-07-15";
-              env.VERGEN_GIT_SHA = finalAttrs.src.rev;
-            });
-          })
-
           # Update to graalvm-oracle 24.
           (final: prev: let
             srcs = {
