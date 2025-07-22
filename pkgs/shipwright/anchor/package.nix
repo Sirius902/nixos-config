@@ -26,27 +26,29 @@
   nlohmann_json,
   tinyxml-2,
   spdlog,
+  libvorbis,
+  libopus,
+  opusfile,
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
   shipwright-anchor,
   fetchpatch,
-  libvorbis,
 }: let
   # The following would normally get fetched at build time, or a specific version is required
   gamecontrollerdb = fetchFromGitHub {
     owner = "mdqinc";
     repo = "SDL_GameControllerDB";
-    rev = "79b8ea1035256740c22fb1686fa0c77d201fe45f";
-    hash = "sha256-pFzIvTlcQW9wGiuMcH6chm6kzE2LLcPgPiSgWbDvgUk=";
+    rev = "dce2d3593c6a96a57716d13d58aa3b1d4965fe6f";
+    hash = "sha256-a1466lU8pCQJcJSIe3cEplUcbVnYoABvnm/QQhwsuDw=";
   };
 
   imgui' = applyPatches {
     src = fetchFromGitHub {
       owner = "ocornut";
       repo = "imgui";
-      tag = "v1.91.6-docking";
-      hash = "sha256-28wyzzwXE02W5vbEdRCw2iOF8ONkb3M3Al8XlYBvz1A=";
+      tag = "v1.91.9b-docking";
+      hash = "sha256-mQOJ6jCN+7VopgZ61yzaCnt4R1QLrW7+47xxMhFRHLQ=";
     };
     patches = [
       "${shipwright-anchor.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
@@ -63,8 +65,8 @@
   prism = fetchFromGitHub {
     owner = "KiritoDv";
     repo = "prism-processor";
-    rev = "fb3f8b4a2d14dfcbae654d0f0e59a73b6f6ca850";
-    hash = "sha256-gGdQSpX/TgCNZ0uyIDdnazgVHpAQhl30e+V0aVvTFMM=";
+    rev = "7ae724a6fb7df8cbf547445214a1a848aefef747";
+    hash = "sha256-G7koDUxD6PgZWmoJtKTNubDHg6Eoq8I+AxIJR0h3i+A=";
   };
 
   stb_impl = writeTextFile {
@@ -116,13 +118,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright-anchor";
-    version = "deed712";
+    version = "2acb266";
 
     src = fetchFromGitHub {
       owner = "lilacLunatic";
       repo = "shipwright";
       rev = finalAttrs.version;
-      hash = "sha256-StsniOGD5RMdV1+Q1mhMm6OvzUawQ4ZUh0giVpjKu3U=";
+      hash = "sha256-/51/yjJS4vPrZHpJPnFnnEQllFdhcKDAziqUY1etJ24=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
@@ -138,10 +140,11 @@ in
       ../darwin-fixes.patch
       ../disable-downloading-stb_image.patch
       ./app-name.patch
+      ./0001-Dynamically-construct-weird-frame-data-5195.patch
       (fetchpatch {
-        name = "n64-weird-frames.patch";
-        url = "https://github.com/Sirius902/Shipwright/commit/28f3fed5c5596e67369139e05498eaa165e9a101.patch";
-        hash = "sha256-pQybaM1ZaLdUX0gqC03RIfcGlMyeu+KxNpyAcQpdmNY=";
+        name = "early-context-init";
+        url = "https://github.com/HarbourMasters/Shipwright/commit/e0ebc115ce3358e532b48f59c446c98cecd20750.patch";
+        hash = "sha256-AjLN7eoIVnTq8qXKrc1/KPMps/G1eri4b7cedSqudRA=";
       })
     ];
 
@@ -176,6 +179,8 @@ in
         tinyxml-2
         spdlog
         libvorbis
+        libopus.dev
+        opusfile.dev
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         libpulseaudio
@@ -197,6 +202,8 @@ in
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
+        (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${libopus.dev}/include/opus")
+        (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${opusfile.dev}/include/opus")
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
@@ -209,6 +216,9 @@ in
 
     # Linking fails without this
     hardeningDisable = ["format"];
+
+    # Pie needs to be enabled or else it segfaults
+    hardeningEnable = ["pie"];
 
     preConfigure = ''
       mkdir stb
@@ -290,7 +300,7 @@ in
         icon = "soh-anchor";
         exec = "soh-anchor";
         comment = finalAttrs.meta.description;
-        genericName = "Ship of Harkinian";
+        genericName = "Ship of Harkinian (Anchor)";
         desktopName = "soh-anchor";
         categories = ["Game"];
       })
