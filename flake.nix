@@ -39,12 +39,13 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
     nixos-cosmic = {
       url = "github:lilyinstarlight/nixos-cosmic";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.nixpkgs-stable.follows = "nixpkgs-stable";
     };
+    nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
+    nixpkgs-staging-next.url = "github:nixos/nixpkgs?rev=12c9599dc269ee39aacd8982b259bc080fae1822";
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
     nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=679b3f608a6774719fa6dd9df711a0bdcbbdc515";
     nixpkgs-jetbrains-jdk-fix.url = "github:Janrupf/nixpkgs?rev=6895a8b63bbdcbdeac7d8f0a332893c2ebbc2498";
@@ -59,8 +60,9 @@
     nvim-conf,
     flake-parts,
     secrets,
-    nixpkgs-ghidra_11_2_1,
     nixos-cosmic,
+    nixpkgs-ghidra_11_2_1,
+    nixpkgs-staging-next,
     nixpkgs-zelda64recomp,
     nixpkgs-jetbrains-jdk-fix,
     ...
@@ -78,28 +80,24 @@
           nvim-conf.overlays.default
 
           (final: prev: {
-            observatory = nixos-cosmic.outputs.packages.${system}.observatory;
+            inherit (nixos-cosmic.outputs.packages.${system}) observatory;
           })
 
           (final: prev: let
             pkgs = import nixpkgs-zelda64recomp {inherit system config;};
           in {
-            n64recomp = pkgs.n64recomp;
-            z64decompress = pkgs.z64decompress;
-            zelda64recomp = pkgs.zelda64recomp;
+            inherit
+              (pkgs)
+              n64recomp
+              z64decompress
+              zelda64recomp
+              ;
           })
 
           # Use newer version of sdl3 with fix for https://github.com/libsdl-org/sdl2-compat/issues/491.
           (final: prev: let
-            sdl3 = prev.sdl3.overrideAttrs (finalAttrs: prevAttrs: {
-              version = "b70919e";
-              src = prevAttrs.src.override {
-                tag = null;
-                rev = finalAttrs.version;
-                hash = "sha256-q5cLNtg5ZCRrrbngrVQhGG1lUOIZeSkaW35NIj6Eqso=";
-              };
-            });
-            SDL2 = prev.SDL2.override {inherit sdl3;};
+            pkgs-staging = import nixpkgs-staging-next {inherit system config;};
+            inherit (pkgs-staging) SDL2;
           in {
             shipwright = prev.shipwright.override {inherit SDL2;};
             _2ship2harkinian = prev._2ship2harkinian.override {inherit SDL2;};
@@ -107,6 +105,7 @@
             zelda64recomp = prev.zelda64recomp.override {inherit SDL2;};
           })
 
+          # FUTURE(Sirius902) Rando fork for macOS?
           # Add extra libs for MMRecompRando.
           (final: prev: {
             zelda64recomp = let
