@@ -26,6 +26,9 @@
   nlohmann_json,
   tinyxml-2,
   spdlog,
+  libvorbis,
+  libopus,
+  opusfile,
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
@@ -35,8 +38,8 @@
   gamecontrollerdb = fetchFromGitHub {
     owner = "mdqinc";
     repo = "SDL_GameControllerDB";
-    rev = "79b8ea1035256740c22fb1686fa0c77d201fe45f";
-    hash = "sha256-pFzIvTlcQW9wGiuMcH6chm6kzE2LLcPgPiSgWbDvgUk=";
+    rev = "dce2d3593c6a96a57716d13d58aa3b1d4965fe6f";
+    hash = "sha256-a1466lU8pCQJcJSIe3cEplUcbVnYoABvnm/QQhwsuDw=";
   };
 
   imgui' = applyPatches {
@@ -98,6 +101,13 @@
     hash = "sha256-zhRFEmPYNFLqQCfvdAaG5VBNle9Qm8FepIIIrT9sh88=";
   };
 
+  dr_libs = fetchFromGitHub {
+    owner = "mackron";
+    repo = "dr_libs";
+    rev = "da35f9d6c7374a95353fd1df1d394d44ab66cf01";
+    hash = "sha256-ydFhQ8LTYDBnRTuETtfWwIHZpRciWfqGsZC6SuViEn0=";
+  };
+
   metalcpp = fetchFromGitHub {
     owner = "briaguya-ai";
     repo = "single-header-metal-cpp";
@@ -107,13 +117,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright";
-    version = "e0ebc11";
+    version = "237dcfe";
 
     src = fetchFromGitHub {
       owner = "harbourmasters";
       repo = "shipwright";
       rev = finalAttrs.version;
-      hash = "sha256-W/34SH7R1A9fDnfqsAkuNRXNDx/WSw1Ewp846DWUwvE=";
+      hash = "sha256-LWOFXEdkqpIjtriBBTjV19PQ7185ZpgyvAuAv7mJlo4=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
@@ -160,6 +170,9 @@ in
         nlohmann_json
         tinyxml-2
         spdlog
+        libvorbis
+        libopus.dev
+        opusfile.dev
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         libpulseaudio
@@ -180,6 +193,9 @@ in
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
+        (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${libopus.dev}/include/opus")
+        (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${opusfile.dev}/include/opus")
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
@@ -192,6 +208,9 @@ in
 
     # Linking fails without this
     hardeningDisable = ["format"];
+
+    # Pie needs to be enabled or else it segfaults
+    hardeningEnable = ["pie"];
 
     preConfigure = ''
       mkdir stb
@@ -213,13 +232,13 @@ in
       cp ${gamecontrollerdb}/gamecontrollerdb.txt gamecontrollerdb.txt
       mv ../libultraship/src/graphic/Fast3D/shaders ../soh/assets/custom
       pushd ../OTRExporter
-      python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../soh/assets/xml --custom-assets-path ../soh/assets/custom --custom-otr-file soh.otr --port-ver $port_ver
+      python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../soh/assets/xml --custom-assets-path ../soh/assets/custom --custom-otr-file soh.o2r --port-ver $port_ver
       popd
     '';
 
     preInstall = ''
       # Cmake likes it here for its install paths
-      cp ../OTRExporter/soh.otr soh/soh.otr
+      cp ../OTRExporter/soh.o2r soh/soh.o2r
     '';
 
     postInstall =

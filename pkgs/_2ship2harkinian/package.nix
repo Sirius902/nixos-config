@@ -26,29 +26,29 @@
   nlohmann_json,
   tinyxml-2,
   spdlog,
+  libvorbis,
+  libopus,
+  opusfile,
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
   _2ship2harkinian,
   fetchpatch,
-  libvorbis,
-  libopus,
-  opusfile,
 }: let
   # The following would normally get fetched at build time, or a specific version is required
   gamecontrollerdb = fetchFromGitHub {
     owner = "mdqinc";
     repo = "SDL_GameControllerDB";
-    rev = "79b8ea1035256740c22fb1686fa0c77d201fe45f";
-    hash = "sha256-pFzIvTlcQW9wGiuMcH6chm6kzE2LLcPgPiSgWbDvgUk=";
+    rev = "dce2d3593c6a96a57716d13d58aa3b1d4965fe6f";
+    hash = "sha256-a1466lU8pCQJcJSIe3cEplUcbVnYoABvnm/QQhwsuDw=";
   };
 
   imgui' = applyPatches {
     src = fetchFromGitHub {
       owner = "ocornut";
       repo = "imgui";
-      tag = "v1.91.6-docking";
-      hash = "sha256-28wyzzwXE02W5vbEdRCw2iOF8ONkb3M3Al8XlYBvz1A=";
+      tag = "v1.91.9b-docking";
+      hash = "sha256-mQOJ6jCN+7VopgZ61yzaCnt4R1QLrW7+47xxMhFRHLQ=";
     };
     patches = [
       "${_2ship2harkinian.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
@@ -65,8 +65,8 @@
   prism = fetchFromGitHub {
     owner = "KiritoDv";
     repo = "prism-processor";
-    rev = "493974843e910d0fac4e3bb1ec52656728b875b4";
-    hash = "sha256-Bq1+deZ2BL1wNxw4qs53EEnc1IFsNyK4wpLimkzFK9w=";
+    rev = "7ae724a6fb7df8cbf547445214a1a848aefef747";
+    hash = "sha256-G7koDUxD6PgZWmoJtKTNubDHg6Eoq8I+AxIJR0h3i+A=";
   };
 
   stb_impl = writeTextFile {
@@ -118,13 +118,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "2ship2harkinian";
-    version = "6208594";
+    version = "5139d60";
 
     src = fetchFromGitHub {
       owner = "harbourmasters";
       repo = "2ship2harkinian";
       rev = finalAttrs.version;
-      hash = "sha256-SQyk6LtFSAAAKbwgVc+g9x2QEkiPW5fmZ8F97bPg+YE=";
+      hash = "sha256-AdHDGZEwtjHyjUmSkUcD+0n/qsP1n+c9I0pXgwcS3tc=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
@@ -142,8 +142,8 @@ in
       # TODO(Sirius902) Remove once underwater ocarina PR gets merged.
       (fetchpatch {
         name = "underwater-ocarina.patch";
-        url = "https://github.com/Sirius902/2ship2harkinian/commit/af8fc4d106aa0eff111c63e32ed760bf9d5c873a.patch";
-        hash = "sha256-+MkUolY9v4KroxgO8y0iMTx9gRMrWeTB2EvYkgO6m2A=";
+        url = "https://github.com/Sirius902/2ship2harkinian/commit/1a2fb1da4dd974fdb462f85128101b1b51ea4f8a.patch";
+        hash = "sha256-Fxr81HMUXp8Rfw71IyR5wFjdGjPuPQIW3FojMg1u6Bs=";
       })
     ];
 
