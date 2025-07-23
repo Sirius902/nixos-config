@@ -273,6 +273,10 @@ in
         rm -rf $out/lib
         ln -s $out/Applications/soh-anchor.app/Contents/Resources $out/lib
 
+        # TODO(Sirius902) This seems like an issue upstream in ship maybe?
+        # Move gamecontrollerdb.txt to the proper place for app bundle
+        cp ${gamecontrollerdb}/gamecontrollerdb.txt $out/Applications/soh-anchor.app/Contents/Resources/gamecontrollerdb.txt
+
         # Copy icons
         cp -r ../build/macosx/soh.icns $out/Applications/soh-anchor.app/Contents/Resources/soh.icns
 

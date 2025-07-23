@@ -366,22 +366,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-staging-next": {
-      "locked": {
-        "lastModified": 1752991557,
-        "narHash": "sha256-aAsNDjLUmk5TLaMo3/WPLAorOxcGN6SXLTMhk0oWzUY=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "12c9599dc269ee39aacd8982b259bc080fae1822",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "12c9599dc269ee39aacd8982b259bc080fae1822",
-        "type": "github"
-      }
-    },
     "nixpkgs-zelda64recomp": {
       "locked": {
         "lastModified": 1750810491,
@@ -472,7 +456,6 @@
         "nixpkgs-ghidra_11_2_1": "nixpkgs-ghidra_11_2_1",
         "nixpkgs-jetbrains-jdk-fix": "nixpkgs-jetbrains-jdk-fix",
         "nixpkgs-stable": "nixpkgs-stable",
-        "nixpkgs-staging-next": "nixpkgs-staging-next",
         "nixpkgs-zelda64recomp": "nixpkgs-zelda64recomp",
         "nvim-conf": "nvim-conf",
         "secrets": "secrets",

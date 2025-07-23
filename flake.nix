@@ -45,7 +45,6 @@
       inputs.nixpkgs-stable.follows = "nixpkgs-stable";
     };
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
-    nixpkgs-staging-next.url = "github:nixos/nixpkgs?rev=12c9599dc269ee39aacd8982b259bc080fae1822";
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
     nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=679b3f608a6774719fa6dd9df711a0bdcbbdc515";
     nixpkgs-jetbrains-jdk-fix.url = "github:Janrupf/nixpkgs?rev=6895a8b63bbdcbdeac7d8f0a332893c2ebbc2498";
@@ -62,7 +61,6 @@
     secrets,
     nixos-cosmic,
     nixpkgs-ghidra_11_2_1,
-    nixpkgs-staging-next,
     nixpkgs-zelda64recomp,
     nixpkgs-jetbrains-jdk-fix,
     ...
@@ -95,9 +93,33 @@
           })
 
           # Use newer version of sdl3 with fix for https://github.com/libsdl-org/sdl2-compat/issues/491.
+          # And adding Switch 2 controller support via https://github.com/libsdl-org/SDL/pull/13327.
           (final: prev: let
-            pkgs-staging = import nixpkgs-staging-next {inherit system config;};
-            inherit (pkgs-staging) SDL2;
+            sdl3 = prev.sdl3.overrideAttrs (finalAttrs: prevAttrs: {
+              version = "db29f89";
+              src = prevAttrs.src.override {
+                tag = null;
+                rev = finalAttrs.version;
+                hash = "sha256-u8PyjZZ2JPUGBtxZ1R3dA3xLGp3EhfyaJ0Utf/hu41U=";
+              };
+              patches =
+                (prevAttrs.patches or [])
+                ++ [
+                  (final.fetchpatch {
+                    name = "switch2-controllers";
+                    url = "https://github.com/flibitijibibo/SDL/commit/9b17353e046e74ba1abc936b87dbac040c123eb1.patch";
+                    hash = "sha256-nW+j/TEieeyOXzGvGIxBcpg5rbqin1ENlEJ3kuBTO2Q=";
+                  })
+                ];
+            });
+            SDL2 = (prev.SDL2.override {inherit sdl3;}).overrideAttrs (finalAttrs: prevAttrs: {
+              version = "a9b8494";
+              src = prevAttrs.src.override {
+                tag = null;
+                rev = finalAttrs.version;
+                hash = "sha256-xPbr+OW1Jdyfbc8pn+0N4nThb8U5MHBeHcNdIydR5wo=";
+              };
+            });
           in {
             shipwright = prev.shipwright.override {inherit SDL2;};
             _2ship2harkinian = prev._2ship2harkinian.override {inherit SDL2;};
@@ -292,10 +314,40 @@
           overlayedAllPackages = lib.mapAttrs (name: _: pkgs.${name}) allPackages;
         in
           overlayedAllPackages
-          // {
-            n64recomp = pkgs.n64recomp;
-            z64decompress = pkgs.z64decompress;
-            zelda64recomp = pkgs.zelda64recomp;
+          // rec {
+            inherit
+              (pkgs)
+              n64recomp
+              z64decompress
+              zelda64recomp
+              ;
+
+            sdl3 = pkgs.sdl3.overrideAttrs (finalAttrs: prevAttrs: {
+              version = "db29f89";
+              src = prevAttrs.src.override {
+                tag = null;
+                rev = finalAttrs.version;
+                hash = "sha256-u8PyjZZ2JPUGBtxZ1R3dA3xLGp3EhfyaJ0Utf/hu41U=";
+              };
+              patches =
+                (prevAttrs.patches or [])
+                ++ [
+                  (pkgs.fetchpatch {
+                    name = "switch2-controllers";
+                    url = "https://github.com/flibitijibibo/SDL/commit/9b17353e046e74ba1abc936b87dbac040c123eb1.patch";
+                    hash = "sha256-nW+j/TEieeyOXzGvGIxBcpg5rbqin1ENlEJ3kuBTO2Q=";
+                  })
+                ];
+            });
+
+            SDL2 = (pkgs.SDL2.override {inherit sdl3;}).overrideAttrs (finalAttrs: prevAttrs: {
+              version = "a9b8494";
+              src = prevAttrs.src.override {
+                tag = null;
+                rev = finalAttrs.version;
+                hash = "sha256-xPbr+OW1Jdyfbc8pn+0N4nThb8U5MHBeHcNdIydR5wo=";
+              };
+            });
           };
 
         devShells.default = pkgs.mkShell {

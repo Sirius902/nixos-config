@@ -272,6 +272,10 @@ in
         rm -rf $out/lib
         ln -s $out/Applications/2s2h.app/Contents/Resources $out/lib
 
+        # TODO(Sirius902) This seems like an issue upstream in 2ship maybe?
+        # Move gamecontrollerdb.txt to the proper place for app bundle
+        cp ${gamecontrollerdb}/gamecontrollerdb.txt $out/Applications/2s2h.app/Contents/Resources/gamecontrollerdb.txt
+
         # Copy icons
         cp -r ../build/macosx/2s2h.icns $out/Applications/2s2h.app/Contents/Resources/2s2h.icns
 
