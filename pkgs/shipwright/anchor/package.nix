@@ -35,10 +35,10 @@
 }: let
   # The following would normally get fetched at build time, or a specific version is required
   gamecontrollerdb = fetchFromGitHub {
-    owner = "mdqinc";
+    owner = "Sirius902";
     repo = "SDL_GameControllerDB";
-    rev = "79b8ea1035256740c22fb1686fa0c77d201fe45f";
-    hash = "sha256-pFzIvTlcQW9wGiuMcH6chm6kzE2LLcPgPiSgWbDvgUk=";
+    rev = "f7e2898a0c154eaf7508c34bfb4264104bc3f4ed";
+    hash = "sha256-6J6U3sgSJegIq5ZYgWroiefxFdvv/+uDd1szBPgbtTM=";
   };
 
   imgui' = applyPatches {
