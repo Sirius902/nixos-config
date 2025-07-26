@@ -1,10 +1,12 @@
 {
   self,
   pkgs,
+  secrets,
   nix-index-database,
   ...
 }: {
   imports = [
+    secrets.darwinModules.default
     nix-index-database.darwinModules.nix-index
     ../modules/tmux.nix
   ];

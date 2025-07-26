@@ -10,7 +10,7 @@
   ...
 }: {
   imports = [
-    secrets.nixosModules.secrets
+    secrets.nixosModules.default
     nix-index-database.nixosModules.nix-index
     ./modules/tmux.nix
   ];
