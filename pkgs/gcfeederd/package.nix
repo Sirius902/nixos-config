@@ -28,7 +28,6 @@ rustPlatform.buildRustPackage rec {
   # TODO(Sirius902) Enable this once tests pass.
   doCheck = false;
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-xgvnCtTlcKy8yfL7SoQBKhA08Te3bUSRn1yitv5D70Y=";
 
   nativeBuildInputs =

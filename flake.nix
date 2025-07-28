@@ -44,10 +44,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.nixpkgs-stable.follows = "nixpkgs-stable";
     };
+    # TODO(Sirius902) Override new derivation to be the old one to get rid of another nixpkgs?
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
-    nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=679b3f608a6774719fa6dd9df711a0bdcbbdc515";
-    nixpkgs-jetbrains-jdk-fix.url = "github:Janrupf/nixpkgs?rev=6895a8b63bbdcbdeac7d8f0a332893c2ebbc2498";
+    nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=fb2249721768eff38e584950e8277d5701763ee6";
   };
 
   outputs = {
@@ -62,7 +62,6 @@
     nixos-cosmic,
     nixpkgs-ghidra_11_2_1,
     nixpkgs-zelda64recomp,
-    nixpkgs-jetbrains-jdk-fix,
     ...
   } @ inputs: let
     importPkgs = {
@@ -287,13 +286,6 @@
                 runHook postInstallCheck
               '';
             });
-          })
-
-          # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/426285 makes it to nixos-unstable.
-          (final: prev: let
-            pkgs = import nixpkgs-jetbrains-jdk-fix {inherit system config;};
-          in {
-            inherit (pkgs) jetbrains;
           })
         ];
         config.allowUnfree = true;

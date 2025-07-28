@@ -33,7 +33,6 @@ rustPlatform.buildRustPackage rec {
 
   cargoPatches = [./libusb1-sys-darwin-reproducible.patch];
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-/wb2X7FWWkNxUWt2lTN8chDDNYf4qUO2jJdQoAZNPvk=";
 
   nativeBuildInputs =
