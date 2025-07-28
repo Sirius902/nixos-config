@@ -139,7 +139,7 @@ in
       ../disable-downloading-stb_image.patch
       ./app-name.patch
       (fetchpatch {
-        name = "n64-weird-frames.patch";
+        name = "n64-weird-frames";
         url = "https://github.com/Sirius902/Shipwright/commit/28f3fed5c5596e67369139e05498eaa165e9a101.patch";
         hash = "sha256-pQybaM1ZaLdUX0gqC03RIfcGlMyeu+KxNpyAcQpdmNY=";
       })

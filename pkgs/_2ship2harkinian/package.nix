@@ -141,7 +141,7 @@ in
       ./disable-downloading-stb_image.patch
       # TODO(Sirius902) Remove once underwater ocarina PR gets merged.
       (fetchpatch {
-        name = "underwater-ocarina.patch";
+        name = "underwater-ocarina";
         url = "https://github.com/Sirius902/2ship2harkinian/commit/1a2fb1da4dd974fdb462f85128101b1b51ea4f8a.patch";
         hash = "sha256-Fxr81HMUXp8Rfw71IyR5wFjdGjPuPQIW3FojMg1u6Bs=";
       })
