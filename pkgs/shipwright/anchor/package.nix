@@ -143,6 +143,11 @@ in
         url = "https://github.com/Sirius902/Shipwright/commit/28f3fed5c5596e67369139e05498eaa165e9a101.patch";
         hash = "sha256-pQybaM1ZaLdUX0gqC03RIfcGlMyeu+KxNpyAcQpdmNY=";
       })
+      (fetchpatch {
+        name = "timesplit-behave-yourself";
+        url = "https://github.com/HarbourMasters/Shipwright/commit/d06cf6bf1032037d67b46bad37b8320bec9643d6.patch";
+        hash = "sha256-R4V8+VP0dOtSjDAYCzhjsBFn9rzM4hFhCKXTa71lzUw=";
+      })
     ];
 
     nativeBuildInputs =
