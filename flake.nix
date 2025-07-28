@@ -189,7 +189,7 @@
             });
           })
 
-          # Update to graalvm-oracle 24.
+          # Add graalvm-oracle_24.
           (final: prev: let
             srcs = {
               "aarch64-linux" = {
@@ -209,28 +209,24 @@
                 hash = "sha256-LcdjTtk5xyXUGjU/c0Q/8y5w8vtXc2fxKmk2EH40lNw=";
               };
             };
-          in rec {
-            graalvm-oracle_24 =
-              (prev.graalvm-oracle.override {
-                version = "24";
-              }).overrideAttrs (finalAttrs: prevAttrs:
-                final.lib.optionalAttrs (prevAttrs.version == "24") {
-                  src = final.fetchurl srcs.${final.stdenv.system};
-                  meta =
-                    prevAttrs.meta
-                    // {
-                      platforms = builtins.attrNames srcs;
-                    };
+          in {
+            graalvm-oracle_24 = prev.graalvm-oracle.overrideAttrs (prevAttrs: {
+              version = "24";
+              src = final.fetchurl srcs.${final.stdenv.system};
+              meta =
+                prevAttrs.meta
+                // {
+                  platforms = builtins.attrNames srcs;
+                };
 
-                  # Fix from https://github.com/NixOS/nixpkgs/pull/423224.
-                  propagatedBuildInputs = (prevAttrs.propagatedBuildInputs or []) ++ [final.onnxruntime];
-                  postFixup =
-                    (prevAttrs.postFixup or "")
-                    + ''
-                      patchelf --replace-needed libonnxruntime.so.1.18.0 libonnxruntime.so.1 $out/lib/svm/profile_inference/onnx/native/libonnxruntime4j_jni.so
-                    '';
-                });
-            graalvm-oracle = graalvm-oracle_24;
+              # Fix from https://github.com/NixOS/nixpkgs/pull/423224.
+              propagatedBuildInputs = (prevAttrs.propagatedBuildInputs or []) ++ [final.onnxruntime];
+              postFixup =
+                (prevAttrs.postFixup or "")
+                + ''
+                  patchelf --replace-needed libonnxruntime.so.1.18.0 libonnxruntime.so.1 $out/lib/svm/profile_inference/onnx/native/libonnxruntime4j_jni.so
+                '';
+            });
           })
 
           # Add graalvm-ce_8.

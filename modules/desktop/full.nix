@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   imports = [
     ./default.nix
     ./rnnoise.nix
@@ -126,7 +130,6 @@
     imhex
     inkscape
     jetbrains.idea-community
-    idea-community-mc-dev
     jetbrains.rider
     (ghidra.withExtensions (_: [ghidra-extensions.gamecube-loader]))
     heroic
@@ -145,8 +148,8 @@
     polychromatic
     (prismlauncher.override {
       jdks = [
-        graalvm-oracle
         temurin-bin-8
+        config.my.jdk
       ];
     })
     protontricks

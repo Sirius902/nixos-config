@@ -1,6 +1,7 @@
 {
-  pkgs,
+  config,
   lib,
+  pkgs,
   ...
 }: {
   imports = [
@@ -50,7 +51,7 @@
 
   environment.systemPackages = with pkgs; [
     screen
-    graalvm-oracle
+    config.my.jdk
     openmw-tes3mp
   ];
 
