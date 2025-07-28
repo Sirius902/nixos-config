@@ -78,7 +78,20 @@
           nvim-conf.overlays.default
 
           (final: prev: {
-            inherit (nixos-cosmic.outputs.packages.${system}) observatory;
+            observatory = nixos-cosmic.outputs.packages.${system}.observatory.override {
+              inherit
+                (prev)
+                lib
+                fetchFromGitHub
+                libcosmicAppHook
+                rustPlatform
+                just
+                stdenv
+                gnused
+                protobuf
+                nix-update-script
+                ;
+            };
           })
 
           (final: prev: let
