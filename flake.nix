@@ -161,18 +161,18 @@
 
               src = prevAttrs.src.override {
                 tag = null;
-                rev = "7f814a445c40234211fc194d1f9ac9341f823d76";
-                hash = "sha256-Rzb8kkX8iaXPVklAG5D78hNNl2SbTBoDh/q4Z0nyEOE=";
+                rev = "6492629f903778a33222169a42a607e818327c95";
+                hash = "sha256-q9lLTYBgczV+f75J9v2JqClROBgLkUXrY4rRj8qaaDw=";
               };
 
-              cargoHash = "sha256-B1Fknbivn2Vr5ZLucXLJ8//zHylNQogfFx7CtzRcU6Y=";
+              cargoHash = "sha256-kavIN2+CGRGH5sD1MRH3BLMRMDB3tMvkJh+tuIfv85I=";
 
               cargoDeps = final.rustPlatform.fetchCargoVendor {
                 inherit (finalAttrs) pname src version;
                 hash = finalAttrs.cargoHash;
               };
 
-              env.VERGEN_GIT_COMMIT_DATE = "2025-07-18";
+              env.VERGEN_GIT_COMMIT_DATE = "2025-07-25";
               env.VERGEN_GIT_SHA = finalAttrs.src.rev;
             });
           })
