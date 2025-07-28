@@ -515,11 +515,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1753515953,
-        "narHash": "sha256-9fYuQHkaa3wGDKd03MMBydD6aBPBfuQIYvc8Mm2U9co=",
+        "lastModified": 1753666653,
+        "narHash": "sha256-aaW0CDpVQuIIv/WHt8S70cGQARjwyTDkf7koFt/nU+U=",
         "ref": "refs/heads/main",
-        "rev": "f607ab6a752f5d1a8cc73508f430abec3740625e",
-        "revCount": 45,
+        "rev": "94e38e65e94187837e5c6ec563d69340f6e19ddb",
+        "revCount": 46,
         "type": "git",
         "url": "ssh://git@github.com/Sirius902/nixos-secrets"
       },
