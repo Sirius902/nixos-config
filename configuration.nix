@@ -2,6 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 {
+  config,
   lib,
   pkgs,
   secrets,
@@ -14,7 +15,8 @@
     secrets.nixosModules.default
     nix-index-database.nixosModules.nix-index
     ./modules/tmux.nix
-    ./modules/jdk.nix
+    ./modules/options/jdk.nix
+    ./modules/options/kernel.nix
   ];
 
   nix.settings = {
@@ -29,8 +31,13 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/efi";
 
-  # Only use kernel versions supported by ZFS.
-  boot.kernelPackages = pkgs.linuxPackages_6_15;
+  boot.kernelPackages = let
+    baseKernel = pkgs.linuxPackages_6_15.kernel;
+    patchedKernel = baseKernel.overrideAttrs (prevAttrs: {
+      patches = (prevAttrs.patches or []) ++ config.my.kernelPatches;
+    });
+  in
+    pkgs.linuxPackagesFor patchedKernel;
   boot.zfs.package = pkgs.zfs_2_3;
 
   # Disable hibernation.
