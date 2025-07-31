@@ -352,17 +352,17 @@
     },
     "nixpkgs-zelda64recomp": {
       "locked": {
-        "lastModified": 1753318775,
-        "narHash": "sha256-pLCpDewqunfGml/63jLxA9WV0JEMSDydUE1XYBrfTYI=",
+        "lastModified": 1753930850,
+        "narHash": "sha256-hsIwqH4AbwRgumPJT+PmfmnSHPQ1a2TFuEaRl+3+6/4=",
         "owner": "qubitnano",
         "repo": "nixpkgs",
-        "rev": "fb2249721768eff38e584950e8277d5701763ee6",
+        "rev": "8dccd27f0feef3b0c1bb21a0b86e428a45a8be3c",
         "type": "github"
       },
       "original": {
         "owner": "qubitnano",
         "repo": "nixpkgs",
-        "rev": "fb2249721768eff38e584950e8277d5701763ee6",
+        "rev": "8dccd27f0feef3b0c1bb21a0b86e428a45a8be3c",
         "type": "github"
       }
     },

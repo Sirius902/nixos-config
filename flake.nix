@@ -47,7 +47,7 @@
     # TODO(Sirius902) Override new derivation to be the old one to get rid of another nixpkgs?
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
-    nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=fb2249721768eff38e584950e8277d5701763ee6";
+    nixpkgs-zelda64recomp.url = "github:qubitnano/nixpkgs?rev=8dccd27f0feef3b0c1bb21a0b86e428a45a8be3c";
   };
 
   outputs = {
