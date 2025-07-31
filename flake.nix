@@ -79,7 +79,7 @@
           (final: prev: {
             observatory = nixos-cosmic.outputs.packages.${system}.observatory.override {
               inherit
-                (prev)
+                (final)
                 lib
                 fetchFromGitHub
                 libcosmicAppHook
@@ -107,7 +107,7 @@
           # Use newer version of sdl3 with fix for https://github.com/libsdl-org/sdl2-compat/issues/491.
           # And adding Switch 2 controller support via https://github.com/libsdl-org/SDL/pull/13327.
           (final: prev: let
-            sdl3 = prev.sdl3.overrideAttrs (finalAttrs: prevAttrs: {
+            sdl3 = final.sdl3.overrideAttrs (finalAttrs: prevAttrs: {
               version = "db29f89";
               src = prevAttrs.src.override {
                 tag = null;
@@ -124,7 +124,7 @@
                   })
                 ];
             });
-            SDL2 = (prev.SDL2.override {inherit sdl3;}).overrideAttrs (finalAttrs: prevAttrs: {
+            SDL2 = (final.SDL2.override {inherit sdl3;}).overrideAttrs (finalAttrs: prevAttrs: {
               version = "a9b8494";
               src = prevAttrs.src.override {
                 tag = null;
