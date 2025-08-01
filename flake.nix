@@ -189,6 +189,30 @@
             });
           })
 
+          # TODO(Sirius902) Overlay new cosmic-panel to avoid crashes when disconnecting displays
+          # until nixos-unstable version is newer.
+          (final: prev: {
+            cosmic-panel = prev.cosmic-panel.overrideAttrs (finalAttrs: prevAttrs: {
+              version = "1.0.0-alpha.7-unstable-${finalAttrs.env.VERGEN_GIT_COMMIT_DATE}";
+
+              src = prevAttrs.src.override {
+                tag = null;
+                rev = "da27f533d9fad2f1b5e85c523217466c952709ce";
+                hash = "sha256-SrBZGdzOT2sZlCXzqN2fKVZjz93T7ewsyDY8zQs1hN4=";
+              };
+
+              cargoHash = "sha256-GdVWQeoPjGeLh7jW4sVEJ3yK+1EG9X2ChKziTDHeRqQ=";
+
+              cargoDeps = final.rustPlatform.fetchCargoVendor {
+                inherit (finalAttrs) pname src version;
+                hash = finalAttrs.cargoHash;
+              };
+
+              env.VERGEN_GIT_COMMIT_DATE = "2025-07-29";
+              env.VERGEN_GIT_SHA = finalAttrs.src.rev;
+            });
+          })
+
           # Add graalvm-oracle_24.
           (final: prev: let
             srcs = {
