@@ -190,7 +190,7 @@
           })
 
           # TODO(Sirius902) Overlay new cosmic-panel to avoid crashes when disconnecting displays
-          # until nixos-unstable version is newer.
+          # until the nixos-unstable version is newer.
           (final: prev: {
             cosmic-panel = prev.cosmic-panel.overrideAttrs (finalAttrs: prevAttrs: {
               version = "1.0.0-alpha.7-unstable-${finalAttrs.env.VERGEN_GIT_COMMIT_DATE}";
@@ -209,6 +209,30 @@
               };
 
               env.VERGEN_GIT_COMMIT_DATE = "2025-07-29";
+              env.VERGEN_GIT_SHA = finalAttrs.src.rev;
+            });
+          })
+
+          # TODO(Sirius902) Overlay new xdg-desktop-portal-cosmic to maybe fix clipboard shenanigans
+          # until the nixos-unstable version is newer.
+          (final: prev: {
+            xdg-desktop-portal-cosmic = prev.xdg-desktop-portal-cosmic.overrideAttrs (finalAttrs: prevAttrs: {
+              version = "1.0.0-alpha.7-unstable-${finalAttrs.env.VERGEN_GIT_COMMIT_DATE}";
+
+              src = prevAttrs.src.override {
+                tag = null;
+                rev = "a9e8731f0f2b8b7f73d595bb9db22448a39d7529";
+                hash = "sha256-SnY33Me61fVthvUL93nZzfeu6Hpz1u1Boklu6vZWEQQ=";
+              };
+
+              cargoHash = "sha256-7rgZSlD5M8T9UIy4AVBOZUZu95TUEWSpOUVjBo8CcDA=";
+
+              cargoDeps = final.rustPlatform.fetchCargoVendor {
+                inherit (finalAttrs) pname src version;
+                hash = finalAttrs.cargoHash;
+              };
+
+              env.VERGEN_GIT_COMMIT_DATE = "2025-07-25";
               env.VERGEN_GIT_SHA = finalAttrs.src.rev;
             });
           })
