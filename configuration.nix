@@ -16,7 +16,6 @@
     nix-index-database.nixosModules.nix-index
     ./modules/tmux.nix
     ./modules/options/jdk.nix
-    ./modules/options/kernel.nix
   ];
 
   nix.settings = {
@@ -31,13 +30,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/efi";
 
-  boot.kernelPackages = let
-    baseKernel = pkgs.linuxPackages_6_15.kernel;
-    patchedKernel = baseKernel.overrideAttrs (prevAttrs: {
-      patches = (prevAttrs.patches or []) ++ config.my.kernelPatches;
-    });
-  in
-    pkgs.linuxPackagesFor patchedKernel;
+  boot.kernelPackages = pkgs.linuxPackages_6_15;
   boot.zfs.package = pkgs.zfs_2_3;
 
   # Disable hibernation.
