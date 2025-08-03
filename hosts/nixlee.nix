@@ -26,8 +26,6 @@
     ../modules/tailscale.nix
     ../modules/docker.nix
 
-    ../modules/pipewire/low-latency.nix
-
     ../modules/amd.nix
     # ../modules/nvidia.nix
   ];
