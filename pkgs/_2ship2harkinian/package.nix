@@ -33,7 +33,6 @@
   fixDarwinDylibNames,
   applyPatches,
   _2ship2harkinian,
-  fetchpatch,
 }: let
   # The following would normally get fetched at build time, or a specific version is required
   gamecontrollerdb = fetchFromGitHub {
@@ -118,13 +117,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "2ship2harkinian";
-    version = "cf3fc8c";
+    version = lib.substring 0 7 finalAttrs.src.rev;
 
     src = fetchFromGitHub {
       owner = "harbourmasters";
       repo = "2ship2harkinian";
-      rev = finalAttrs.version;
-      hash = "sha256-mHpfEtiwlxkKfnXQL4OO+dxnqZ2HQ28qrncHYAA+skY=";
+      rev = "6444ca80f3c1086c4d58c76c85737493f1a1e6d9";
+      hash = "sha256-Wn/wPqpUvql3EDZOlGn/C43X+W9tSIgJnVoH8At1pWY=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
@@ -139,12 +138,6 @@ in
     patches = [
       ./darwin-fixes.patch
       ./disable-downloading-stb_image.patch
-      # TODO(Sirius902) Remove once underwater ocarina PR gets merged.
-      (fetchpatch {
-        name = "underwater-ocarina";
-        url = "https://github.com/Sirius902/2ship2harkinian/commit/1a2fb1da4dd974fdb462f85128101b1b51ea4f8a.patch";
-        hash = "sha256-Fxr81HMUXp8Rfw71IyR5wFjdGjPuPQIW3FojMg1u6Bs=";
-      })
     ];
 
     nativeBuildInputs =
