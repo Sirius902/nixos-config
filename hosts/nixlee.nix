@@ -26,6 +26,8 @@
     ../modules/tailscale.nix
     ../modules/docker.nix
 
+    ../modules/pipewire/crackle-fix.nix
+
     ../modules/amd.nix
     # ../modules/nvidia.nix
   ];
