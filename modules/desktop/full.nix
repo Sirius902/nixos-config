@@ -40,6 +40,10 @@
   };
   programs.virt-manager.enable = true;
 
+  # FUTURE(Sirius902) Remove this once linked issue is resolved.
+  # https://github.com/NixOS/nixpkgs/issues/425874
+  networking.firewall.trustedInterfaces = ["virbr0"];
+
   # Symlink /persist/etc/libvirt to /etc/libvirt
   environment.etc."libvirt".source = "/persist/etc/libvirt";
 
