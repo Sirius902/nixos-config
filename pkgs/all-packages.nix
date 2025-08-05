@@ -17,4 +17,6 @@
   _2ship2harkinian = pkgs.callPackage ./_2ship2harkinian/package.nix {};
 
   shipwright-anchor = pkgs.callPackage ./shipwright/anchor/package.nix {};
+
+  observatory = pkgs.callPackage ./observatory/package.nix {};
 }

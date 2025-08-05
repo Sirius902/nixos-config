@@ -39,11 +39,6 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-cosmic = {
-      url = "github:lilyinstarlight/nixos-cosmic";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs-stable";
-    };
     # TODO(Sirius902) Override new derivation to be the old one to get rid of another nixpkgs?
     nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
     # TODO(Sirius902) Remove once https://github.com/NixOS/nixpkgs/pull/313013 gets in.
@@ -59,7 +54,6 @@
     nvim-conf,
     flake-parts,
     secrets,
-    nixos-cosmic,
     nixpkgs-ghidra_11_2_1,
     nixpkgs-zelda64recomp,
     ...
@@ -75,23 +69,6 @@
           (import ./pkgs/overlay.nix {inherit nixpkgs-ghidra_11_2_1;})
 
           nvim-conf.overlays.default
-
-          (final: prev: {
-            observatory = nixos-cosmic.outputs.packages.${system}.observatory.override {
-              inherit
-                (final)
-                lib
-                fetchFromGitHub
-                libcosmicAppHook
-                rustPlatform
-                just
-                stdenv
-                gnused
-                protobuf
-                nix-update-script
-                ;
-            };
-          })
 
           (final: prev: let
             pkgs = import nixpkgs-zelda64recomp {inherit system config;};
@@ -355,6 +332,8 @@
       in {
         formatter = pkgs.alejandra;
 
+        # FUTURE(Sirius902) Add support for nix-update-script?
+        # https://discourse.nixos.org/t/how-can-i-run-the-updatescript-of-personal-packages/25274
         packages = let
           allPackages = import ./pkgs/all-packages.nix {
             inherit pkgs nixpkgs-ghidra_11_2_1;
