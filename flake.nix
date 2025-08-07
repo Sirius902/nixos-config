@@ -308,6 +308,19 @@
               '';
             });
           })
+
+          # Use xwayland for Prism Launcher. Running with wayland on system glfw
+          # makes my Ctrl+A input do Ctrl+A followed by A. :(
+          # TODO(Sirius902) Open an issue on nixpkgs for this?
+          (final: prev: {
+            prismlauncher = prev.prismlauncher.overrideAttrs (prevAttrs: {
+              qtWrapperArgs =
+                (prevAttrs.qtWrapperArgs or [])
+                ++ final.lib.optionals final.stdenv.isLinux [
+                  "--unset WAYLAND_DISPLAY"
+                ];
+            });
+          })
         ];
         config.allowUnfree = true;
       };
