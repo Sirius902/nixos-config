@@ -324,6 +324,20 @@
                 ];
             });
           })
+
+          # TODO(Sirius902) Overlay new version until this commit makes it to nixos-unstable.
+          # https://github.com/NixOS/nixpkgs/commit/285da4d2a8bf716d988728e4d68831f2e65cdfdb
+          (final: prev: {
+            moonlight = prev.moonlight.overrideAttrs (prevAttrs: {
+              version = "1.3.26";
+              src = prevAttrs.src.override {
+                hash = "sha256-NcwRidwb/ask65LE86os4RkhyoPQo5sLu0sJs/NboK4=";
+              };
+              pnpmDeps = prevAttrs.pnpmDeps.override {
+                hash = "sha256-LUUpcC2eS8VvzguicIn9xsKql9w3533xxUJ+l7e7Anc=";
+              };
+            });
+          })
         ];
         config.allowUnfree = true;
       };
