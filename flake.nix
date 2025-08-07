@@ -309,15 +309,18 @@
             });
           })
 
-          # Use xwayland for Prism Launcher. Running with wayland on system glfw
-          # makes my Ctrl+A input do Ctrl+A followed by A. :(
-          # TODO(Sirius902) Open an issue on nixpkgs for this?
           (final: prev: {
             prismlauncher = prev.prismlauncher.overrideAttrs (prevAttrs: {
               qtWrapperArgs =
                 (prevAttrs.qtWrapperArgs or [])
                 ++ final.lib.optionals final.stdenv.isLinux [
+                  # Use xwayland for Prism Launcher. Running with wayland on system glfw
+                  # makes my Ctrl+A input do Ctrl+A followed by A. :(
+                  # TODO(Sirius902) Open an issue on nixpkgs for this?
                   "--unset WAYLAND_DISPLAY"
+                  # Java is cronge, some RLCraft mod fails to initialize without fontconfig
+                  # in `LD_LIBRARY_PATH`.
+                  "--prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath [final.fontconfig]}"
                 ];
             });
           })
