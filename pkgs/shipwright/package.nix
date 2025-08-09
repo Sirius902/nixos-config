@@ -33,6 +33,7 @@
   fixDarwinDylibNames,
   applyPatches,
   shipwright,
+  fetchpatch,
 }: let
   # The following would normally get fetched at build time, or a specific version is required
   gamecontrollerdb = fetchFromGitHub {
@@ -138,6 +139,16 @@ in
     patches = [
       ./darwin-fixes.patch
       ./disable-downloading-stb_image.patch
+      (fetchpatch {
+        name = "triforce-hunt-gbk";
+        url = "https://github.com/Sirius902/Shipwright/commit/6bedb8c7e6f59d774d35310bb81252c054ed99b0.patch";
+        hash = "sha256-1g5/j7PZiL+J+v2TjpVBTPn/e+ONsL7v+T8Xe6ZVCRs=";
+      })
+      (fetchpatch {
+        name = "bombchu-bag-rework";
+        url = "https://github.com/Sirius902/Shipwright/commit/67794ac760f132f1b9d00bbd8048c278a6959bf8.patch";
+        hash = "sha256-GL77x3w3iY6S198uREWyCKtoS49Sep3swpCSLihOnuU=";
+      })
     ];
 
     nativeBuildInputs =

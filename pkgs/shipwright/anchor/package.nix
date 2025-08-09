@@ -142,6 +142,16 @@ in
       ./app-name.patch
       ./0001-Dynamically-construct-weird-frame-data-5195.patch
       (fetchpatch {
+        name = "triforce-hunt-gbk";
+        url = "https://github.com/Sirius902/Shipwright/commit/6bedb8c7e6f59d774d35310bb81252c054ed99b0.patch";
+        hash = "sha256-1g5/j7PZiL+J+v2TjpVBTPn/e+ONsL7v+T8Xe6ZVCRs=";
+      })
+      (fetchpatch {
+        name = "bombchu-bag-rework";
+        url = "https://github.com/Sirius902/Shipwright/commit/bad8cfc1db90307a271d79e274f05d657df0f890.patch";
+        hash = "sha256-f4BsmtVLr3+D3hrBp9P9Em3IXN4RdXEeoSoEx5RhbQI=";
+      })
+      (fetchpatch {
         name = "early-context-init";
         url = "https://github.com/HarbourMasters/Shipwright/commit/e0ebc115ce3358e532b48f59c446c98cecd20750.patch";
         hash = "sha256-AjLN7eoIVnTq8qXKrc1/KPMps/G1eri4b7cedSqudRA=";
