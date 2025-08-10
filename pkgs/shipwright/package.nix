@@ -146,8 +146,8 @@ in
       })
       (fetchpatch {
         name = "bombchu-bag-rework";
-        url = "https://github.com/Sirius902/Shipwright/commit/67794ac760f132f1b9d00bbd8048c278a6959bf8.patch";
-        hash = "sha256-GL77x3w3iY6S198uREWyCKtoS49Sep3swpCSLihOnuU=";
+        url = "https://github.com/Sirius902/Shipwright/commit/091389d37fd5ceb53890a7f61c4c30374836a188.patch";
+        hash = "sha256-TCuTTkbf5zrx9kWAQhU2lY8DQck6uRXXUTPI1mfmE8M=";
       })
     ];
 
