@@ -13,6 +13,10 @@
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-compat = {
+      url = "github:nix-community/flake-compat";
+      flake = false;
+    };
     # disko = {
     #   url = "github:nix-community/disko";
     #   inputs.nixpkgs.follows = "nixpkgs";
@@ -67,6 +71,7 @@
         inherit system;
         overlays = [
           (import ./pkgs/overlay.nix {inherit nixpkgs-ghidra_11_2_1;})
+          (import ./overlays/cosmic)
 
           nvim-conf.overlays.default
 
@@ -140,77 +145,6 @@
           (final: prev: {
             shipwright-anchor = prev.shipwright-anchor.overrideAttrs (prevAttrs: {
               patches = (prevAttrs.patches or []) ++ secrets.patches.shipwright-anchor;
-            });
-          })
-
-          # TODO(Sirius902) Overlay new cosmic-comp until https://github.com/pop-os/cosmic-comp/pull/1481 makes it to nixos-unstable.
-          (final: prev: {
-            cosmic-comp = prev.cosmic-comp.overrideAttrs (finalAttrs: prevAttrs: {
-              version = "1.0.0-alpha.7-unstable-${finalAttrs.env.VERGEN_GIT_COMMIT_DATE}";
-
-              src = prevAttrs.src.override {
-                tag = null;
-                rev = "680542e4e2484f209a3fc2ddf5e958f64cf584ab";
-                hash = "sha256-cgeaI+LMngTk6Ve31qi7bYs/mG3jdILiEPHAHOQ8Mp0=";
-              };
-
-              cargoHash = "sha256-ZC8NUddxr/wiIYoV0Ta9lhO3s/fOTa1avlnKTLBNor8=";
-
-              cargoDeps = final.rustPlatform.fetchCargoVendor {
-                inherit (finalAttrs) pname src version;
-                hash = finalAttrs.cargoHash;
-              };
-
-              env.VERGEN_GIT_COMMIT_DATE = "2025-08-07";
-              env.VERGEN_GIT_SHA = finalAttrs.src.rev;
-            });
-          })
-
-          # TODO(Sirius902) Overlay new cosmic-panel to avoid crashes when disconnecting displays
-          # until the nixos-unstable version is newer.
-          (final: prev: {
-            cosmic-panel = prev.cosmic-panel.overrideAttrs (finalAttrs: prevAttrs: {
-              version = "1.0.0-alpha.7-unstable-${finalAttrs.env.VERGEN_GIT_COMMIT_DATE}";
-
-              src = prevAttrs.src.override {
-                tag = null;
-                rev = "da27f533d9fad2f1b5e85c523217466c952709ce";
-                hash = "sha256-SrBZGdzOT2sZlCXzqN2fKVZjz93T7ewsyDY8zQs1hN4=";
-              };
-
-              cargoHash = "sha256-GdVWQeoPjGeLh7jW4sVEJ3yK+1EG9X2ChKziTDHeRqQ=";
-
-              cargoDeps = final.rustPlatform.fetchCargoVendor {
-                inherit (finalAttrs) pname src version;
-                hash = finalAttrs.cargoHash;
-              };
-
-              env.VERGEN_GIT_COMMIT_DATE = "2025-07-29";
-              env.VERGEN_GIT_SHA = finalAttrs.src.rev;
-            });
-          })
-
-          # TODO(Sirius902) Overlay new xdg-desktop-portal-cosmic to maybe fix clipboard shenanigans
-          # until the nixos-unstable version is newer.
-          (final: prev: {
-            xdg-desktop-portal-cosmic = prev.xdg-desktop-portal-cosmic.overrideAttrs (finalAttrs: prevAttrs: {
-              version = "1.0.0-alpha.7-unstable-${finalAttrs.env.VERGEN_GIT_COMMIT_DATE}";
-
-              src = prevAttrs.src.override {
-                tag = null;
-                rev = "a9e8731f0f2b8b7f73d595bb9db22448a39d7529";
-                hash = "sha256-SnY33Me61fVthvUL93nZzfeu6Hpz1u1Boklu6vZWEQQ=";
-              };
-
-              cargoHash = "sha256-7rgZSlD5M8T9UIy4AVBOZUZu95TUEWSpOUVjBo8CcDA=";
-
-              cargoDeps = final.rustPlatform.fetchCargoVendor {
-                inherit (finalAttrs) pname src version;
-                hash = finalAttrs.cargoHash;
-              };
-
-              env.VERGEN_GIT_COMMIT_DATE = "2025-07-25";
-              env.VERGEN_GIT_SHA = finalAttrs.src.rev;
             });
           })
 
@@ -356,8 +290,11 @@
           };
 
           overlayedAllPackages = lib.mapAttrs (name: _: pkgs.${name}) allPackages;
+          # TODO(Sirius902) Restructure overlay so these can be derived just from `attrNames`.
+          cosmicPackages = lib.mapAttrs (name: _: pkgs.${name}) (import ./overlays/cosmic/overlays.nix);
         in
           overlayedAllPackages
+          // cosmicPackages
           // rec {
             inherit
               (pkgs)
@@ -392,6 +329,33 @@
                 hash = "sha256-xPbr+OW1Jdyfbc8pn+0N4nThb8U5MHBeHcNdIydR5wo=";
               };
             });
+
+            update-cosmic = pkgs.writeShellApplication {
+              name = "cosmic-unstable-update";
+
+              text = lib.concatStringsSep "\n" (
+                lib.mapAttrsToList (
+                  attr: drv:
+                    if drv ? updateScript && (lib.isList drv.updateScript) && (lib.length drv.updateScript) > 0
+                    then
+                      lib.escapeShellArgs (
+                        if (lib.match "nix-update|.*/nix-update" (lib.head drv.updateScript) != null)
+                        then
+                          [(lib.getExe pkgs.nix-update)]
+                          ++ (lib.tail drv.updateScript)
+                          ++ [
+                            "--version"
+                            "branch=HEAD"
+                            "--commit"
+                            attr
+                          ]
+                        else drv.updateScript
+                      )
+                    else builtins.toString drv.updateScript or ""
+                )
+                cosmicPackages
+              );
+            };
           };
 
         devShells.default = pkgs.mkShell {
