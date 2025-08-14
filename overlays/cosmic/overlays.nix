@@ -133,6 +133,8 @@
         hash = finalAttrs.cargoHash;
       };
 
+      buildInputs = (prevAttrs.buildInputs or []) ++ [final.glib];
+
       passthru =
         (prevAttrs.passthru or {})
         // {
