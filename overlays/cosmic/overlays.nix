@@ -234,6 +234,10 @@
         hash = finalAttrs.cargoHash;
       };
 
+      # FUTURE(Sirius902) One of the tests is broken currently due to a missing arg. Re-enable once it is fixed.
+      # https://github.com/pop-os/cosmic-files/blob/b3a6d14bc63ebec6aae5ee5d20c12b967cecbbc5/src/tab.rs#L6470
+      doCheck = false;
+
       passthru.updateScript = final.nix-update-script {
         extraArgs = [
           "--version-regex"
