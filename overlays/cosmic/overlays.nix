@@ -16,6 +16,7 @@
         hash = finalAttrs.cargoHash;
       };
 
+      # FUTURE(Sirius902) Remove this if upstream removes the bluetooth spam patch (already applied here).
       patches = [];
 
       passthru =
@@ -135,6 +136,7 @@
         hash = finalAttrs.cargoHash;
       };
 
+      # FUTURE(Sirius902) cosmic-edit now depends on glib. Remove this if it is added upstream.
       buildInputs = (prevAttrs.buildInputs or []) ++ [final.glib];
 
       passthru =
