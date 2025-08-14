@@ -16,6 +16,8 @@
         hash = finalAttrs.cargoHash;
       };
 
+      patches = [];
+
       passthru =
         (prevAttrs.passthru or {})
         // {
