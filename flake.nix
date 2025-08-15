@@ -13,10 +13,6 @@
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-compat = {
-      url = "github:nix-community/flake-compat";
-      flake = false;
-    };
     # disko = {
     #   url = "github:nix-community/disko";
     #   inputs.nixpkgs.follows = "nixpkgs";
@@ -339,7 +335,7 @@
                       lib.escapeShellArgs (
                         if (lib.match "nix-update|.*/nix-update" (lib.head drv.updateScript) != null)
                         then
-                          [(lib.getExe pkgs.nix-update)]
+                          [(lib.getExe pkgs.nix-update) "--flake"]
                           ++ (lib.tail drv.updateScript)
                           ++ [
                             "--version"
@@ -366,7 +362,7 @@
                       lib.escapeShellArgs (
                         if (lib.match "nix-update|.*/nix-update" (lib.head drv.updateScript) != null)
                         then
-                          [(lib.getExe pkgs.nix-update)]
+                          [(lib.getExe pkgs.nix-update) "--flake"]
                           ++ (lib.tail drv.updateScript)
                           ++ [
                             "--version"
