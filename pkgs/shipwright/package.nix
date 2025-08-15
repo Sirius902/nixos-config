@@ -32,6 +32,7 @@
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
+  nix-update-script,
   shipwright,
   fetchpatch,
 }: let
@@ -118,13 +119,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright";
-    version = lib.substring 0 7 finalAttrs.src.rev;
+    version = "9.0.5-unstable-2025-08-13";
 
     src = fetchFromGitHub {
       owner = "harbourmasters";
       repo = "shipwright";
-      rev = "6d4c6f8ea649d1e4857a275994e854c8a983dab8";
-      hash = "sha256-oD6yGxJInNHWjNMBDswPNnEXLT4rldibPVRBd3x1ebI=";
+      rev = "7b4df9bdb2ebde2bdd6581c10ffdc1aea4ee1573";
+      hash = "sha256-cAs99MTR/BAltMR6gc4S6cpgI1g3rLMNibIfRg0ycoE=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
@@ -303,6 +304,8 @@ in
         categories = ["Game"];
       })
     ];
+
+    passthru.updateScript = nix-update-script {};
 
     meta = {
       homepage = "https://github.com/HarbourMasters/Shipwright";

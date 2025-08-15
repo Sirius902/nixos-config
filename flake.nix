@@ -282,8 +282,6 @@
       in {
         formatter = pkgs.alejandra;
 
-        # FUTURE(Sirius902) Add support for nix-update-script?
-        # https://discourse.nixos.org/t/how-can-i-run-the-updatescript-of-personal-packages/25274
         packages = let
           allPackages = import ./pkgs/all-packages.nix {
             inherit pkgs nixpkgs-ghidra_11_2_1;
@@ -329,6 +327,33 @@
                 hash = "sha256-xPbr+OW1Jdyfbc8pn+0N4nThb8U5MHBeHcNdIydR5wo=";
               };
             });
+
+            update = pkgs.writeShellApplication {
+              name = "unstable-update";
+
+              text = lib.concatStringsSep "\n" (
+                lib.mapAttrsToList (
+                  attr: drv:
+                    if drv ? updateScript && (lib.isList drv.updateScript) && (lib.length drv.updateScript) > 0
+                    then
+                      lib.escapeShellArgs (
+                        if (lib.match "nix-update|.*/nix-update" (lib.head drv.updateScript) != null)
+                        then
+                          [(lib.getExe pkgs.nix-update)]
+                          ++ (lib.tail drv.updateScript)
+                          ++ [
+                            "--version"
+                            "branch=HEAD"
+                            "--commit"
+                            attr
+                          ]
+                        else drv.updateScript
+                      )
+                    else builtins.toString drv.updateScript or ""
+                )
+                overlayedAllPackages
+              );
+            };
 
             update-cosmic = pkgs.writeShellApplication {
               name = "cosmic-unstable-update";

@@ -32,6 +32,7 @@
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
+  nix-update-script,
   _2ship2harkinian,
 }: let
   # The following would normally get fetched at build time, or a specific version is required
@@ -117,7 +118,7 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "2ship2harkinian";
-    version = lib.substring 0 7 finalAttrs.src.rev;
+    version = "2.0.0-unstable-2025-08-10";
 
     src = fetchFromGitHub {
       owner = "harbourmasters";
@@ -291,6 +292,8 @@ in
         categories = ["Game"];
       })
     ];
+
+    passthru.updateScript = nix-update-script {};
 
     meta = {
       homepage = "https://github.com/HarbourMasters/2ship2harkinian";

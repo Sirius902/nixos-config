@@ -32,6 +32,7 @@
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
+  nix-update-script,
   shipwright-anchor,
   fetchpatch,
 }: let
@@ -118,7 +119,7 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright-anchor";
-    version = lib.substring 0 7 finalAttrs.src.rev;
+    version = "unstable-2025-07-30";
 
     src = fetchFromGitHub {
       owner = "lilacLunatic";
@@ -324,6 +325,14 @@ in
         categories = ["Game"];
       })
     ];
+
+    passthru.updateScript = nix-update-script {
+      extraArgs = [
+        "--version=branch=experimental"
+        "--version-regex"
+        ".*(unstable-.*)"
+      ];
+    };
 
     meta = {
       homepage = "https://github.com/HarbourMasters/Shipwright";
