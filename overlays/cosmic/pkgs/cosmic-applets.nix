@@ -16,7 +16,7 @@ prev.cosmic-applets.overrideAttrs (finalAttrs: prevAttrs: {
   };
 
   # FUTURE(Sirius902) Remove this if upstream removes the bluetooth spam patch (already applied here).
-  patches = [];
+  patches = builtins.filter (p: p.name != "fix-bluetooth-dbus-spam.patch") (prevAttrs.patches or []);
 
   passthru =
     (prevAttrs.passthru or {})
