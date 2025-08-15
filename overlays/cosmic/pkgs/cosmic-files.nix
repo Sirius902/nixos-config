@@ -15,8 +15,7 @@ prev.cosmic-files.overrideAttrs (finalAttrs: prevAttrs: {
     hash = finalAttrs.cargoHash;
   };
 
-  # FUTURE(Sirius902) One of the tests is broken currently due to a missing arg. Re-enable once it is fixed.
-  # https://github.com/pop-os/cosmic-files/blob/0bf1a21351a5394864a62411ae5b753f3b310af4/src/tab.rs#L6470
+  # FUTURE(Sirius902) A few tests are broken currently due to `ThumbCfg` stuff. Re-enable once they are fixed.
   doCheck = false;
 
   passthru.updateScript = final.nix-update-script {
