@@ -19,4 +19,8 @@
   shipwright-anchor = pkgs.callPackage ./shipwright/anchor/package.nix {};
 
   observatory = pkgs.callPackage ./observatory/package.nix {};
+
+  n64recomp = pkgs.callPackage ./n64recomp/package.nix {};
+  z64decompress = pkgs.callPackage ./z64decompress/package.nix {};
+  zelda64recomp = pkgs.callPackage ./zelda64recomp/package.nix {};
 }

@@ -309,22 +309,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-zelda64recomp": {
-      "locked": {
-        "lastModified": 1753930850,
-        "narHash": "sha256-hsIwqH4AbwRgumPJT+PmfmnSHPQ1a2TFuEaRl+3+6/4=",
-        "owner": "qubitnano",
-        "repo": "nixpkgs",
-        "rev": "8dccd27f0feef3b0c1bb21a0b86e428a45a8be3c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "qubitnano",
-        "repo": "nixpkgs",
-        "rev": "8dccd27f0feef3b0c1bb21a0b86e428a45a8be3c",
-        "type": "github"
-      }
-    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1743568003,
@@ -397,7 +381,6 @@
         "nixpkgs": "nixpkgs",
         "nixpkgs-ghidra_11_2_1": "nixpkgs-ghidra_11_2_1",
         "nixpkgs-stable": "nixpkgs-stable",
-        "nixpkgs-zelda64recomp": "nixpkgs-zelda64recomp",
         "nvim-conf": "nvim-conf",
         "secrets": "secrets",
         "sops-nix": "sops-nix"
