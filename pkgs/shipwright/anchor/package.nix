@@ -328,7 +328,6 @@ in
 
     passthru.updateScript = nix-update-script {
       extraArgs = [
-        "--version=branch=experimental"
         "--version-regex"
         ".*(unstable-.*)"
       ];
