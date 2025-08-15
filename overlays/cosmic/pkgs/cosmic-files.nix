@@ -4,8 +4,8 @@ prev.cosmic-files.overrideAttrs (finalAttrs: prevAttrs: {
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "be67fd8e0dd0a6457c992a659e7d6884b343520f";
-    hash = "sha256-JpJyCtavDo1KsARlGAZPnJIPXVRUZzM0tZ0etKECCvk=";
+    rev = "0bf1a21351a5394864a62411ae5b753f3b310af4";
+    hash = "sha256-JF4XUxV2BDw9z7PVIGN2CHcnfuiZ+MXOPRpTJitUt+g=";
   };
 
   cargoHash = "sha256-TDXo0PsDLIBewAasBK82VsG1O0lPqY6g3dBRFsGzF6A=";
@@ -16,7 +16,7 @@ prev.cosmic-files.overrideAttrs (finalAttrs: prevAttrs: {
   };
 
   # FUTURE(Sirius902) One of the tests is broken currently due to a missing arg. Re-enable once it is fixed.
-  # https://github.com/pop-os/cosmic-files/blob/be67fd8e0dd0a6457c992a659e7d6884b343520f/src/tab.rs#L6470
+  # https://github.com/pop-os/cosmic-files/blob/0bf1a21351a5394864a62411ae5b753f3b310af4/src/tab.rs#L6470
   doCheck = false;
 
   passthru.updateScript = final.nix-update-script {
