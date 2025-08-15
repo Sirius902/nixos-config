@@ -96,7 +96,7 @@
                 (prevAttrs.patches or [])
                 ++ [
                   (final.fetchpatch {
-                    name = "switch2-controllers";
+                    name = "switch2-controllers.patch";
                     url = "https://github.com/flibitijibibo/SDL/commit/9b17353e046e74ba1abc936b87dbac040c123eb1.patch";
                     hash = "sha256-nW+j/TEieeyOXzGvGIxBcpg5rbqin1ENlEJ3kuBTO2Q=";
                   })
@@ -308,7 +308,7 @@
                 (prevAttrs.patches or [])
                 ++ [
                   (pkgs.fetchpatch {
-                    name = "switch2-controllers";
+                    name = "switch2-controllers.patch";
                     url = "https://github.com/flibitijibibo/SDL/commit/9b17353e046e74ba1abc936b87dbac040c123eb1.patch";
                     hash = "sha256-nW+j/TEieeyOXzGvGIxBcpg5rbqin1ENlEJ3kuBTO2Q=";
                   })

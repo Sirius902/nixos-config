@@ -143,22 +143,22 @@ in
       ./app-name.patch
       ./0001-Dynamically-construct-weird-frame-data-5195.patch
       (fetchpatch {
-        name = "triforce-hunt-gbk";
+        name = "triforce-hunt-gbk.patch";
         url = "https://github.com/Sirius902/Shipwright/commit/6bedb8c7e6f59d774d35310bb81252c054ed99b0.patch";
         hash = "sha256-1g5/j7PZiL+J+v2TjpVBTPn/e+ONsL7v+T8Xe6ZVCRs=";
       })
       (fetchpatch {
-        name = "bombchu-bag-rework";
+        name = "bombchu-bag-rework.patch";
         url = "https://github.com/Sirius902/Shipwright/commit/8e411562396def2501539b97873c19dedc651fec.patch";
         hash = "sha256-b/CvlUfbzpAJEApHdYo+UIVR81wPVA3xgikb+S+CHnI=";
       })
       (fetchpatch {
-        name = "early-context-init";
+        name = "early-context-init.patch";
         url = "https://github.com/HarbourMasters/Shipwright/commit/e0ebc115ce3358e532b48f59c446c98cecd20750.patch";
         hash = "sha256-AjLN7eoIVnTq8qXKrc1/KPMps/G1eri4b7cedSqudRA=";
       })
       (fetchpatch {
-        name = "timesplit-behave-yourself";
+        name = "timesplit-behave-yourself.patch";
         url = "https://github.com/HarbourMasters/Shipwright/commit/d06cf6bf1032037d67b46bad37b8320bec9643d6.patch";
         hash = "sha256-R4V8+VP0dOtSjDAYCzhjsBFn9rzM4hFhCKXTa71lzUw=";
       })
