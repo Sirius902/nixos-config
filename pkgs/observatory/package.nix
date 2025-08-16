@@ -87,7 +87,7 @@ rustPlatform.buildRustPackage rec {
     cp resources/monitord.service $out/lib/systemd/system/
   '';
 
-  passthru.updateScript = nix-update-script {};
+  passthru.updateScript = nix-update-script {extraArgs = ["--version=branch"];};
 
   meta = {
     homepage = "https://github.com/cosmic-utils/observatory";

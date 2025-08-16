@@ -305,7 +305,7 @@ in
       })
     ];
 
-    passthru.updateScript = nix-update-script {};
+    passthru.updateScript = nix-update-script {extraArgs = ["--version=branch"];};
 
     meta = {
       homepage = "https://github.com/HarbourMasters/Shipwright";

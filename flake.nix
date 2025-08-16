@@ -289,12 +289,7 @@
                         then
                           [(lib.getExe pkgs.nix-update) "--flake"]
                           ++ (lib.tail drv.updateScript)
-                          ++ [
-                            "--version"
-                            "branch=HEAD"
-                            "--commit"
-                            attr
-                          ]
+                          ++ ["--commit" attr]
                         else drv.updateScript
                       )
                     else builtins.toString drv.updateScript or ""

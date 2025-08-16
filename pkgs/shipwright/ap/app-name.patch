@@ -1,0 +1,13 @@
+diff --git a/soh/soh/OTRGlobals.h b/soh/soh/OTRGlobals.h
+index 032686f8e..b6d3f0371 100644
+--- a/soh/soh/OTRGlobals.h
++++ b/soh/soh/OTRGlobals.h
+@@ -36,7 +36,7 @@ extern std::unordered_map<std::string, ExtensionEntry> ExtensionCache;
+ #include "Enhancements/randomizer/settings.h"
+ 
+ const std::string customMessageTableID = "BaseGameOverrides";
+-const std::string appShortName = "soh";
++const std::string appShortName = "soh-ap";
+ 
+ #ifdef __WIIU__
+ const uint32_t defaultImGuiScale = 3;

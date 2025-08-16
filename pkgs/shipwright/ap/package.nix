@@ -29,11 +29,13 @@
   libvorbis,
   libopus,
   opusfile,
+  openssl,
+  runCommand,
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
   nix-update-script,
-  _2ship2harkinian,
+  shipwright-ap,
 }: let
   # The following would normally get fetched at build time, or a specific version is required
   gamecontrollerdb = fetchFromGitHub {
@@ -51,7 +53,7 @@
       hash = "sha256-mQOJ6jCN+7VopgZ61yzaCnt4R1QLrW7+47xxMhFRHLQ=";
     };
     patches = [
-      "${_2ship2harkinian.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
+      "${shipwright-ap.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
     ];
   };
 
@@ -91,7 +93,7 @@
       hash = "sha256-HTi2FKzKCbRaP13XERUmHkJgw8IfKaRJvsK3+YxFFdc=";
     };
     patches = [
-      "${_2ship2harkinian.src}/libultraship/cmake/dependencies/patches/stormlib-optimizations.patch"
+      "${shipwright-ap.src}/libultraship/cmake/dependencies/patches/stormlib-optimizations.patch"
     ];
   };
 
@@ -115,16 +117,26 @@
     tag = "macOS13_iOS16";
     hash = "sha256-CSYIpmq478bla2xoPL/cGYKIWAeiORxyFFZr0+ixd7I";
   };
+
+  cacert = fetchurl {
+    url = "https://curl.se/ca/cacert.pem";
+    sha256 = "sha256-ZN/VsQJnAOCgoySWR0namtxprl5R6Jm/Fv9H1v0Oml4=";
+  };
+
+  sslCertStore = runCommand "sslCertStore-dir" {} ''
+    mkdir -p $out
+    cp ${cacert} $out/cacert.pem
+  '';
 in
   stdenv.mkDerivation (finalAttrs: {
-    pname = "2ship2harkinian";
-    version = "2.0.0-unstable-2025-08-16";
+    pname = "shipwright-ap";
+    version = "0-unstable-2025-08-06";
 
     src = fetchFromGitHub {
-      owner = "harbourmasters";
-      repo = "2ship2harkinian";
-      rev = "c78703e4e6371998ad8613e92c42d5f148cdebba";
-      hash = "sha256-oqoTvtNZB+q1OERbhgyoRep5Cl8Co16e+PT0/Ho+W7s=";
+      owner = "aMannus";
+      repo = "shipwright";
+      rev = "58a564077e6649e2addd427f95fa5c5fa80ba1d8";
+      hash = "sha256-zTu/uUzuYmmKIWyYc9ZDx8IlcpRNt8QUGbqY3shPBus=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
@@ -137,8 +149,12 @@ in
     };
 
     patches = [
-      ./darwin-fixes.patch
-      ./disable-downloading-stb_image.patch
+      ../darwin-fixes.patch
+      ../disable-downloading-stb_image.patch
+      ./disable-downloading-gamecontrollerdb.patch
+      ./disable-openssl-check.patch
+      ./sslcertstore-dir.patch
+      ./app-name.patch
     ];
 
     nativeBuildInputs =
@@ -174,6 +190,7 @@ in
         libvorbis
         libopus.dev
         opusfile.dev
+        openssl
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         libpulseaudio
@@ -197,6 +214,7 @@ in
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
         (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${libopus.dev}/include/opus")
         (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${opusfile.dev}/include/opus")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SSLCERTSTORE" "${sslCertStore}")
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
@@ -219,10 +237,13 @@ in
       cp ${stb_impl} ./stb/${stb_impl.name}
       substituteInPlace libultraship/cmake/dependencies/common.cmake \
         --replace-fail "\''${STB_DIR}" "$(readlink -f ./stb)"
+
+      mkdir -p ./soh/networking
+      cp ${cacert} ./soh/networking/cacert.pem
     '';
 
     postPatch = ''
-      substituteInPlace mm/src/boot/build.c.in \
+      substituteInPlace soh/src/boot/build.c.in \
       --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
       --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
       --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
@@ -231,82 +252,93 @@ in
     postBuild = ''
       port_ver=$(grep CMAKE_PROJECT_VERSION: "$PWD/CMakeCache.txt" | cut -d= -f2)
       cp ${gamecontrollerdb}/gamecontrollerdb.txt gamecontrollerdb.txt
+      mv ../libultraship/src/graphic/Fast3D/shaders ../soh/assets/custom
       pushd ../OTRExporter
-      python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../mm/assets/xml --custom-assets-path ../mm/assets/custom --custom-otr-file 2ship.o2r --port-ver $port_ver
+      python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../soh/assets/xml --custom-assets-path ../soh/assets/custom --custom-otr-file soh.o2r --port-ver $port_ver
       popd
     '';
 
     preInstall = ''
       # Cmake likes it here for its install paths
-      cp ../OTRExporter/2ship.o2r mm/2ship.o2r
+      cp ../OTRExporter/soh.o2r soh/soh.o2r
     '';
 
     postInstall =
       lib.optionalString stdenv.hostPlatform.isLinux ''
         mkdir -p $out/bin
-        ln -s $out/lib/2s2h.elf $out/bin/2s2h
-        install -Dm644 ../mm/macosx/2s2hIcon.png $out/share/pixmaps/2s2h.png
+        ln -s $out/lib/soh.elf $out/bin/soh-ap
+        install -Dm644 ../soh/macosx/sohIcon.png $out/share/pixmaps/soh-ap.png
       ''
       + lib.optionalString stdenv.hostPlatform.isDarwin ''
         # Recreate the macOS bundle (without using cpack)
         # We mirror the structure of the bundle distributed by the project
 
-        mkdir -p $out/Applications/2s2h.app/Contents
-        cp $src/mm/macosx/Info.plist.in $out/Applications/2s2h.app/Contents/Info.plist
-        substituteInPlace $out/Applications/2s2h.app/Contents/Info.plist \
-          --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}"
+        mkdir -p $out/Applications/soh-ap.app/Contents
+        cp $src/soh/macosx/Info.plist.in $out/Applications/soh-ap.app/Contents/Info.plist
+        substituteInPlace $out/Applications/soh-ap.app/Contents/Info.plist \
+          --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}" \
+          --replace-fail \
+            "<string>Ship of Harkinian</string>" \
+            "<string>Ship of Harkinian Archipelago</string>" \
+          --replace-fail \
+            "<string>com.shipofharkinian.ShipOfHarkinian</string>" \
+            "<string>com.shipofharkinian.ShipOfHarkinian.Archipelago</string>" \
+          --replace-fail \
+            "<string>~/Library/Application Support/com.shipofharkinian.soh</string>" \
+            "<string>~/Library/Application Support/com.shipofharkinian.soh-ap</string>"
 
-        mv $out/MacOS $out/Applications/2s2h.app/Contents/MacOS
+        mv $out/MacOS $out/Applications/soh-ap.app/Contents/MacOS
 
         # "lib" contains all resources that are in "Resources" in the official bundle.
         # We move them to the right place and symlink them back to $out/lib,
         # as that's where the game expects them.
-        mv $out/Resources $out/Applications/2s2h.app/Contents/Resources
-        mv $out/lib/** $out/Applications/2s2h.app/Contents/Resources
+        mv $out/Resources $out/Applications/soh-ap.app/Contents/Resources
+        mv $out/lib/** $out/Applications/soh-ap.app/Contents/Resources
         rm -rf $out/lib
-        ln -s $out/Applications/2s2h.app/Contents/Resources $out/lib
+        ln -s $out/Applications/soh-ap.app/Contents/Resources $out/lib
 
-        # TODO(Sirius902) This seems like an issue upstream in 2ship maybe?
+        # TODO(Sirius902) This seems like an issue upstream in ship maybe?
         # Move gamecontrollerdb.txt to the proper place for app bundle
-        cp ${gamecontrollerdb}/gamecontrollerdb.txt $out/Applications/2s2h.app/Contents/Resources/gamecontrollerdb.txt
+        cp ${gamecontrollerdb}/gamecontrollerdb.txt $out/Applications/soh-ap.app/Contents/Resources/gamecontrollerdb.txt
 
         # Copy icons
-        cp -r ../build/macosx/2s2h.icns $out/Applications/2s2h.app/Contents/Resources/2s2h.icns
+        cp -r ../build/macosx/soh.icns $out/Applications/soh-ap.app/Contents/Resources/soh.icns
 
         # Codesign (ad-hoc)
-        codesign -f -s - $out/Applications/2s2h.app/Contents/MacOS/2s2h
+        codesign -f -s - $out/Applications/soh-ap.app/Contents/MacOS/soh
       '';
 
     fixupPhase = lib.optionalString stdenv.hostPlatform.isLinux ''
-      wrapProgram $out/lib/2s2h.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
+      wrapProgram $out/lib/soh.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
     '';
 
     desktopItems = [
       (makeDesktopItem {
-        name = "2s2h";
-        icon = "2s2h";
-        exec = "2s2h";
+        name = "soh-ap";
+        icon = "soh-ap";
+        exec = "soh-ap";
         comment = finalAttrs.meta.description;
-        genericName = "2 Ship 2 Harkinian";
-        desktopName = "2s2h";
+        genericName = "Ship of Harkinian (Archipelago)";
+        desktopName = "soh-ap";
         categories = ["Game"];
       })
     ];
 
-    passthru.updateScript = nix-update-script {extraArgs = ["--version=branch"];};
+    passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=aManchipelago"];};
 
     meta = {
-      homepage = "https://github.com/HarbourMasters/2ship2harkinian";
-      description = "A PC port of Majora's Mask with modern controls, widescreen, high-resolution, and more";
-      mainProgram = "2s2h";
+      homepage = "https://github.com/HarbourMasters/Shipwright";
+      description = "A PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
+      mainProgram = "soh-ap";
       platforms = ["x86_64-linux"] ++ lib.platforms.darwin;
-      maintainers = with lib.maintainers; [qubitnano];
+      maintainers = with lib.maintainers; [
+        j0lol
+        matteopacini
+      ];
       license = with lib.licenses; [
         # OTRExporter, OTRGui, ZAPDTR, libultraship
         mit
-        # 2 Ship 2 Harkinian
-        cc0
-        # Reverse engineering
+        # Ship of Harkinian itself
         unfree
       ];
     };

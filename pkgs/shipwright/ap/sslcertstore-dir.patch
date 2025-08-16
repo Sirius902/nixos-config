@@ -1,0 +1,13 @@
+diff --git a/soh/CMakeLists.txt b/soh/CMakeLists.txt
+index 4be8f505b..295a3a5b6 100644
+--- a/soh/CMakeLists.txt
++++ b/soh/CMakeLists.txt
+@@ -352,7 +352,7 @@ if (BUILD_REMOTE_CONTROL)
+         sslCertStore
+     )
+ 
+-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/networking/cacert.pem DESTINATION ./networking COMPONENT ship)
++    install(FILES ${FETCHCONTENT_SOURCE_DIR_SSLCERTSTORE}/cacert.pem DESTINATION ./networking COMPONENT ship)
+ 
+ endif()
+ 
