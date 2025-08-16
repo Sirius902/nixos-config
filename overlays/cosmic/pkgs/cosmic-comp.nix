@@ -5,8 +5,8 @@ prev.cosmic-comp.overrideAttrs (finalAttrs: prevAttrs: {
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "4209e61c48f424f9c7949c69cbef81799b1ec8ad";
-    hash = "sha256-qNtXaRhn7wVkd743Fk0IQfTslviA+HX1n7Ciq7Wi1Uk=";
+    rev = "b28f92a6e1fa89a9090d5588fec733206c8817e7";
+    hash = "sha256-6+Ulro+PGaxu6hoKbrT8B72E4tGZQfuwH9kATyeK7GY=";
   };
 
   cargoHash = "sha256-XyiPpYVqk9y1V+0R0zIHXxLuao8qS8o8ZGTqp8+32PE=";
