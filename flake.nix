@@ -123,10 +123,14 @@
               });
           })
 
-          # Add extra patches for shipwright-anchor.
+          # Add extra patches for shipwright-anchor and shipwright-ap.
           (final: prev: {
             shipwright-anchor = prev.shipwright-anchor.overrideAttrs (prevAttrs: {
               patches = (prevAttrs.patches or []) ++ secrets.patches.shipwright-anchor;
+            });
+
+            shipwright-ap = prev.shipwright-ap.overrideAttrs (prevAttrs: {
+              patches = (prevAttrs.patches or []) ++ secrets.patches.shipwright-ap;
             });
           })
 
