@@ -44,6 +44,7 @@
   };
 
   outputs = {
+    self,
     nixpkgs,
     home-manager,
     nixpkgs-stable,
@@ -328,6 +329,11 @@
                 cosmicPackages
               );
             };
+
+            update-all = pkgs.writeShellScriptBin "update-all" ''
+              ${self.packages.${system}.update}/bin/unstable-update
+              ${self.packages.${system}.update-cosmic}/bin/cosmic-unstable-update
+            '';
           };
 
         devShells.default = pkgs.mkShell {
