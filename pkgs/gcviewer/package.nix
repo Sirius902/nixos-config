@@ -12,22 +12,23 @@
   xorg,
   pkg-config,
   libudev-zero,
+  nix-update-script,
 }:
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage (finalAttrs: {
   pname = "gcviewer";
-  version = "44865ac";
+  version = "0.1.0-unstable-2025-04-29";
 
   src = fetchFromGitHub {
     owner = "Sirius902";
-    repo = pname;
+    repo = "gcviewer";
     # TODO(Sirius902) Change to tag when release comes out.
-    rev = version;
-    sha256 = "sha256-rOPNnb2wR1/SXMTV/QHPqVeE5gwcPZTvUeGpOUD0+q4=";
+    rev = "32cae0e9dfe2f37aa713280d5c7e311a3591215a";
+    sha256 = "sha256-pk/rVKc0NJjwN76CdW4Z5z4Miv8HCTJQlpZ08q+QsBw=";
   };
 
   cargoBuildFlags = "--no-default-features";
 
-  cargoHash = "sha256-eTr7hLvO4mH9/sm5akl0UJUmky8adEdelQqF5Edlnvo=";
+  cargoHash = "sha256-wyzY4TkobIgSMhkXJYjCUXQCCaTCcip7qaup8XxikMU=";
 
   nativeBuildInputs = [
     copyDesktopItems
@@ -49,23 +50,25 @@ rustPlatform.buildRustPackage rec {
 
   postInstall = ''
     wrapProgram $out/bin/gcviewer \
-      --suffix LD_LIBRARY_PATH : ${lib.makeLibraryPath buildInputs}
+      --suffix LD_LIBRARY_PATH : ${lib.makeLibraryPath finalAttrs.buildInputs}
 
     install -Dm644 resource/icon.png $out/share/pixmaps/gcviewer.png
   '';
 
-  GCVIEWER_VERSION = "v0.1.0-${version}";
+  GCVIEWER_VERSION = "v0.1.0-${builtins.substring 0 7 finalAttrs.src.rev}";
 
   desktopItems = [
     (makeDesktopItem {
       name = "gcviewer";
       icon = "gcviewer";
       exec = "gcviewer %U";
-      comment = meta.description;
+      comment = finalAttrs.meta.description;
       desktopName = "gcviewer";
       categories = ["Utility"];
     })
   ];
+
+  passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=serial"];};
 
   meta = with lib; {
     description = "A customizable input viewer.";
@@ -73,4 +76,4 @@ rustPlatform.buildRustPackage rec {
     platforms = platforms.linux ++ platforms.darwin;
     mainProgram = "gcviewer";
   };
-}
+})

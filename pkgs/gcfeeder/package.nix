@@ -18,16 +18,17 @@
   libappindicator-gtk3,
   xdotool,
   zlib,
+  nix-update-script,
 }:
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage (finalAttrs: {
   pname = "gcfeeder";
-  version = "d73b0ca";
+  version = "3.0.1-unstable-2025-02-22";
 
   src = fetchFromGitHub {
     owner = "Sirius902";
-    repo = pname;
+    repo = "gcfeeder";
     # TODO(Sirius902) Change to tag when release comes out.
-    rev = version;
+    rev = "d73b0caefb61ad91de0753631e1888bb8982cea1";
     sha256 = "sha256-jdkHNgepqXlu0JPFKxL7V1LgvFgeUG+3SlQ3cRixbWM=";
   };
 
@@ -62,8 +63,8 @@ rustPlatform.buildRustPackage rec {
   ];
 
   postInstall = ''
-    wrapProgram $out/bin/gcfeeder \
-      --suffix LD_LIBRARY_PATH : ${lib.makeLibraryPath buildInputs}
+    # wrapProgram $out/bin/gcfeeder \
+    #   --suffix LD_LIBRARY_PATH : ${lib.makeLibraryPath finalAttrs.buildInputs}
 
     mkdir -p $out/lib/udev/rules.d
     cp rules/50-gcfeeder.rules $out/lib/udev/rules.d/
@@ -71,18 +72,20 @@ rustPlatform.buildRustPackage rec {
     install -Dm644 crates/gcfeeder/resource/icon.png $out/share/pixmaps/gcfeeder.png
   '';
 
-  GCFEEDER_VERSION = "v3.0.1-${version}";
+  GCFEEDER_VERSION = "v3.0.1-${builtins.substring 0 7 finalAttrs.src.rev}";
 
   desktopItems = [
     (makeDesktopItem {
       name = "gcfeeder";
       icon = "gcfeeder";
       exec = "gcfeeder %U";
-      comment = meta.description;
+      comment = finalAttrs.meta.description;
       desktopName = "gcfeeder";
       categories = ["Utility"];
     })
   ];
+
+  passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=linux"];};
 
   meta = with lib; {
     description = "A ViGEm / evdev feeder for GameCube controllers using the GameCube Controller Adapter.";
@@ -97,4 +100,4 @@ rustPlatform.buildRustPackage rec {
     platforms = platforms.linux ++ platforms.darwin;
     mainProgram = "gcfeeder";
   };
-}
+})
