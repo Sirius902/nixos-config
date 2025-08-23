@@ -246,6 +246,16 @@
                 ];
             });
           })
+
+          (final: prev: {
+            proton-ge-bin = prev.proton-ge-bin.overrideAttrs (finalAttrs: prevAttrs: {
+              version = "GE-Proton10-13";
+              src = final.fetchzip {
+                url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/${finalAttrs.version}/${finalAttrs.version}.tar.gz";
+                hash = "sha256-HjCsnPX3TwUroVj8RnQ0k6unU2Ou/E5PogRIElDWjgE=";
+              };
+            });
+          })
         ];
         config.allowUnfree = true;
       };
