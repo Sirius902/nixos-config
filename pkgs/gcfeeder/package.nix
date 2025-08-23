@@ -5,7 +5,7 @@
   fetchFromGitHub,
   copyDesktopItems,
   makeDesktopItem,
-  makeWrapper,
+  autoPatchelfHook,
   libGL,
   libxkbcommon,
   vulkan-loader,
@@ -33,46 +33,47 @@ rustPlatform.buildRustPackage (finalAttrs: {
   };
 
   cargoPatches = [./libusb1-sys-darwin-reproducible.patch];
-
   cargoHash = "sha256-/wb2X7FWWkNxUWt2lTN8chDDNYf4qUO2jJdQoAZNPvk=";
 
   nativeBuildInputs =
     [
       copyDesktopItems
-      makeWrapper
     ]
     ++ lib.optionals stdenv.isLinux [
       pkg-config
+      autoPatchelfHook
     ];
 
-  buildInputs = lib.optionals stdenv.isLinux [
-    libGL
+  runtimeDependencies = lib.optionals stdenv.isLinux [
     libxkbcommon
     vulkan-loader
     wayland
-    xorg.libX11
-    xorg.libXcursor
-    xorg.libxcb
-    xorg.libXi
     gdk-pixbuf
     glib
     gtk3
     libappindicator-gtk3
-    xdotool
-    zlib
   ];
 
-  postInstall = ''
-    # wrapProgram $out/bin/gcfeeder \
-    #   --suffix LD_LIBRARY_PATH : ${lib.makeLibraryPath finalAttrs.buildInputs}
+  buildInputs =
+    lib.optionals stdenv.isLinux [
+      libGL
+      xorg.libX11
+      xorg.libXcursor
+      xorg.libxcb
+      xorg.libXi
+      xdotool
+      zlib
+    ]
+    ++ finalAttrs.runtimeDependencies;
 
+  postInstall = ''
     mkdir -p $out/lib/udev/rules.d
     cp rules/50-gcfeeder.rules $out/lib/udev/rules.d/
 
     install -Dm644 crates/gcfeeder/resource/icon.png $out/share/pixmaps/gcfeeder.png
   '';
 
-  GCFEEDER_VERSION = "v3.0.1-${builtins.substring 0 7 finalAttrs.src.rev}";
+  env.GCFEEDER_VERSION = "v${finalAttrs.version}";
 
   desktopItems = [
     (makeDesktopItem {

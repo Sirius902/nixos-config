@@ -5,7 +5,7 @@
   fetchFromGitHub,
   copyDesktopItems,
   makeDesktopItem,
-  makeWrapper,
+  autoPatchelfHook,
   pkg-config,
   glib,
   gtk3,
@@ -26,26 +26,34 @@ rustPlatform.buildRustPackage (finalAttrs: {
   };
 
   cargoBuildFlags = "-p gcfeederd --no-default-features";
-  # TODO(Sirius902) Enable this once tests pass.
-  doCheck = false;
-
   cargoHash = "sha256-6bjpHqIPJ8jozW1f4e1sKjaVc2Y0XS+ZwUP/0jQCI+I=";
+
+  # TODO(Sirius902) Remove once these tests pass.
+  checkFlags = map (t: "--skip=${t}") [
+    "layers::mm_vc::tests::inv_vc_main_stick_works"
+    "layers::z64_gc::tests::inv_gc_main_stick_works"
+  ];
 
   nativeBuildInputs =
     [
       copyDesktopItems
-      makeWrapper
     ]
     ++ lib.optionals stdenv.isLinux [
       pkg-config
+      autoPatchelfHook
     ];
 
-  buildInputs = lib.optionals stdenv.isLinux [
-    glib
-    gtk3
+  runtimeDependencies = lib.optionals stdenv.isLinux [
     libappindicator-gtk3
-    xdotool
   ];
+
+  buildInputs =
+    lib.optionals stdenv.isLinux [
+      glib
+      gtk3
+      xdotool
+    ]
+    ++ finalAttrs.runtimeDependencies;
 
   postInstall = ''
     mkdir -p $out/lib/udev/rules.d
@@ -54,7 +62,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     install -Dm644 crates/gcfeederd/resource/icon.png $out/share/pixmaps/gcfeederd.png
   '';
 
-  GCFEEDER_VERSION = "v3.0.1-${builtins.substring 0 7 finalAttrs.src.rev}";
+  env.GCFEEDER_VERSION = "v${finalAttrs.version}";
 
   desktopItems = [
     (makeDesktopItem {

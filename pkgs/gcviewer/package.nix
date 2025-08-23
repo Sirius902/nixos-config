@@ -1,10 +1,11 @@
 {
   lib,
+  stdenv,
   rustPlatform,
   fetchFromGitHub,
   copyDesktopItems,
   makeDesktopItem,
-  makeWrapper,
+  autoPatchelfHook,
   libGL,
   libxkbcommon,
   vulkan-loader,
@@ -27,35 +28,41 @@ rustPlatform.buildRustPackage (finalAttrs: {
   };
 
   cargoBuildFlags = "--no-default-features";
-
   cargoHash = "sha256-wyzY4TkobIgSMhkXJYjCUXQCCaTCcip7qaup8XxikMU=";
 
-  nativeBuildInputs = [
-    copyDesktopItems
-    makeWrapper
-    pkg-config
-  ];
+  nativeBuildInputs =
+    [
+      copyDesktopItems
+    ]
+    ++ lib.optionals stdenv.isLinux [
+      pkg-config
+      autoPatchelfHook
+    ];
 
-  buildInputs = [
-    libGL
+  runtimeDependencies = lib.optionals stdenv.isLinux [
+    # TODO(Sirius902) What in the world is calling dlopen for `libgcc_s.so.1`??
+    stdenv.cc.cc.lib
     libxkbcommon
     vulkan-loader
     wayland
-    xorg.libX11
-    xorg.libXcursor
-    xorg.libxcb
-    xorg.libXi
-    libudev-zero
   ];
 
-  postInstall = ''
-    wrapProgram $out/bin/gcviewer \
-      --suffix LD_LIBRARY_PATH : ${lib.makeLibraryPath finalAttrs.buildInputs}
+  buildInputs =
+    lib.optionals stdenv.isLinux [
+      libGL
+      xorg.libX11
+      xorg.libXcursor
+      xorg.libxcb
+      xorg.libXi
+      libudev-zero
+    ]
+    ++ finalAttrs.runtimeDependencies;
 
+  postInstall = ''
     install -Dm644 resource/icon.png $out/share/pixmaps/gcviewer.png
   '';
 
-  GCVIEWER_VERSION = "v0.1.0-${builtins.substring 0 7 finalAttrs.src.rev}";
+  env.GCVIEWER_VERSION = "v${finalAttrs.version}";
 
   desktopItems = [
     (makeDesktopItem {
