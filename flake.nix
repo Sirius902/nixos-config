@@ -275,7 +275,6 @@
           };
 
           overlayedAllPackages = lib.mapAttrs (name: _: pkgs.${name}) allPackages;
-          # TODO(Sirius902) Restructure overlay so these can be derived just from `attrNames`.
           cosmicPackages = lib.mapAttrs (name: _: pkgs.${name}) (import ./overlays/cosmic/overlays.nix);
         in
           overlayedAllPackages

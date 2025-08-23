@@ -27,7 +27,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
   src = fetchFromGitHub {
     owner = "Sirius902";
     repo = "gcfeeder";
-    # TODO(Sirius902) Change to tag when release comes out.
     rev = "d73b0caefb61ad91de0753631e1888bb8982cea1";
     sha256 = "sha256-jdkHNgepqXlu0JPFKxL7V1LgvFgeUG+3SlQ3cRixbWM=";
   };
