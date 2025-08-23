@@ -66,6 +66,7 @@
         overlays = [
           (import ./pkgs/overlay.nix {inherit nixpkgs-ghidra_11_2_1;})
           (import ./overlays/cosmic)
+          (import ./overlays/gamescope.nix)
 
           nvim-conf.overlays.default
 
@@ -274,7 +275,9 @@
             inherit pkgs nixpkgs-ghidra_11_2_1;
           };
 
-          overlayedAllPackages = lib.mapAttrs (name: _: pkgs.${name}) allPackages;
+          overlayedAllPackages =
+            (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
+            // {inherit (pkgs) gamescope;};
           cosmicPackages = lib.mapAttrs (name: _: pkgs.${name}) (import ./overlays/cosmic/overlays.nix);
         in
           overlayedAllPackages
