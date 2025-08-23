@@ -11,7 +11,7 @@
   protobuf,
   nix-update-script,
 }:
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage (finalAttrs: {
   pname = "observatory";
   version = "0.2.2-unstable-2025-04-04";
 
@@ -35,11 +35,11 @@ rustPlatform.buildRustPackage rec {
   monitord = rustPlatform.buildRustPackage {
     pname = "observatory-monitord";
 
-    inherit version src;
+    inherit (finalAttrs) version src;
 
     cargoHash = "sha256-+ELF/COm0SSDJk8ydyS4x/4ImTqj7PNZI4W2+4v62Js=";
 
-    sourceRoot = "${src.name}/monitord";
+    sourceRoot = "${finalAttrs.src.name}/monitord";
 
     nativeBuildInputs = [
       protobuf
@@ -78,7 +78,7 @@ rustPlatform.buildRustPackage rec {
     "target/${stdenv.hostPlatform.rust.cargoShortTarget}/release/observatory"
   ];
 
-  env.VERGEN_GIT_SHA = src.rev;
+  env.VERGEN_GIT_SHA = finalAttrs.src.rev;
 
   postInstall = ''
     cp $monitord/bin/monitord $out/bin/
@@ -104,4 +104,4 @@ rustPlatform.buildRustPackage rec {
     platforms = lib.platforms.linux;
     mainProgram = "observatory";
   };
-}
+})
