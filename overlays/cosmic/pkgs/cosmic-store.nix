@@ -1,14 +1,14 @@
 final: prev:
 prev.cosmic-store.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-08-26";
+  version = "1.0.0-alpha.7-unstable-2025-08-28";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "db805990b6b864d19d3dfff144965802da40f7d0";
-    hash = "sha256-pNMmkXQjQ66o21rxqXR3U2f4aLFASsRfw/R+qloBln8=";
+    rev = "92355462645b085c6e815969c942e399c2b2703e";
+    hash = "sha256-9g6W2E4Cgf+YeeuvISX/+DZiMqTEvT+FPBl0T8157Bk=";
   };
 
-  cargoHash = "sha256-zkmfYOHGwKbAn6QINp8iX4/WG/xHqoT8lGP/zjICjBE=";
+  cargoHash = "sha256-55XHzkmH+Jerog3+Ltz1IO281JEdTEL+1vdfnoCZ31Y=";
 
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
