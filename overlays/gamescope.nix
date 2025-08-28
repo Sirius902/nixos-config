@@ -1,10 +1,10 @@
 final: prev: {
   gamescope = prev.gamescope.overrideAttrs (prevAttrs: {
-    version = "3.16.14.2-unstable-2025-07-30";
+    version = "3.16.14.2-unstable-2025-08-28";
     src = prevAttrs.src.override {
       tag = null;
-      rev = "1faf7acd90f960b8e6c816bfea15f699b70527f9";
-      hash = "sha256-/JMk1ZzcVDdgvTYC+HQL09CiFDmQYWcu6/uDNgYDfdM=";
+      rev = "9d9d442ddf58be8b171cd9a28aa523783b9175bb";
+      hash = "sha256-2J1FIwFjiL/r5dVVYFD8H1qEBjmrlRZ1OKUv5oxCwsQ=";
     };
 
     passthru =
