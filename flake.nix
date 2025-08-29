@@ -73,29 +73,20 @@
           # Use newer version of sdl3 with fix for https://github.com/libsdl-org/sdl2-compat/issues/491.
           # And adding Switch 2 controller support via https://github.com/libsdl-org/SDL/pull/13327.
           (final: prev: let
-            sdl3 = final.sdl3.overrideAttrs (finalAttrs: prevAttrs: {
-              version = "db29f89";
+            sdl3 = final.sdl3.overrideAttrs (prevAttrs: {
+              version = "3.2.20-unstable-2025-08-29";
               src = prevAttrs.src.override {
                 tag = null;
-                rev = finalAttrs.version;
-                hash = "sha256-u8PyjZZ2JPUGBtxZ1R3dA3xLGp3EhfyaJ0Utf/hu41U=";
+                rev = "edfbfa27b44d7f8963ddffe536773227329755c1";
+                hash = "sha256-KvSTn6sbl6I6iPR2p50G3NdgTHM04DbnGZp9NIWFP7w=";
               };
-              patches =
-                (prevAttrs.patches or [])
-                ++ [
-                  (final.fetchpatch {
-                    name = "switch2-controllers.patch";
-                    url = "https://github.com/flibitijibibo/SDL/commit/9b17353e046e74ba1abc936b87dbac040c123eb1.patch";
-                    hash = "sha256-nW+j/TEieeyOXzGvGIxBcpg5rbqin1ENlEJ3kuBTO2Q=";
-                  })
-                ];
             });
-            SDL2 = (final.SDL2.override {inherit sdl3;}).overrideAttrs (finalAttrs: prevAttrs: {
-              version = "a9b8494";
+            SDL2 = (final.SDL2.override {inherit sdl3;}).overrideAttrs (prevAttrs: {
+              version = "2.32.56-unstable-2025-08-28";
               src = prevAttrs.src.override {
                 tag = null;
-                rev = finalAttrs.version;
-                hash = "sha256-xPbr+OW1Jdyfbc8pn+0N4nThb8U5MHBeHcNdIydR5wo=";
+                rev = "ff4a64cd22599b6b4a21352485815ddef994cbba";
+                hash = "sha256-u4iGtmtvQFA+6Z3GFnd+WA4YiQRXYceHzQ76PA16VnQ=";
               };
             });
           in {
