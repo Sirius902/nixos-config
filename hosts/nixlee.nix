@@ -32,6 +32,10 @@
     # ../modules/nvidia.nix
   ];
 
+  # TODO(Sirius902) LMAO. Remove this once the issue is fixed.
+  # https://mundobytes.com/en/Linux-6%3A-16-problems-with-Asus-motherboards%3A-why-they-occur-and-how-to-mitigate-them-without-headaches/
+  boot.blacklistedKernelModules = ["asus_wmi" "asus_nb_wmi"];
+
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
   # Disable other greeters since we can only have one.
