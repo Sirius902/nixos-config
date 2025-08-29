@@ -531,114 +531,114 @@
               ];
             };
 
-          qemu = let
-            system = "x86_64-linux";
-            inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
-            args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
-              hostname = "vm";
-              hostId = "1763015d";
-              isHeadless = false;
-              isVm = true;
-            };
-          in
-            nixpkgs.lib.nixosSystem {
-              inherit system pkgs;
-              specialArgs = args;
-              modules = [
-                ./configuration.nix
-                ./hosts/qemu.nix
-                (hardwareConfigOr ./hardware/qemu.nix)
+          # qemu = let
+          #   system = "x86_64-linux";
+          #   inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
+          #   args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
+          #     hostname = "vm";
+          #     hostId = "1763015d";
+          #     isHeadless = false;
+          #     isVm = true;
+          #   };
+          # in
+          #   nixpkgs.lib.nixosSystem {
+          #     inherit system pkgs;
+          #     specialArgs = args;
+          #     modules = [
+          #       ./configuration.nix
+          #       ./hosts/qemu.nix
+          #       (hardwareConfigOr ./hardware/qemu.nix)
+          #
+          #       # TODO: This conflicts with the manual hardware config. Decide which to use.
+          #       # disko.nixosModules.disko
+          #       # ./disk-config.nix
+          #       # { disko.devices.disk.primary.device = "/dev/vda"; }
+          #
+          #       home-manager
+          #       {
+          #         home-manager.useGlobalPkgs = true;
+          #         home-manager.useUserPackages = true;
+          #         home-manager.extraSpecialArgs = args;
+          #         home-manager.users.chris = {
+          #           imports = [
+          #             ./modules/home/default.nix
+          #             ./modules/home/gnome.nix
+          #             ./modules/home/ghostty/default.nix
+          #             ./modules/home/ghostty/gnome.nix
+          #           ];
+          #         };
+          #       }
+          #     ];
+          #   };
+          #
+          # qemu-server = let
+          #   system = "x86_64-linux";
+          #   inherit (stableDeps system) pkgs nixpkgs home-manager inputs;
+          #   args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
+          #     hostname = "vm-server";
+          #     hostId = "f531a5e3";
+          #     isHeadless = true;
+          #     isVm = true;
+          #   };
+          # in
+          #   nixpkgs.lib.nixosSystem {
+          #     inherit system pkgs;
+          #     specialArgs = args;
+          #     modules = [
+          #       ./configuration.nix
+          #       ./hosts/server.nix
+          #       ./hosts/qemu.nix
+          #       (hardwareConfigOr ./hardware/qemu.nix)
+          #
+          #       # TODO: This conflicts with the manual hardware config. Decide which to use.
+          #       # disko.nixosModules.disko
+          #       # ./disk-config.nix
+          #       # { disko.devices.disk.primary.device = "/dev/vda"; }
+          #
+          #       home-manager
+          #       {
+          #         home-manager.useGlobalPkgs = true;
+          #         home-manager.useUserPackages = true;
+          #         home-manager.extraSpecialArgs = args;
+          #         home-manager.users.chris = import ./modules/home/default.nix;
+          #       }
+          #     ];
+          #   };
 
-                # TODO: This conflicts with the manual hardware config. Decide which to use.
-                # disko.nixosModules.disko
-                # ./disk-config.nix
-                # { disko.devices.disk.primary.device = "/dev/vda"; }
-
-                home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = {
-                    imports = [
-                      ./modules/home/default.nix
-                      ./modules/home/gnome.nix
-                      ./modules/home/ghostty/default.nix
-                      ./modules/home/ghostty/gnome.nix
-                    ];
-                  };
-                }
-              ];
-            };
-
-          qemu-server = let
-            system = "x86_64-linux";
-            inherit (stableDeps system) pkgs nixpkgs home-manager inputs;
-            args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
-              hostname = "vm-server";
-              hostId = "f531a5e3";
-              isHeadless = true;
-              isVm = true;
-            };
-          in
-            nixpkgs.lib.nixosSystem {
-              inherit system pkgs;
-              specialArgs = args;
-              modules = [
-                ./configuration.nix
-                ./hosts/server.nix
-                ./hosts/qemu.nix
-                (hardwareConfigOr ./hardware/qemu.nix)
-
-                # TODO: This conflicts with the manual hardware config. Decide which to use.
-                # disko.nixosModules.disko
-                # ./disk-config.nix
-                # { disko.devices.disk.primary.device = "/dev/vda"; }
-
-                home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = import ./modules/home/default.nix;
-                }
-              ];
-            };
-
-          vmware-aarch64 = let
-            system = "aarch64-linux";
-            inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
-            args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
-              hostname = "vm";
-              hostId = "c5cb7a32";
-              isHeadless = false;
-              isVm = true;
-            };
-          in
-            nixpkgs.lib.nixosSystem {
-              inherit system pkgs;
-              specialArgs = args;
-              modules = [
-                ./configuration.nix
-                ./hosts/vmware.nix
-                ./hardware-configuration.nix
-
-                home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.extraSpecialArgs = args;
-                  home-manager.users.chris = {
-                    imports = [
-                      ./modules/home/default.nix
-                      # ./modules/home/gnome.nix
-                      ./modules/home/ghostty/default.nix
-                      # ./modules/home/ghostty/gnome.nix
-                    ];
-                  };
-                }
-              ];
-            };
+          # vmware-aarch64 = let
+          #   system = "aarch64-linux";
+          #   inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
+          #   args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
+          #     hostname = "vm";
+          #     hostId = "c5cb7a32";
+          #     isHeadless = false;
+          #     isVm = true;
+          #   };
+          # in
+          #   nixpkgs.lib.nixosSystem {
+          #     inherit system pkgs;
+          #     specialArgs = args;
+          #     modules = [
+          #       ./configuration.nix
+          #       ./hosts/vmware.nix
+          #       ./hardware-configuration.nix
+          #
+          #       home-manager
+          #       {
+          #         home-manager.useGlobalPkgs = true;
+          #         home-manager.useUserPackages = true;
+          #         home-manager.extraSpecialArgs = args;
+          #         home-manager.users.chris = {
+          #           imports = [
+          #             ./modules/home/default.nix
+          #             # ./modules/home/gnome.nix
+          #             ./modules/home/ghostty/default.nix
+          #             # ./modules/home/ghostty/gnome.nix
+          #           ];
+          #         };
+          #       }
+          #     ];
+          #   };
         };
 
         darwinConfigurations = let
