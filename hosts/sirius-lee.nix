@@ -58,4 +58,9 @@
     pkgs.shipwright-ap
     pkgs.zelda64recomp
   ];
+
+  specialisation.lts-kernel.configuration = {
+    system.nixos.tags = ["lts"];
+    boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_12;
+  };
 }
