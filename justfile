@@ -6,11 +6,11 @@ default:
 fmt:
     nix --extra-experimental-features "nix-command flakes" fmt .
 
-switch:
-    nixos-rebuild --flake "path:.#{{ host }}" switch
+switch *FLAGS:
+    nixos-rebuild --flake "path:.#{{ host }}" switch {{ FLAGS }}
 
-switch-darwin:
-    darwin-rebuild switch --flake "path:.#{{ host }}"
+switch-darwin *FLAGS:
+    darwin-rebuild switch --flake "path:.#{{ host }}" {{ FLAGS }}
 
 anywhere host ip:
     #!/usr/bin/env bash
@@ -21,5 +21,5 @@ anywhere host ip:
     rsync -a "$keydir/keys.txt" "$temp/$keydir/keys.txt"
     nix run github:nix-community/nixos-anywhere -- --extra-files "$temp" --flake ".#{{ host }}" "root@{{ ip }}"
 
-anywhere-test host:
-    nix run github:nix-community/nixos-anywhere -- --flake ".#{{ host }}" --vm-test
+anywhere-test host *FLAGS:
+    nix run github:nix-community/nixos-anywhere -- --flake ".#{{ host }}" --vm-test {{ FLAGS }}
