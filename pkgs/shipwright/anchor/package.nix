@@ -40,8 +40,8 @@
   gamecontrollerdb = fetchFromGitHub {
     owner = "Sirius902";
     repo = "SDL_GameControllerDB";
-    rev = "f7e2898a0c154eaf7508c34bfb4264104bc3f4ed";
-    hash = "sha256-6J6U3sgSJegIq5ZYgWroiefxFdvv/+uDd1szBPgbtTM=";
+    rev = "e375bc281acf1887a0cde9f8dc5e58c255ed92c7";
+    hash = "sha256-ULLhC/UIKzNnG4MrsHH34BCgdGbDTsQ8eBeXT2x8ALE=";
   };
 
   imgui' = applyPatches {

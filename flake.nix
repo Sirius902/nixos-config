@@ -74,11 +74,11 @@
           # And adding Switch 2 controller support via https://github.com/libsdl-org/SDL/pull/13327.
           (final: prev: let
             sdl3 = final.sdl3.overrideAttrs (prevAttrs: {
-              version = "3.2.20-unstable-2025-08-29";
+              version = "3.2.20-unstable-2025-08-30";
               src = prevAttrs.src.override {
                 tag = null;
-                rev = "edfbfa27b44d7f8963ddffe536773227329755c1";
-                hash = "sha256-KvSTn6sbl6I6iPR2p50G3NdgTHM04DbnGZp9NIWFP7w=";
+                rev = "875653658abcb6091fa6a17bd4859fb66e8a1187";
+                hash = "sha256-HZbF6FecxKCGtjiHZ3K1ExDq5jvaKj5cq0pBXh+Jf0I=";
               };
             });
             SDL2 = (final.SDL2.override {inherit sdl3;}).overrideAttrs (prevAttrs: {
