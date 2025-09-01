@@ -94,6 +94,7 @@
             _2ship2harkinian = prev._2ship2harkinian.override {inherit SDL2;};
             shipwright-anchor = prev.shipwright-anchor.override {inherit SDL2;};
             zelda64recomp = prev.zelda64recomp.override {inherit SDL2;};
+            dolphin-emu = prev.dolphin-emu.override {inherit SDL2;};
           })
 
           # FUTURE(Sirius902) Rando fork for macOS?
