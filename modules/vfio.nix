@@ -1,14 +1,37 @@
 {
-  boot.kernelParams = ["intel_iommu=on" "iommu=pt"];
-  boot.kernelModules = ["vfio-pci" "vfio" "vfio_iommu_type1"];
+  config,
+  lib,
+  ...
+}: let
+  cfg = config.my.vfio;
+in {
+  options.my.vfio = {
+    enable = lib.mkEnableOption "vfio";
 
-  # NOTE(Sirius902) Should be `softdep nvidia pre: vfio-pci` for NVIDIA.
-  # Pick the correct one based on NixOS options?
-  boot.extraModprobeConfig = ''
-    softdep drm pre: vfio-pci
-  '';
+    amd.enable = lib.mkEnableOption "amd";
+    intel.enable = lib.mkEnableOption "intel";
 
-  # NOTE(Sirius902) For AMD it seems you must set some weird KVM settings to
+    amdgpu.enable = lib.mkEnableOption "amdgpu";
+    nvidia.enable = lib.mkEnableOption "nvidia";
+  };
+
+  config = lib.mkIf cfg.enable {
+    boot.kernelModules = ["vfio-pci" "vfio" "vfio-iommu-type1"];
+
+    boot.kernelParams =
+      lib.optionals cfg.amd.enable ["amd_iommu=on"]
+      ++ lib.optionals cfg.intel.enable ["intel_iommu=on" "iommu=pt"];
+
+    boot.extraModprobeConfig =
+      lib.optionalString cfg.amdgpu.enable ''
+        softdep amdgpu pre: vfio-pci
+      ''
+      + lib.optionalString cfg.nvidia.enable ''
+        softdep nvidia pre: vfio-pci
+      '';
+  };
+
+  # NOTE(Sirius902) For AMD GPU it seems you must set some weird KVM settings to
   # get single GPU passthrough to work.
   # https://forum.level1techs.com/t/vfio-pass-through-working-on-9070xt/227194
   #

@@ -381,6 +381,43 @@
             then ./hardware-configuration.nix
             else cfg;
         in {
+          sirius-lee = let
+            system = "x86_64-linux";
+            inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
+            args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
+              hostname = "sirius-lee";
+              hostId = "49e32584";
+              isHeadless = false;
+              isVm = false;
+            };
+          in
+            nixpkgs.lib.nixosSystem {
+              inherit system pkgs;
+              specialArgs = args;
+              modules = [
+                ./configuration.nix
+                ./hosts/sirius-lee.nix
+                (hardwareConfigOr ./hardware/sirius-lee.nix)
+                home-manager
+                {
+                  home-manager.useGlobalPkgs = true;
+                  home-manager.useUserPackages = true;
+                  home-manager.extraSpecialArgs = args;
+                  home-manager.users.chris = {
+                    imports = [
+                      ./modules/home/default.nix
+                      # ./modules/home/gnome.nix
+                      ./modules/home/cosmic.nix
+                      ./modules/home/ghostty/default.nix
+                      # ./modules/home/ghostty/gnome.nix
+                      ./modules/home/gcviewer.nix
+                      ./modules/home/gcfeederd.nix
+                    ];
+                  };
+                }
+              ];
+            };
+
           nixlee = let
             system = "x86_64-linux";
             inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;

@@ -14,7 +14,8 @@
     secrets.nixosModules.default
     nix-index-database.nixosModules.nix-index
     ./modules/tmux.nix
-    ./modules/options/jdk.nix
+    ./modules/jdk.nix
+    ./modules/vfio.nix
   ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
