@@ -1,11 +1,11 @@
 final: prev:
 prev.cosmic-protocols.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "0-unstable-2025-08-12";
+  version = "0-unstable-2025-09-01";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "8e84152fedf350d2756a2c1c90e07313acb9cdf6";
-    hash = "sha256-rFoSSc2wBNiW8wK3AIKxyv28FNTEiGk6UWjp5dQVxe8=";
+    rev = "6254f50abc6dbfccadc6939f80e20081ab5f9d51";
+    hash = "sha256-gOYgz07RGZoBp2RbHn0jUGLGXH/geoch/Y27Qh+jBao=";
   };
 
   passthru =
