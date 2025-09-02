@@ -70,32 +70,9 @@
 
           nvim-conf.overlays.default
 
-          # Use newer version of sdl3 with fix for https://github.com/libsdl-org/sdl2-compat/issues/491.
-          # And adding Switch 2 controller support via https://github.com/libsdl-org/SDL/pull/13327.
-          (final: prev: let
-            sdl3 = final.sdl3.overrideAttrs (prevAttrs: {
-              version = "3.2.20-unstable-2025-08-30";
-              src = prevAttrs.src.override {
-                tag = null;
-                rev = "875653658abcb6091fa6a17bd4859fb66e8a1187";
-                hash = "sha256-HZbF6FecxKCGtjiHZ3K1ExDq5jvaKj5cq0pBXh+Jf0I=";
-              };
-            });
-            SDL2 = (final.SDL2.override {inherit sdl3;}).overrideAttrs (prevAttrs: {
-              version = "2.32.56-unstable-2025-08-28";
-              src = prevAttrs.src.override {
-                tag = null;
-                rev = "ff4a64cd22599b6b4a21352485815ddef994cbba";
-                hash = "sha256-u4iGtmtvQFA+6Z3GFnd+WA4YiQRXYceHzQ76PA16VnQ=";
-              };
-            });
-          in {
-            shipwright = prev.shipwright.override {inherit SDL2;};
-            shipwright-anchor = prev.shipwright-anchor.override {inherit SDL2;};
-            shipwright-ap = prev.shipwright-ap.override {inherit SDL2;};
-            _2ship2harkinian = prev._2ship2harkinian.override {inherit SDL2;};
-            zelda64recomp = prev.zelda64recomp.override {inherit SDL2;};
-            dolphin-emu = prev.dolphin-emu.override {inherit SDL2;};
+          # Add Switch 2 controller support via https://github.com/libsdl-org/SDL/pull/13327.
+          (final: prev: {
+            dolphin-emu = prev.dolphin-emu.override {SDL2 = prev.SDL2_git;};
           })
 
           # FUTURE(Sirius902) Rando fork for macOS?
