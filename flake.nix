@@ -257,7 +257,7 @@
 
           overlayedAllPackages =
             (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
-            // {inherit (pkgs) gamescope;};
+            // {inherit (pkgs) gamescope dolphin-emu;};
           cosmicPackages = lib.mapAttrs (name: _: pkgs.${name}) (import ./overlays/cosmic/overlays.nix);
         in
           overlayedAllPackages
