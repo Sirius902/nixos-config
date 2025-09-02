@@ -2,12 +2,12 @@
 # until the nixos-unstable version is newer.
 final: prev:
 prev.xdg-desktop-portal-cosmic.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-08-13";
+  version = "1.0.0-alpha.7-unstable-2025-09-02";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "7e803d13e3b4d28f2954a628675dcc2be4f3765c";
-    hash = "sha256-rxUVVvNlb3IjVfCeIIKzDecN1TDZ2WdmxVwdTngXMAI=";
+    rev = "de1f131344a5de6bccaf3481e977b7d7e322aea9";
+    hash = "sha256-cvb+GrRUbK48RqKi5PW8mMv5XKLuPexgffxw+vkQr8A=";
   };
 
   cargoHash = "sha256-NQoqbfNEMWowo2KxdgKqTbn/BDgv218NFCCGYR9OAO0=";
