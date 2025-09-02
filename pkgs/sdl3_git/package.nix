@@ -12,6 +12,10 @@ sdl3.overrideAttrs (finalAttrs: prevAttrs: {
     hash = "sha256-8toGbm8GWqZ6OFnuTet43t0IDDYH+piEVUSbjDar6pE=";
   };
 
+  # TODO(Sirius902) NSO GC left stick calibration was broken by this commit.
+  # https://github.com/libsdl-org/SDL/commit/1f007ad5cd6f8103e8975295e6cfa9659a26cad9
+  patches = (prevAttrs.patches or []) ++ [./revert-ns2-led.patch];
+
   passthru =
     (prevAttrs.passthru or {})
     // {
