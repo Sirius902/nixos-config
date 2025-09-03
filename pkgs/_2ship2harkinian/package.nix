@@ -29,20 +29,13 @@
   libvorbis,
   libopus,
   opusfile,
+  sdl_gamecontrollerdb,
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
   nix-update-script,
   _2ship2harkinian,
 }: let
-  # The following would normally get fetched at build time, or a specific version is required
-  gamecontrollerdb = fetchFromGitHub {
-    owner = "Sirius902";
-    repo = "SDL_GameControllerDB";
-    rev = "e375bc281acf1887a0cde9f8dc5e58c255ed92c7";
-    hash = "sha256-ULLhC/UIKzNnG4MrsHH34BCgdGbDTsQ8eBeXT2x8ALE=";
-  };
-
   imgui' = applyPatches {
     src = fetchFromGitHub {
       owner = "ocornut";
@@ -230,7 +223,7 @@ in
 
     postBuild = ''
       port_ver=$(grep CMAKE_PROJECT_VERSION: "$PWD/CMakeCache.txt" | cut -d= -f2)
-      cp ${gamecontrollerdb}/gamecontrollerdb.txt gamecontrollerdb.txt
+      cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
       pushd ../OTRExporter
       python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../mm/assets/xml --custom-assets-path ../mm/assets/custom --custom-otr-file 2ship.o2r --port-ver $port_ver
       popd
@@ -268,7 +261,7 @@ in
 
         # TODO(Sirius902) This seems like an issue upstream in 2ship maybe?
         # Move gamecontrollerdb.txt to the proper place for app bundle
-        cp ${gamecontrollerdb}/gamecontrollerdb.txt $out/Applications/2s2h.app/Contents/Resources/gamecontrollerdb.txt
+        cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt $out/Applications/2s2h.app/Contents/Resources/gamecontrollerdb.txt
 
         # Copy icons
         cp -r ../build/macosx/2s2h.icns $out/Applications/2s2h.app/Contents/Resources/2s2h.icns

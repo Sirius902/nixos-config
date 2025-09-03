@@ -29,6 +29,7 @@
   libvorbis,
   libopus,
   opusfile,
+  sdl_gamecontrollerdb,
   openssl,
   runCommand,
   writeTextFile,
@@ -37,14 +38,6 @@
   nix-update-script,
   shipwright-ap,
 }: let
-  # The following would normally get fetched at build time, or a specific version is required
-  gamecontrollerdb = fetchFromGitHub {
-    owner = "Sirius902";
-    repo = "SDL_GameControllerDB";
-    rev = "e375bc281acf1887a0cde9f8dc5e58c255ed92c7";
-    hash = "sha256-ULLhC/UIKzNnG4MrsHH34BCgdGbDTsQ8eBeXT2x8ALE=";
-  };
-
   imgui' = applyPatches {
     src = fetchFromGitHub {
       owner = "ocornut";
@@ -251,7 +244,7 @@ in
 
     postBuild = ''
       port_ver=$(grep CMAKE_PROJECT_VERSION: "$PWD/CMakeCache.txt" | cut -d= -f2)
-      cp ${gamecontrollerdb}/gamecontrollerdb.txt gamecontrollerdb.txt
+      cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
       mv ../libultraship/src/graphic/Fast3D/shaders ../soh/assets/custom
       pushd ../OTRExporter
       python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../soh/assets/xml --custom-assets-path ../soh/assets/custom --custom-otr-file soh.o2r --port-ver $port_ver
@@ -299,7 +292,7 @@ in
 
         # TODO(Sirius902) This seems like an issue upstream in ship maybe?
         # Move gamecontrollerdb.txt to the proper place for app bundle
-        cp ${gamecontrollerdb}/gamecontrollerdb.txt $out/Applications/soh-ap.app/Contents/Resources/gamecontrollerdb.txt
+        cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt $out/Applications/soh-ap.app/Contents/Resources/gamecontrollerdb.txt
 
         # Copy icons
         cp -r ../build/macosx/soh.icns $out/Applications/soh-ap.app/Contents/Resources/soh.icns
