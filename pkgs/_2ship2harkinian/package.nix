@@ -271,7 +271,9 @@ in
       '';
 
     fixupPhase = lib.optionalString stdenv.hostPlatform.isLinux ''
+      runHook preFixup
       wrapProgram $out/lib/2s2h.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
+      runHook postFixup
     '';
 
     desktopItems = [
