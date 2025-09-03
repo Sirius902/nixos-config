@@ -1,0 +1,25 @@
+From 619e6f6eb0c05030c8ac2c9e4c48d4ece52b2e38 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Wed, 3 Sep 2025 00:29:39 -0700
+Subject: [PATCH] Use digital input for NSO GameCube triggers
+
+---
+ src/joystick/SDL_gamepad.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/joystick/SDL_gamepad.c b/src/joystick/SDL_gamepad.c
+index c5ef232b3..a08cef25f 100644
+--- a/src/joystick/SDL_gamepad.c
++++ b/src/joystick/SDL_gamepad.c
+@@ -717,7 +717,7 @@ static GamepadMapping_t *SDL_CreateMappingForHIDAPIGamepad(SDL_GUID guid)
+         SDL_strlcat(mapping_string, "a:b0,b:b2,dpdown:b6,dpleft:b4,dpright:b5,dpup:b7,lefttrigger:a4,leftx:a0,lefty:a1~,rightshoulder:b9,righttrigger:a5,rightx:a2,righty:a3~,start:b8,x:b1,y:b3,misc3:b11,misc4:b10,hint:!SDL_GAMECONTROLLER_USE_GAMECUBE_LABELS:=1,", sizeof(mapping_string));
+     } else if (vendor == USB_VENDOR_NINTENDO &&
+                product == USB_PRODUCT_NINTENDO_SWITCH2_GAMECUBE_CONTROLLER) {
+-        SDL_strlcat(mapping_string, "a:b0,b:b1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b4,leftshoulder:b6,lefttrigger:a4,leftx:a0,lefty:a1,rightshoulder:b7,righttrigger:a5,rightx:a2,righty:a3,start:b5,x:b2,y:b3,misc1:b8,misc2:b9,misc3:b10,misc4:b11,hint:!SDL_GAMECONTROLLER_USE_GAMECUBE_LABELS:=1,", sizeof(mapping_string));
++        SDL_strlcat(mapping_string, "a:b0,b:b1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b4,leftshoulder:b6,lefttrigger:b10,leftx:a0,lefty:a1,rightshoulder:b7,righttrigger:b11,rightx:a2,righty:a3,start:b5,x:b2,y:b3,misc1:b8,misc2:b9,hint:!SDL_GAMECONTROLLER_USE_GAMECUBE_LABELS:=1,", sizeof(mapping_string));
+     } else if (vendor == USB_VENDOR_NINTENDO &&
+                product == USB_PRODUCT_NINTENDO_SWITCH2_PRO) {
+         SDL_strlcat(mapping_string, "a:b0,b:b1,back:b4,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b5,leftshoulder:b9,leftstick:b7,lefttrigger:a4,leftx:a0,lefty:a1,rightshoulder:b10,rightstick:b8,righttrigger:a5,rightx:a2,righty:a3,start:b6,x:b2,y:b3,misc1:b11,misc2:b12,paddle1:b13,paddle2:b14,hint:!SDL_GAMECONTROLLER_USE_BUTTON_LABELS:=1,", sizeof(mapping_string));
+-- 
+2.50.1
+
