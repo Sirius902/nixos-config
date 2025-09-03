@@ -2,15 +2,15 @@
 # until the nixos-unstable version is newer.
 final: prev:
 prev.cosmic-panel.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-09-01";
+  version = "1.0.0-alpha.7-unstable-2025-09-03";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "9adf94ebefc7dba5e58dd051e6efa87d058d11aa";
-    hash = "sha256-mYfV5INjsF0lG523ZDgKFgGiv8bzrvvxqQ84JlWLVVQ=";
+    rev = "f0e2d217c6cbfb656ffbcfc03be28191ccf42468";
+    hash = "sha256-rWfItTECf8XGOWI7B8f7b1fsdEREPwYTVf9FZZRZ4Zo=";
   };
 
-  cargoHash = "sha256-Q30v5dd2iAMJKdeDapQBMeyusDfdX4yAw15I0b90SvM=";
+  cargoHash = "sha256-m9tWSJ/77uD29k6FFxLNtyZCkR32LHy5lzCAEPH5uXw=";
 
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
