@@ -4,8 +4,8 @@ prev.cosmic-settings-daemon.overrideAttrs (finalAttrs: prevAttrs: {
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "6d45dbeaade7689ad2241f818fb1c6336ebe2bc2";
-    hash = "sha256-xd4Gmif0inGxyccbTFTPvmdSY7/qg/MWohoLd9nButg=";
+    rev = "ff15f3240f6cf36ea74eacbf55ad805377e88a41";
+    hash = "sha256-xhscc4S+TdZh56I4D2Xo8C+q40jil1rAanaxx+HwUPE=";
   };
 
   cargoHash = "sha256-TqDuBmmFL3JIJQPCbZ0eN9Fr8gqt2bbpMPvGFwkH2/s=";
