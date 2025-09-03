@@ -9,8 +9,8 @@
   version = "2.32.56-unstable-2025-09-03";
   src = prevAttrs.src.override {
     tag = null;
-    rev = "469d0b7a0509a1329b8ab1aa38faa1b341614e72";
-    hash = "sha256-3TewdJSCpsvRfb17Uq9OpQxBlUnGRH7O0nrlIaw4Ayg=";
+    rev = "a731e60df9dbc235b3ffa3b4e1c3db2d0c19222a";
+    hash = "sha256-90Mklg5TBdCCUji0JMkjnKSnUFM4GLNUYwd2UUvxRX8=";
   };
 
   passthru =
