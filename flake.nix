@@ -226,6 +226,22 @@
               };
             });
           })
+
+          # TODO(Sirius902) tailscale brokeded on stable.
+          # https://github.com/NixOS/nixpkgs/issues/438765
+          (final: prev:
+            prev.lib.optionalAttrs (prev.lib.versionOlder prev.lib.trivial.release "25.11") {
+              tailscale = prev.tailscale.overrideAttrs (prevAttrs: {
+                checkFlags =
+                  builtins.map (
+                    flag:
+                      if final.lib.hasPrefix "-skip=" flag
+                      then flag + "|^TestGetList$|^TestIgnoreLocallyBoundPorts$|^TestPoller$"
+                      else flag
+                  )
+                  prevAttrs.checkFlags;
+              });
+            })
         ];
         config.allowUnfree = true;
       };
