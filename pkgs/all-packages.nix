@@ -2,6 +2,8 @@
   pkgs,
   nixpkgs-ghidra_11_2_1,
 }: rec {
+  archipelago = pkgs.callPackage ./archipelago/package.nix {};
+
   ghostty-nautilus = pkgs.callPackage ./ghostty-nautilus/package.nix {};
 
   gcfeeder = pkgs.callPackage ./gcfeeder/package.nix {};
