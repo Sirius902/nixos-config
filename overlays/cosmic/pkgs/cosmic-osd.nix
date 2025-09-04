@@ -1,19 +1,22 @@
 final: prev:
 prev.cosmic-osd.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-09-03";
+  version = "1.0.0-alpha.7-unstable-2025-09-04";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "aa8a7d5a01489bbf56e33f45abcadf1e497d7757";
-    hash = "sha256-UYJck+j8q+cN1aFkETNg/BE+BfJj2bV72Dw2UrCYl5Y=";
+    rev = "a0dc762f0195365b5d4c5b7b744a33a193374390";
+    hash = "sha256-JTMcV16JN+qxt/dY7w+bYAXbYrxkyrvI8btBlLgHYug=";
   };
 
-  cargoHash = "sha256-090ifWvXb2Idd/LBybDTbmKx4QGYa4I0EDRs4yKbI4A=";
+  cargoHash = "sha256-qiQ4VV1ML2EpfxEdE/A8b6mhtnr5y1/Dr9BvtFu0zgg=";
 
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
     hash = finalAttrs.cargoHash;
   };
+
+  # No longer needed due to https://github.com/pop-os/cosmic-osd/commit/4970139d875f9b28ea72d431e07ca3650a200470.
+  postPatch = null;
 
   # FUTURE(Sirius902) cosmic-osd now depends on pipewire and libclang. Remove these if it is added upstream.
   nativeBuildInputs = (prevAttrs.nativeBuildInputs or []) ++ [final.rustPlatform.bindgenHook];
