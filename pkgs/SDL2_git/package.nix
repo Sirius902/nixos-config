@@ -1,4 +1,5 @@
 {
+  lib,
   SDL2,
   sdl3_git,
   nix-update-script,
@@ -25,5 +26,9 @@
       };
     };
 
-  meta = prevAttrs.meta // {changelog = null;};
+  meta =
+    prevAttrs.meta
+    // {
+      changelog = "https://github.com/libsdl-org/sdl2-compat/releases/tag/release-${builtins.elemAt (lib.splitString "-" finalAttrs.version) 0}";
+    };
 })
