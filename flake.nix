@@ -297,7 +297,14 @@
                       )
                     else builtins.toString drv.updateScript or ""
                 )
-                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu" "sdl3-ship" "SDL2-ship"])
+                (builtins.removeAttrs overlayedAllPackages [
+                  "dolphin-emu"
+                  "sdl3-ship"
+                  "SDL2-ship"
+                  # Probably good on SDL updates for a while... soooo many rebuilds.
+                  "sdl3_git"
+                  "SDL2_git"
+                ])
               );
             };
 
