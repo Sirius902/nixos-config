@@ -4,8 +4,8 @@ prev.cosmic-applets.overrideAttrs (finalAttrs: prevAttrs: {
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "84cbfe0d86022275ef8d67950d07f209521f2517";
-    hash = "sha256-258aZw7OZiJ2aZYaWiQZ3PlHZruRN+PQO8Sfre+YF+o=";
+    rev = "9e0a1da88336f2371a60fd62877c44351e436a78";
+    hash = "sha256-z6DaSkhJ7FHqrA6YY4qDHQQleJUY6kGZ73AtXukPH1U=";
   };
 
   cargoHash = "sha256-KfsUAwte+U6hsXZS0N1Ywjw4sUpq0wkR9/nTalmv44c=";
