@@ -37,6 +37,7 @@
   applyPatches,
   nix-update-script,
   shipwright-ap,
+  fetchpatch,
 }: let
   imgui' = applyPatches {
     src = fetchFromGitHub {
@@ -148,6 +149,11 @@ in
       ./disable-openssl-check.patch
       ./sslcertstore-dir.patch
       ./app-name.patch
+      (fetchpatch {
+        name = "follow-app-directory-for-uuid.patch";
+        url = "https://github.com/Sirius902/Shipwright/commit/c363137e6467e8f56458b08f9eacf779e9f6c97a.patch";
+        hash = "sha256-j+bLvU5PHTFrSIsiLSCJzbCoJTDxrMrad4DUBZimHks=";
+      })
     ];
 
     nativeBuildInputs =
