@@ -1,11 +1,11 @@
 final: prev:
 prev.cosmic-settings.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-09-02";
+  version = "1.0.0-alpha.7-unstable-2025-09-05";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "814beb5950de9488687eb9afada3bbf600198c20";
-    hash = "sha256-cYAmOefmOBvJQIz2zspGQMWx5Wxf1bTizIctIhe71Fg=";
+    rev = "cabed2fcfd91ca510d7c2f3119e80e297462c8a0";
+    hash = "sha256-LXg8SF/BmA6sqkNAWi0pbpbqRZz5BVkuT/qCcJRiE8k=";
   };
 
   cargoHash = "sha256-wMkED3KyVy9gDpYDNLtPIn2IDA1U0tKBxKvz86VAH94=";
