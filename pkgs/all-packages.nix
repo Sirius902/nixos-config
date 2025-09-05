@@ -34,4 +34,6 @@
   n64recomp = pkgs.callPackage ./n64recomp/package.nix {};
   z64decompress = pkgs.callPackage ./z64decompress/package.nix {};
   zelda64recomp = pkgs.callPackage ./zelda64recomp/package.nix {SDL2 = SDL2-ship;};
+
+  archipelago = pkgs.callPackage ./archipelago/package.nix {};
 }
