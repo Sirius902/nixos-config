@@ -1,5 +1,4 @@
 {
-  lib,
   sdl3,
   nix-update-script,
   ...
@@ -25,9 +24,5 @@ sdl3.overrideAttrs (finalAttrs: prevAttrs: {
       };
     };
 
-  meta =
-    prevAttrs.meta
-    // {
-      changelog = "https://github.com/libsdl-org/SDL/releases/tag/release-${builtins.elemAt (lib.splitString "-" finalAttrs.version) 0}";
-    };
+  meta = prevAttrs.meta // {changelog = null;};
 })
