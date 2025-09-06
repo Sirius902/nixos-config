@@ -1,103 +1,209 @@
 {
   lib,
-  pkgs,
-  stdenvNoCC,
-  appimageTools,
-  autoPatchelfHook,
-  makeWrapper,
+  python313,
+  fetchFromGitHub,
+  fetchPypi,
   xsel,
   xclip,
   mtdev,
-  openssl,
-  lttng-ust,
-  gobject-introspection,
   zenity,
-  fetchurl,
+  cmake,
+  s2clientprotocol,
   nix-update-script,
-}:
-stdenvNoCC.mkDerivation (finalAttrs: {
-  pname = "archipelago";
-  version = "0.6.3";
-
-  src = fetchurl {
-    url = "https://github.com/ArchipelagoMW/Archipelago/releases/download/${finalAttrs.version}/Archipelago_${finalAttrs.version}_linux-x86_64.AppImage";
-    hash = "sha256-PetlGYsdhyvThIFqy+7wbPLAXDcgN2Kcl2WF3rta8PA=";
+}: let
+  python3 = python313.override {
+    packageOverrides = pyfinal: pyprev: {
+      inherit s2clientprotocol;
+    };
   };
 
-  dontUnpack = true;
+  pyevermizer = python3.pkgs.buildPythonPackage rec {
+    pname = "pyevermizer";
+    version = "0.50.1";
+    format = "setuptools";
 
-  nativeBuildInputs = [
-    autoPatchelfHook
-    makeWrapper
-  ];
+    src = fetchPypi {
+      inherit pname version;
+      hash = "sha256-zVbMom7ZZ1eQFU3XBAKtKKOB/DyQMb0C65sdrYwxc5g=";
+    };
+  };
 
-  buildInputs = finalAttrs.runtimeDependencies;
+  maseya-z3pr = python3.pkgs.buildPythonPackage rec {
+    pname = "maseya-z3pr";
+    version = "1.0.0rc1";
+    format = "setuptools";
 
-  runtimeDependencies =
-    [
-      gobject-introspection
-      openssl
-      lttng-ust
-    ]
-    ++ appimageTools.defaultFhsEnvArgs.targetPkgs pkgs
-    ++ appimageTools.defaultFhsEnvArgs.multiPkgs pkgs;
+    src = fetchPypi {
+      inherit pname version;
+      hash = "sha256-wCj9syUrSuLIbwfsyZY2n+Oar+s7oxQBG/Y3Ilf4Z8U=";
+    };
+  };
 
-  libraryPath = lib.makeLibraryPath [
-    xsel
-    xclip
-    mtdev
-  ];
+  factorio-rcon-py = python3.pkgs.buildPythonPackage rec {
+    pname = "factorio_rcon_py";
+    version = "2.1.3";
+    pyproject = true;
 
-  binPath = lib.makeBinPath [
-    zenity
-  ];
+    build-system = with python3.pkgs; [setuptools];
 
-  appimageContents = appimageTools.extractType2 {inherit (finalAttrs) pname version src;};
+    src = fetchPypi {
+      inherit pname version;
+      hash = "sha256-hL/ELSrfzQFmC9QDZSxkU/a+K0dIF+IU51IG8CsVEsM=";
+    };
+  };
 
-  installPhase = ''
-    runHook preInstall
+  setuptools-cmake-helper = python3.pkgs.buildPythonPackage rec {
+    pname = "setuptools_cmake_helper";
+    version = "0.1.2";
+    pyproject = true;
 
-    mkdir -p $out/bin
-    cp ${finalAttrs.appimageContents}/AppRun $out/bin/archipelago
+    build-system = with python3.pkgs; [setuptools-scm];
 
-    mkdir -p $out/lib/opt
-    cp -r ${finalAttrs.appimageContents}/opt/* $out/lib/opt
+    src = fetchPypi {
+      inherit pname version;
+      hash = "sha256-U0hFtthr98iZ3Jvrynj+ElF28nCiu+VKqkzPw6jfoIk=";
+    };
+  };
 
-    wrapProgram $out/bin/archipelago \
-      --set APPDIR $out/lib \
-      --prefix LD_LIBRARY_PATH : "${finalAttrs.libraryPath}" \
-      --prefix PATH : "${finalAttrs.binPath}"
+  dolphin-memory-engine = python3.pkgs.buildPythonPackage rec {
+    pname = "dolphin_memory_engine";
+    version = "1.3.0";
+    pyproject = true;
 
-    install -Dm444 ${finalAttrs.appimageContents}/archipelago.desktop -t $out/share/applications
-    substituteInPlace $out/share/applications/archipelago.desktop \
-      --replace-fail 'opt/Archipelago/ArchipelagoLauncher' "archipelago"
-    cp -r ${finalAttrs.appimageContents}/usr/share/icons $out/share
-
-    runHook postInstall
-  '';
-
-  preFixup = ''
-    patchelf \
-      --replace-needed libcrypto.so.1.0.0 libcrypto.so \
-      --replace-needed libssl.so.1.0.0 libssl.so \
-      $out/lib/opt/Archipelago/EnemizerCLI/System.Security.Cryptography.Native.OpenSsl.so
-
-    patchelf --replace-needed liblttng-ust.so.0 liblttng-ust.so \
-      $out/lib/opt/Archipelago/EnemizerCLI/libcoreclrtraceptprovider.so
-  '';
-
-  passthru.updateScript = nix-update-script {};
-
-  meta = {
-    description = "Multi-Game Randomizer and Server";
-    homepage = "https://archipelago.gg";
-    changelog = "https://github.com/ArchipelagoMW/Archipelago/releases/tag/${finalAttrs.version}";
-    license = lib.licenses.mit;
-    mainProgram = "archipelago";
-    maintainers = with lib.maintainers; [
-      pyrox0
-      iqubic
+    nativeBuildInputs = [
+      cmake
     ];
-    platforms = lib.platforms.linux;
+
+    dontUseCmakeConfigure = true;
+
+    build-system = with python3.pkgs; [setuptools-scm];
+
+    dependencies = with python3.pkgs; [cython setuptools-cmake-helper];
+
+    src = fetchPypi {
+      inherit pname version;
+      hash = "sha256-WHvVf8eclF9GePYCotMW/3wbAisyE/xq3wXtLhuo2pI=";
+    };
   };
-})
+
+  pymem = python3.pkgs.buildPythonPackage rec {
+    pname = "pymem";
+    version = "1.14.0";
+    pyproject = true;
+
+    build-system = with python3.pkgs; [poetry-core];
+
+    src = fetchPypi {
+      inherit pname version;
+      hash = "sha256-KfbDK8rQAyiIr6ut+X0eTHdX+Ihz3k159/TB35uefvE=";
+    };
+  };
+
+  zilliandomizer = python3.pkgs.buildPythonPackage rec {
+    pname = "pymem";
+    version = "0.9.1";
+    pyproject = true;
+
+    build-system = with python3.pkgs; [setuptools-scm];
+
+    src = fetchFromGitHub {
+      owner = "beauxq";
+      repo = "zilliandomizer";
+      tag = "v${version}";
+      hash = "sha256-8QkjVl7kNjpww64bs8UpSdpMhpdtYGyILYjxwMgZWoc=";
+    };
+  };
+
+  xxtea = python3.pkgs.buildPythonPackage rec {
+    pname = "xxtea";
+    version = "3.3.0";
+    pyproject = true;
+
+    build-system = with python3.pkgs; [setuptools];
+
+    src = fetchPypi {
+      inherit pname version;
+      hash = "sha256-5DdCC99AuTF9adiO2D5ucNWBzXVV0WpudOyv/B1u/D8=";
+    };
+  };
+in
+  python3.pkgs.buildPythonApplication {
+    pname = "archipelago";
+    version = "0.6.3";
+    format = "other";
+
+    src = fetchFromGitHub {
+      owner = "ArchipelagoMW";
+      repo = "Archipelago";
+      rev = "ecb22642af291e05bdc6ae729bb14d4d1ae83792";
+      hash = "sha256-CGg2Jedwp6GyYhRmjy5AL0o1HKeaJmA2+RyJ9Zn28lY=";
+    };
+
+    buildInputs = [
+      xsel
+      xclip
+      mtdev
+    ];
+
+    dependencies = with python3.pkgs; [
+      setuptools
+
+      pyevermizer
+      maseya-z3pr
+      websockets
+      factorio-rcon-py
+      nest-asyncio
+      bsdiff4
+      dolphin-memory-engine
+      pymem
+      zilliandomizer
+      colorama
+      websockets
+      xxtea
+      s2clientprotocol
+      pyyaml
+      jellyfish
+      jinja2
+      schema
+      kivy
+      platformdirs
+      cymem
+    ];
+
+    prePatch = ''
+      substituteInPlace requirements.txt \
+        --replace "websockets>=13.0.1,<14" "websockets" \
+        --replace "jellyfish>=1.1.3" "jellyfish>=1.1.2" \
+
+      # TODO(Sirius902) Remove
+      substituteInPlace worlds/_sc2common/requirements.txt \
+        --replace "s2clientprotocol>=5.0.11.90136.0" "s2clientprotocol"
+    '';
+
+    installPhase = ''
+      runHook preInstall
+
+      mkdir -p $out/share/archipelago
+      mv * $out/share/archipelago
+
+      makeWrapper ${python3.interpreter} $out/bin/archipelago \
+        --set PYTHONPATH "$PYTHONPATH:$out/share/archipelago" \
+        --add-flags "-O $out/share/archipelago/Launcher.py"
+
+      runHook postInstall
+    '';
+
+    passthru.updateScript = nix-update-script {extraArgs = ["--version=branch"];};
+
+    meta = {
+      description = "Multi-Game Randomizer and Server";
+      homepage = "https://archipelago.gg";
+      # changelog = "https://github.com/ArchipelagoMW/Archipelago/releases/tag/${version}";
+      license = lib.licenses.mit;
+      mainProgram = "archipelago";
+      maintainers = with lib.maintainers; [
+        # sirius902
+      ];
+      platforms = lib.platforms.linux;
+    };
+  }

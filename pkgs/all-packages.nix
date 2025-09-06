@@ -35,6 +35,7 @@
   z64decompress = pkgs.callPackage ./z64decompress/package.nix {};
   zelda64recomp = pkgs.callPackage ./zelda64recomp/package.nix {SDL2 = SDL2-ship;};
 
+  s2clientprotocol = pkgs.callPackage ./s2clientprotocol/package.nix {};
   archipelago = pkgs.callPackage ./archipelago/package.nix {};
 
   wwrando = pkgs.callPackage ./wwrando/package.nix {};
