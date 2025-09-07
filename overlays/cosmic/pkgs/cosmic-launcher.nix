@@ -1,11 +1,11 @@
 final: prev:
 prev.cosmic-launcher.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-07-29";
+  version = "1.0.0-alpha.7-unstable-2025-09-07";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "2831b8c5faf6297f64d2a90d8edd48a7efbcdf77";
-    hash = "sha256-m8AAsbptnCd5gHNIBCoy4+5IjXW3eui24dnHY4qoS0E=";
+    rev = "e2aa2aaa0be8bd6269d2e08ec56aee43c0638bec";
+    hash = "sha256-i2kKtvE/8SnSZWrzT3eMcmNIjEA1SZIvdJxsPKKSCrY=";
   };
 
   cargoHash = "sha256-57rkCufJPWm844/iMIfULfaGR9770q8VgZgnqCM57Zg=";
