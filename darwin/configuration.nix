@@ -15,8 +15,11 @@
   # $ nix-env -qaP | grep wget
   environment.systemPackages = [pkgs.just];
 
-  # Necessary for using flakes on this system.
-  nix.settings.experimental-features = "nix-command flakes";
+  nix.settings = {
+    # Necessary for using flakes on this system.
+    experimental-features = ["nix-command" "flakes"];
+    trusted-users = ["chris"];
+  };
 
   # Enable alternative shell support in nix-darwin.
   # programs.fish.enable = true;

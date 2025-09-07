@@ -18,7 +18,10 @@
     ./modules/vfio.nix
   ];
 
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings = {
+    experimental-features = ["nix-command" "flakes"];
+    trusted-users = ["chris"];
+  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
