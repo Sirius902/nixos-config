@@ -13,13 +13,13 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "n64recomp";
-  version = "unstable-2025-08-29";
+  version = "unstable-2025-09-07";
 
   src = fetchFromGitHub {
     owner = "N64Recomp";
     repo = "N64Recomp";
-    rev = "6db56f597d1fd52f8f5439504c3de0a4e4e2bf37";
-    hash = "sha256-M5VMyhOJ6fSOhxJ9iMp+yzCHbwnS6ZLC1y5HFO+SSOk=";
+    rev = "6888c1f1df03349906acdec1a7ed3b308c86020c";
+    hash = "sha256-xIpbGtnGyK+UYBBk8/+33H/oFzZKstGCv8Q/OF04ukE=";
     fetchSubmodules = true;
   };
 
