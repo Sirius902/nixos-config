@@ -1,11 +1,11 @@
 final: prev:
 prev.cosmic-randr.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-08-21";
+  version = "1.0.0-alpha.7-unstable-2025-09-07";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "2c1cef722900dd8177a627377e89194560c5bd51";
-    hash = "sha256-AGJH7QpEvI1wfpd0AUMFFK3A/8SsFyoG09rUZAt1lQ4=";
+    rev = "bce9cdf2d447508d4e2d54a2be4fcd738ab51df5";
+    hash = "sha256-daP2YZ7B1LXzqh2n0KoSTJbitdK+hlZO+Ydt9behzmQ=";
   };
 
   cargoHash = "sha256-tkmBthh+nM3Mb9WoSjxMbx3t0NTf6lv91TwEwEANS6U=";
