@@ -125,6 +125,8 @@
       removeWarningPopup = true;
     })
     dolphin-emu-beta
+    wwrando
+    wwrando-ap
     ffmpeg-full
     gcfeeder
     gcviewer

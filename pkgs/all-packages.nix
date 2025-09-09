@@ -36,4 +36,7 @@
   zelda64recomp = pkgs.callPackage ./zelda64recomp/package.nix {SDL2 = SDL2-ship;};
 
   archipelago = pkgs.callPackage ./archipelago/package.nix {};
+
+  wwrando = pkgs.callPackage ./wwrando/package.nix {};
+  wwrando-ap = pkgs.callPackage ./wwrando-ap/package.nix {};
 }
