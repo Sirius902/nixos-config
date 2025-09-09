@@ -113,8 +113,8 @@
   };
 
   cacert = fetchurl {
-    url = "https://curl.se/ca/cacert.pem";
-    sha256 = "sha256-ZN/VsQJnAOCgoySWR0namtxprl5R6Jm/Fv9H1v0Oml4=";
+    url = "https://curl.se/ca/cacert-2025-09-09.pem";
+    sha256 = "sha256-8pDmrK+QSkEhQkyj691wZSeAcH4o6K+ZkiF4a4a7GXU=";
   };
 
   sslCertStore = runCommand "sslCertStore-dir" {} ''
