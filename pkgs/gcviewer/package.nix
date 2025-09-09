@@ -17,17 +17,17 @@
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "gcviewer";
-  version = "0.1.0-unstable-2025-09-04";
+  version = "0.1.0-unstable-2025-09-09";
 
   src = fetchFromGitHub {
     owner = "Sirius902";
     repo = "gcviewer";
-    rev = "aeda3b431f27473c97d7b991e57070edafd6d3ea";
-    sha256 = "sha256-vMSMIvPtRjIw8G/pBKLhLbTBzMPQhSf8ki0bV3LhHuo=";
+    rev = "1997e241da629cd7100867f1129dd6835aba17f5";
+    sha256 = "sha256-oItlnMSCmNjT3mjEyVwXdATvYz3YWstH/Pq4Inm6sgQ=";
   };
 
   cargoBuildFlags = "--no-default-features";
-  cargoHash = "sha256-pMB60Wq7CzobBpOMqXvdFPtN0la3dr8eXVah4r+JdkY=";
+  cargoHash = "sha256-BZZStujgWoA0VXoyuluzyLRZxu9ry+ay5+VpENXcGSA=";
 
   nativeBuildInputs =
     [
