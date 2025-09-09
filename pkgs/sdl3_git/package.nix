@@ -8,8 +8,8 @@ sdl3.overrideAttrs (finalAttrs: prevAttrs: {
   version = "3.2.22-unstable-2025-09-09";
   src = prevAttrs.src.override {
     tag = null;
-    rev = "b59d6d49c3314543e7f224716746946bbc89fb22";
-    hash = "sha256-Xj80Kz4QxvMcV7FhECCLMQs7jFb4d3pben2fOqVPk7E=";
+    rev = "c5749f0ae7c8b6252dab321e78ab3b9d53deaba1";
+    hash = "sha256-NX4rUgaZYE0nrnJn6wGdbMUyLY0VRulLXMd1XuOwbEw=";
   };
 
   passthru =
