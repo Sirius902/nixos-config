@@ -13,6 +13,10 @@ prev.cosmic-osd.overrideAttrs (finalAttrs: prevAttrs: {
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
     hash = finalAttrs.cargoHash;
+    patches =
+      if builtins.hasAttr "cargoPatches" finalAttrs
+      then finalAttrs.cargoPatches
+      else null;
   };
 
   # No longer needed due to https://github.com/pop-os/cosmic-osd/commit/4970139d875f9b28ea72d431e07ca3650a200470.

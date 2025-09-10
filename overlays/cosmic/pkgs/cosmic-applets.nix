@@ -13,6 +13,10 @@ prev.cosmic-applets.overrideAttrs (finalAttrs: prevAttrs: {
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
     hash = finalAttrs.cargoHash;
+    patches =
+      if builtins.hasAttr "cargoPatches" finalAttrs
+      then finalAttrs.cargoPatches
+      else null;
   };
 
   # FUTURE(Sirius902) Remove this if upstream removes the bluetooth spam patch (already applied here).

@@ -13,6 +13,10 @@ prev.cosmic-settings-daemon.overrideAttrs (finalAttrs: prevAttrs: {
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
     hash = finalAttrs.cargoHash;
+    patches =
+      if builtins.hasAttr "cargoPatches" finalAttrs
+      then finalAttrs.cargoPatches
+      else null;
   };
 
   buildInputs = (prevAttrs.buildInputs or []) ++ [final.openssl];
