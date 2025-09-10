@@ -5,12 +5,12 @@
   appimageTools,
   autoPatchelfHook,
   makeWrapper,
-  xsel,
-  xclip,
-  mtdev,
+  gobject-introspection,
   openssl,
   lttng-ust,
-  gobject-introspection,
+  mtdev,
+  xsel,
+  xclip,
   zenity,
   fetchurl,
   nix-update-script,
@@ -18,7 +18,6 @@
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "archipelago";
   version = "0.6.3";
-
   src = fetchurl {
     url = "https://github.com/ArchipelagoMW/Archipelago/releases/download/${finalAttrs.version}/Archipelago_${finalAttrs.version}_linux-x86_64.AppImage";
     hash = "sha256-PetlGYsdhyvThIFqy+7wbPLAXDcgN2Kcl2WF3rta8PA=";
@@ -36,19 +35,19 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   runtimeDependencies =
     [
       gobject-introspection
-      openssl
       lttng-ust
+      openssl
     ]
     ++ appimageTools.defaultFhsEnvArgs.targetPkgs pkgs
     ++ appimageTools.defaultFhsEnvArgs.multiPkgs pkgs;
 
   libraryPath = lib.makeLibraryPath [
-    xsel
-    xclip
     mtdev
   ];
 
   binPath = lib.makeBinPath [
+    xsel
+    xclip
     zenity
   ];
 
