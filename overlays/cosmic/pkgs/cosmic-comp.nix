@@ -1,12 +1,12 @@
 # TODO(Sirius902) Overlay new cosmic-comp until https://github.com/pop-os/cosmic-comp/pull/1481 makes it to nixos-unstable.
 final: prev:
 prev.cosmic-comp.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-09-09";
+  version = "1.0.0-alpha.7-unstable-2025-09-10";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "458f5f4dcf021b21b5f92faa3ec405d0445edc02";
-    hash = "sha256-Pkl4ppCBqjXRTY34sBFzZS817MJ3wT05VB8nV0SImGs=";
+    rev = "cd1117080c026da61f1c7e6be55f893b3a2f87ef";
+    hash = "sha256-H2eMYjJi9VXv6D5IREVjfqR46hC9dxT84lk9Ubpnhpk=";
   };
 
   cargoHash = "sha256-mBS+usjUSKQporohuo2xOtEMepGWrqyfo5nWBuZ1tiM=";
