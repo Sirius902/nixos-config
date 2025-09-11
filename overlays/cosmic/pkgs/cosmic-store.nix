@@ -1,11 +1,11 @@
 final: prev:
 prev.cosmic-store.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-09-07";
+  version = "1.0.0-alpha.7-unstable-2025-09-11";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "2f9bf1eebba1a3bf9a8d0849b72da5412c87fe20";
-    hash = "sha256-cCgz4aE/9lCGu/zZborzK/AQ3o965TW4ScG+kJxdCLc=";
+    rev = "0c42853fa8cc9daa35b0bd85af6685f316362626";
+    hash = "sha256-bS4ExEF2z54V5eAQyiZgvuPJ6KSvYZXyi9pQKR2qTrE=";
   };
 
   cargoHash = "sha256-55XHzkmH+Jerog3+Ltz1IO281JEdTEL+1vdfnoCZ31Y=";
