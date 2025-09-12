@@ -67,6 +67,7 @@
           (import ./pkgs/overlay.nix {inherit nixpkgs-ghidra_11_2_1;})
           (import ./overlays/cosmic)
           (import ./overlays/gamescope.nix)
+          (import ./overlays/moonlight.nix)
 
           nvim-conf.overlays.default
 
@@ -247,7 +248,7 @@
 
           overlayedAllPackages =
             (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
-            // {inherit (pkgs) gamescope dolphin-emu;};
+            // {inherit (pkgs) gamescope dolphin-emu moonlight;};
           cosmicPackages = lib.mapAttrs (name: _: pkgs.${name}) (import ./overlays/cosmic/overlays.nix);
         in
           overlayedAllPackages
