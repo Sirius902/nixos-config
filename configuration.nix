@@ -28,10 +28,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/efi";
 
-  boot.kernelPackages =
-    if (lib.versionAtLeast lib.trivial.release "25.11")
-    then pkgs.linuxPackages_6_16
-    else pkgs.linuxPackages_6_15;
+  boot.kernelPackages = pkgs.linuxPackages_6_16;
   boot.zfs.package = pkgs.zfs_2_3;
 
   # Disable hibernation.
