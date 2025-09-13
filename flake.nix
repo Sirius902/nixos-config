@@ -216,6 +216,24 @@
                 ];
             });
           })
+
+          (final: prev: {
+            jetbrains =
+              prev.jetbrains
+              // {
+                rider = prev.jetbrains.rider.overrideAttrs (prevAttrs: let
+                  runtimeDependencies = [final.icu];
+                in {
+                  buildInputs = (prevAttrs.buildInputs or []) ++ runtimeDependencies;
+                  postFixup =
+                    (prevAttrs.postFixup or "")
+                    + ''
+                      wrapProgram $out/bin/rider \
+                        --prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath runtimeDependencies}
+                    '';
+                });
+              };
+          })
         ];
         config.allowUnfree = true;
       };
