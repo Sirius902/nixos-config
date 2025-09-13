@@ -1,14 +1,14 @@
 final: prev:
 prev.cosmic-applets.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-09-10";
+  version = "1.0.0-alpha.7-unstable-2025-09-13";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "c54bf8e189636cc550941294c4904cbf33342ecd";
-    hash = "sha256-W9vN2bNZn1OGIxuhhsOsDzKe44D/gpNXu3e8WxFPzk0=";
+    rev = "5a4f4c201874ae234d26b6efe24f35ad382f5141";
+    hash = "sha256-AKfmwqSZ50Hmje2pkld5Os3fbwzskqkYz0tz0zqedJA=";
   };
 
-  cargoHash = "sha256-LFdcr6LPgzE18vFXpy0111220cu0TPVNikAdlQ+6EIs=";
+  cargoHash = "sha256-B+V5hw/gGUOrmsVf25ZvYDVPOq350v1YJB7wpHI0ioU=";
 
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
