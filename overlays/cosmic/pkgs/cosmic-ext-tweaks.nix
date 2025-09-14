@@ -1,11 +1,11 @@
 final: prev:
 prev.cosmic-ext-tweaks.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "0.1.3-unstable-2025-09-02";
+  version = "0.1.3-unstable-2025-09-13";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "04dd3074269dde62a64d83a3df504513bc847108";
-    hash = "sha256-BqiVu1ffF7aMxBLX5G23OonPa3sHYwtYSczUt3v5JjM=";
+    rev = "ec683d517fe240aea47175b7e071244f181d3407";
+    hash = "sha256-q0kK2KbSpd1aZapfrEkaRfwqgZ0NmOwghYzG3kAbKVc=";
   };
 
   cargoHash = "sha256-X1ER0iYp0s2ap3FQfvXrXTyFOo1QdW+ftNaNvtYdjRs=";
