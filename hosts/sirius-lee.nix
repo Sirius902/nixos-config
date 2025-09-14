@@ -32,6 +32,7 @@
     # ../modules/nvidia.nix
   ];
 
+  boot.kernelModules = ["ntsync"];
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
   # Disable other greeters since we can only have one.
