@@ -143,6 +143,7 @@
     krita
     libreoffice-qt
     lunar-client
+    mangohud
     ntfs3g
     (wrapOBS {
       plugins = with pkgs.obs-studio-plugins; [
