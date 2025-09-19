@@ -1,14 +1,14 @@
 final: prev:
 prev.cosmic-osd.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-09-12";
+  version = "1.0.0-alpha.7-unstable-2025-09-19";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "8c35926f25cb67612f58eb8481d06574922675cc";
-    hash = "sha256-t6mtACR8xRm/676H7ki/t8EPRLZotLTgoLKKPilIJlw=";
+    rev = "c88988f7af0cf6524fdc80131446562226a3494e";
+    hash = "sha256-+NwsMCOZeZlPcVVQv3WzRj8vAM8P8qPGsOMaTACVEFQ=";
   };
 
-  cargoHash = "sha256-9XUDMf+rDHrpPK07EoF1dpcCqqbkYzhaTu/p9ckmTNk=";
+  cargoHash = "sha256-YcNvvK+Zf8nSS5YjS5iaoipogstiyBdNY7LhWPsz9xQ=";
 
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
@@ -25,7 +25,12 @@ prev.cosmic-osd.overrideAttrs (finalAttrs: prevAttrs: {
   # FUTURE(Sirius902) cosmic-osd now depends on pipewire and libclang. Remove these if it is added upstream.
   nativeBuildInputs = (prevAttrs.nativeBuildInputs or []) ++ [final.rustPlatform.bindgenHook];
 
-  buildInputs = (prevAttrs.buildInputs or []) ++ [final.pipewire];
+  buildInputs =
+    (prevAttrs.buildInputs or [])
+    ++ [
+      final.pipewire
+      final.libinput
+    ];
 
   passthru =
     (prevAttrs.passthru or {})
