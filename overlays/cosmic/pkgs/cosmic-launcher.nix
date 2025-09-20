@@ -1,6 +1,6 @@
 final: prev:
 prev.cosmic-launcher.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-09-11";
+  version = "1.0.0-beta.1-unstable-2025-09-11";
 
   src = prevAttrs.src.override {
     tag = null;
