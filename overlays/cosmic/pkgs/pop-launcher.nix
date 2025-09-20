@@ -1,6 +1,6 @@
 final: prev:
 prev.pop-launcher.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.2.4-unstable-2025-05-01";
+  version = "epoch-1.0.0-beta.1-unstable-2025-05-01";
 
   src = prevAttrs.src.override {
     tag = null;
