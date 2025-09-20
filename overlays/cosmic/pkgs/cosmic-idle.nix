@@ -1,6 +1,6 @@
 final: prev:
 prev.cosmic-idle.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-alpha.7-unstable-2025-02-25";
+  version = "1.0.0-beta.1-unstable-2025-02-25";
 
   src = prevAttrs.src.override {
     tag = null;
