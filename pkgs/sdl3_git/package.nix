@@ -1,5 +1,9 @@
 {
+  lib,
+  stdenv,
   sdl3,
+  zenity,
+  waylandSupport ? stdenv.hostPlatform.isLinux && !stdenv.hostPlatform.isAndroid,
   nix-update-script,
   ...
 }:
@@ -8,9 +12,23 @@ sdl3.overrideAttrs (finalAttrs: prevAttrs: {
   version = "3.2.22-unstable-2025-09-21";
   src = prevAttrs.src.override {
     tag = null;
-    rev = "bae34c3e34f8e7180279a2e5b77c2c79910e4944";
-    hash = "sha256-WL32pFibiG16jRilDD47QEFTxEiwCcrfZ9G7knCPWdc=";
+    rev = "005f10bd97633a44b60f69236ff4d4a3c777b5b3";
+    hash = "sha256-7qPsAUBUcCHUCGOnw+e7Znk2l9UPWdriQJxH/Go8Ozw=";
   };
+
+  postPatch =
+    # Tests timeout on Darwin
+    # `testtray` loads assets from a relative path, which we are patching to be absolute
+    lib.optionalString (finalAttrs.finalPackage.doCheck) ''
+      substituteInPlace test/CMakeLists.txt \
+        --replace-fail 'set(noninteractive_timeout 10)' 'set(noninteractive_timeout 30)'
+    ''
+    + lib.optionalString waylandSupport ''
+      substituteInPlace src/dialog/unix/SDL_zenitymessagebox.c \
+        --replace-fail '"zenity"' '"${lib.getExe zenity}"'
+      substituteInPlace src/dialog/unix/SDL_zenitydialog.c \
+        --replace-fail '"zenity"' '"${lib.getExe zenity}"'
+    '';
 
   passthru =
     (prevAttrs.passthru or {})
