@@ -6,7 +6,7 @@
     pkg.overrideAttrs (prevAttrs: {
       postFixup =
         (prevAttrs.postFixup or "")
-        + ''
+        + pkgs.lib.optionalString pkgs.stdenv.isLinux ''
           wrapProgram ${bin} \
             --suffix SDL_GAMECONTROLLERCONFIG $'\n' \
               "030046457e0500007320000001016800,Nintendo GameCube Controller,a:b0,b:b1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b4,leftshoulder:b6,lefttrigger:b10,leftx:a0,lefty:a1,rightshoulder:b7,righttrigger:b11,rightx:a2,righty:a3,start:b5,x:b2,y:b3,misc1:b8,misc2:b9,hint:!SDL_GAMECONTROLLER_USE_GAMECUBE_LABELS:=1,"
