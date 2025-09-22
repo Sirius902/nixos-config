@@ -2,28 +2,26 @@
   pkgs,
   nixpkgs-ghidra_11_2_1,
 }: let
-  makeNsoGcTriggersDigital = bin: pkg:
-    if pkgs.stdenv.isDarwin
-    then
-      pkg.override {
-        sdl_gamecontrollerdb = pkgs.sdl_gamecontrollerdb.overrideAttrs (prevAttrs: {
-          postInstall =
-            (prevAttrs.postInstall or "")
-            + ''
-              echo "030046457e0500007320000001010000,Nintendo GameCube Controller,crc:4546,platform:macOS,a:b1,b:b3,dpdown:b8,dpleft:b10,dpright:b9,dpup:b11,guide:b16,leftshoulder:b13,lefttrigger:b12,leftx:a0,lefty:a1~,misc1:b17,misc2:b20,rightshoulder:b5,righttrigger:b4,rightx:a2,righty:a3~,start:b6,x:b0,y:b2,hint:!SDL_GAMECONTROLLER_USE_GAMECUBE_LABELS:=1," >> $out/share/gamecontrollerdb.txt
-            '';
-        });
-      }
-    else
-      pkg.overrideAttrs (prevAttrs: {
-        postFixup =
-          (prevAttrs.postFixup or "")
-          + pkgs.lib.optionalString pkgs.stdenv.isLinux ''
-            wrapProgram ${bin} \
-              --suffix SDL_GAMECONTROLLERCONFIG $'\n' \
-                "030046457e0500007320000001016800,Nintendo GameCube Controller,a:b0,b:b1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b4,leftshoulder:b6,lefttrigger:b10,leftx:a0,lefty:a1,rightshoulder:b7,righttrigger:b11,rightx:a2,righty:a3,start:b5,x:b2,y:b3,misc1:b8,misc2:b9,hint:!SDL_GAMECONTROLLER_USE_GAMECUBE_LABELS:=1,"
+  makeNsoGcTriggersDigital = linuxBin: pkg:
+    (pkg.override (pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
+      # On Darwin the hidapi driver isn't usable without entitlements so just treat it as a regular controller and init hid via a separate program.
+      sdl_gamecontrollerdb = pkgs.sdl_gamecontrollerdb.overrideAttrs (prevAttrs: {
+        postInstall =
+          (prevAttrs.postInstall or "")
+          + ''
+            echo "030046457e0500007320000001010000,Nintendo GameCube Controller,crc:4546,platform:macOS,a:b1,b:b3,dpdown:b8,dpleft:b10,dpright:b9,dpup:b11,guide:b16,leftshoulder:b13,lefttrigger:b12,leftx:a0,lefty:a1~,misc1:b17,misc2:b20,rightshoulder:b5,righttrigger:b4,rightx:a2,righty:a3~,start:b6,x:b0,y:b2,hint:!SDL_GAMECONTROLLER_USE_GAMECUBE_LABELS:=1," >> $out/share/gamecontrollerdb.txt
           '';
       });
+    })).overrideAttrs (prevAttrs: {
+      # On Linux, set `SDL_GAMECONTROLLERCONFIG` to override the hidapi binding (setting it in sdl_gamecontrollerdb is not sufficient).
+      postFixup =
+        (prevAttrs.postFixup or "")
+        + pkgs.lib.optionalString pkgs.stdenv.isLinux ''
+          wrapProgram ${linuxBin} \
+            --suffix SDL_GAMECONTROLLERCONFIG $'\n' \
+              "030046457e0500007320000001016800,Nintendo GameCube Controller,a:b0,b:b1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b4,leftshoulder:b6,lefttrigger:b10,leftx:a0,lefty:a1,rightshoulder:b7,righttrigger:b11,rightx:a2,righty:a3,start:b5,x:b2,y:b3,misc1:b8,misc2:b9,hint:!SDL_GAMECONTROLLER_USE_GAMECUBE_LABELS:=1,"
+        '';
+    });
 in rec {
   ghostty-nautilus = pkgs.callPackage ./ghostty-nautilus/package.nix {};
 
