@@ -17,23 +17,14 @@
 
   sdl_gamecontrollerdb = pkgs.callPackage ./sdl_gamecontrollerdb/package.nix {};
 
-  sdl3-ship = sdl3_git.overrideAttrs (prevAttrs: {
-    patches =
-      (prevAttrs.patches or [])
-      ++ [
-        ../patches/sdl3/0001-Use-digital-input-for-NSO-GameCube-triggers.patch
-      ];
-  });
-  SDL2-ship = SDL2_git.override {sdl3_git = sdl3-ship;};
-
-  shipwright = pkgs.callPackage ./shipwright/package.nix {SDL2 = SDL2-ship;};
-  shipwright-anchor = pkgs.callPackage ./shipwright/anchor/package.nix {SDL2 = SDL2-ship;};
-  shipwright-ap = pkgs.callPackage ./shipwright/ap/package.nix {SDL2 = SDL2-ship;};
-  _2ship2harkinian = pkgs.callPackage ./_2ship2harkinian/package.nix {SDL2 = SDL2-ship;};
+  shipwright = pkgs.callPackage ./shipwright/package.nix {SDL2 = SDL2_git;};
+  shipwright-anchor = pkgs.callPackage ./shipwright/anchor/package.nix {SDL2 = SDL2_git;};
+  shipwright-ap = pkgs.callPackage ./shipwright/ap/package.nix {SDL2 = SDL2_git;};
+  _2ship2harkinian = pkgs.callPackage ./_2ship2harkinian/package.nix {SDL2 = SDL2_git;};
 
   n64recomp = pkgs.callPackage ./n64recomp/package.nix {};
   z64decompress = pkgs.callPackage ./z64decompress/package.nix {};
-  zelda64recomp = pkgs.callPackage ./zelda64recomp/package.nix {SDL2 = SDL2-ship;};
+  zelda64recomp = pkgs.callPackage ./zelda64recomp/package.nix {SDL2 = SDL2_git;};
 
   archipelago = pkgs.callPackage ./archipelago/package.nix {};
 
