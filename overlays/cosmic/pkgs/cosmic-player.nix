@@ -1,11 +1,11 @@
 final: prev:
 prev.cosmic-player.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1-unstable-2025-09-21";
+  version = "1.0.0-beta.1-unstable-2025-09-23";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "e3aebf4ea85a90b6d1491dc24379df960cd4943a";
-    hash = "sha256-EzH/HWHH3raHw4wUmBUgaHiDT329P86FdxWzVxGzprE=";
+    rev = "9cdbb223f991683cef870e2340bdd97f7cb37d96";
+    hash = "sha256-IgN1kRgka7GOU+t3RBq7earroR4tYyBaYiHaUjSzI8c=";
   };
 
   cargoHash = "sha256-DodFIfthiGFSvXWfPsPjFhNY6G7z3lb6pfc5HtUXhMo=";
