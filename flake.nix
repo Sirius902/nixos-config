@@ -289,7 +289,7 @@
                       )
                     else builtins.toString drv.updateScript or ""
                 )
-                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu" "sdl3-ship" "SDL2-ship"])
+                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu"])
               );
             };
 
