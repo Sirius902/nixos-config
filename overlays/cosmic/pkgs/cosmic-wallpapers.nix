@@ -12,10 +12,7 @@ prev.cosmic-wallpapers.overrideAttrs (finalAttrs: prevAttrs: {
     (prevAttrs.passthru or {})
     // {
       updateScript = final.nix-update-script {
-        extraArgs = [
-          "--version-regex"
-          "epoch-(.*)"
-        ];
+        extraArgs = ["--version-regex=epoch-(.*)"];
       };
     };
 })

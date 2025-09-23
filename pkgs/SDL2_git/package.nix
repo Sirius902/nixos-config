@@ -19,8 +19,7 @@
       updateScript = nix-update-script {
         extraArgs = [
           "--version=branch"
-          "--version-regex"
-          "release-(.*)"
+          "--version-regex=release-(.*)"
         ];
       };
     };

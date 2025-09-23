@@ -54,10 +54,7 @@ wwrando.overrideAttrs (finalAttrs: prevAttrs: {
     (prevAttrs.passthru or {})
     // {
       updateScript = nix-update-script {
-        extraArgs = [
-          "--version-regex"
-          "ap_(.*)"
-        ];
+        extraArgs = ["--version-regex=ap_(.*)"];
       };
     };
 

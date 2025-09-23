@@ -13,10 +13,7 @@ prev.cosmic-protocols.overrideAttrs (finalAttrs: prevAttrs: {
     // {
       updateScript = final.nix-update-script {
         # FUTURE(Sirius902) From nixos-cosmic: "add if upstream ever makes a tag"
-        # extraArgs = [
-        #   "--version-regex"
-        #   "epoch-(.*)"
-        # ];
+        # extraArgs = ["--version-regex=epoch-(.*)"];
       };
     };
 })
