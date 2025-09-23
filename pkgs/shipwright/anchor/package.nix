@@ -112,7 +112,7 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright-anchor";
-    version = "unstable-2025-07-30";
+    version = "0-unstable-2025-07-30";
 
     src = fetchFromGitHub {
       owner = "lilacLunatic";
@@ -324,8 +324,7 @@ in
     passthru.updateScript = nix-update-script {
       extraArgs = [
         "--version=branch=experimental"
-        "--version-regex"
-        ".*(unstable-.*)"
+        "--version-regex=(0-unstable-.*)"
       ];
     };
 

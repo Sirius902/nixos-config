@@ -13,7 +13,7 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "n64recomp";
-  version = "unstable-2025-09-07";
+  version = "0-unstable-2025-09-07";
 
   src = fetchFromGitHub {
     owner = "N64Recomp";
@@ -47,8 +47,7 @@ stdenv.mkDerivation (finalAttrs: {
   passthru.updateScript = nix-update-script {
     extraArgs = [
       "--version=branch"
-      "--version-regex"
-      ".*(unstable-.*)"
+      "--version-regex=(0-unstable-.*)"
     ];
   };
 
