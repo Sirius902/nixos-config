@@ -12,8 +12,8 @@ sdl3.overrideAttrs (finalAttrs: prevAttrs: {
   version = "3.2.22-unstable-2025-09-23";
   src = prevAttrs.src.override {
     tag = null;
-    rev = "221d1f12eaa53b7cae186db932e8adde35e5ff95";
-    hash = "sha256-+uAAGEZXlcJvXukud9LBZcAoU71+65DxplViFcLNBqo=";
+    rev = "fe8c0807134176e2060b15dc6adefc9dfb5e8905";
+    hash = "sha256-a/7gNO385PXZRLIhmBBwFebuF+YRmqB2jGs86hWI9d4=";
   };
 
   postPatch =
