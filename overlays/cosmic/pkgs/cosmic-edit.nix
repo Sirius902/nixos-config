@@ -4,8 +4,8 @@ prev.cosmic-edit.overrideAttrs (finalAttrs: prevAttrs: {
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "02b2d58dfd5a1afe530244a9ec31960bab69b8fc";
-    hash = "sha256-fl71LFN9CrCG9Qa/I/Z96/zjvqAPlZspqrrT2RHFikY=";
+    rev = "0fa5c4f056640293004fcf0f1e92e38357456d5d";
+    hash = "sha256-yii4B1mRBFS4TBy9vr4YRhy3zX4CjxqtjaoH/C0nKkw=";
   };
 
   cargoHash = "sha256-YfD06RAQPZRwapd0fhNsZ0tx+0JMNDXiPJIWwDhmG0M=";
