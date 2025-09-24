@@ -5,10 +5,7 @@
 
   environment.sessionVariables.COSMIC_DATA_CONTROL_ENABLED = 1;
 
-  environment.systemPackages = [pkgs.observatory];
-
-  systemd.packages = [pkgs.observatory];
-  systemd.services.monitord.wantedBy = ["multi-user.target"];
+  environment.systemPackages = [pkgs.gnome-system-monitor];
 
   # TODO(Sirius902) We probably want this for GNOME too?
   # Reset dconf changes made upon launching a KDE session.
