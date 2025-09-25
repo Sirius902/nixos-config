@@ -2,7 +2,7 @@
 # until the nixos-unstable version is newer.
 final: prev:
 prev.cosmic-panel.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1-unstable-2025-09-25";
+  version = "1.0.0-beta.1.1-unstable-2025-09-25";
 
   src = prevAttrs.src.override {
     tag = null;
