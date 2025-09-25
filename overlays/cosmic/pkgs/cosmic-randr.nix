@@ -1,6 +1,6 @@
 final: prev:
 prev.cosmic-randr.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1-unstable-2025-09-07";
+  version = "1.0.0-beta.1.1-unstable-2025-09-07";
 
   src = prevAttrs.src.override {
     tag = null;
