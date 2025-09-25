@@ -1,6 +1,6 @@
 final: prev:
 prev.cosmic-greeter.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1-unstable-2025-09-21";
+  version = "1.0.0-beta.1.1-unstable-2025-09-21";
 
   src = prevAttrs.src.override {
     tag = null;
