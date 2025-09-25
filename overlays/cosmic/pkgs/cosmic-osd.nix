@@ -1,6 +1,6 @@
 final: prev:
 prev.cosmic-osd.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1-unstable-2025-09-22";
+  version = "1.0.0-beta.1.1-unstable-2025-09-22";
 
   src = prevAttrs.src.override {
     tag = null;
