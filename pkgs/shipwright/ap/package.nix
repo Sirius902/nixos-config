@@ -31,6 +31,9 @@
   opusfile,
   sdl_gamecontrollerdb,
   openssl,
+  valijson,
+  asio,
+  websocketpp,
   runCommand,
   writeTextFile,
   fixDarwinDylibNames,
@@ -111,6 +114,20 @@
     hash = "sha256-CSYIpmq478bla2xoPL/cGYKIWAeiORxyFFZr0+ixd7I";
   };
 
+  wswrap = fetchFromGitHub {
+    owner = "black-sliver";
+    repo = "wswrap";
+    rev = "47438193ec50427ee28aadf294ba57baefd9f3f1";
+    hash = "sha256-WWXi/OWfaC40V+tV4JNmVM8kImozuwaiRLeSdhIf0X8=";
+  };
+
+  apclientpp = fetchFromGitHub {
+    owner = "black-sliver";
+    repo = "apclientpp";
+    rev = "65638b7479f6894eda172e603cffa79762c0ddc1";
+    hash = "sha256-/pUa51tZmFL15moMO1KlX5iBmMcx/vYMhqO6PZckIPo=";
+  };
+
   cacert = fetchurl {
     url = "https://curl.se/ca/cacert-2025-09-09.pem";
     sha256 = "sha256-8pDmrK+QSkEhQkyj691wZSeAcH4o6K+ZkiF4a4a7GXU=";
@@ -184,6 +201,9 @@ in
         libopus.dev
         opusfile.dev
         openssl
+        valijson
+        asio
+        websocketpp
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         libpulseaudio
@@ -208,6 +228,9 @@ in
         (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${libopus.dev}/include/opus")
         (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${opusfile.dev}/include/opus")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SSLCERTSTORE" "${sslCertStore}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_ASIO" "${asio}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_WSWRAP" "${wswrap}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_APCLIENTPP" "${apclientpp}")
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
