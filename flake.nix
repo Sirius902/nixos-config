@@ -65,7 +65,6 @@
         inherit system;
         overlays = [
           (import ./pkgs/overlay.nix {inherit nixpkgs-ghidra_11_2_1;})
-          (import ./overlays/cosmic)
           (import ./overlays/moonlight.nix)
 
           nvim-conf.overlays.default
@@ -266,10 +265,8 @@
           overlayedAllPackages =
             (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
             // {inherit (pkgs) dolphin-emu moonlight;};
-          cosmicPackages = lib.mapAttrs (name: _: pkgs.${name}) (import ./overlays/cosmic/overlays.nix);
         in
           overlayedAllPackages
-          // cosmicPackages
           // {
             update = pkgs.writeShellApplication {
               name = "unstable-update";
@@ -293,36 +290,8 @@
               );
             };
 
-            update-cosmic = pkgs.writeShellApplication {
-              name = "cosmic-unstable-update";
-
-              text = lib.concatStringsSep "\n" (
-                lib.mapAttrsToList (
-                  attr: drv:
-                    if drv ? updateScript && (lib.isList drv.updateScript) && (lib.length drv.updateScript) > 0
-                    then
-                      lib.escapeShellArgs (
-                        if (lib.match "nix-update|.*/nix-update" (lib.head drv.updateScript) != null)
-                        then
-                          [(lib.getExe pkgs.nix-update) "--flake"]
-                          ++ (lib.tail drv.updateScript)
-                          ++ [
-                            "--version"
-                            "branch=HEAD"
-                            "--commit"
-                            attr
-                          ]
-                        else drv.updateScript
-                      )
-                    else builtins.toString drv.updateScript or ""
-                )
-                cosmicPackages
-              );
-            };
-
             update-all = pkgs.writeShellScriptBin "update-all" ''
               ${self.packages.${system}.update}/bin/unstable-update
-              ${self.packages.${system}.update-cosmic}/bin/cosmic-unstable-update
             '';
           };
 
