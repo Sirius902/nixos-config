@@ -138,11 +138,6 @@ in
         url = "https://github.com/Sirius902/Shipwright/commit/6bedb8c7e6f59d774d35310bb81252c054ed99b0.patch";
         hash = "sha256-1g5/j7PZiL+J+v2TjpVBTPn/e+ONsL7v+T8Xe6ZVCRs=";
       })
-      (fetchpatch {
-        name = "bombchu-bag-rework.patch";
-        url = "https://github.com/Sirius902/Shipwright/commit/091389d37fd5ceb53890a7f61c4c30374836a188.patch";
-        hash = "sha256-TCuTTkbf5zrx9kWAQhU2lY8DQck6uRXXUTPI1mfmE8M=";
-      })
     ];
 
     nativeBuildInputs =
