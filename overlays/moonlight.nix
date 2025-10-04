@@ -4,6 +4,7 @@ final: prev: {
     src = prevAttrs.src.override {
       hash = "sha256-aXap/wUjjJTCy2eq7p7BL6ZYOVZEBVY4/YkrDtbIj2Q=";
     };
+    patches = [../patches/moonlight/disable_updates.patch];
     pnpmDeps = prevAttrs.pnpmDeps.override {
       hash = "sha256-gv+PHGbo0IiPgcxi0RAvsNmGLHWZar3SB4eW7NbJRJY=";
     };
