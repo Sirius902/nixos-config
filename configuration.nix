@@ -30,7 +30,7 @@
 
   boot.kernelPackages =
     if lib.versionAtLeast lib.version "25.11"
-    then pkgs.linuxPackages_testing
+    then pkgs.linuxPackages_6_17
     else pkgs.linuxPackages_6_16;
   boot.zfs.package =
     if lib.versionAtLeast lib.version "25.11"
