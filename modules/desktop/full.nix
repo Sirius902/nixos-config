@@ -114,7 +114,7 @@
     (bottles.override {
       removeWarningPopup = true;
     })
-    dolphin-emu-beta
+    # dolphin-emu-beta
     wwrando
     wwrando-ap
     ffmpeg-full
@@ -123,10 +123,10 @@
     gcfeederd
     gimp3
     godot_4
-    imhex
+    # imhex
     inkscape
-    jetbrains.idea-community
-    jetbrains.rider
+    # jetbrains.idea-community
+    # jetbrains.rider
     (ghidra.withExtensions (_: [ghidra-extensions.gamecube-loader]))
     heroic
     keymapp
@@ -140,7 +140,7 @@
         obs-pipewire-audio-capture
       ];
     })
-    openmw
+    # openmw
     openrazer-daemon
     polychromatic
     (prismlauncher.override {
