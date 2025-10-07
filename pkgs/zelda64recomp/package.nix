@@ -41,13 +41,13 @@
 in
   llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
     pname = "zelda64recomp";
-    version = "1.2.2-unstable-2025-08-27";
+    version = "1.2.2-unstable-2025-10-05";
 
     src = fetchFromGitHub {
       owner = "Zelda64Recomp";
       repo = "Zelda64Recomp";
-      rev = "54950a10408599d1d63802ee21cc2c4b05bfd378";
-      hash = "sha256-lsGnxgQqQ8wFc/qSVRFYxF0COir+eeH/flf4ePo98WA=";
+      rev = "42646e2cb1c84f08262e55de411f5402e0c34841";
+      hash = "sha256-7x7877ymoIHzR/l99wmk9NOEZS+SxuxVXeZJpiK5yII=";
       fetchSubmodules = true;
     };
 
