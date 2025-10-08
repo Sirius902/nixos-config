@@ -115,6 +115,8 @@
       removeWarningPopup = true;
     })
     # dolphin-emu-beta
+    melonDS
+    kh-melon-mix
     wwrando
     wwrando-ap
     ffmpeg-full
