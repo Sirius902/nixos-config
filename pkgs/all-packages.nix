@@ -31,6 +31,8 @@ in rec {
 
   gamecube-loader = nixpkgs-ghidra_11_2_1.legacyPackages.${pkgs.system}.callPackage ./ghidra-extensions/gamecube-loader/package.nix {};
 
+  kh-melon-mix = pkgs.callPackage ./kh-melon-mix/package.nix {};
+
   observatory = pkgs.callPackage ./observatory/package.nix {};
 
   sdl3_git = pkgs.callPackage ./sdl3_git/package.nix {};
