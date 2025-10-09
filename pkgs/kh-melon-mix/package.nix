@@ -25,5 +25,11 @@ melonDS.overrideAttrs (prevAttrs: {
 
   qtWrapperArgs = (prevAttrs.qtWrapperArgs) ++ ["--set QT_QPA_PLATFORM xcb"];
 
+  postInstall =
+    ''
+      mv $out/bin/melonDS $out/bin/MelonMix
+    ''
+    + (prevAttrs.postInstall or "");
+
   passthru.updateScript = nix-update-script {};
 })
