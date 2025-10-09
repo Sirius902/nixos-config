@@ -2,6 +2,7 @@
   fetchFromGitHub,
   flac,
   lua5_4_compat,
+  makeWrapper,
   melonDS,
   nix-update-script,
 }:
@@ -15,6 +16,8 @@ melonDS.overrideAttrs (prevAttrs: {
     rev = "a98754391a17e746fde30bf17f86337d9a0705d6";
     hash = "sha256-5KdB82rJKeoiEz4Se1S0EL8yIlFNKLdCooqJsXiZ2Rw=";
   };
+
+  nativeBuildInputs = (prevAttrs.nativeBuildInputs or []) ++ [makeWrapper];
 
   buildInputs =
     (prevAttrs.buildInputs or [])
@@ -30,6 +33,14 @@ melonDS.overrideAttrs (prevAttrs: {
       mv $out/bin/melonDS $out/bin/MelonMix
     ''
     + (prevAttrs.postInstall or "");
+
+  postFixup =
+    (prevAttrs.postFixup or "")
+    + ''
+      # Setup cwd to a directory where we can install custom assets.
+      wrapProgram $out/bin/MelonMix \
+        --run 'CWD_DIR="''${XDG_CONFIG_HOME:-$HOME/.config}/kh-melon-mix"; mkdir -p "$CWD_DIR"; cd "$CWD_DIR"'
+    '';
 
   passthru.updateScript = nix-update-script {};
 })
