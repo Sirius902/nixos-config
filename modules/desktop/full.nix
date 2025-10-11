@@ -110,6 +110,9 @@
   # For wgnord
   services.resolved.enable = true;
 
+  # melonDS LAN port
+  networking.firewall.allowedTCPPorts = [7064];
+
   environment.systemPackages = with pkgs; [
     (bottles.override {
       removeWarningPopup = true;
