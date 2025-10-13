@@ -233,22 +233,6 @@
                 });
               };
           })
-
-          # TODO(Sirius902) Fix ois build failure.
-          # https://github.com/NixOS/nixpkgs/pull/449741
-          (final: prev: {
-            ois = prev.ois.overrideAttrs (prevAttrs: {
-              patches =
-                (prevAttrs.patches or [])
-                ++ [
-                  (final.fetchpatch {
-                    name = "cmake4.patch";
-                    url = "https://raw.githubusercontent.com/NixOS/nixpkgs/fb45249f521ece9ed80bad5140361e5bbe36eb2d/pkgs/by-name/oi/ois/cmake4.patch";
-                    hash = "sha256-Y/w6XPFuG6Ne6jQHmXWB6ldsETGoclGhR1hJ1wUNODw=";
-                  })
-                ];
-            });
-          })
         ];
         config.allowUnfree = true;
       };
