@@ -212,17 +212,6 @@ in
     # Pie needs to be enabled or else it segfaults
     hardeningEnable = ["pie"];
 
-    # TODO(Sirius902) https://github.com/Kenix3/libultraship/pull/938
-    postUnpack = let
-      audioFixPatch = fetchpatch {
-        name = "audio-fix.patch";
-        url = "https://github.com/Sirius902/libultraship/commit/f575c5056c1fe701bbbc636dd9484dc423ea6410.patch";
-        hash = "sha256-7Sp1KAsbFdPaYohm9VBkJU6OQ1YbSOsJmSZp+Rlsy4Y=";
-      };
-    in ''
-      patch -p1 -d "$sourceRoot/libultraship" < ${audioFixPatch}
-    '';
-
     preConfigure = ''
       mkdir stb
       cp ${stb'} ./stb/${stb'.name}
