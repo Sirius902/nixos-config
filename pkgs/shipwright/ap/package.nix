@@ -161,7 +161,6 @@ in
     patches = [
       ../darwin-fixes.patch
       ../disable-downloading-stb_image.patch
-      ./disable-downloading-gamecontrollerdb.patch
       ./disable-openssl-check.patch
       ./sslcertstore-dir.patch
       ./app-name.patch
@@ -268,7 +267,7 @@ in
     postBuild = ''
       port_ver=$(grep CMAKE_PROJECT_VERSION: "$PWD/CMakeCache.txt" | cut -d= -f2)
       cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
-      mv ../libultraship/src/graphic/Fast3D/shaders ../soh/assets/custom
+      mv ../libultraship/src/fast/shaders ../soh/assets/custom
       pushd ../OTRExporter
       python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../soh/assets/xml --custom-assets-path ../soh/assets/custom --custom-otr-file soh.o2r --port-ver $port_ver
       popd
