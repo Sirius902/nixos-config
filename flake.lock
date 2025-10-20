@@ -331,11 +331,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1759967315,
-        "narHash": "sha256-fWodLkCqj6520matRihuWjZd4gFvnyMpmh7OsGN41cM=",
+        "lastModified": 1760980338,
+        "narHash": "sha256-+PQ5LprwlWWzHjxsGs6UFwz34kYf0+UC4WGHhhWHx2A=",
         "owner": "Sirius902",
         "repo": "nvim-conf",
-        "rev": "5c691e92f7db084531d0579d692c9a37d44e05e8",
+        "rev": "1c8156baa1038f1eb87db98ee961b9dfbbfb3a3c",
         "type": "github"
       },
       "original": {
