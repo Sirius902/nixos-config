@@ -663,8 +663,9 @@
             ({pkgs, ...}: {
               environment.systemPackages = [
                 pkgs.shipwright
-                pkgs._2ship2harkinian
                 pkgs.shipwright-anchor
+                pkgs.shipwright-ap
+                pkgs._2ship2harkinian
               ];
             })
           ];
