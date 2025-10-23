@@ -264,7 +264,7 @@
 
           overlayedAllPackages =
             (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
-            // {inherit (pkgs) dolphin-emu moonlight;};
+            // {inherit (pkgs) moonlight dolphin-emu graalvm-oracle_25 graalvm-ce_8;};
         in
           overlayedAllPackages
           // {
@@ -286,7 +286,7 @@
                       )
                     else builtins.toString drv.updateScript or ""
                 )
-                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu"])
+                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu" "graalvm-oracle_25" "graalvm-ce_8"])
               );
             };
 
