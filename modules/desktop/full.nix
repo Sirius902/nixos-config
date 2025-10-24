@@ -117,9 +117,6 @@
     (bottles.override {
       removeWarningPopup = true;
     })
-    dolphin-emu-beta
-    melonDS
-    kh-melon-mix
     wwrando
     wwrando-ap
     ffmpeg-full
@@ -145,7 +142,6 @@
         obs-pipewire-audio-capture
       ];
     })
-    openmw
     openrazer-daemon
     polychromatic
     (prismlauncher.override {
