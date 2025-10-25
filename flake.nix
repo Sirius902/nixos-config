@@ -259,6 +259,20 @@
                 });
               };
           })
+
+          # TODO(Sirius902) Remove this when we get https://github.com/NixOS/nixpkgs/pull/455600.
+          (final: prev: {
+            openmw = prev.openmw.overrideAttrs (prevAttrs: {
+              patches =
+                (prevAttrs.patches or [])
+                ++ [
+                  (final.fetchpatch2 {
+                    url = "https://raw.githubusercontent.com/Sirius902/nixpkgs/c7db3c41e6a6b60e25538aff086ac3e24c6fb985/pkgs/by-name/op/openmw/0001-Do-not-implicitly-convert-QByteArray-to-const-char.patch";
+                    hash = "sha256-wYe93m8w/q8hJsCXBagkJ7ah/tT3UKmppkYYjjHAve8=";
+                  })
+                ];
+            });
+          })
         ];
         config.allowUnfree = true;
       };
