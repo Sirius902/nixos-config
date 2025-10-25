@@ -273,6 +273,20 @@
                 ];
             });
           })
+
+          # TODO(Sirius902) Remove this when we get https://github.com/NixOS/nixpkgs/pull/454951.
+          (final: prev: {
+            dolphin-emu-beta = prev.dolphin-emu-beta.overrideAttrs (prevAttrs: {
+              patches =
+                (prevAttrs.patches or [])
+                ++ [
+                  (final.fetchpatch2 {
+                    url = "https://github.com/dolphin-emu/dolphin/commit/8edef722ce1aae65d5a39faf58753044de48b6e0.patch?full_index=1";
+                    hash = "sha256-QEG0p+AzrExWrOxL0qRPa+60GlL0DlLyVBrbG6pGuog=";
+                  })
+                ];
+            });
+          })
         ];
         config.allowUnfree = true;
       };
