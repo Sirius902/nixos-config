@@ -17,6 +17,8 @@ melonDS.overrideAttrs (prevAttrs: {
     hash = "sha256-5KdB82rJKeoiEz4Se1S0EL8yIlFNKLdCooqJsXiZ2Rw=";
   };
 
+  patches = [./fix-build-qt-6.10.patch];
+
   nativeBuildInputs = (prevAttrs.nativeBuildInputs or []) ++ [makeWrapper];
 
   buildInputs =
