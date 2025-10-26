@@ -6,11 +6,11 @@
 }:
 (SDL2.override {sdl3 = sdl3_git;}).overrideAttrs (finalAttrs: prevAttrs: {
   pname = "${prevAttrs.pname}-git";
-  version = "2.32.56-unstable-2025-10-23";
+  version = "2.32.56-unstable-2025-10-26";
   src = prevAttrs.src.override {
     tag = null;
-    rev = "bbbab8660ae84022584757c35bdb8723632e6462";
-    hash = "sha256-UkybIVB3NAxIR7aack0S9OAfKSfY5Yc7+6QROjCS9tU=";
+    rev = "58d64831e792c0a53285981fbc644bb96915fca5";
+    hash = "sha256-bGSCyOMabBHki9k51AwHLo+f8QOUXcMGl2dMZRopTdc=";
   };
 
   passthru =
