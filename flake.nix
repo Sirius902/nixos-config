@@ -287,18 +287,6 @@
                 ];
             });
           })
-
-          # TODO(Sirius902) Remove this when we get https://github.com/NixOS/nixpkgs/pull/455193.
-          (final: prev: {
-            melonDS = prev.melonDS.overrideAttrs (prevAttrs: {
-              version = "1.0-unstable-2025-10-24";
-              src = prevAttrs.src.override {
-                rev = "420a1fa7e75121d5f9de2a886b5c2742563d9a3d";
-                hash = "sha256-g0mTmv5eIrCIra2Bp/LV9ZOAmXUaDaOIFwc+Fufp7p8=";
-              };
-              buildInputs = (prevAttrs.buildInputs or []) ++ [final.faad2];
-            });
-          })
         ];
         config.allowUnfree = true;
       };
