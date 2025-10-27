@@ -2,15 +2,15 @@
 # until the nixos-unstable version is newer.
 final: prev:
 prev.xdg-desktop-portal-cosmic.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1.1-unstable-2025-09-19";
+  version = "1.0.0-beta.3-unstable-2025-10-24";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "2477a1b39806fd0eb6831e38f0a32a81abb1a806";
-    hash = "sha256-EkhOa1Tircgyta98Zf4ZaV/tR4zZh4/bU35xjn3xU8c=";
+    rev = "100ed29395c78a3d3181d94bd74c5d2425c8a537";
+    hash = "sha256-2eTbp5qPLdJV4VrULyQxzuEfoVi+ZSeS9F5bY5CADu4=";
   };
 
-  cargoHash = "sha256-uJKwwESkzqweM4JunnMIsDE8xhCyjFFZs1GiJAwnbG8=";
+  cargoHash = "sha256-48gK3rRmtvXmmY6Ut5qd94/aGq7UyYZvtCipWgiSGLg=";
 
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
