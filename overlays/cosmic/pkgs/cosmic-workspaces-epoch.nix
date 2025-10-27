@@ -1,11 +1,11 @@
 final: prev:
 prev.cosmic-workspaces-epoch.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1.1-unstable-2025-09-22";
+  version = "1.0.0-beta.3-unstable-2025-10-12";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "9968b0e61f106fc60cc19e57cc46321c26e496dd";
-    hash = "sha256-gcS8Q9SR7Dj1FH2Dtdd6jUMX8u5kHJBMvlgqJGw+rjA=";
+    rev = "b7afe231d0922ea707f805677b9578f1e4d5e001";
+    hash = "sha256-WHMOA7fNPIAwaQmzqyo+XlBYl+13cz0LrRpT0GUa8Vs=";
   };
 
   cargoHash = "sha256-BE6s2dmbgXlFXrtd8b9k2LltLnegLzWbIUlaEQvv+5o=";
