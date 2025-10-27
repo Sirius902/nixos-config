@@ -1,15 +1,15 @@
 # TODO(Sirius902) Overlay new cosmic-comp until https://github.com/pop-os/cosmic-comp/pull/1481 makes it to nixos-unstable.
 final: prev:
 prev.cosmic-comp.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1.1-unstable-2025-09-22";
+  version = "1.0.0-beta.3-unstable-2025-10-22";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "f339e21479c05153864af79c8fb5d005dcff8abc";
-    hash = "sha256-RHeQk1yBNnDN/efuDDWNLn9O7FQTYLBsbs+h+gxi+Xo=";
+    rev = "5a2eca29c38f24901a8f5f793d2190571d95c9ad";
+    hash = "sha256-vdpKxXkC6Z8ySa21jZ5zF2aqwLY7dt2FpQbfbZkgu+c=";
   };
 
-  cargoHash = "sha256-Jaw2v+02lA5wWRAhRNW/lcLnTI7beJIZ43dqcJ60EP0=";
+  cargoHash = "sha256-Gk2vXmVMcDWg3VnI0176eKF65tAfPwVZ74oQtD0UBO8=";
 
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
