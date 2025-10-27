@@ -1,14 +1,14 @@
 final: prev:
 prev.cosmic-greeter.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1.1-unstable-2025-09-21";
+  version = "1.0.0-beta.3-unstable-2025-10-27";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "aa0f1cc53aec0e8d7923b3b5544bfa3c008e4804";
-    hash = "sha256-rMZ+UbHarnvPaVAI5XeBfLduWEZHthguRSKLv3d/Eo0=";
+    rev = "7bab53c5b45c10292e8f8f4dfedfaa09235a029f";
+    hash = "sha256-kp5DSr/RxWhv35VKAc8xSAprM1Hbo84/oB8h0XBSmTE=";
   };
 
-  cargoHash = "sha256-qioWGfg+cMaRNX6H6IWdcAU2py7oq9eNaxzKWw0H4R4=";
+  cargoHash = "sha256-4yRBgFrH4RBpuvChTED+ynx+PyFumoT2Z+R1gXxF4Xc=";
 
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
