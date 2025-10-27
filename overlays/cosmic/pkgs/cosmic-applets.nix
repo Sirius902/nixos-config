@@ -19,14 +19,6 @@ prev.cosmic-applets.overrideAttrs (finalAttrs: prevAttrs: {
       else null;
   };
 
-  # FUTURE(Sirius902) Remove this if upstream removes the bluetooth spam patch (already applied here).
-  patches = builtins.filter (p: p.name != "fix-bluetooth-dbus-spam.patch") (prevAttrs.patches or []);
-
-  # FUTURE(Sirius902) cosmic-applets now depends on pipewire and libclang. Remove these if it is added upstream.
-  nativeBuildInputs = (prevAttrs.nativeBuildInputs or []) ++ [final.rustPlatform.bindgenHook];
-
-  buildInputs = (prevAttrs.buildInputs or []) ++ [final.pipewire];
-
   passthru =
     (prevAttrs.passthru or {})
     // {

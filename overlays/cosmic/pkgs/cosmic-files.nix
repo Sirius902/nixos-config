@@ -19,7 +19,11 @@ prev.cosmic-files.overrideAttrs (finalAttrs: prevAttrs: {
       else null;
   };
 
-  passthru.updateScript = final.nix-update-script {
-    extraArgs = ["--version-regex=epoch-(.*)"];
-  };
+  passthru =
+    (prevAttrs.passthru or {})
+    // {
+      updateScript = final.nix-update-script {
+        extraArgs = ["--version-regex=epoch-(.*)"];
+      };
+    };
 })

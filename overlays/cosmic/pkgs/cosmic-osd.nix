@@ -19,19 +19,6 @@ prev.cosmic-osd.overrideAttrs (finalAttrs: prevAttrs: {
       else null;
   };
 
-  # No longer needed due to https://github.com/pop-os/cosmic-osd/commit/4970139d875f9b28ea72d431e07ca3650a200470.
-  postPatch = null;
-
-  # FUTURE(Sirius902) cosmic-osd now depends on pipewire and libclang. Remove these if it is added upstream.
-  nativeBuildInputs = (prevAttrs.nativeBuildInputs or []) ++ [final.rustPlatform.bindgenHook];
-
-  buildInputs =
-    (prevAttrs.buildInputs or [])
-    ++ [
-      final.pipewire
-      final.libinput
-    ];
-
   passthru =
     (prevAttrs.passthru or {})
     // {

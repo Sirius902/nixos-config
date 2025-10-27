@@ -19,5 +19,9 @@ prev.cosmic-ext-ctl.overrideAttrs (finalAttrs: prevAttrs: {
       else null;
   };
 
-  passthru.updateScript = final.nix-update-script {};
+  passthru =
+    (prevAttrs.passthru or {})
+    // {
+      updateScript = final.nix-update-script {};
+    };
 })
