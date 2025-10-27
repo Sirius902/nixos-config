@@ -1,14 +1,14 @@
 final: prev:
 prev.cosmic-ext-tweaks.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "0.2.0-unstable-2025-09-24";
+  version = "0.2.0-unstable-2025-10-26";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "33f1b213e44f1627d98191afb145626ae0a96e7d";
-    hash = "sha256-pSTmou9tkMHKbUm/vdDiSzFjcHNQBbnqQ25JCNINjgI=";
+    rev = "2a896d4ff5334877b6173ce37cf042d505841761";
+    hash = "sha256-x3Lh12uPnVHqM7XO3S4q65Unx3B45oP8shOACUiuutE=";
   };
 
-  cargoHash = "sha256-Zl7c/3q5J+9y1vRJdR77NJ6y62bV1bxaVMuiyxDbLX4=";
+  cargoHash = "sha256-kf6sVUl+0rEZfWqLBt4XFhcmov7yErEXO8y39DWom40=";
 
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
