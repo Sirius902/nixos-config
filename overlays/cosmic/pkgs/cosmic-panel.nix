@@ -2,12 +2,12 @@
 # until the nixos-unstable version is newer.
 final: prev:
 prev.cosmic-panel.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1.1-unstable-2025-09-25";
+  version = "1.0.0-beta.3-unstable-2025-10-14";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "1cbfafc68b68ef822f346b2c3c3a04dc04ab0e9a";
-    hash = "sha256-gSTvF6Zcixh5/uYZuUiCIdBlXJj31+lISBwLujTuOfo=";
+    rev = "f1a947605243a79c4a4a0813fa234fa21440c859";
+    hash = "sha256-d21/ydBbT/lWudx9+hEDu7PlbIbORr3tqWcvMzenxr8=";
   };
 
   cargoHash = "sha256-8KOl581VmsfE7jiVFXy3ZDIfAqnaJuiDd7paqiFI/mk=";
