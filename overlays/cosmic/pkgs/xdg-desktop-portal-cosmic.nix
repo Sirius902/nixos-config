@@ -1,5 +1,3 @@
-# TODO(Sirius902) Overlay new xdg-desktop-portal-cosmic to maybe fix clipboard shenanigans
-# until the nixos-unstable version is newer.
 final: prev:
 prev.xdg-desktop-portal-cosmic.overrideAttrs (finalAttrs: prevAttrs: {
   version = "1.0.0-beta.1.1-unstable-2025-09-19";

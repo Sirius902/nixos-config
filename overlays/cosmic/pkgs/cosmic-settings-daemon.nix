@@ -19,8 +19,6 @@ prev.cosmic-settings-daemon.overrideAttrs (finalAttrs: prevAttrs: {
       else null;
   };
 
-  buildInputs = (prevAttrs.buildInputs or []) ++ [final.openssl];
-
   passthru =
     (prevAttrs.passthru or {})
     // {

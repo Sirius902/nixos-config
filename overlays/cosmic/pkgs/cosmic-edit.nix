@@ -19,9 +19,6 @@ prev.cosmic-edit.overrideAttrs (finalAttrs: prevAttrs: {
       else null;
   };
 
-  # FUTURE(Sirius902) cosmic-edit now depends on glib. Remove this if it is added upstream.
-  buildInputs = (prevAttrs.buildInputs or []) ++ [final.glib];
-
   passthru =
     (prevAttrs.passthru or {})
     // {
