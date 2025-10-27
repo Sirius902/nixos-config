@@ -1,11 +1,11 @@
 final: prev:
 prev.cosmic-ext-calculator.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "0.2.0-unstable-2025-09-25";
+  version = "0.2.0-unstable-2025-09-30";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "0b7670dc291a9941c230f11e9f77245ae4a82a9d";
-    hash = "sha256-qPo+Qi6P0m3rNA6Qo6iNsgzGyirPqzXk4nj3OG6IuZ0=";
+    rev = "455f28c9ae445fa30f91e570ab2eaccbf28e8461";
+    hash = "sha256-cVwo+iP6tGTQDq2d4EeUOIIVjNdh7/aqRXxio4AFGzc=";
   };
 
   cargoHash = "sha256-Pq1E4O6lZMe+wKJgQKDBmgdsJJsJTyK0FDXU53n+Di4=";
