@@ -1,14 +1,14 @@
 final: prev:
 prev.cosmic-notifications.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1.1-unstable-2025-09-19";
+  version = "1.0.0-beta.3-unstable-2025-10-20";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "19d24637d45a32a116653f0cf1501d4eb9f8b1ee";
-    hash = "sha256-wgOjaiKJ1KYdYsynQV5+KKGhdneELiLTHYqjMEWaxt0=";
+    rev = "32c94572eb9d65b27afac37e791c31213cb5dc55";
+    hash = "sha256-cr8nG9Mj2CZNj+SgOYFScPVAvj71z3jTxCfbQoTJjqs=";
   };
 
-  cargoHash = "sha256-CL8xvj57yq0qzK3tyYh3YXh+fM4ZDsmL8nP1mcqTqeQ=";
+  cargoHash = "sha256-kLvfZBHJbVSceqKuB9XFshTH4Sl54hKfm8H90RUszKk=";
 
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
