@@ -117,7 +117,7 @@
     (bottles.override {
       removeWarningPopup = true;
     })
-    dolphin-emu-beta
+    dolphin-emu
     melonDS
     kh-melon-mix
     wwrando
