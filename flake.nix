@@ -126,23 +126,27 @@
               };
             };
           in {
-            graalvm-oracle_25 = prev.graalvm-oracle.overrideAttrs (prevAttrs: {
-              version = "25.0.1";
-              src = final.fetchurl srcs.${final.stdenv.system};
-              meta =
-                prevAttrs.meta
-                // {
-                  platforms = builtins.attrNames srcs;
-                };
+            graalvmPackages =
+              (prev.graalvmPackages or {})
+              // {
+                graalvm-oracle_25 = prev.graalvmPackages.graalvm-oracle.overrideAttrs (prevAttrs: {
+                  version = "25.0.1";
+                  src = final.fetchurl srcs.${final.stdenv.system};
+                  meta =
+                    prevAttrs.meta
+                    // {
+                      platforms = builtins.attrNames srcs;
+                    };
 
-              # Fix from https://github.com/NixOS/nixpkgs/pull/423224.
-              propagatedBuildInputs = (prevAttrs.propagatedBuildInputs or []) ++ [final.onnxruntime];
-              postFixup =
-                (prevAttrs.postFixup or "")
-                + ''
-                  patchelf --replace-needed libonnxruntime.so.1.18.0 libonnxruntime.so.1 $out/lib/svm/profile_inference/onnx/native/libonnxruntime4j_jni.so
-                '';
-            });
+                  # Fix from https://github.com/NixOS/nixpkgs/pull/423224.
+                  propagatedBuildInputs = (prevAttrs.propagatedBuildInputs or []) ++ [final.onnxruntime];
+                  postFixup =
+                    (prevAttrs.postFixup or "")
+                    + ''
+                      patchelf --replace-needed libonnxruntime.so.1.18.0 libonnxruntime.so.1 $out/lib/svm/profile_inference/onnx/native/libonnxruntime4j_jni.so
+                    '';
+                });
+              };
           })
 
           # Add graalvm-ce_8.
@@ -154,50 +158,54 @@
               };
             };
           in {
-            graalvm-ce_8 = prev.graalvm-ce.overrideAttrs (prevAttrs: {
-              version = "8";
-              src = final.fetchurl srcs.${final.stdenv.system};
-              meta =
-                prevAttrs.meta
-                // {
-                  platforms = builtins.attrNames srcs;
-                };
+            graalvmPackages =
+              (prev.graalvmPackages or {})
+              // {
+                graalvm-ce_8 = prev.graalvmPackages.graalvm-ce.overrideAttrs (prevAttrs: {
+                  version = "8";
+                  src = final.fetchurl srcs.${final.stdenv.system};
+                  meta =
+                    prevAttrs.meta
+                    // {
+                      platforms = builtins.attrNames srcs;
+                    };
 
-              postInstall = ''
-                # jni.h expects jni_md.h to be in the header search path.
-                ln -sf $out/include/linux/*_md.h $out/include/
+                  postInstall = ''
+                    # jni.h expects jni_md.h to be in the header search path.
+                    ln -sf $out/include/linux/*_md.h $out/include/
 
-                mkdir -p $out/share
-                # move files in $out like LICENSE.txt
-                find $out/ -maxdepth 1 -type f -exec mv {} $out/share \;
+                    mkdir -p $out/share
+                    # move files in $out like LICENSE.txt
+                    find $out/ -maxdepth 1 -type f -exec mv {} $out/share \;
 
-                # copy-paste openjdk's preFixup
-                # Set JAVA_HOME automatically.
-                mkdir -p $out/nix-support
-                cat > $out/nix-support/setup-hook << EOF
-                if [ -z "\''${JAVA_HOME-}" ]; then export JAVA_HOME=$out; fi
-                EOF
-              '';
+                    # copy-paste openjdk's preFixup
+                    # Set JAVA_HOME automatically.
+                    mkdir -p $out/nix-support
+                    cat > $out/nix-support/setup-hook << EOF
+                    if [ -z "\''${JAVA_HOME-}" ]; then export JAVA_HOME=$out; fi
+                    EOF
+                  '';
 
-              installCheckPhase = ''
-                runHook preInstallCheck
+                  installCheckPhase = ''
+                    runHook preInstallCheck
 
-                echo ${final.lib.escapeShellArg ''
-                  public class HelloWorld {
-                    public static void main(String[] args) {
-                      System.out.println("Hello World");
-                    }
-                  }
-                ''} > HelloWorld.java
-                $out/bin/javac HelloWorld.java
+                    echo ${final.lib.escapeShellArg ''
+                      public class HelloWorld {
+                        public static void main(String[] args) {
+                          System.out.println("Hello World");
+                        }
+                      }
+                    ''} > HelloWorld.java
+                    $out/bin/javac HelloWorld.java
 
-                # run on JVM with Graal Compiler
-                echo "Testing GraalVM"
-                $out/bin/java -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI -XX:+UseJVMCICompiler HelloWorld | fgrep 'Hello World'
+                    # run on JVM with Graal Compiler
+                    echo "Testing GraalVM"
+                    $out/bin/java -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI -XX:+UseJVMCICompiler HelloWorld | fgrep 'Hello World'
 
-                runHook postInstallCheck
-              '';
-            });
+                    runHook postInstallCheck
+                  '';
+                });
+              };
           })
 
           (final: prev: {
@@ -260,7 +268,10 @@
 
           overlayedAllPackages =
             (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
-            // {inherit (pkgs) moonlight dolphin-emu graalvm-oracle_25 graalvm-ce_8;};
+            // {
+              inherit (pkgs) moonlight dolphin-emu;
+              inherit (pkgs.graalvmPackages) graalvm-oracle_25 graalvm-ce_8;
+            };
         in
           overlayedAllPackages
           // {
@@ -282,7 +293,7 @@
                       )
                     else builtins.toString drv.updateScript or ""
                 )
-                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu" "graalvm-oracle_25" "graalvm-ce_8"])
+                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu" "graalvmPackages"])
               );
             };
 
