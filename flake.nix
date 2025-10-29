@@ -2,7 +2,7 @@
   description = "nixlee flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?rev=6242b0061817159818107346754f70229014bbdc";
+    nixpkgs.url = "github:nixos/nixpkgs?rev=e99366c665bdd53b7b500ccdc5226675cfc51f45";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
