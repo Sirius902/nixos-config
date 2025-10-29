@@ -122,7 +122,7 @@
     xxd
   ];
 
-  my.jdk = lib.mkDefault pkgs.graalvm-oracle_25;
+  my.jdk = lib.mkDefault pkgs.graalvmPackages.graalvm-oracle_25;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
