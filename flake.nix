@@ -27,9 +27,16 @@
       inputs.sops-nix.follows = "sops-nix";
     };
     nvim-conf.url = "github:Sirius902/nvim-conf";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        rust-overlay.follows = "rust-overlay";
+      };
     };
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
