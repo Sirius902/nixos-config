@@ -300,7 +300,7 @@
                       )
                     else builtins.toString drv.updateScript or ""
                 )
-                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu" "graalvmPackages"])
+                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu" "graalvm-oracle_25" "graalvm-ce_8"])
               );
             };
 
