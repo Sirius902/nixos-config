@@ -17,6 +17,8 @@
   boot.kernelModules = ["kvm-amd"];
   boot.extraModulePackages = [];
 
+  boot.zfs.extraPools = ["futomaki"];
+
   fileSystems."/" = {
     device = "zroot/ROOT";
     fsType = "zfs";
