@@ -196,7 +196,7 @@ in
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SPDLOG" "${spdlog}")
       ];
 
-    env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
+    env.NIX_CFLAGS_COMPILE = "-Wno-error=return-mismatch" + lib.optionalString stdenv.hostPlatform.isDarwin " -Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
 
     dontAddPrefix = true;
 
