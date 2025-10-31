@@ -112,13 +112,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright-anchor";
-    version = "0-unstable-2025-07-30";
+    version = "0-unstable-2025-10-29";
 
     src = fetchFromGitHub {
       owner = "lilacLunatic";
       repo = "shipwright";
-      rev = "e80d52d3ba55d1ac106aeaf14b07d33ac8d0fa3c";
-      hash = "sha256-BytdXK1qAkQtAEU9EJbySSVoRWrSLrJpqidg53WIhPQ=";
+      rev = "58e16e1e34bcf6a143c67d731088c2c1eea2ad3a";
+      hash = "sha256-EE7F2Ry9N0Pkre5GciB/YDYMM6vdijm4qIIFiJuo99Q=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
