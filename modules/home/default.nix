@@ -8,13 +8,13 @@
   ...
 }: let
   inherit (pkgs) stdenv;
-  isLinuxDesktop = stdenv.isLinux && !isHeadless;
+  isLinuxDesktop = stdenv.hostPlatform.isLinux && !isHeadless;
 in {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "chris";
   home.homeDirectory =
-    if stdenv.isDarwin
+    if stdenv.hostPlatform.isDarwin
     then "/Users/chris"
     else "/home/chris";
 
@@ -79,14 +79,14 @@ in {
         bindkey '^R' history-incremental-search-backward
         prompt pure
       ''
-      + (lib.optionalString stdenv.isLinux ''
+      + (lib.optionalString stdenv.hostPlatform.isLinux ''
         alias open='xdg-open 2>/dev/null'
       '')
-      + (lib.optionalString stdenv.isDarwin ''
+      + (lib.optionalString stdenv.hostPlatform.isDarwin ''
         export PATH="/opt/homebrew/bin:$PATH"
       '');
 
-    envExtra = lib.mkIf stdenv.isDarwin ''
+    envExtra = lib.mkIf stdenv.hostPlatform.isDarwin ''
       . "$HOME/.cargo/env"
     '';
   };

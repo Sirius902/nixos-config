@@ -3,7 +3,7 @@
   nixpkgs-ghidra_11_2_1,
 }: let
   makeNsoGcTriggersDigital = linuxBin: pkg:
-    (pkg.override (pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
+    (pkg.override (pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
       # On Darwin the hidapi driver isn't usable without entitlements so just treat it as a regular controller and init hid via a separate program.
       sdl_gamecontrollerdb = pkgs.sdl_gamecontrollerdb.overrideAttrs (prevAttrs: {
         postInstall =
@@ -16,7 +16,7 @@
       # On Linux, set `SDL_GAMECONTROLLERCONFIG` to override the hidapi binding (setting it in sdl_gamecontrollerdb is not sufficient).
       postFixup =
         (prevAttrs.postFixup or "")
-        + pkgs.lib.optionalString pkgs.stdenv.isLinux ''
+        + pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
           wrapProgram ${linuxBin} \
             --suffix SDL_GAMECONTROLLERCONFIG $'\n' \
               "030046457e0500007320000001016800,Nintendo GameCube Controller,a:b0,b:b1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b4,leftshoulder:b6,lefttrigger:b10,leftx:a0,lefty:a1,rightshoulder:b7,righttrigger:b11,rightx:a2,righty:a3,start:b5,x:b2,y:b3,misc1:b8,misc2:b9,hint:!SDL_GAMECONTROLLER_USE_GAMECUBE_LABELS:=1,"
@@ -63,7 +63,7 @@ in rec {
   in
     # Avoid overriding nonexistent sdl_gamecontrollerdb arg on darwin.
     # FUTURE(Sirius902) This is kinda ugly though.
-    if pkgs.stdenv.isDarwin
+    if pkgs.stdenv.hostPlatform.isDarwin
     then pkg
     else makeNsoGcTriggersDigital "$out/bin/Zelda64Recompiled" pkg;
 

@@ -33,12 +33,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     [
       copyDesktopItems
     ]
-    ++ lib.optionals stdenv.isLinux [
+    ++ lib.optionals stdenv.hostPlatform.isLinux [
       pkg-config
       autoPatchelfHook
     ];
 
-  runtimeDependencies = lib.optionals stdenv.isLinux [
+  runtimeDependencies = lib.optionals stdenv.hostPlatform.isLinux [
     # TODO(Sirius902) What in the world is calling dlopen for `libgcc_s.so.1`??
     stdenv.cc.cc.lib
     libxkbcommon
@@ -47,7 +47,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   buildInputs =
-    lib.optionals stdenv.isLinux [
+    lib.optionals stdenv.hostPlatform.isLinux [
       libGL
       xorg.libX11
       xorg.libXcursor

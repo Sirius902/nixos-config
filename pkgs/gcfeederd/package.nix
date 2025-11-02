@@ -37,17 +37,17 @@ rustPlatform.buildRustPackage (finalAttrs: {
     [
       copyDesktopItems
     ]
-    ++ lib.optionals stdenv.isLinux [
+    ++ lib.optionals stdenv.hostPlatform.isLinux [
       pkg-config
       autoPatchelfHook
     ];
 
-  runtimeDependencies = lib.optionals stdenv.isLinux [
+  runtimeDependencies = lib.optionals stdenv.hostPlatform.isLinux [
     libappindicator-gtk3
   ];
 
   buildInputs =
-    lib.optionals stdenv.isLinux [
+    lib.optionals stdenv.hostPlatform.isLinux [
       glib
       gtk3
       xdotool

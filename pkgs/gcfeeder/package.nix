@@ -38,12 +38,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     [
       copyDesktopItems
     ]
-    ++ lib.optionals stdenv.isLinux [
+    ++ lib.optionals stdenv.hostPlatform.isLinux [
       pkg-config
       autoPatchelfHook
     ];
 
-  runtimeDependencies = lib.optionals stdenv.isLinux [
+  runtimeDependencies = lib.optionals stdenv.hostPlatform.isLinux [
     libxkbcommon
     vulkan-loader
     wayland
@@ -54,7 +54,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   buildInputs =
-    lib.optionals stdenv.isLinux [
+    lib.optionals stdenv.hostPlatform.isLinux [
       libGL
       xorg.libX11
       xorg.libXcursor

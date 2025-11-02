@@ -8,7 +8,7 @@
   os = (lib.systems.parse.mkSystemFromString stdenv.system).kernel.name;
 in {
   # NOTE(Sirius902) ghostty currently can't build on macOS from the flake.
-  home.packages = lib.mkIf stdenv.isLinux [
+  home.packages = lib.mkIf stdenv.hostPlatform.isLinux [
     pkgs.ghostty
   ];
 
@@ -29,7 +29,7 @@ in {
       then "initContent"
       else "initExtra";
   in {
-    ${initAttr} = lib.mkIf stdenv.isDarwin ''
+    ${initAttr} = lib.mkIf stdenv.hostPlatform.isDarwin ''
       if [[ "$TERM_PROGRAM" = ghostty ]]; then
         if [[ -n "$GHOSTTY_RESOURCES_DIR" ]]; then
           source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
