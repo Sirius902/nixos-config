@@ -154,6 +154,7 @@
         config.my.jdk
       ];
     })
+    mcpelauncher-ui-qt
     protontricks
     scarab
     spotify
