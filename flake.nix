@@ -138,7 +138,7 @@
               // {
                 graalvm-oracle_25 = prev.graalvmPackages.graalvm-oracle.overrideAttrs (prevAttrs: {
                   version = "25.0.1";
-                  src = final.fetchurl srcs.${final.stdenv.system};
+                  src = final.fetchurl srcs.${final.stdenv.hostPlatform.system};
                   meta =
                     prevAttrs.meta
                     // {
@@ -170,7 +170,7 @@
               // {
                 graalvm-ce_8 = prev.graalvmPackages.graalvm-ce.overrideAttrs (prevAttrs: {
                   version = "8";
-                  src = final.fetchurl srcs.${final.stdenv.system};
+                  src = final.fetchurl srcs.${final.stdenv.hostPlatform.system};
                   meta =
                     prevAttrs.meta
                     // {

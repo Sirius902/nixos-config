@@ -5,7 +5,7 @@
   ...
 }: let
   inherit (pkgs) stdenv;
-  os = (lib.systems.parse.mkSystemFromString stdenv.system).kernel.name;
+  os = (lib.systems.parse.mkSystemFromString stdenv.hostPlatform.system).kernel.name;
 in {
   # NOTE(Sirius902) ghostty currently can't build on macOS from the flake.
   home.packages = lib.mkIf stdenv.hostPlatform.isLinux [
