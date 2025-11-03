@@ -22,14 +22,8 @@ in {
     };
 
   # NOTE(Sirius902) Workaround for ghostty's PATH not being respected with nix-darwin.
-  programs.zsh = let
-    # TODO(Sirius902) Just use initContent when initExtra is deprecated in stable home-manager.
-    initAttr =
-      if lib.hasAttrByPath ["initContent"] options.programs.zsh
-      then "initContent"
-      else "initExtra";
-  in {
-    ${initAttr} = lib.mkIf stdenv.hostPlatform.isDarwin ''
+  programs.zsh = {
+    initContent = lib.mkIf stdenv.hostPlatform.isDarwin ''
       if [[ "$TERM_PROGRAM" = ghostty ]]; then
         if [[ -n "$GHOSTTY_RESOURCES_DIR" ]]; then
           source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration

@@ -60,13 +60,7 @@ in {
       };
     };
 
-  programs.zsh = let
-    # TODO(Sirius902) Just use initContent when initExtra is deprecated in stable home-manager.
-    initAttr =
-      if lib.hasAttrByPath ["initContent"] options.programs.zsh
-      then "initContent"
-      else "initExtra";
-  in {
+  programs.zsh = {
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true;
@@ -74,7 +68,7 @@ in {
 
     defaultKeymap = "viins"; # Use Vim keybinds
 
-    ${initAttr} =
+    initContent =
       ''
         bindkey '^R' history-incremental-search-backward
         prompt pure

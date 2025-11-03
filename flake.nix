@@ -7,11 +7,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs-stable.url = "github:nixos/nixpkgs?ref=nixos-25.05";
-    home-manager-stable = {
-      url = "github:nix-community/home-manager?ref=release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
-    };
     flake-parts.url = "github:hercules-ci/flake-parts";
     # disko = {
     #   url = "github:nix-community/disko";
@@ -46,9 +41,6 @@
   outputs = {
     self,
     nixpkgs,
-    home-manager,
-    nixpkgs-stable,
-    home-manager-stable,
     nix-darwin,
     nvim-conf,
     flake-parts,
@@ -56,11 +48,7 @@
     nixpkgs-ghidra_11_2_1,
     ...
   } @ inputs: let
-    importPkgs = {
-      system,
-      nixpkgs,
-      isUnstable ? false,
-    }:
+    importPkgs = system:
       import nixpkgs {
         inherit system;
         overlays = [
@@ -196,12 +184,6 @@
         ];
         config.allowUnfree = true;
       };
-
-    importPkgsUnstable = system:
-      importPkgs {
-        inherit system nixpkgs;
-        isUnstable = true;
-      };
   in
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = [
@@ -212,7 +194,7 @@
       ];
 
       perSystem = {system, ...}: let
-        pkgs = importPkgsUnstable system;
+        pkgs = importPkgs system;
         inherit (pkgs) lib;
       in {
         formatter = pkgs.alejandra;
@@ -265,34 +247,7 @@
 
       flake = {
         nixosConfigurations = let
-          systemDeps = {
-            system,
-            nixpkgs,
-            home-manager,
-            isUnstable ? false,
-          }: {
-            inherit nixpkgs;
-            pkgs = importPkgs {inherit system nixpkgs isUnstable;};
-            home-manager = home-manager.nixosModules.home-manager;
-            inputs =
-              inputs
-              // {
-                inherit nixpkgs;
-                home-manager = home-manager.nixosModules.home-manager;
-              };
-          };
-
-          unstableDeps = system:
-            systemDeps {
-              inherit system nixpkgs home-manager;
-              isUnstable = true;
-            };
-          stableDeps = system:
-            systemDeps {
-              inherit system;
-              nixpkgs = nixpkgs-stable;
-              home-manager = home-manager-stable;
-            };
+          home-manager = inputs.home-manager.nixosModules.home-manager;
 
           hardwareConfigOr = cfg:
             if (builtins.pathExists ./hardware-configuration.nix)
@@ -301,7 +256,7 @@
         in {
           sirius-lee = let
             system = "x86_64-linux";
-            inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
+            pkgs = importPkgs system;
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "sirius-lee";
               hostId = "49e32584";
@@ -338,7 +293,7 @@
 
           nixlee = let
             system = "x86_64-linux";
-            inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
+            pkgs = importPkgs system;
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "nixlee";
               hostId = "ff835154";
@@ -375,7 +330,7 @@
 
           nixtower = let
             system = "x86_64-linux";
-            inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
+            pkgs = importPkgs system;
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "nixtower";
               hostId = "1a14084a";
@@ -412,7 +367,7 @@
 
           hee-ho = let
             system = "x86_64-linux";
-            inherit (stableDeps system) pkgs nixpkgs home-manager inputs;
+            pkgs = importPkgs system;
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "hee-ho";
               hostId = "b0e08309";
@@ -446,7 +401,7 @@
 
           nixpad = let
             system = "x86_64-linux";
-            inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
+            pkgs = importPkgs system;
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "nixpad";
               hostId = "1c029249";
@@ -480,7 +435,7 @@
 
           qemu = let
             system = "x86_64-linux";
-            inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
+            pkgs = importPkgs system;
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "vm";
               hostId = "1763015d";
@@ -520,7 +475,7 @@
 
           qemu-server = let
             system = "x86_64-linux";
-            inherit (stableDeps system) pkgs nixpkgs home-manager inputs;
+            pkgs = importPkgs system;
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "vm-server";
               hostId = "f531a5e3";
@@ -554,7 +509,7 @@
 
           vmware-aarch64 = let
             system = "aarch64-linux";
-            inherit (unstableDeps system) pkgs nixpkgs home-manager inputs;
+            pkgs = importPkgs system;
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "vm";
               hostId = "c5cb7a32";
@@ -590,7 +545,7 @@
 
         darwinConfigurations = let
           system = "aarch64-darwin";
-          pkgs = importPkgsUnstable system;
+          pkgs = importPkgs system;
           home-manager = inputs.home-manager.darwinModules.home-manager;
 
           args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
