@@ -48,7 +48,7 @@
     amdgpu.enable = true;
   };
 
-  my.rnnoise.micNodeName = lib.mkForce "alsa_input.usb-HP__Inc_HyperX_SoloCast-00.iec958-stereo";
+  my.rnnoise.micNodeName = "alsa_input.usb-HP__Inc_HyperX_SoloCast-00.iec958-stereo";
 
   environment.systemPackages = [
     pkgs.archipelago
