@@ -2,6 +2,7 @@
   lib,
   stdenv,
   sdl3,
+  xorg,
   zenity,
   waylandSupport ? stdenv.hostPlatform.isLinux && !stdenv.hostPlatform.isAndroid,
   nix-update-script,
@@ -29,6 +30,8 @@ sdl3.overrideAttrs (finalAttrs: prevAttrs: {
       substituteInPlace src/dialog/unix/SDL_zenitydialog.c \
         --replace-fail '"zenity"' '"${lib.getExe zenity}"'
     '';
+
+  buildInputs = (prevAttrs.buildInputs or []) ++ [xorg.libXtst];
 
   passthru =
     (prevAttrs.passthru or {})
