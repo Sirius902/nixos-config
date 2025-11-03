@@ -8,10 +8,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
-    # disko = {
-    #   url = "github:nix-community/disko";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -384,11 +380,6 @@
                 ./hosts/hee-ho.nix
                 (hardwareConfigOr ./hardware/hee-ho.nix)
 
-                # TODO: This conflicts with the manual hardware config. Decide which to use.
-                # disko.nixosModules.disko
-                # ./disk-config.nix
-                # { disko.devices.disk.primary.device = "/dev/nvme0n1"; }
-
                 home-manager
                 {
                   home-manager.useGlobalPkgs = true;
@@ -451,11 +442,6 @@
                 ./hosts/qemu.nix
                 (hardwareConfigOr ./hardware/qemu.nix)
 
-                # TODO: This conflicts with the manual hardware config. Decide which to use.
-                # disko.nixosModules.disko
-                # ./disk-config.nix
-                # { disko.devices.disk.primary.device = "/dev/vda"; }
-
                 home-manager
                 {
                   home-manager.useGlobalPkgs = true;
@@ -491,11 +477,6 @@
                 ./hosts/server.nix
                 ./hosts/qemu.nix
                 (hardwareConfigOr ./hardware/qemu.nix)
-
-                # TODO: This conflicts with the manual hardware config. Decide which to use.
-                # disko.nixosModules.disko
-                # ./disk-config.nix
-                # { disko.devices.disk.primary.device = "/dev/vda"; }
 
                 home-manager
                 {
