@@ -52,7 +52,6 @@
   environment.systemPackages = with pkgs; [
     screen
     config.my.jdk
-    openmw-tes3mp
   ];
 
   # Fix waiting for WiFi on rebuild.
