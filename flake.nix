@@ -105,50 +105,6 @@
             });
           })
 
-          # Add graalvm-oracle_25.
-          (final: prev: let
-            srcs = {
-              "aarch64-linux" = {
-                url = "https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.1_linux-aarch64_bin.tar.gz";
-                hash = "sha256-7dd1ZcdlcKbfXzjlPVRSQQLywbHPdO69n1Hn/Bn2Z80=";
-              };
-              "x86_64-linux" = {
-                url = "https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.1_linux-x64_bin.tar.gz";
-                hash = "sha256-1KsCuhAp5jnwM3T9+RwkLh0NSQeYgOGvGTLqe3xDGDc=";
-              };
-              "x86_64-darwin" = {
-                url = "https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.1_macos-x64_bin.tar.gz";
-                hash = "sha256-p2LKHZoWPjJ5C5KG869MFjaXKf8nmZ2NurYNe+Fs/y8=";
-              };
-              "aarch64-darwin" = {
-                url = "https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.1_macos-aarch64_bin.tar.gz";
-                hash = "sha256-Gd/UmtES5ubCve3FB8aFm/ISlPpMFk8b5nDUacZbeZM=";
-              };
-            };
-          in {
-            graalvmPackages =
-              (prev.graalvmPackages or {})
-              // {
-                graalvm-oracle_25 = prev.graalvmPackages.graalvm-oracle.overrideAttrs (prevAttrs: {
-                  version = "25.0.1";
-                  src = final.fetchurl srcs.${final.stdenv.hostPlatform.system};
-                  meta =
-                    prevAttrs.meta
-                    // {
-                      platforms = builtins.attrNames srcs;
-                    };
-
-                  # Fix from https://github.com/NixOS/nixpkgs/pull/423224.
-                  propagatedBuildInputs = (prevAttrs.propagatedBuildInputs or []) ++ [final.onnxruntime];
-                  postFixup =
-                    (prevAttrs.postFixup or "")
-                    + ''
-                      patchelf --replace-needed libonnxruntime.so.1.18.0 libonnxruntime.so.1 $out/lib/svm/profile_inference/onnx/native/libonnxruntime4j_jni.so
-                    '';
-                });
-              };
-          })
-
           # Add graalvm-ce_8.
           (final: prev: let
             srcs = {
@@ -270,7 +226,7 @@
             (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
             // {
               inherit (pkgs) moonlight dolphin-emu;
-              inherit (pkgs.graalvmPackages) graalvm-oracle_25 graalvm-ce_8;
+              inherit (pkgs.graalvmPackages) graalvm-ce_8;
             };
         in
           overlayedAllPackages
@@ -293,7 +249,7 @@
                       )
                     else builtins.toString drv.updateScript or ""
                 )
-                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu" "graalvm-oracle_25" "graalvm-ce_8"])
+                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu" "graalvm-ce_8"])
               );
             };
 
