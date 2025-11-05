@@ -29,7 +29,7 @@ in rec {
   gcfeederd = pkgs.callPackage ./gcfeederd/package.nix {};
   gcviewer = pkgs.callPackage ./gcviewer/package.nix {};
 
-  gamecube-loader = nixpkgs-ghidra_11_2_1.legacyPackages.${pkgs.system}.callPackage ./ghidra-extensions/gamecube-loader/package.nix {};
+  gamecube-loader = nixpkgs-ghidra_11_2_1.legacyPackages.${pkgs.stdenv.hostPlatform.system}.callPackage ./ghidra-extensions/gamecube-loader/package.nix {};
 
   kh-melon-mix = pkgs.callPackage ./kh-melon-mix/package.nix {};
 
