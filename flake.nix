@@ -30,8 +30,6 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # TODO(Sirius902) Override new derivation to be the old one to get rid of another nixpkgs?
-    nixpkgs-ghidra_11_2_1.url = "github:nixos/nixpkgs?rev=e0c16b06b5557975efe96961f9169d5e833a4d92";
   };
 
   outputs = {
@@ -41,14 +39,13 @@
     nvim-conf,
     flake-parts,
     secrets,
-    nixpkgs-ghidra_11_2_1,
     ...
   } @ inputs: let
     importPkgs = system:
       import nixpkgs {
         inherit system;
         overlays = [
-          (import ./pkgs/overlay.nix {inherit nixpkgs-ghidra_11_2_1;})
+          (import ./pkgs/overlay.nix)
           (import ./overlays/moonlight.nix)
 
           nvim-conf.overlays.default
@@ -196,9 +193,7 @@
         formatter = pkgs.alejandra;
 
         packages = let
-          allPackages = import ./pkgs/all-packages.nix {
-            inherit pkgs nixpkgs-ghidra_11_2_1;
-          };
+          allPackages = import ./pkgs/all-packages.nix {inherit pkgs;};
 
           overlayedAllPackages =
             (lib.mapAttrs (name: _: pkgs.${name}) allPackages)

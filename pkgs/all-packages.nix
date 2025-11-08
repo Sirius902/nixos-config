@@ -1,7 +1,4 @@
-{
-  pkgs,
-  nixpkgs-ghidra_11_2_1,
-}: let
+{pkgs}: let
   makeNsoGcTriggersDigital = linuxBin: pkg:
     (pkg.override (pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
       # On Darwin the hidapi driver isn't usable without entitlements so just treat it as a regular controller and init hid via a separate program.
@@ -29,7 +26,7 @@ in rec {
   gcfeederd = pkgs.callPackage ./gcfeederd/package.nix {};
   gcviewer = pkgs.callPackage ./gcviewer/package.nix {};
 
-  gamecube-loader = nixpkgs-ghidra_11_2_1.legacyPackages.${pkgs.stdenv.hostPlatform.system}.callPackage ./ghidra-extensions/gamecube-loader/package.nix {};
+  gamecube-loader = pkgs.callPackage ./ghidra-extensions/gamecube-loader/package.nix {};
 
   kh-melon-mix = pkgs.callPackage ./kh-melon-mix/package.nix {};
 

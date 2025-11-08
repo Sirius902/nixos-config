@@ -4,6 +4,7 @@
   gradle,
   fetchFromGitHub,
   ant,
+  nix-update-script,
 }: let
   version = "1.2.5";
   self = ghidra.buildGhidraExtension {
@@ -59,6 +60,8 @@
       pkg = self;
       data = ./deps.json;
     };
+
+    passthru.updateScript = nix-update-script {extraArgs = ["--version=branch"];};
 
     meta = {
       description = "Nintendo GameCube Binary Loader for Ghidra";

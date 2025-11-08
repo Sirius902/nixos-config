@@ -226,22 +226,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-ghidra_11_2_1": {
-      "locked": {
-        "lastModified": 1738868127,
-        "narHash": "sha256-O5ne/JSVLQHZ6UaTL+DQ3pieh523/Q43+Rg8pkYibK4=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "e0c16b06b5557975efe96961f9169d5e833a4d92",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "e0c16b06b5557975efe96961f9169d5e833a4d92",
-        "type": "github"
-      }
-    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1761765539,
@@ -341,7 +325,6 @@
         "nix-darwin": "nix-darwin",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-ghidra_11_2_1": "nixpkgs-ghidra_11_2_1",
         "nvim-conf": "nvim-conf",
         "secrets": "secrets",
         "sops-nix": "sops-nix"

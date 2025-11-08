@@ -1,6 +1,5 @@
-{nixpkgs-ghidra_11_2_1}: final: prev: let
+final: prev: let
   pkgs = import ./all-packages.nix {
-    inherit nixpkgs-ghidra_11_2_1;
     pkgs = final;
   };
 in
