@@ -10,11 +10,11 @@
 }:
 sdl3.overrideAttrs (finalAttrs: prevAttrs: {
   pname = "${prevAttrs.pname}-git";
-  version = "3.2.26-unstable-2025-11-08";
+  version = "3.2.26-unstable-2025-11-09";
   src = prevAttrs.src.override {
     tag = null;
-    rev = "7553d5892eb926ea32065e5e4e63d43ca73851ca";
-    hash = "sha256-YYu4rGcYeNGlxIxxZhzpGBwjZPH81aCez6QFqc4bGGI=";
+    rev = "b9c790949e4ff6bc26813b437d477da694269ef5";
+    hash = "sha256-ldiTSlDaBOpcVUnXN8EutVC/dT2asGOxJMF9wkY+wYM=";
   };
 
   postPatch =
