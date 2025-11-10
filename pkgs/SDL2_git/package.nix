@@ -17,10 +17,7 @@
     (prevAttrs.passthru or {})
     // {
       updateScript = nix-update-script {
-        extraArgs = [
-          "--version=branch"
-          "--version-regex=release-(.*)"
-        ];
+        extraArgs = ["--version-regex=release-(.*)"];
       };
     };
 
