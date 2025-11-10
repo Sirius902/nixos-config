@@ -10,11 +10,11 @@
 }:
 sdl3.overrideAttrs (finalAttrs: prevAttrs: {
   pname = "${prevAttrs.pname}-git";
-  version = "3.2.26-unstable-2025-11-09";
+  version = "3.2.26-unstable-2025-10-23";
   src = prevAttrs.src.override {
     tag = null;
-    rev = "f6a05121ec9cad153423c995e394e8765e001655";
-    hash = "sha256-sYqo44huKwvZjiCGnIPtYhwSvCdo3uZUaRWhQdJWk9Y=";
+    rev = "b31c4b70b3031dc4eb873612d65595a31b439a30";
+    hash = "sha256-4/scd/wiFrKePUpKgSY5cfmxa7PdH2yfE7wh4ElYn98=";
   };
 
   postPatch =
@@ -37,7 +37,10 @@ sdl3.overrideAttrs (finalAttrs: prevAttrs: {
     (prevAttrs.passthru or {})
     // {
       updateScript = nix-update-script {
-        extraArgs = ["--version-regex=release-(3\\..*)"];
+        extraArgs = [
+          "--version=branch=preview-3.3.2"
+          "--version-regex=release-(3\\..*)"
+        ];
       };
     };
 
