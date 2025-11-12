@@ -8,13 +8,13 @@
 }:
 melonDS.overrideAttrs (prevAttrs: {
   pname = "kh-melon-mix";
-  version = "0.7.1-unstable-2025-11-03";
+  version = "0.7.1-unstable-2025-11-12";
 
   src = fetchFromGitHub {
     owner = "vitor251093";
     repo = "KHMelonMix";
-    rev = "7f95b2a2ba4f86b89f45259af7f0abd1a3db81f0";
-    hash = "sha256-Qi2mfMdrq6EOw1wXBF3dbwm/jDWQ5uynaTKs2n2tneY=";
+    rev = "670238c5fff74e58b0ea5ec67053fd3944b53d99";
+    hash = "sha256-RaJ52Y6ycmO6w70SWfq32r7I4X/bWls6Gaw7G0+XKeI=";
   };
 
   patches = [./fix-build-qt-6.10.patch];
