@@ -243,9 +243,6 @@ in
     # Linking fails without this
     hardeningDisable = ["format"];
 
-    # Pie needs to be enabled or else it segfaults
-    hardeningEnable = ["pie"];
-
     preConfigure = ''
       mkdir stb
       cp ${stb'} ./stb/${stb'.name}
