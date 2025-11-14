@@ -174,6 +174,13 @@
                 });
               };
           })
+
+          # TODO(Sirius902) https://github.com/NixOS/nixpkgs/pull/461461
+          (final: prev: {
+            imhex = prev.imhex.override {
+              fmt = final.fmt_11;
+            };
+          })
         ];
         config.allowUnfree = true;
       };
