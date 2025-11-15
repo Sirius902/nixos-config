@@ -15,17 +15,17 @@
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "gcfeederd";
-  version = "3.0.1-unstable-2025-09-09";
+  version = "3.0.1-unstable-2025-11-15";
 
   src = fetchFromGitHub {
     owner = "Sirius902";
     repo = "gcfeeder";
-    rev = "e520fcf18d0006a01992e8abae3a2d05c74a8366";
-    sha256 = "sha256-id88SrQBirtGfKTSzX19bVowWF6ev5Q+52astPo1QP0=";
+    rev = "adf5adda08dc392d40b6108d5edf2c6322cb3826";
+    sha256 = "sha256-JhQEgPmFUVc7G6ujf8M1HjAf+W6F/Nj80rAD1Gj9Fao=";
   };
 
   cargoBuildFlags = "-p gcfeederd --no-default-features";
-  cargoHash = "sha256-kG3OfUv2GYgM13FLtUk8EVAhDoJv2kMrW/kLyMTt+CA=";
+  cargoHash = "sha256-IFK2XZsAiflZ581QQojticWZO1Uj3OqXlbEFRfUHMxE=";
 
   # TODO(Sirius902) Remove once these tests pass.
   checkFlags = map (t: "--skip=${t}") [
