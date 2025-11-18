@@ -341,6 +341,8 @@ in
     passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=aManchipelago"];};
 
     meta = {
+      # TODO(Sirius902) Fix.
+      broken = stdenv.hostPlatform.isDarwin;
       homepage = "https://github.com/HarbourMasters/Shipwright";
       description = "A PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
       mainProgram = "soh-ap";
