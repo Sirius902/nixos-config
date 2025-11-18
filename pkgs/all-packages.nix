@@ -38,7 +38,6 @@ in rec {
   sdl_gamecontrollerdb = pkgs.callPackage ./sdl_gamecontrollerdb/package.nix {};
 
   shipwright = makeNsoGcTriggersDigital "$out/lib/soh.elf" (pkgs.callPackage ./shipwright/package.nix {SDL2 = SDL2_git;});
-  shipwright-anchor = makeNsoGcTriggersDigital "$out/lib/soh.elf" (pkgs.callPackage ./shipwright/anchor/package.nix {SDL2 = SDL2_git;});
   shipwright-ap = makeNsoGcTriggersDigital "$out/lib/soh.elf" (pkgs.callPackage ./shipwright/ap/package.nix {SDL2 = SDL2_git;});
   _2ship2harkinian = makeNsoGcTriggersDigital "$out/lib/2s2h.elf" (pkgs.callPackage ./_2ship2harkinian/package.nix {SDL2 = SDL2_git;});
 
