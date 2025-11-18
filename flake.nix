@@ -38,7 +38,6 @@
     nix-darwin,
     nvim-conf,
     flake-parts,
-    secrets,
     ...
   } @ inputs: let
     importPkgs = system:
@@ -73,17 +72,6 @@
                       --prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath libs}
                   '';
               });
-          })
-
-          # Add extra patches for shipwright-anchor and shipwright-ap.
-          (final: prev: {
-            shipwright-anchor = prev.shipwright-anchor.overrideAttrs (prevAttrs: {
-              patches = (prevAttrs.patches or []) ++ secrets.patches.shipwright-anchor;
-            });
-
-            shipwright-ap = prev.shipwright-ap.overrideAttrs (prevAttrs: {
-              patches = (prevAttrs.patches or []) ++ secrets.patches.shipwright-ap;
-            });
           })
 
           # Add graalvm-ce_8.
