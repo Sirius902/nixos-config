@@ -21,4 +21,6 @@ stdenvNoCC.mkDerivation {
   installPhase = ''
     install -Dm644 "ghostty-nautilus.py" -t "$out/share/nautilus-python/extensions"
   '';
+
+  meta.platforms = lib.platforms.linux;
 }
