@@ -1,5 +1,4 @@
 {
-  apple-sdk_13,
   stdenv,
   cmake,
   lsb-release,
@@ -26,21 +25,32 @@
   nlohmann_json,
   tinyxml-2,
   spdlog,
-  libvorbis,
-  libopus,
-  opusfile,
-  sdl_gamecontrollerdb,
-  openssl,
-  valijson,
-  asio,
-  websocketpp,
-  runCommand,
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
-  nix-update-script,
   shipwright-ap,
+  libopus,
+  opusfile,
+  libogg,
+  libvorbis,
+  bzip2,
+  libX11,
+  sdl_gamecontrollerdb,
+  runCommand,
+  asio,
+  openssl,
+  valijson,
+  websocketpp,
+  nix-update-script,
 }: let
+  # The following would normally get fetched at build time, or a specific version is required
+  dr_libs = fetchFromGitHub {
+    owner = "mackron";
+    repo = "dr_libs";
+    rev = "da35f9d6c7374a95353fd1df1d394d44ab66cf01";
+    hash = "sha256-ydFhQ8LTYDBnRTuETtfWwIHZpRciWfqGsZC6SuViEn0=";
+  };
+
   imgui' = applyPatches {
     src = fetchFromGitHub {
       owner = "ocornut";
@@ -98,13 +108,6 @@
     repo = "thread-pool";
     tag = "v4.1.0";
     hash = "sha256-zhRFEmPYNFLqQCfvdAaG5VBNle9Qm8FepIIIrT9sh88=";
-  };
-
-  dr_libs = fetchFromGitHub {
-    owner = "mackron";
-    repo = "dr_libs";
-    rev = "da35f9d6c7374a95353fd1df1d394d44ab66cf01";
-    hash = "sha256-ydFhQ8LTYDBnRTuETtfWwIHZpRciWfqGsZC6SuViEn0=";
   };
 
   metalcpp = fetchFromGitHub {
@@ -196,21 +199,20 @@ in
         nlohmann_json
         tinyxml-2
         spdlog
+        (lib.getDev libopus)
+        (lib.getDev opusfile)
+        libogg
         libvorbis
-        libopus.dev
-        opusfile.dev
+        bzip2
+        libX11
+        asio
         openssl
         valijson
-        asio
         websocketpp
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         libpulseaudio
         zenity
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        # Metal.hpp requires macOS 13.x min.
-        apple-sdk_13
       ];
 
     cmakeFlags =
@@ -218,14 +220,14 @@ in
         (lib.cmakeBool "BUILD_REMOTE_CONTROL" true)
         (lib.cmakeBool "NON_PORTABLE" true)
         (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/lib")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
-        (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${libopus.dev}/include/opus")
-        (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${opusfile.dev}/include/opus")
+        (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${lib.getDev libopus}/include/opus")
+        (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${lib.getDev opusfile}/include/opus")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SSLCERTSTORE" "${sslCertStore}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_ASIO" "${asio}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_WSWRAP" "${wswrap}")
@@ -237,6 +239,8 @@ in
       ];
 
     env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
+
+    strictDeps = true;
 
     dontAddPrefix = true;
 
@@ -344,9 +348,9 @@ in
       # TODO(Sirius902) Fix.
       broken = stdenv.hostPlatform.isDarwin;
       homepage = "https://github.com/HarbourMasters/Shipwright";
-      description = "A PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
+      description = "PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
       mainProgram = "soh-ap";
-      platforms = ["x86_64-linux"] ++ lib.platforms.darwin;
+      platforms = lib.platforms.linux ++ lib.platforms.darwin;
       maintainers = with lib.maintainers; [
         j0lol
         matteopacini

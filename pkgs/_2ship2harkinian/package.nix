@@ -1,5 +1,4 @@
 {
-  apple-sdk_13,
   stdenv,
   cmake,
   lsb-release,
@@ -26,16 +25,28 @@
   nlohmann_json,
   tinyxml-2,
   spdlog,
-  libvorbis,
-  libopus,
-  opusfile,
-  sdl_gamecontrollerdb,
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
-  nix-update-script,
   _2ship2harkinian,
+  libopus,
+  opusfile,
+  libogg,
+  libvorbis,
+  bzip2,
+  libX11,
+  sdl_gamecontrollerdb,
+  fetchpatch,
+  nix-update-script,
 }: let
+  # The following would normally get fetched at build time, or a specific version is required
+  dr_libs = fetchFromGitHub {
+    owner = "mackron";
+    repo = "dr_libs";
+    rev = "da35f9d6c7374a95353fd1df1d394d44ab66cf01";
+    hash = "sha256-ydFhQ8LTYDBnRTuETtfWwIHZpRciWfqGsZC6SuViEn0=";
+  };
+
   imgui' = applyPatches {
     src = fetchFromGitHub {
       owner = "ocornut";
@@ -95,13 +106,6 @@
     hash = "sha256-zhRFEmPYNFLqQCfvdAaG5VBNle9Qm8FepIIIrT9sh88=";
   };
 
-  dr_libs = fetchFromGitHub {
-    owner = "mackron";
-    repo = "dr_libs";
-    rev = "da35f9d6c7374a95353fd1df1d394d44ab66cf01";
-    hash = "sha256-ydFhQ8LTYDBnRTuETtfWwIHZpRciWfqGsZC6SuViEn0=";
-  };
-
   metalcpp = fetchFromGitHub {
     owner = "briaguya-ai";
     repo = "single-header-metal-cpp";
@@ -114,7 +118,7 @@ in
     version = "3.0.1-unstable-2025-11-17";
 
     src = fetchFromGitHub {
-      owner = "harbourmasters";
+      owner = "HarbourMasters";
       repo = "2ship2harkinian";
       rev = "02d9170d141c9f9f8e6a14568efc7678f0d87236";
       hash = "sha256-B+vpV1194lD++y/GRE+v5Avb2E22pg/jFrc//8UJJ5A=";
@@ -164,17 +168,16 @@ in
         nlohmann_json
         tinyxml-2
         spdlog
+        (lib.getDev libopus)
+        (lib.getDev opusfile)
+        libogg
         libvorbis
-        libopus.dev
-        opusfile.dev
+        bzip2
+        libX11
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         libpulseaudio
         zenity
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        # Metal.hpp requires macOS 13.x min.
-        apple-sdk_13
       ];
 
     cmakeFlags =
@@ -182,21 +185,23 @@ in
         (lib.cmakeBool "BUILD_REMOTE_CONTROL" true)
         (lib.cmakeBool "NON_PORTABLE" true)
         (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/lib")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
-        (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${libopus.dev}/include/opus")
-        (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${opusfile.dev}/include/opus")
+        (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${lib.getDev libopus}/include/opus")
+        (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${lib.getDev opusfile}/include/opus")
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SPDLOG" "${spdlog}")
       ];
 
-    env.NIX_CFLAGS_COMPILE = "-Wno-error=return-mismatch" + lib.optionalString stdenv.hostPlatform.isDarwin " -Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
+    env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
+
+    strictDeps = true;
 
     dontAddPrefix = true;
 
@@ -289,9 +294,9 @@ in
 
     meta = {
       homepage = "https://github.com/HarbourMasters/2ship2harkinian";
-      description = "A PC port of Majora's Mask with modern controls, widescreen, high-resolution, and more";
+      description = "PC port of Majora's Mask with modern controls, widescreen, high-resolution, and more";
       mainProgram = "2s2h";
-      platforms = ["x86_64-linux"] ++ lib.platforms.darwin;
+      platforms = lib.platforms.linux ++ lib.platforms.darwin;
       maintainers = with lib.maintainers; [qubitnano];
       license = with lib.licenses; [
         # OTRExporter, OTRGui, ZAPDTR, libultraship

@@ -1,5 +1,4 @@
 {
-  apple-sdk_13,
   stdenv,
   cmake,
   lsb-release,
@@ -26,17 +25,28 @@
   nlohmann_json,
   tinyxml-2,
   spdlog,
-  libvorbis,
-  libopus,
-  opusfile,
-  sdl_gamecontrollerdb,
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
-  nix-update-script,
   shipwright,
+  libopus,
+  opusfile,
+  libogg,
+  libvorbis,
+  bzip2,
+  libX11,
+  sdl_gamecontrollerdb,
   fetchpatch,
+  nix-update-script,
 }: let
+  # The following would normally get fetched at build time, or a specific version is required
+  dr_libs = fetchFromGitHub {
+    owner = "mackron";
+    repo = "dr_libs";
+    rev = "da35f9d6c7374a95353fd1df1d394d44ab66cf01";
+    hash = "sha256-ydFhQ8LTYDBnRTuETtfWwIHZpRciWfqGsZC6SuViEn0=";
+  };
+
   imgui' = applyPatches {
     src = fetchFromGitHub {
       owner = "ocornut";
@@ -96,13 +106,6 @@
     hash = "sha256-zhRFEmPYNFLqQCfvdAaG5VBNle9Qm8FepIIIrT9sh88=";
   };
 
-  dr_libs = fetchFromGitHub {
-    owner = "mackron";
-    repo = "dr_libs";
-    rev = "da35f9d6c7374a95353fd1df1d394d44ab66cf01";
-    hash = "sha256-ydFhQ8LTYDBnRTuETtfWwIHZpRciWfqGsZC6SuViEn0=";
-  };
-
   metalcpp = fetchFromGitHub {
     owner = "briaguya-ai";
     repo = "single-header-metal-cpp";
@@ -115,7 +118,7 @@ in
     version = "9.1.1-unstable-2025-11-16";
 
     src = fetchFromGitHub {
-      owner = "harbourmasters";
+      owner = "HarbourMasters";
       repo = "shipwright";
       rev = "eca9eac0cfda9f1f42bf4e6ee323e1bf947d1e42";
       hash = "sha256-/7AfUC1+juJ7kX/BoNlTAujEj1SacWwD5cjQPFEEmX8=";
@@ -170,17 +173,16 @@ in
         nlohmann_json
         tinyxml-2
         spdlog
+        (lib.getDev libopus)
+        (lib.getDev opusfile)
+        libogg
         libvorbis
-        libopus.dev
-        opusfile.dev
+        bzip2
+        libX11
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         libpulseaudio
         zenity
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        # Metal.hpp requires macOS 13.x min.
-        apple-sdk_13
       ];
 
     cmakeFlags =
@@ -188,14 +190,14 @@ in
         (lib.cmakeBool "BUILD_REMOTE_CONTROL" true)
         (lib.cmakeBool "NON_PORTABLE" true)
         (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/lib")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
-        (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${libopus.dev}/include/opus")
-        (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${opusfile.dev}/include/opus")
+        (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${lib.getDev libopus}/include/opus")
+        (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${lib.getDev opusfile}/include/opus")
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
@@ -203,6 +205,8 @@ in
       ];
 
     env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
+
+    strictDeps = true;
 
     dontAddPrefix = true;
 
@@ -296,9 +300,9 @@ in
 
     meta = {
       homepage = "https://github.com/HarbourMasters/Shipwright";
-      description = "A PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
+      description = "PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
       mainProgram = "soh";
-      platforms = ["x86_64-linux"] ++ lib.platforms.darwin;
+      platforms = lib.platforms.linux ++ lib.platforms.darwin;
       maintainers = with lib.maintainers; [
         j0lol
         matteopacini
