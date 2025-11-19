@@ -1,5 +1,3 @@
-# Yoinked from https://github.com/NixOS/nixpkgs/pull/313013.
-# https://github.com/NixOS/nixpkgs/blob/8dccd27f0feef3b0c1bb21a0b86e428a45a8be3c/pkgs/by-name/z6/z64decompress/package.nix
 {
   lib,
   stdenv,
