@@ -1,6 +1,6 @@
-/result
-
 /host
 /hardware-configuration.nix
 
 .direnv/
+result
+result-*
