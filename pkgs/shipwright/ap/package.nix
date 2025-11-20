@@ -236,6 +236,7 @@ in
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SPDLOG" "${spdlog}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_VALIJSON" "${valijson}")
       ];
 
     env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
@@ -345,8 +346,6 @@ in
     passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=aManchipelago"];};
 
     meta = {
-      # TODO(Sirius902) Fix.
-      broken = stdenv.hostPlatform.isDarwin;
       homepage = "https://github.com/HarbourMasters/Shipwright";
       description = "PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
       mainProgram = "soh-ap";
