@@ -181,16 +181,17 @@
         formatter = pkgs.alejandra;
 
         packages = let
-          selfNames = lib.attrNames (import ./pkgs/all-packages.nix {inherit pkgs;});
+          allPackages = import ./pkgs/all-packages.nix {inherit pkgs;};
 
-          overlayedPackages =
-            (lib.genAttrs selfNames (name: pkgs.${name}))
+          overlayedAllPackages =
+            (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
             // {
               inherit (pkgs) moonlight dolphin-emu;
               inherit (pkgs.graalvmPackages) graalvm-ce_8;
             };
-
-          updatePackages = {
+        in
+          overlayedAllPackages
+          // {
             update = pkgs.writeShellApplication {
               name = "unstable-update";
 
@@ -209,7 +210,7 @@
                       )
                     else builtins.toString drv.updateScript or ""
                 )
-                (builtins.removeAttrs overlayedPackages ["dolphin-emu" "graalvm-ce_8"])
+                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu" "graalvm-ce_8"])
               );
             };
 
@@ -217,10 +218,6 @@
               ${self.packages.${system}.update}/bin/unstable-update
             '';
           };
-
-          allPackages = overlayedPackages // updatePackages;
-        in
-          lib.filterAttrs (_: lib.meta.availableOn pkgs.stdenv.hostPlatform) allPackages;
 
         devShells.default = pkgs.mkShell {
           packages = [pkgs.just];
