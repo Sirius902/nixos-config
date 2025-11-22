@@ -14,7 +14,6 @@
       batteryNotifier.enable = false;
       syncEffectsEnabled = true;
     };
-    xpadneo.enable = true;
     keyboard.zsa.enable = true;
   };
 
