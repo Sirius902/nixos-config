@@ -1,14 +1,14 @@
 final: prev:
 prev.xdg-desktop-portal-cosmic.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1.1-unstable-2025-09-19";
+  version = "1.0.0-beta.7-unstable-2025-11-21";
 
   src = prevAttrs.src.override {
     tag = null;
-    rev = "2477a1b39806fd0eb6831e38f0a32a81abb1a806";
-    hash = "sha256-EkhOa1Tircgyta98Zf4ZaV/tR4zZh4/bU35xjn3xU8c=";
+    rev = "31b7a1aa36f1a11c7bd1a14a6da3d87b9edca7d1";
+    hash = "sha256-4rNHZcAq/LafUPywZ9XdpXr9wVFOBWkUvnCFwT+3lFA=";
   };
 
-  cargoHash = "sha256-uJKwwESkzqweM4JunnMIsDE8xhCyjFFZs1GiJAwnbG8=";
+  cargoHash = "sha256-0PsiB/xvePSi5o1eRUgCq02UAGzuBQEe8+LlFJi5814=";
 
   cargoDeps = final.rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname src version;
