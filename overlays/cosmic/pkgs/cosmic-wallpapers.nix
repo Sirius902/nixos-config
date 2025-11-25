@@ -1,6 +1,6 @@
 final: prev:
 prev.cosmic-wallpapers.overrideAttrs (finalAttrs: prevAttrs: {
-  version = "1.0.0-beta.1.1-unstable-2025-04-08";
+  version = "1.0.0-beta.7-unstable-2025-04-08";
 
   src = prevAttrs.src.override {
     tag = null;
