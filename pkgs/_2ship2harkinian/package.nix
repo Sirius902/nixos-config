@@ -36,7 +36,6 @@
   bzip2,
   libX11,
   sdl_gamecontrollerdb,
-  fetchpatch,
   nix-update-script,
 }: let
   # The following would normally get fetched at build time, or a specific version is required
