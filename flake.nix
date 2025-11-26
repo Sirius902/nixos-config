@@ -75,6 +75,43 @@
               });
           })
 
+          # Make NSO GameCube triggers digital for ship-like derivations.
+          (final: prev:
+            if prev.stdenv.hostPlatform.isLinux
+            then
+              # On Linux, set `SDL_GAMECONTROLLERCONFIG` to override the hidapi binding (setting it in sdl_gamecontrollerdb is not sufficient).
+              prev.lib.mapAttrs (name: bin:
+                prev.${name}.overrideAttrs (prevAttrs: {
+                  postFixup =
+                    (prevAttrs.postFixup or "")
+                    + ''
+                      wrapProgram ${bin} \
+                        --suffix SDL_GAMECONTROLLERCONFIG $'\n' \
+                          "030046457e0500007320000001016800,Nintendo GameCube Controller,a:b0,b:b1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b4,leftshoulder:b6,lefttrigger:b10,leftx:a0,lefty:a1,rightshoulder:b7,righttrigger:b11,rightx:a2,righty:a3,start:b5,x:b2,y:b3,misc1:b8,misc2:b9,hint:!SDL_GAMECONTROLLER_USE_GAMECUBE_LABELS:=1,"
+                    '';
+                })) {
+                shipwright = "$out/lib/soh.elf";
+                shipwright-ap = "$out/lib/soh.elf";
+                _2ship2harkinian = "$out/lib/2s2h.elf";
+                zelda64recomp = "$out/bin/Zelda64Recompiled";
+              }
+            else if prev.stdenv.hostPlatform.isDarwin
+            then
+              # On Darwin the hidapi driver isn't usable without entitlements so just treat it as a regular controller and init hid via a separate program.
+              prev.lib.genAttrs ["shipwright" "shipwright-ap" "_2ship2harkinian"] (
+                name:
+                  prev.${name}.override {
+                    sdl_gamecontrollerdb = final.sdl_gamecontrollerdb.overrideAttrs (prevAttrs: {
+                      postInstall =
+                        (prevAttrs.postInstall or "")
+                        + ''
+                          echo "030046457e0500007320000001010000,Nintendo GameCube Controller,crc:4546,platform:macOS,a:b1,b:b3,dpdown:b8,dpleft:b10,dpright:b9,dpup:b11,guide:b16,leftshoulder:b13,lefttrigger:b12,leftx:a0,lefty:a1~,misc1:b17,misc2:b20,rightshoulder:b5,righttrigger:b4,rightx:a2,righty:a3~,start:b6,x:b0,y:b2,hint:!SDL_GAMECONTROLLER_USE_GAMECUBE_LABELS:=1," >> $out/share/gamecontrollerdb.txt
+                        '';
+                    });
+                  }
+              )
+            else {})
+
           # Add graalvm-ce_8.
           (final: prev: let
             srcs = {
