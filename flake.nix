@@ -52,7 +52,7 @@
 
           # Add Switch 2 controller support via https://github.com/libsdl-org/SDL/pull/13327.
           (final: prev: {
-            dolphin-emu = prev.dolphin-emu.override {sdl3 = prev.sdl3_git;};
+            dolphin-emu = prev.dolphin-emu.override {sdl3 = final.sdl3_git;};
           })
 
           # FUTURE(Sirius902) Rando fork for macOS?
