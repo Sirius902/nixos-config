@@ -230,7 +230,6 @@ in
 
     postBuild = ''
       port_ver=$(grep CMAKE_PROJECT_VERSION: "$PWD/CMakeCache.txt" | cut -d= -f2)
-      cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
       mv ../libultraship/src/fast/shaders ../soh/assets/custom
       pushd ../OTRExporter
       python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../soh/assets/xml --custom-assets-path ../soh/assets/custom --custom-otr-file soh.o2r --port-ver $port_ver
@@ -240,6 +239,7 @@ in
     preInstall = ''
       # Cmake likes it here for its install paths
       cp ../OTRExporter/soh.o2r soh/soh.o2r
+      install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
     '';
 
     postInstall =
@@ -267,12 +267,13 @@ in
         rm -rf $out/lib
         ln -s $out/Applications/soh.app/Contents/Resources $out/lib
 
-        # TODO(Sirius902) This seems like an issue upstream in ship maybe?
-        # Move gamecontrollerdb.txt to the proper place for app bundle
-        cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt $out/Applications/soh.app/Contents/Resources/gamecontrollerdb.txt
-
         # Copy icons
         cp -r ../build/macosx/soh.icns $out/Applications/soh.app/Contents/Resources/soh.icns
+
+        # TODO(Sirius902) This seems like an issue upstream in ship maybe?
+        # Move gamecontrollerdb.txt to the proper place for app bundle
+        install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
+          $out/Applications/soh.app/Contents/Resources/gamecontrollerdb.txt
 
         # Codesign (ad-hoc)
         codesign -f -s - $out/Applications/soh.app/Contents/MacOS/soh
