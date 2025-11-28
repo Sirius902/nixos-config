@@ -28,7 +28,6 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/efi";
 
   boot.kernelPackages = pkgs.linuxPackages_6_17;
   boot.zfs.package = pkgs.zfs_unstable;

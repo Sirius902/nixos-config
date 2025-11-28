@@ -60,7 +60,7 @@
     neededForBoot = true;
   };
 
-  fileSystems."/efi" = {
+  fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/72E9-31EE";
     fsType = "vfat";
     options = ["fmask=0077" "dmask=0077"];
