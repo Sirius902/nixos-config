@@ -5,6 +5,8 @@
   # https://mundobytes.com/en/Linux-6%3A-16-problems-with-Asus-motherboards%3A-why-they-occur-and-how-to-mitigate-them-without-headaches/
   boot.blacklistedKernelModules = ["asus_wmi" "asus_nb_wmi"];
 
+  boot.zfs.requestEncryptionCredentials = false;
+
   my.vfio = {
     amd.enable = lib.mkForce false;
     intel.enable = true;
