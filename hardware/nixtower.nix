@@ -20,7 +20,7 @@
   fileSystems."/" = {
     device = "none";
     fsType = "tmpfs";
-    options = ["defaults" "size=3G" "mode=755"];
+    options = ["defaults" "size=20%" "mode=755"];
   };
 
   fileSystems."/nix" = {
