@@ -41,7 +41,10 @@
   environment.persistence."/persist" = {
     enable = true;
     hideMounts = true;
-    directories = ["/etc/NetworkManager/system-connections"];
+    directories = [
+      "/etc/NetworkManager/system-connections"
+      "/etc/ssh"
+    ];
     files = ["/etc/machine-id"];
   };
 
