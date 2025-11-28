@@ -41,7 +41,8 @@
   environment.persistence."/persist" = {
     enable = true;
     hideMounts = true;
-    directories = ["/etc/NetworkManager"];
+    directories = ["/etc/NetworkManager/system-connections"];
+    files = ["/etc/machine-id"];
   };
 
   security.doas.enable = true;
