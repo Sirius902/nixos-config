@@ -19,15 +19,10 @@
 
   boot.zfs.extraPools = ["data"];
 
-  # TODO: Filesystems should only be configured if not using nixos-anywhere.
   fileSystems."/" = {
-    device = "zroot/ROOT";
-    fsType = "zfs";
-  };
-
-  fileSystems."/home" = {
-    device = "zroot/home";
-    fsType = "zfs";
+    device = "none";
+    fsType = "tmpfs";
+    options = ["defaults" "size=20%" "mode=755"];
   };
 
   fileSystems."/nix" = {
@@ -35,9 +30,34 @@
     fsType = "zfs";
   };
 
+  fileSystems."/var/lib" = {
+    device = "zroot/var/lib";
+    fsType = "zfs";
+    neededForBoot = true;
+  };
+
+  fileSystems."/var/log" = {
+    device = "zroot/var/log";
+    fsType = "zfs";
+    neededForBoot = true;
+  };
+
+  fileSystems."/var/cache" = {
+    device = "zroot/var/cache";
+    fsType = "zfs";
+    neededForBoot = true;
+  };
+
+  fileSystems."/var/tmp" = {
+    device = "zroot/var/tmp";
+    fsType = "zfs";
+    neededForBoot = true;
+  };
+
   fileSystems."/persist" = {
     device = "zroot/persist";
     fsType = "zfs";
+    neededForBoot = true;
   };
 
   fileSystems."/efi" = {
@@ -46,7 +66,9 @@
     options = ["fmask=0077" "dmask=0077"];
   };
 
-  swapDevices = [{device = "/dev/disk/by-uuid/19b40077-ca17-4cf7-b21f-09f0f746fdbb";}];
+  swapDevices = [
+    {device = "/dev/disk/by-uuid/19b40077-ca17-4cf7-b21f-09f0f746fdbb";}
+  ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

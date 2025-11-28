@@ -4,15 +4,17 @@
 {
   lib,
   pkgs,
-  secrets,
+  impermanence,
   nix-index-database,
+  secrets,
   hostname,
   hostId,
   ...
 }: {
   imports = [
-    secrets.nixosModules.default
+    impermanence.nixosModules.impermanence
     nix-index-database.nixosModules.nix-index
+    secrets.nixosModules.default
     ./modules/tmux.nix
     ./modules/jdk.nix
     ./modules/vfio.nix
@@ -36,6 +38,12 @@
 
   # Automatically scrub ZFS pools weekly.
   services.zfs.autoScrub.enable = true;
+
+  environment.persistence."/persist" = {
+    enable = true;
+    hideMounts = true;
+    directories = ["/etc/NetworkManager"];
+  };
 
   security.doas.enable = true;
   security.sudo.enable = false;

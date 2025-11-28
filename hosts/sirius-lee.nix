@@ -1,11 +1,9 @@
 {
-  pkgs,
   lib,
+  pkgs,
   ...
 }: {
   imports = [
-    ../modules/rollback-tmp.nix
-
     ../modules/desktop/full.nix
     # ../modules/desktop/gnome/full.nix
     # ../modules/desktop/ibus.nix

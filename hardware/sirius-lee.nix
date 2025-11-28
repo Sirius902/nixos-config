@@ -20,8 +20,9 @@
   boot.zfs.extraPools = ["futomaki"];
 
   fileSystems."/" = {
-    device = "zroot/ROOT";
-    fsType = "zfs";
+    device = "none";
+    fsType = "tmpfs";
+    options = ["defaults" "size=20%" "mode=755"];
   };
 
   fileSystems."/nix" = {
@@ -29,9 +30,28 @@
     fsType = "zfs";
   };
 
-  fileSystems."/tmp" = {
-    device = "zroot/tmp";
+  fileSystems."/var/lib" = {
+    device = "zroot/var/lib";
     fsType = "zfs";
+    neededForBoot = true;
+  };
+
+  fileSystems."/var/log" = {
+    device = "zroot/var/log";
+    fsType = "zfs";
+    neededForBoot = true;
+  };
+
+  fileSystems."/var/cache" = {
+    device = "zroot/var/cache";
+    fsType = "zfs";
+    neededForBoot = true;
+  };
+
+  fileSystems."/var/tmp" = {
+    device = "zroot/var/tmp";
+    fsType = "zfs";
+    neededForBoot = true;
   };
 
   fileSystems."/persist" = {

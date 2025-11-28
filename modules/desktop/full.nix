@@ -32,32 +32,7 @@
   # Related https://github.com/NixOS/nixpkgs/pull/432610.
   networking.firewall.trustedInterfaces = ["virbr0"];
 
-  # Symlink /persist/etc/libvirt to /etc/libvirt
-  environment.etc."libvirt".source = "/persist/etc/libvirt";
-
-  fileSystems."/var/lib/libvirt" = {
-    device = "/persist/var/lib/libvirt";
-    fsType = "none";
-    options = ["bind" "noauto"];
-  };
-
-  systemd.services.libvirtd = {
-    preStart = ''
-      mkdir -p /var/lib/libvirt/hooks/
-      ln -sf /persist/qemu-hooks/qemu /var/lib/libvirt/hooks/qemu
-      ln -sf /persist/qemu-hooks/kvm.conf /var/lib/libvirt/hooks/kvm.conf
-
-      mkdir -p /var/lib/libvirt/hooks/qemu.d/win11-vfio/prepare/begin/
-      mkdir -p /var/lib/libvirt/hooks/qemu.d/win11-vfio/release/end/
-      ln -sf /persist/qemu-hooks/vfio/start.sh /var/lib/libvirt/hooks/qemu.d/win11-vfio/prepare/begin/start.sh
-      ln -sf /persist/qemu-hooks/vfio/stop.sh /var/lib/libvirt/hooks/qemu.d/win11-vfio/release/end/stop.sh
-
-      mkdir -p /var/lib/libvirt/hooks/qemu.d/win10-vfio/prepare/begin/
-      mkdir -p /var/lib/libvirt/hooks/qemu.d/win10-vfio/release/end/
-      ln -sf /persist/qemu-hooks/vfio/start.sh /var/lib/libvirt/hooks/qemu.d/win10-vfio/prepare/begin/start.sh
-      ln -sf /persist/qemu-hooks/vfio/stop.sh /var/lib/libvirt/hooks/qemu.d/win10-vfio/release/end/stop.sh
-    '';
-  };
+  environment.persistence."/persist".directories = ["/etc/libvirt"];
 
   users.users.chris.extraGroups = ["libvirtd" "openrazer"];
 
