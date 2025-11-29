@@ -79,7 +79,7 @@
   fileSystems."/swap" = {
     device = "/dev/disk/by-label/rootfs";
     fsType = "btrfs";
-    options = ["subvol=@swap" "noatime"];
+    options = ["subvol=@swap" "compress=no" "noatime"];
   };
 
   fileSystems."/boot" = {
