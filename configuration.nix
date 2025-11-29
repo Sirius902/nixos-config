@@ -114,6 +114,7 @@
     fastfetch
     file
     fzf
+    htop
     just
     liquidctl
     lm_sensors

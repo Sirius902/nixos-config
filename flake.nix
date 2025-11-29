@@ -382,6 +382,13 @@
               ./hosts/iso/configuration.nix
             ];
           };
+
+          raspberrypi = nixpkgs.lib.nixosSystem {
+            specialArgs = {inherit inputs;};
+            modules = [
+              ./hosts/raspberrypi/configuration.nix
+            ];
+          };
         };
 
         darwinConfigurations = let
