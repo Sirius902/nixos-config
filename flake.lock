@@ -250,11 +250,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1764138170,
-        "narHash": "sha256-2bCmfCUZyi2yj9FFXYKwsDiaZmizN75cLhI/eWmf3tk=",
+        "lastModified": 1764261142,
+        "narHash": "sha256-dHDas3fNxX4OyN7Vdk5rpvAJYieXrZldm/UtW9IC0h4=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "bb813de6d2241bcb1b5af2d3059f560c66329967",
+        "rev": "43b1eefcc27068dd3c35af4bb7519ac5ff12a337",
         "type": "github"
       },
       "original": {
@@ -270,11 +270,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1764202981,
-        "narHash": "sha256-ImdHxPqL3LEitNIyVb+nTvYE5PuFypHeR6soPwTCy9I=",
+        "lastModified": 1764379963,
+        "narHash": "sha256-jq8flTA1njD/VvXDGlyej5enmh6tvKVAaHkwoqNsDHw=",
         "owner": "Sirius902",
         "repo": "nvim-conf",
-        "rev": "0e265db3258329158b056e713b8ff837bc29a88e",
+        "rev": "045a06fdf36edc635355b74bfad942ed8e501ae6",
         "type": "github"
       },
       "original": {
@@ -352,11 +352,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1764203162,
-        "narHash": "sha256-vrSxsQ25YB5w5ikxQNUAbqtorvpysJIF1MSzv2DSyqw=",
+        "lastModified": 1764381815,
+        "narHash": "sha256-fXAh6EgFtRhw3fzd9nI4LefC3oKWcYcfulOoNcFz95Q=",
         "ref": "refs/heads/main",
-        "rev": "a6cbce320db474e738b83a9e413222e9b5384370",
-        "revCount": 56,
+        "rev": "1081cb265968cf267a1c6be84e175ae6fe88cb7d",
+        "revCount": 59,
         "type": "git",
         "url": "ssh://git@github.com/Sirius902/nixos-secrets"
       },
