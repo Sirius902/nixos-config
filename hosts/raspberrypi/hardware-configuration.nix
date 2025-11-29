@@ -82,7 +82,15 @@
     options = ["subvol=@swap" "noatime"];
   };
 
-  swapDevices = [{device = "/swap/swapfile";}];
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/2178-694E";
+    fsType = "vfat";
+    options = ["fmask=0077" "dmask=0077"];
+  };
+
+  swapDevices = [
+    {device = "/swap/swapfile";}
+  ];
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 }
