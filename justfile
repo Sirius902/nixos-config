@@ -12,6 +12,9 @@ switch *FLAGS:
 switch-darwin *FLAGS:
     darwin-rebuild switch --flake "path:.#{{ host }}" {{ FLAGS }}
 
+build-iso:
+    nix --extra-experimental-features "nix-command flakes" build "path:.#nixosConfigurations.iso.config.system.build.isoImage"
+
 anywhere host ip:
     #!/usr/bin/env bash
     temp=$(mktemp -d)

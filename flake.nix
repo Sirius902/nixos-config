@@ -373,6 +373,14 @@
                 }
               ];
             };
+
+          iso = nixpkgs.lib.nixosSystem {
+            modules = [
+              "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-gnome.nix"
+              "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+              ./hosts/iso/configuration.nix
+            ];
+          };
         };
 
         darwinConfigurations = let
