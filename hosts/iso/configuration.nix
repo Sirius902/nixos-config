@@ -1,10 +1,12 @@
 {
+  inputs,
   lib,
   pkgs,
   ...
 }: {
   nixpkgs = {
     hostPlatform = lib.mkDefault "x86_64-linux";
+    overlays = [inputs.nvim-conf.overlays.default];
     config.allowUnfree = true;
   };
 
@@ -15,12 +17,14 @@
     zfs.package = pkgs.zfs_unstable;
   };
 
-  services = {
-    openssh.settings.PermitRootLogin = "yes";
-  };
+  environment.systemPackages = [
+    pkgs.ghostty
+    pkgs.just
+    pkgs.nvim
+    pkgs.pv
+  ];
 
-  users.users.root = {
-    initialHashedPassword = lib.mkForce null;
-    initialPassword = "nixos";
+  users.users.nixos = {
+    openssh.authorizedKeys.keys = inputs.secrets.lib.opensshKeys;
   };
 }

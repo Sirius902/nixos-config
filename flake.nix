@@ -375,6 +375,7 @@
             };
 
           iso = nixpkgs.lib.nixosSystem {
+            specialArgs = {inherit inputs;};
             modules = [
               "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-gnome.nix"
               "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
