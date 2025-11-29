@@ -20,59 +20,59 @@
   fileSystems."/" = {
     device = "/dev/disk/by-label/rootfs";
     fsType = "btrfs";
-    options = ["subvol=@" "compression=zstd" "noatime"];
+    options = ["subvol=@" "compress=zstd" "noatime"];
   };
 
   fileSystems."/nix" = {
     device = "/dev/disk/by-label/rootfs";
     fsType = "btrfs";
-    options = ["subvol=@nix" "compression=zstd" "noatime"];
+    options = ["subvol=@nix" "compress=zstd" "noatime"];
   };
 
   fileSystems."/tmp" = {
     device = "/dev/disk/by-label/rootfs";
     fsType = "btrfs";
-    options = ["subvol=@tmp" "compression=zstd:1" "noatime"];
+    options = ["subvol=@tmp" "compress=zstd:1" "noatime"];
   };
 
   fileSystems."/home/chris" = {
     device = "/dev/disk/by-label/rootfs";
     fsType = "btrfs";
-    options = ["subvol=@home-chris" "compression=zstd" "noatime"];
+    options = ["subvol=@home-chris" "compress=zstd" "noatime"];
   };
 
   fileSystems."/persist" = {
     device = "/dev/disk/by-label/rootfs";
     fsType = "btrfs";
-    options = ["subvol=@persist" "compression=zstd" "noatime"];
+    options = ["subvol=@persist" "compress=zstd" "noatime"];
     neededForBoot = true;
   };
 
   fileSystems."/var/cache" = {
     device = "/dev/disk/by-label/rootfs";
     fsType = "btrfs";
-    options = ["subvol=@var-cache" "compression=zstd" "noatime"];
+    options = ["subvol=@var-cache" "compress=zstd:1" "noatime"];
     neededForBoot = true;
   };
 
   fileSystems."/var/lib" = {
     device = "/dev/disk/by-label/rootfs";
     fsType = "btrfs";
-    options = ["subvol=@var-lib" "compression=zstd" "noatime"];
+    options = ["subvol=@var-lib" "compress=zstd" "noatime"];
     neededForBoot = true;
   };
 
   fileSystems."/var/log" = {
     device = "/dev/disk/by-label/rootfs";
     fsType = "btrfs";
-    options = ["subvol=@var-log" "compression=zstd" "noatime"];
+    options = ["subvol=@var-log" "compress=zstd" "noatime"];
     neededForBoot = true;
   };
 
   fileSystems."/var/tmp" = {
     device = "/dev/disk/by-label/rootfs";
     fsType = "btrfs";
-    options = ["subvol=@var-tmp" "compression=zstd:1" "noatime"];
+    options = ["subvol=@var-tmp" "compress=zstd:1" "noatime"];
     neededForBoot = true;
   };
 
