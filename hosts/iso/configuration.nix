@@ -27,4 +27,6 @@
   users.users.nixos = {
     openssh.authorizedKeys.keys = inputs.secrets.lib.opensshKeys;
   };
+
+  system.stateVersion = "26.05";
 }
