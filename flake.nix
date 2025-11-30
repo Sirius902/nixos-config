@@ -390,6 +390,13 @@
             ];
           };
 
+          sd = nixpkgs.lib.nixosSystem {
+            specialArgs = {inherit inputs;};
+            modules = [
+              ./hosts/sd/configuration.nix
+            ];
+          };
+
           netboot = nixpkgs.lib.nixosSystem {
             specialArgs = {inherit inputs;};
             modules = [
