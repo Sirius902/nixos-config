@@ -41,6 +41,12 @@
     options = ["subvol=@home-chris" "compress=zstd" "noatime"];
   };
 
+  fileSystems."/home/chris/.cache" = {
+    device = "/dev/disk/by-label/rootfs";
+    fsType = "btrfs";
+    options = ["subvol=@home-chris-cache" "compress=zstd:1" "noatime"];
+  };
+
   fileSystems."/persist" = {
     device = "/dev/disk/by-label/rootfs";
     fsType = "btrfs";
@@ -82,7 +88,7 @@
     options = ["subvol=@swap" "compress=no" "noatime"];
   };
 
-  fileSystems."/boot" = {
+  fileSystems."/boot/firmware" = {
     device = "/dev/disk/by-uuid/2178-694E";
     fsType = "vfat";
     options = ["fmask=0077" "dmask=0077"];
