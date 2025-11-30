@@ -389,6 +389,13 @@
               ./hosts/raspberrypi/configuration.nix
             ];
           };
+
+          netboot = nixpkgs.lib.nixosSystem {
+            specialArgs = {inherit inputs;};
+            modules = [
+              ./hosts/netboot/configuration.nix
+            ];
+          };
         };
 
         darwinConfigurations = let
