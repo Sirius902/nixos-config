@@ -1,8 +1,8 @@
 {
   inputs,
   lib,
-  pkgs,
   modulesPath,
+  pkgs,
   ...
 }: {
   imports = [
@@ -16,9 +16,11 @@
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   environment.systemPackages = [
+    pkgs.htop
     pkgs.just
     pkgs.neovim
-    pkgs.htop
+    pkgs.nvd
+    pkgs.wakeonlan
   ];
 
   sdImage.compressImage = false;
