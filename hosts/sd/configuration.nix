@@ -7,6 +7,8 @@
 }: {
   imports = [
     (modulesPath + "/installer/sd-card/sd-image-aarch64-installer.nix")
+    ../../modules/openssh.nix
+    ../../modules/tmux.nix
   ];
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
@@ -15,14 +17,11 @@
 
   environment.systemPackages = [
     pkgs.just
+    pkgs.neovim
+    pkgs.htop
   ];
 
-  sdImage = {
-    firmwareSize = 512;
-    compressImage = false;
-  };
-
-  services.openssh.enable = true;
+  sdImage.compressImage = false;
 
   users.users.nixos = {
     openssh.authorizedKeys.keys = inputs.secrets.lib.opensshKeys;
