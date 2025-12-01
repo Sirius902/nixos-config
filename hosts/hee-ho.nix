@@ -13,6 +13,8 @@
   networking.firewall.allowedTCPPorts = [25565 25566 32069];
   networking.firewall.allowedUDPPorts = [25565 25566 32069];
 
+  # Must be enabled due to https://github.com/tailscale/tailscale/issues/4254.
+  services.resolved.enable = true;
   services.tailscale.useRoutingFeatures = "server";
 
   services.cron = {
