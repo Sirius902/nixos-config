@@ -40,6 +40,8 @@
 
   services.flatpak.enable = true;
 
+  services.tailscale.useRoutingFeatures = "client";
+
   my.vfio = {
     enable = true;
     amd.enable = true;

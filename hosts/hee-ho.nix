@@ -13,6 +13,8 @@
   networking.firewall.allowedTCPPorts = [25565 25566 32069];
   networking.firewall.allowedUDPPorts = [25565 25566 32069];
 
+  services.tailscale.useRoutingFeatures = "server";
+
   services.cron = {
     enable = true;
     systemCronJobs = [
