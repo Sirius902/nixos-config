@@ -127,6 +127,7 @@
     sops
     usbutils
     xxd
+    wget
   ];
 
   my.jdk = lib.mkDefault pkgs.graalvmPackages.graalvm-oracle;
