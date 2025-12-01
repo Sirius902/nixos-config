@@ -1,13 +1,20 @@
 {
   inputs,
   lib,
+  modulesPath,
   pkgs,
   ...
 }: {
+  imports = [
+    (modulesPath + "installer/cd-dvd/installation-cd-graphical-gnome.nix")
+    (modulesPath + "installer/cd-dvd/channel.nix")
+    ../../modules/openssh.nix
+    ../../modules/tmux.nix
+  ];
+
   nixpkgs = {
     hostPlatform = lib.mkDefault "x86_64-linux";
     overlays = [inputs.nvim-conf.overlays.default];
-    config.allowUnfree = true;
   };
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
@@ -19,6 +26,8 @@
 
   environment.systemPackages = [
     pkgs.ghostty
+    pkgs.git
+    pkgs.htop
     pkgs.just
     pkgs.nvim
     pkgs.pv

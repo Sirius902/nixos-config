@@ -1,23 +1,25 @@
 {
   inputs,
   lib,
-  pkgs,
   modulesPath,
+  pkgs,
   ...
 }: {
   imports = [
     (modulesPath + "/installer/netboot/netboot-minimal.nix")
+    ../../modules/openssh.nix
+    ../../modules/tmux.nix
   ];
 
-  nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   environment.systemPackages = [
+    pkgs.htop
+    pkgs.just
     pkgs.neovim
   ];
-
-  services.openssh.enable = true;
 
   users.users.nixos = {
     openssh.authorizedKeys.keys = inputs.secrets.lib.opensshKeys;
