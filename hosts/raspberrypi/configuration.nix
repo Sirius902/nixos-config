@@ -30,6 +30,7 @@
   boot.kernelPackages = pkgs.linuxPackages_rpi3;
   hardware.enableRedistributableFirmware = true;
 
+  # FUTURE(Sirius902) Rollback root + tmp via btrfs snapshots.
   environment.persistence."/persist" = {
     enable = true;
     hideMounts = true;
