@@ -138,8 +138,8 @@ in
       ./disable-downloading-stb_image.patch
       (fetchpatch {
         name = "triforce-hunt-gbk.patch";
-        url = "https://github.com/Sirius902/Shipwright/commit/b4540f243cd0f9c547c308140dc054735966b551.patch";
-        hash = "sha256-NWwr3flsimzd28sU0gacxR4ndeByhMw/A/lhtu4Fyec=";
+        url = "https://github.com/Sirius902/Shipwright/commit/420fc9c211e2f9fc0ac93d4d95303bdb75397413.patch";
+        hash = "sha256-jNNhcvndrovpOjadidpGJYp6gvMYZwjiakDI+sTWcGY=";
       })
     ];
 
