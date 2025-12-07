@@ -290,7 +290,12 @@ in
       })
     ];
 
-    passthru.updateScript = nix-update-script {extraArgs = ["--version=branch"];};
+    passthru.updateScript = nix-update-script {
+      extraArgs = [
+        "--version=branch"
+        "--version-regex=([0-9].*)"
+      ];
+    };
 
     meta = {
       homepage = "https://github.com/HarbourMasters/2ship2harkinian";
