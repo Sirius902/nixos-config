@@ -38,7 +38,7 @@ sdl3.overrideAttrs (finalAttrs: prevAttrs: {
     // {
       updateScript = nix-update-script {
         extraArgs = [
-          "--version=branch=preview-3.3.2"
+          "--version=branch=prerelease-3.3.4"
           "--version-regex=release-(3\\..*)"
         ];
       };
