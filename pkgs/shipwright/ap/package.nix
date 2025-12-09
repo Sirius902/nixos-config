@@ -41,6 +41,7 @@
   openssl,
   valijson,
   websocketpp,
+  fetchpatch2,
   nix-update-script,
 }: let
   # The following would normally get fetched at build time, or a specific version is required
@@ -117,11 +118,20 @@
     hash = "sha256-CSYIpmq478bla2xoPL/cGYKIWAeiORxyFFZr0+ixd7I";
   };
 
-  wswrap = fetchFromGitHub {
-    owner = "black-sliver";
-    repo = "wswrap";
-    rev = "47438193ec50427ee28aadf294ba57baefd9f3f1";
-    hash = "sha256-WWXi/OWfaC40V+tV4JNmVM8kImozuwaiRLeSdhIf0X8=";
+  wswrap = applyPatches {
+    src = fetchFromGitHub {
+      owner = "black-sliver";
+      repo = "wswrap";
+      rev = "47438193ec50427ee28aadf294ba57baefd9f3f1";
+      hash = "sha256-WWXi/OWfaC40V+tV4JNmVM8kImozuwaiRLeSdhIf0X8=";
+    };
+    patches = [
+      (fetchpatch2 {
+        name = "boost-1_87-fix.patch";
+        url = "https://github.com/Sirius902/wswrap/commit/455e50470f4b4213d654251ad5ca223370f99287.patch?full_index=1";
+        hash = "sha256-pTZdM2aqSJkTm+EYpX0qAA6afmbHZDzb08rbgp39lmA=";
+      })
+    ];
   };
 
   apclientpp = fetchFromGitHub {
