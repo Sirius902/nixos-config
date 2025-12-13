@@ -109,7 +109,7 @@
     heroic
     keymapp
     krita
-    libreoffice-qt
+    libreoffice
     lunar-client
     mangohud
     ntfs3g
