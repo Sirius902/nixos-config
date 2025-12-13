@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?rev=894dac4f6aec40f0bbaeffd23a2c4956cc2a85f4";
+    nixpkgs-hydra.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -199,6 +200,15 @@
                     '';
                 });
               };
+          })
+
+          (final: prev: let
+            pkgs = import inputs.nixpkgs-hydra {
+              inherit system;
+              config.allowUnfree = true;
+            };
+          in {
+            inherit (pkgs) librewolf-unwrapped;
           })
         ];
         config.allowUnfree = true;
