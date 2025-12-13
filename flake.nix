@@ -2,7 +2,7 @@
   description = "My NixOS and nix-darwin configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?rev=894dac4f6aec40f0bbaeffd23a2c4956cc2a85f4";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
