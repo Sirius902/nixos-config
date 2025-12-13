@@ -153,13 +153,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright-ap";
-    version = "0-unstable-2025-11-02";
+    version = "0-unstable-2025-12-10";
 
     src = fetchFromGitHub {
-      owner = "aMannus";
+      owner = "Patrick12115";
       repo = "shipwright";
-      rev = "8ce808fb5313ad0419b7c2b77a95844a721a1019";
-      hash = "sha256-LHBk3guaopMjPGUn6nL/Rw7kphZvwG1g6CaFp2r4RnI=";
+      rev = "562d38c6d50dd99438b23fc205013cdce70b2ee9";
+      hash = "sha256-mhzRmlF/9AqYyOm8SieHHyGPq9CDwcYxwWXrAGHvJ6A=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
@@ -352,7 +352,7 @@ in
       })
     ];
 
-    passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=aManchipelago"];};
+    passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=Prevent-Anchor-Sync-in-AP"];};
 
     meta = {
       homepage = "https://github.com/HarbourMasters/Shipwright";
