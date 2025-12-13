@@ -58,4 +58,6 @@
     pkgs.shipwright-ap
     pkgs.zelda64recomp
   ];
+
+  programs.librepods.enable = true;
 }
