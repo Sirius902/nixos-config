@@ -18,9 +18,8 @@
   boot.extraModulePackages = [];
 
   fileSystems."/" = {
-    device = "none";
     fsType = "tmpfs";
-    options = ["defaults" "size=20%" "mode=755"];
+    options = ["mode=0755" "size=20%"];
   };
 
   fileSystems."/nix" = {
