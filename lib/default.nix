@@ -3,6 +3,7 @@
     system,
     host,
     nixpkgs ? inputs.nixpkgs,
+    setHostName ? true,
   }:
     nixpkgs.lib.nixosSystem {
       inherit system;
@@ -11,7 +12,7 @@
         (../. + "/hosts/${host}/configuration.nix")
 
         ({lib, ...}: {
-          networking.hostName = lib.mkDefault host;
+          networking.hostName = lib.mkIf setHostName host;
         })
       ];
     };

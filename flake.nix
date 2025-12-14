@@ -71,6 +71,24 @@
           iso = self.lib.nixosSystem {
             system = "x86_64-linux";
             host = "iso";
+            setHostName = false;
+          };
+
+          netboot = self.lib.nixosSystem {
+            system = "x86_64-linux";
+            host = "netboot";
+            setHostName = false;
+          };
+
+          raspberrypi = self.lib.nixosSystem {
+            system = "aarch64-linux";
+            host = "raspberrypi";
+          };
+
+          sd = self.lib.nixosSystem {
+            system = "aarch64-linux";
+            host = "sd";
+            setHostName = false;
           };
         };
 
