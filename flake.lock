@@ -54,11 +54,11 @@
         "nixpkgs-lib": "nixpkgs-lib_2"
       },
       "locked": {
-        "lastModified": 1763759067,
-        "narHash": "sha256-LlLt2Jo/gMNYAwOgdRQBrsRoOz7BPRkzvNaI/fzXi2Q=",
+        "lastModified": 1765495779,
+        "narHash": "sha256-MhA7wmo/7uogLxiewwRRmIax70g6q1U/YemqTGoFHlM=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "2cccadc7357c0ba201788ae99c4dfa90728ef5e0",
+        "rev": "5635c32d666a59ec9a55cab87e898889869f7b71",
         "type": "github"
       },
       "original": {
@@ -266,11 +266,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1764261142,
-        "narHash": "sha256-dHDas3fNxX4OyN7Vdk5rpvAJYieXrZldm/UtW9IC0h4=",
+        "lastModified": 1765457389,
+        "narHash": "sha256-ddhDtNYvleZeYF7g7TRFSmuQuZh7HCgqstg5YBGwo5s=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "43b1eefcc27068dd3c35af4bb7519ac5ff12a337",
+        "rev": "f997fa0f94fb1ce55bccb97f60d41412ae8fde4c",
         "type": "github"
       },
       "original": {
@@ -286,11 +286,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1764379963,
-        "narHash": "sha256-jq8flTA1njD/VvXDGlyej5enmh6tvKVAaHkwoqNsDHw=",
+        "lastModified": 1765674464,
+        "narHash": "sha256-qfWFzXifT5lpdqUpmfrTztQpQS2X+WAzNVkwKxetUP8=",
         "owner": "Sirius902",
         "repo": "nvim-conf",
-        "rev": "045a06fdf36edc635355b74bfad942ed8e501ae6",
+        "rev": "61b5b2639242f97aa7b60c8c64115ad1e190b2c2",
         "type": "github"
       },
       "original": {
@@ -369,11 +369,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1764381815,
-        "narHash": "sha256-fXAh6EgFtRhw3fzd9nI4LefC3oKWcYcfulOoNcFz95Q=",
+        "lastModified": 1765674657,
+        "narHash": "sha256-0J1Tc2Dx1DfmAtr7NzWOz769DF5lpBJ92rW7KBc7dUA=",
         "ref": "refs/heads/main",
-        "rev": "1081cb265968cf267a1c6be84e175ae6fe88cb7d",
-        "revCount": 59,
+        "rev": "dd600cd9d38da6398eba684a4d04ea4be8d582ba",
+        "revCount": 61,
         "type": "git",
         "url": "ssh://git@github.com/Sirius902/nixos-secrets"
       },
