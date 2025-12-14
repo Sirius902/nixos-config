@@ -9,11 +9,6 @@
   ];
 
   hardware = {
-    openrazer = {
-      enable = true;
-      batteryNotifier.enable = false;
-      syncEffectsEnabled = true;
-    };
     keyboard.zsa.enable = true;
   };
 
@@ -34,7 +29,7 @@
 
   environment.persistence."/persist".directories = ["/etc/libvirt"];
 
-  users.users.chris.extraGroups = ["libvirtd" "openrazer"];
+  users.users.chris.extraGroups = ["libvirtd"];
 
   programs = {
     steam = {
@@ -100,7 +95,6 @@
     gcviewer
     gcfeederd
     gimp3
-    godot_4
     imhex
     inkscape
     jetbrains.idea-community
@@ -110,7 +104,6 @@
     keymapp
     krita
     libreoffice
-    lunar-client
     mangohud
     ntfs3g
     (wrapOBS {
@@ -119,8 +112,6 @@
       ];
     })
     openmw
-    openrazer-daemon
-    polychromatic
     (prismlauncher.override {
       jdks = [
         temurin-bin-8
@@ -132,7 +123,7 @@
     scarab
     spotify
     sticky-notes
-    transmission_4-qt
+    transmission_4-gtk
     (discord-canary.override {withMoonlight = true;})
     vlc
     wineWowPackages.stagingFull
