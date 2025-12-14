@@ -1,4 +1,4 @@
-host := `cat ./host`
+host := `[ "$(uname -s)" = Darwin ] && scutil --get LocalHostName || hostname`
 
 default:
     just --list

@@ -1,14 +1,26 @@
 {
-  self,
+  inputs,
   pkgs,
-  secrets,
-  nix-index-database,
   ...
 }: {
   imports = [
-    secrets.darwinModules.default
-    nix-index-database.darwinModules.nix-index
-    ../modules/tmux.nix
+    ../nixpkgs.nix
+    inputs.secrets.darwinModules.default
+    inputs.nix-index-database.darwinModules.default
+    ../tmux.nix
+
+    inputs.home-manager.darwinModules.default
+    {
+      home-manager.useGlobalPkgs = true;
+      home-manager.useUserPackages = true;
+      home-manager.extraSpecialArgs = {inherit inputs;};
+      home-manager.users.chris = {
+        imports = [
+          ../home/default.nix
+          ../home/ghostty/default.nix
+        ];
+      };
+    }
   ];
 
   # List packages installed in system profile. To search by name, run:
@@ -25,7 +37,7 @@
   # programs.fish.enable = true;
 
   # Set Git commit hash for darwin-version.
-  system.configurationRevision = self.rev or self.dirtyRev or null;
+  system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog

@@ -1,9 +1,15 @@
 {
   inputs,
   lib,
+  modulesPath,
   pkgs,
   ...
 }: {
+  imports = [
+    (modulesPath + "/installer/cd-dvd/installation-cd-graphical-gnome.nix")
+    (modulesPath + "/installer/cd-dvd/channel.nix")
+  ];
+
   nixpkgs = {
     hostPlatform = lib.mkDefault "x86_64-linux";
     overlays = [inputs.nvim-conf.overlays.default];

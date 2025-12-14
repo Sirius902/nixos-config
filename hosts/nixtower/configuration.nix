@@ -1,5 +1,10 @@
 {lib, ...}: {
-  imports = [./sirius-lee.nix];
+  imports = [
+    ./hardware-configuration.nix
+    ../sirius-lee/default.nix
+  ];
+
+  networking.hostId = lib.mkForce "1a14084a";
 
   boot.zfs.requestEncryptionCredentials = false;
 

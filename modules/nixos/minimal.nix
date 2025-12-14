@@ -2,22 +2,27 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 {
+  inputs,
   lib,
   pkgs,
-  impermanence,
-  nix-index-database,
-  secrets,
-  hostname,
-  hostId,
   ...
 }: {
   imports = [
-    impermanence.nixosModules.impermanence
-    nix-index-database.nixosModules.nix-index
-    secrets.nixosModules.default
-    ./modules/tmux.nix
-    ./modules/jdk.nix
-    ./modules/vfio.nix
+    ../nixpkgs.nix
+    inputs.impermanence.nixosModules.default
+    inputs.nix-index-database.nixosModules.default
+    inputs.secrets.nixosModules.default
+    ../tmux.nix
+    ../jdk.nix
+    ../vfio.nix
+
+    inputs.home-manager.nixosModules.default
+    {
+      home-manager.useGlobalPkgs = true;
+      home-manager.useUserPackages = true;
+      home-manager.extraSpecialArgs = {inherit inputs;};
+      home-manager.users.chris = import ../home/default.nix;
+    }
   ];
 
   nix.settings = {
@@ -60,9 +65,6 @@
     }
   ];
 
-  networking.hostId = hostId;
-
-  networking.hostName = hostname; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -120,14 +122,17 @@
     liquidctl
     lm_sensors
     nvd
+    p7zip
     parted
     pciutils
     pv
     ripgrep
     sops
+    unzip
     usbutils
     xxd
     wget
+    zip
   ];
 
   my.jdk = lib.mkDefault pkgs.graalvmPackages.graalvm-oracle;

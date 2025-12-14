@@ -5,9 +5,14 @@
   ...
 }: {
   imports = [
-    ../modules/documentation.nix
-    ../modules/tailscale.nix
+    ./hardware-configuration.nix
+    ../../modules/nixos/minimal.nix
+    ../../modules/openssh.nix
+    ../../modules/documentation.nix
+    ../../modules/tailscale.nix
   ];
+
+  networking.hostId = "b0e08309";
 
   # Allow ports for mc and hkmp.
   networking.firewall.allowedTCPPorts = [25565 25566 32069];

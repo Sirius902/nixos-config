@@ -1,0 +1,6 @@
+{inputs, ...}: {
+  nixpkgs = {
+    overlays = import ../overlays/default.nix {inherit inputs;};
+    config.allowUnfree = true;
+  };
+}
