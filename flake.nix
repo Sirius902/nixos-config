@@ -1,8 +1,9 @@
 {
-  description = "My NixOS and nix-darwin configuration";
+  description = "My NixOS and nix-darwin configurations";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs?rev=23735a82a828372c4ef92c660864e82fbe2f5fbe";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -35,13 +36,15 @@
 
   outputs = {
     self,
-    nixpkgs,
     nix-darwin,
     nvim-conf,
     flake-parts,
     ...
   } @ inputs: let
-    importPkgs = system:
+    importPkgs = {
+      system,
+      nixpkgs ? inputs.nixpkgs,
+    }:
       import nixpkgs {
         inherit system;
         overlays = [
@@ -213,7 +216,7 @@
       ];
 
       perSystem = {system, ...}: let
-        pkgs = importPkgs system;
+        pkgs = importPkgs {inherit system;};
         inherit (pkgs) lib;
       in {
         formatter = pkgs.alejandra;
@@ -273,7 +276,8 @@
         in {
           sirius-lee = let
             system = "x86_64-linux";
-            pkgs = importPkgs system;
+            nixpkgs = inputs.nixpkgs-unstable;
+            pkgs = importPkgs {inherit system nixpkgs;};
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "sirius-lee";
               hostId = "49e32584";
@@ -310,7 +314,8 @@
 
           nixtower = let
             system = "x86_64-linux";
-            pkgs = importPkgs system;
+            nixpkgs = inputs.nixpkgs-unstable;
+            pkgs = importPkgs {inherit system nixpkgs;};
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "nixtower";
               hostId = "1a14084a";
@@ -347,7 +352,8 @@
 
           hee-ho = let
             system = "x86_64-linux";
-            pkgs = importPkgs system;
+            nixpkgs = inputs.nixpkgs;
+            pkgs = importPkgs {inherit system;};
             args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
               hostname = "hee-ho";
               hostId = "b0e08309";
@@ -374,19 +380,23 @@
               ];
             };
 
-          iso = nixpkgs.lib.nixosSystem {
-            specialArgs = {inherit inputs;};
-            modules = [
-              "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-gnome.nix"
-              "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-              ./hosts/iso/configuration.nix
-            ];
-          };
+          iso = let
+            nixpkgs = inputs.nixpkgs;
+          in
+            nixpkgs.lib.nixosSystem {
+              specialArgs = {inherit inputs;};
+              modules = [
+                "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-gnome.nix"
+                "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+                ./hosts/iso/configuration.nix
+              ];
+            };
         };
 
         darwinConfigurations = let
           system = "aarch64-darwin";
-          pkgs = importPkgs system;
+          nixpkgs = inputs.nixpkgs;
+          pkgs = importPkgs {inherit system;};
           home-manager = inputs.home-manager.darwinModules.home-manager;
 
           args = nixpkgs.lib.attrsets.unionOfDisjoint inputs {
