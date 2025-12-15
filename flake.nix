@@ -47,21 +47,78 @@
         "aarch64-darwin"
       ];
 
-      flake = {
+      flake = let
+        mkNixpkgsLibrepods = {
+          system,
+          nixpkgs,
+        }:
+          nixpkgs.legacyPackages.${system}.applyPatches {
+            name = "nixpkgs-librepods";
+            src = nixpkgs;
+            patches = [
+              # Add librepods https://github.com/NixOS/nixpkgs/pull/444137
+              (builtins.fetchurl {
+                name = "add-librepods.patch";
+                url = "https://github.com/NixOS/nixpkgs/compare/78a51b69699c3f6b366dc5c2fb62a567b8334459...1c229bf6f394e65227854061b7d7e5ffa7753ae5.patch?full_index=1";
+                sha256 = "sha256:1b8nny6k1vyyc1lnf123br5w0p006sj8r8ac65v9afk0cgvd0cay";
+              })
+            ];
+          };
+      in {
         lib = import ./lib/default.nix {inherit inputs;};
 
         nixosConfigurations = {
-          sirius-lee = self.lib.nixosSystem {
+          sirius-lee = let
             system = "x86_64-linux";
-            host = "sirius-lee";
             nixpkgs = inputs.nixpkgs-unstable;
-          };
+            nixpkgs' = mkNixpkgsLibrepods {inherit system nixpkgs;};
+            pkgs' = import nixpkgs' {
+              inherit system;
+              overlays = import ./overlays/default.nix {inherit inputs;};
+              config.allowUnfree = true;
+            };
+          in
+            self.lib.nixosSystem {
+              inherit system nixpkgs;
+              host = "sirius-lee";
+              extraModules = [
+                (import "${nixpkgs'}/nixos/modules/programs/librepods.nix")
 
-          nixtower = self.lib.nixosSystem {
+                ({lib, ...}: {
+                  nixpkgs.overlays = lib.mkAfter [
+                    (final: prev: {
+                      inherit (pkgs') librepods;
+                    })
+                  ];
+                })
+              ];
+            };
+
+          nixtower = let
             system = "x86_64-linux";
-            host = "nixtower";
             nixpkgs = inputs.nixpkgs-unstable;
-          };
+            nixpkgs' = mkNixpkgsLibrepods {inherit system nixpkgs;};
+            pkgs' = import nixpkgs' {
+              inherit system;
+              overlays = import ./overlays/default.nix {inherit inputs;};
+              config.allowUnfree = true;
+            };
+          in
+            self.lib.nixosSystem {
+              inherit system nixpkgs;
+              host = "nixtower";
+              extraModules = [
+                (import "${nixpkgs'}/nixos/modules/programs/librepods.nix")
+
+                ({lib, ...}: {
+                  nixpkgs.overlays = lib.mkAfter [
+                    (final: prev: {
+                      inherit (pkgs') librepods;
+                    })
+                  ];
+                })
+              ];
+            };
 
           hee-ho = self.lib.nixosSystem {
             system = "x86_64-linux";

@@ -54,6 +54,8 @@
 
   my.rnnoise.micNodeName = "alsa_input.usb-HP__Inc_HyperX_SoloCast-00.iec958-stereo";
 
+  programs.librepods.enable = true;
+
   environment.systemPackages = [
     pkgs.archipelago
     pkgs.flatpak
