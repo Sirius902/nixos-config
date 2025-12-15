@@ -80,7 +80,6 @@
             nixpkgs' = patchNixpkgs {inherit system nixpkgs;};
             pkgs' = import nixpkgs' {
               inherit system;
-              overlays = import ./overlays/default.nix {inherit inputs;};
               config.allowUnfree = true;
             };
           in
@@ -92,7 +91,6 @@
 
                 ({lib, ...}: {
                   nixpkgs.pkgs = pkgs';
-                  nixpkgs.overlays = lib.mkForce [];
                   nixpkgs.config = lib.mkForce {};
                 })
               ];
@@ -104,7 +102,6 @@
             nixpkgs' = patchNixpkgs {inherit system nixpkgs;};
             pkgs' = import nixpkgs' {
               inherit system;
-              overlays = import ./overlays/default.nix {inherit inputs;};
               config.allowUnfree = true;
             };
           in
@@ -116,7 +113,6 @@
 
                 ({lib, ...}: {
                   nixpkgs.pkgs = pkgs';
-                  nixpkgs.overlays = lib.mkForce [];
                   nixpkgs.config = lib.mkForce {};
                 })
               ];
