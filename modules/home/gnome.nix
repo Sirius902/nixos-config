@@ -17,8 +17,7 @@
     settings."org/gnome/shell".favorite-apps = [
       "firefox.desktop"
       "com.mitchellh.ghostty.desktop"
-      "codium.desktop"
-      "dev.zed.Zed.desktop"
+      "code.desktop"
       "org.gnome.Nautilus.desktop"
       "discord-canary.desktop"
       "org.prismlauncher.PrismLauncher.desktop"

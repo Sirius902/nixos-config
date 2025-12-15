@@ -1,7 +1,7 @@
 {
-  pkgs,
-  lib,
   config,
+  lib,
+  pkgs,
   ...
 }: {
   imports = [
@@ -67,7 +67,5 @@
     wl-clipboard
     xclip
     vscode
-    vscodium
-    zed-editor
   ];
 }
