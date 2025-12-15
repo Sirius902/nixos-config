@@ -48,12 +48,12 @@
       ];
 
       flake = let
-        mkNixpkgsLibrepods = {
+        patchNixpkgs = {
           system,
           nixpkgs,
         }:
           nixpkgs.legacyPackages.${system}.applyPatches {
-            name = "nixpkgs-librepods";
+            name = "nixpkgs-patched";
             src = nixpkgs;
             patches = [
               # Add librepods https://github.com/NixOS/nixpkgs/pull/444137
@@ -61,6 +61,12 @@
                 name = "add-librepods.patch";
                 url = "https://github.com/NixOS/nixpkgs/compare/78a51b69699c3f6b366dc5c2fb62a567b8334459...1c229bf6f394e65227854061b7d7e5ffa7753ae5.patch?full_index=1";
                 sha256 = "sha256:1b8nny6k1vyyc1lnf123br5w0p006sj8r8ac65v9afk0cgvd0cay";
+              })
+              # Ghidra 12.0 https://github.com/NixOS/nixpkgs/pull/469200
+              (builtins.fetchurl {
+                name = "ghidra-12_0.patch";
+                url = "https://github.com/NixOS/nixpkgs/compare/94a0d0855155c299df57ad5c39419465940c9362...165e21d5b4acd522e6efb9b88aac036b87a96874.patch?full_index=1";
+                sha256 = "sha256:1hxpg0vdmfnwsvwphrcks429z94zlf7acvq8q9jzhvw9rsh02sdz";
               })
             ];
           };
@@ -71,7 +77,7 @@
           sirius-lee = let
             system = "x86_64-linux";
             nixpkgs = inputs.nixpkgs-unstable;
-            nixpkgs' = mkNixpkgsLibrepods {inherit system nixpkgs;};
+            nixpkgs' = patchNixpkgs {inherit system nixpkgs;};
             pkgs' = import nixpkgs' {
               inherit system;
               overlays = import ./overlays/default.nix {inherit inputs;};
@@ -85,11 +91,9 @@
                 (import "${nixpkgs'}/nixos/modules/programs/librepods.nix")
 
                 ({lib, ...}: {
-                  nixpkgs.overlays = lib.mkAfter [
-                    (final: prev: {
-                      inherit (pkgs') librepods;
-                    })
-                  ];
+                  nixpkgs.pkgs = pkgs';
+                  nixpkgs.overlays = lib.mkForce [];
+                  nixpkgs.config = lib.mkForce {};
                 })
               ];
             };
@@ -97,7 +101,7 @@
           nixtower = let
             system = "x86_64-linux";
             nixpkgs = inputs.nixpkgs-unstable;
-            nixpkgs' = mkNixpkgsLibrepods {inherit system nixpkgs;};
+            nixpkgs' = patchNixpkgs {inherit system nixpkgs;};
             pkgs' = import nixpkgs' {
               inherit system;
               overlays = import ./overlays/default.nix {inherit inputs;};
@@ -111,11 +115,9 @@
                 (import "${nixpkgs'}/nixos/modules/programs/librepods.nix")
 
                 ({lib, ...}: {
-                  nixpkgs.overlays = lib.mkAfter [
-                    (final: prev: {
-                      inherit (pkgs') librepods;
-                    })
-                  ];
+                  nixpkgs.pkgs = pkgs';
+                  nixpkgs.overlays = lib.mkForce [];
+                  nixpkgs.config = lib.mkForce {};
                 })
               ];
             };
