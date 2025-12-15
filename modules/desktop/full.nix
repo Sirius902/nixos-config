@@ -97,7 +97,7 @@
     gimp3
     imhex
     inkscape
-    jetbrains.idea-community
+    jetbrains.idea
     jetbrains.rider
     (ghidra.withExtensions (_: [ghidra-extensions.gamecube-loader]))
     heroic
