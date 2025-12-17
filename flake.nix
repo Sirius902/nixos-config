@@ -68,12 +68,6 @@
                 url = "https://github.com/NixOS/nixpkgs/compare/94a0d0855155c299df57ad5c39419465940c9362...165e21d5b4acd522e6efb9b88aac036b87a96874.patch?full_index=1";
                 sha256 = "sha256:1hxpg0vdmfnwsvwphrcks429z94zlf7acvq8q9jzhvw9rsh02sdz";
               })
-              # https://github.com/NixOS/nixpkgs/pull/471047
-              (builtins.fetchurl {
-                name = "python-dbusmock-fix.patch";
-                url = "https://github.com/NixOS/nixpkgs/commit/9553b2f0b6c11d2071a0ad40401234b4b2a397fa.patch?full_index=1";
-                sha256 = "sha256:14885fq52wccai1d1c9gcl73g96kv6xfr272km6jyk4csx10dlyx";
-              })
             ];
           };
       in {
