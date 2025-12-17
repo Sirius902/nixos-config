@@ -7,5 +7,8 @@ final: prev: {
     pnpmDeps = prevAttrs.pnpmDeps.override {
       hash = "sha256-pqCje7yPTasPvVuE8sf4Xb+ivaxnAIOtjB+zdpaBaoM=";
     };
+    patches = [
+      ./disable_updates.patch
+    ];
   });
 }
