@@ -100,8 +100,6 @@
   };
 
   environment.systemPackages = [
-    # https://github.com/NixOS/nixpkgs/issues/275018
-    pkgs.doas-sudo-shim
     pkgs.just
     pkgs.nvim
     pkgs.libraspberrypi
