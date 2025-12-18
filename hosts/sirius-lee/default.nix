@@ -63,6 +63,7 @@
     pkgs._2ship2harkinian
     pkgs.shipwright-ap
     pkgs.zelda64recomp
+    pkgs.waypipe
   ];
 
   home-manager.users.chris = {
