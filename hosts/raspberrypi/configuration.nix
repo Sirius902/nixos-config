@@ -11,6 +11,14 @@
     ../../modules/openssh.nix
     ../../modules/tailscale.nix
     ../../modules/tmux.nix
+
+    inputs.home-manager.nixosModules.default
+    {
+      home-manager.useGlobalPkgs = true;
+      home-manager.useUserPackages = true;
+      home-manager.extraSpecialArgs = {inherit inputs;};
+      home-manager.users.chris = import ../../modules/home/default.nix;
+    }
   ];
 
   nixpkgs = {
@@ -29,7 +37,6 @@
   boot.kernelPackages = pkgs.linuxPackages_rpi3;
   hardware.enableRedistributableFirmware = true;
 
-  # FUTURE(Sirius902) Rollback root + tmp via btrfs snapshots.
   environment.persistence."/persist" = {
     enable = true;
     hideMounts = true;
@@ -95,8 +102,6 @@
   environment.systemPackages = [
     # https://github.com/NixOS/nixpkgs/issues/275018
     pkgs.doas-sudo-shim
-    pkgs.busybox
-    pkgs.ghostty
     pkgs.just
     pkgs.nvim
     pkgs.libraspberrypi
@@ -107,11 +112,8 @@
     pkgs.fzf
     pkgs.htop
     pkgs.just
-    pkgs.liquidctl
-    pkgs.lm_sensors
     pkgs.nvd
     pkgs.parted
-    pkgs.pciutils
     pkgs.ripgrep
     pkgs.sops
     pkgs.usbutils
