@@ -26,7 +26,7 @@
   boot.loader.grub.enable = false;
   boot.loader.generic-extlinux-compatible.enable = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_6_18;
+  boot.kernelPackages = pkgs.linuxPackages_rpi3;
   hardware.enableRedistributableFirmware = true;
 
   # FUTURE(Sirius902) Rollback root + tmp via btrfs snapshots.
