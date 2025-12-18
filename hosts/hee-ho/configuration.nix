@@ -59,8 +59,13 @@
   # };
 
   environment.systemPackages = with pkgs; [
+    ghostty.terminfo
     screen
     config.my.jdk
+  ];
+
+  environment.pathsToLink = [
+    "/share/terminfo"
   ];
 
   # Fix waiting for WiFi on rebuild.

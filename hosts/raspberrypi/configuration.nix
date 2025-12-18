@@ -100,6 +100,7 @@
   };
 
   environment.systemPackages = [
+    pkgs.ghostty.terminfo
     pkgs.just
     pkgs.nvim
     pkgs.libraspberrypi
@@ -116,6 +117,10 @@
     pkgs.sops
     pkgs.usbutils
     pkgs.xxd
+  ];
+
+  environment.pathsToLink = [
+    "/share/terminfo"
   ];
 
   system.stateVersion = "26.05";
