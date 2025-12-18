@@ -4,7 +4,7 @@
   ...
 }: {
   imports = [
-    inputs.impermanence.nixosModules.impermanence
+    inputs.impermanence.nixosModules.default
     inputs.secrets.nixosModules.default
     ./hardware-configuration.nix
     ../../modules/documentation.nix
@@ -26,7 +26,7 @@
   boot.loader.grub.enable = false;
   boot.loader.generic-extlinux-compatible.enable = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_rpi3;
+  boot.kernelPackages = pkgs.linuxPackages_6_18;
   hardware.enableRedistributableFirmware = true;
 
   # FUTURE(Sirius902) Rollback root + tmp via btrfs snapshots.
@@ -93,11 +93,14 @@
   };
 
   environment.systemPackages = [
+    # https://github.com/NixOS/nixpkgs/issues/275018
+    pkgs.doas-sudo-shim
     pkgs.busybox
     pkgs.ghostty
     pkgs.just
     pkgs.nvim
     pkgs.libraspberrypi
+    pkgs.wakeonlan
 
     pkgs.fastfetch
     pkgs.file

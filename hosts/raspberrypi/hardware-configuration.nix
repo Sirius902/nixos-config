@@ -18,9 +18,8 @@
   boot.extraModulePackages = [];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-label/ROOTFS";
-    fsType = "btrfs";
-    options = ["subvol=@" "compress=zstd" "noatime"];
+    fsType = "tmpfs";
+    options = ["mode=0755" "size=20%"];
   };
 
   fileSystems."/nix" = {
@@ -34,12 +33,6 @@
     fsType = "btrfs";
     options = ["subvol=@persist" "compress=zstd" "noatime"];
     neededForBoot = true;
-  };
-
-  fileSystems."/tmp" = {
-    device = "/dev/disk/by-label/ROOTFS";
-    fsType = "btrfs";
-    options = ["subvol=@tmp" "compress=zstd:1" "noatime"];
   };
 
   fileSystems."/var/cache" = {
@@ -72,7 +65,7 @@
 
   fileSystems."/boot" = {
     device = "/dev/disk/by-label/NIXOS_SD";
-    fsType = "vfat";
+    fsType = "ext4";
   };
 
   fileSystems."/boot/firmware" = {
