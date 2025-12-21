@@ -68,6 +68,12 @@
                 url = "https://github.com/NixOS/nixpkgs/compare/94a0d0855155c299df57ad5c39419465940c9362...165e21d5b4acd522e6efb9b88aac036b87a96874.patch?full_index=1";
                 sha256 = "sha256:1hxpg0vdmfnwsvwphrcks429z94zlf7acvq8q9jzhvw9rsh02sdz";
               })
+              # XIVLauncher 1.3.0
+              (builtins.fetchurl {
+                name = "xivlauncher-1_3_0.patch";
+                url = "https://github.com/NixOS/nixpkgs/commit/ce94af39f3b312c092d7938cfa8278c63d843408.patch?full_index=1";
+                sha256 = "sha256:0q3429vlmany21m84xcc9wxlrg3narrcz75f2b6wkwqi74v9c7kz";
+              })
             ];
           };
       in {
