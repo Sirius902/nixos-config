@@ -7,7 +7,6 @@
     inputs.impermanence.nixosModules.default
     inputs.secrets.nixosModules.default
     ./hardware-configuration.nix
-    ./samba.nix
     ../../modules/documentation.nix
     ../../modules/openssh.nix
     ../../modules/tailscale.nix
