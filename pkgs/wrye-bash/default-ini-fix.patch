@@ -1,0 +1,31 @@
+diff --git a/Mopy/bash/gen_ini.py b/Mopy/bash/gen_ini.py
+index 1cf0b09ac..03ad1bd0d 100644
+--- a/Mopy/bash/gen_ini.py
++++ b/Mopy/bash/gen_ini.py
+@@ -24,7 +24,7 @@
+ 
+ __author__ = 'sibir'
+ 
+-from os import path
++from os import makedirs, path
+ from textwrap import fill
+ from zlib import crc32
+ 
+@@ -555,11 +555,14 @@ def _generate_default_bash_ini():
+ def write_default_bash_ini():
+     """Write bash_default.ini if missing or changed."""
+     default_bash_ini, default_ini_crc = _generate_default_bash_ini()
+-    if path.exists('bash_default.ini'):
+-        with open('bash_default.ini', 'r') as f:
++    ini_dir = path.join(path.expanduser('~'), '.local', 'share', 'wrye-bash')
++    ini_path = path.join(ini_dir, 'bash_default.ini')
++    if path.exists(ini_path):
++        with open(ini_path, 'r') as f:
+             curr_default_ini_crc = crc32(f.read().encode())
+     else:
++        makedirs(ini_dir, exist_ok=True)
+         curr_default_ini_crc = 0
+     if curr_default_ini_crc != default_ini_crc:
+-        with open('bash_default.ini', 'w') as f:
++        with open(ini_path, 'w') as f:
+             f.write(default_bash_ini)

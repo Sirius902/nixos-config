@@ -39,4 +39,6 @@
 
   wwrando = pkgs.callPackage ./wwrando/package.nix {};
   wwrando-ap = pkgs.callPackage ./wwrando-ap/package.nix {};
+
+  wrye-bash = pkgs.callPackage ./wrye-bash/package.nix {};
 }
