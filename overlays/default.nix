@@ -162,4 +162,15 @@
       NIX_CFLAGS_COMPILE = (prevAttrs.NIX_CFLAGS_COMPILE or []) ++ ["-fno-fast-math"];
     });
   })
+
+  (final: prev: {
+    wrye-bash = prev.wrye-bash.overrideAttrs (prevAttrs: {
+      postFixup =
+        (prevAttrs.postFixup or "")
+        + ''
+          wrapProgram $out/bin/wrye-bash \
+            --set GDK_BACKEND x11
+        '';
+    });
+  })
 ]

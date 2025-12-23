@@ -1,0 +1,48 @@
+From 413f04c5a7e970a62e97972133b0cbe291dd48ce Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Wed, 24 Dec 2025 20:33:48 -0800
+Subject: [PATCH 3/3] Write bash_default.ini to config directory
+
+---
+ Mopy/bash/gen_ini.py | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/Mopy/bash/gen_ini.py b/Mopy/bash/gen_ini.py
+index 1cf0b09ac..e6e63035c 100644
+--- a/Mopy/bash/gen_ini.py
++++ b/Mopy/bash/gen_ini.py
+@@ -24,10 +24,11 @@
+ 
+ __author__ = 'sibir'
+ 
+-from os import path
++from os import getcwd, getenv, makedirs, path
+ from textwrap import fill
+ from zlib import crc32
+ 
++from . import bolt
+ from .bass import AppVersion
+ 
+ def _gen_section_header(txt):
+@@ -555,11 +556,15 @@ def _generate_default_bash_ini():
+ def write_default_bash_ini():
+     """Write bash_default.ini if missing or changed."""
+     default_bash_ini, default_ini_crc = _generate_default_bash_ini()
+-    if path.exists('bash_default.ini'):
+-        with open('bash_default.ini', 'r') as f:
++    ini_dir = (getcwd() if bolt.os_name == 'nt' else
++               path.join(getenv('XDG_CONFIG_HOME') or path.expanduser('~/.config'), 'wrye-bash'))
++    ini_path = path.join(ini_dir, 'bash_default.ini')
++    if path.exists(ini_path):
++        with open(ini_path, 'r') as f:
+             curr_default_ini_crc = crc32(f.read().encode())
+     else:
++        makedirs(ini_dir, exist_ok=True)
+         curr_default_ini_crc = 0
+     if curr_default_ini_crc != default_ini_crc:
+-        with open('bash_default.ini', 'w') as f:
++        with open(ini_path, 'w') as f:
+             f.write(default_bash_ini)
+-- 
+2.51.2
+
