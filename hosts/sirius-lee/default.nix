@@ -64,6 +64,7 @@
     pkgs.shipwright-ap
     pkgs.zelda64recomp
     pkgs.waypipe
+    pkgs.wrye-bash
   ];
 
   home-manager.users.chris = {
