@@ -1,3 +1,14 @@
+From a8915a6f5ed8fbab9543cd932a02a140f4c5f090 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Wed, 24 Dec 2025 18:40:07 -0800
+Subject: [PATCH 2/3] Don't use internet in helpers/utils.py
+
+Importing pygit2 tries to access the internet, which is not allowed in
+a nix build environment.
+---
+ scripts/helpers/utils.py | 17 -----------------
+ 1 file changed, 17 deletions(-)
+
 diff --git a/scripts/helpers/utils.py b/scripts/helpers/utils.py
 index 2aabfb5f8..e1e5658e9 100644
 --- a/scripts/helpers/utils.py
@@ -33,3 +44,6 @@ index 2aabfb5f8..e1e5658e9 100644
  def out_path(dir_=OUT_PATH, name='out.txt'):
      """Returns a path joining the dir_ and name parameters. Will create the
      dirs in dir_ if not existing.
+-- 
+2.51.2
+

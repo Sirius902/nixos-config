@@ -51,8 +51,8 @@ in
     patches = [
       # https://aur.archlinux.org/cgit/aur.git/plain/0001-Make-BashBugDump-work-globally.patch?h=wrye-bash
       ./0001-Make-BashBugDump-work-globally.patch
-      ./default-ini-fix.patch
-      ./no-internet.patch
+      ./0002-Don-t-use-internet-in-helpers-utils.py.patch
+      ./0003-Write-bash_default.ini-to-config-directory.patch
     ];
 
     nativeBuildInputs = [
@@ -63,6 +63,11 @@ in
     buildInputs = [
       python
     ];
+
+    postPatch = ''
+      substituteInPlace Mopy/bash/basher/constants.py \
+        --replace-fail "'bash.update_check.enabled': True" "'bash.update_check.enabled': False"
+    '';
 
     buildPhase = ''
       runHook preBuild
@@ -130,6 +135,8 @@ in
       mainProgram = "wrye-bash";
       license = lib.licenses.gpl3;
       platforms = lib.platforms.linux;
-      maintainers = [];
+      maintainers = with lib.maintainers; [
+        # sirius902
+      ];
     };
   })
