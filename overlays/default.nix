@@ -154,4 +154,12 @@
         });
       };
   })
+
+  # FUTURE(Sirius902) Disable fast math to fix blurriness on Wayland.
+  # https://github.com/ValveSoftware/gamescope/issues/1622
+  (final: prev: {
+    gamescope = prev.gamescope.overrideAttrs (prevAttrs: {
+      NIX_CFLAGS_COMPILE = (prevAttrs.NIX_CFLAGS_COMPILE or []) ++ ["-fno-fast-math"];
+    });
+  })
 ]
