@@ -11,6 +11,7 @@
   nix-update-script,
   taglistsFn ? lib.id,
 }: let
+  # FUTURE(Sirius902) Update script for `taglists.nix`?
   taglists = taglistsFn (lib.mapAttrs (game: fetchArgs: fetchurl fetchArgs) (import ./taglists.nix));
 
   python = python3.withPackages (ps:
@@ -46,6 +47,7 @@ in
       ./0001-Make-BashBugDump-work-globally.patch
       ./0002-Don-t-use-internet-in-helpers-utils.py.patch
       ./0003-Write-bash_default.ini-to-config-directory.patch
+      # FUTURE(Sirius902) Add patch for `bash.ini` paths?
     ];
 
     nativeBuildInputs = [
