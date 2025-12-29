@@ -8,11 +8,13 @@
   copyDesktopItems,
   makeDesktopItem,
   makeWrapper,
+  _experimental-update-script-combinators,
   nix-update-script,
   taglistsFn ? lib.id,
 }: let
-  # FUTURE(Sirius902) Update script for `taglists.nix`?
-  taglists = taglistsFn (lib.mapAttrs (game: fetchArgs: fetchurl fetchArgs) (import ./taglists.nix));
+  taglists = taglistsFn (lib.mapAttrs (game: fetchArgs: fetchurl fetchArgs) (
+    builtins.fromJSON (builtins.readFile ./taglists.json)
+  ));
 
   python = python3.withPackages (ps:
     with ps; [
@@ -122,9 +124,15 @@ in
       })
     ];
 
-    passthru.updateScript = nix-update-script {
-      extraArgs = ["--version=branch"];
-    };
+    passthru.updateScript = _experimental-update-script-combinators.sequence [
+      (nix-update-script {
+        extraArgs = ["--version=branch"];
+      })
+      {
+        command = [./update-taglists.py];
+        supportedFeatures = [];
+      }
+    ];
 
     meta = {
       homepage = "https://github.com/wrye-bash/wrye-bash";

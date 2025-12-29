@@ -1,0 +1,38 @@
+{
+  "Enderal": {
+    "url": "https://raw.githubusercontent.com/loot/enderal/744f019353f0b9d64113e99919f39d92a09f14e6/masterlist.yaml",
+    "hash": "sha256-5pIzHepPhSt5pkVkKa2eWsImJ7km2n5yQ+RXfhSdfik="
+  },
+  "Fallout3": {
+    "url": "https://raw.githubusercontent.com/loot/fallout3/cfb9d5186aed71aafc1319703cee87331a74e8e9/masterlist.yaml",
+    "hash": "sha256-CDAy+Kf5bvKwqZocQ390HIyMOudqSog+g8k/+MJqMaY="
+  },
+  "Fallout4": {
+    "url": "https://raw.githubusercontent.com/loot/fallout4/b519c56dab5791dc7141d9ef178552817664bfe8/masterlist.yaml",
+    "hash": "sha256-xW2iIoEZgQIQKeYUgvVQhsJfazLMGSLpL/Sv1FSRs7c="
+  },
+  "FalloutNV": {
+    "url": "https://raw.githubusercontent.com/loot/falloutnv/b2cb6236e10afbdaaf6e3c83ba47329548e159b7/masterlist.yaml",
+    "hash": "sha256-Ykcnkoj6rc5NJPmVc4OnjvVRX2sXtaMjwf2vyqxWOMw="
+  },
+  "Morrowind": {
+    "url": "https://raw.githubusercontent.com/loot/morrowind/748db08e41c2bfae6c82e9d4529b796b2df80666/masterlist.yaml",
+    "hash": "sha256-/9NrwI31VWXprV8Xm3L/5T5EBMBuyMRnc97+NUovacY="
+  },
+  "Oblivion": {
+    "url": "https://raw.githubusercontent.com/loot/oblivion/42551ef75b9ad7708f03115fecde46063f0123d3/masterlist.yaml",
+    "hash": "sha256-xphW9BLd6JIw1jvCaj1A5F8S55es5PTE3hnGcF/hFv8="
+  },
+  "Skyrim": {
+    "url": "https://raw.githubusercontent.com/loot/skyrim/64ab6a4c719096c444c5eb4534ef659cfb5755b8/masterlist.yaml",
+    "hash": "sha256-NwaQgUTJBD4xT7llsNLNC/XeoT1HxMzXDm+Yx5oa7GI="
+  },
+  "SkyrimSE": {
+    "url": "https://raw.githubusercontent.com/loot/skyrimse/56beea840c0d755f27e3c8e11868a14c7f16c4f7/masterlist.yaml",
+    "hash": "sha256-F7VQKHYl/qDfbhbVulU7peuNtZHoy6rzwTO4R3NiKyw="
+  },
+  "Starfield": {
+    "url": "https://raw.githubusercontent.com/loot/starfield/3b72fb930f027601c9dad4e709ad6b486b1e1f47/masterlist.yaml",
+    "hash": "sha256-bOX25usKTOwEjG61jIqlcvGJV9itKLFDcV4QE7FUgTs="
+  }
+}
