@@ -170,43 +170,34 @@
       in {
         formatter = pkgs.alejandra;
 
-        packages = let
-          allPackages = import ./pkgs/all-packages.nix {inherit pkgs;};
-
-          overlayedAllPackages =
-            (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
-            // {
-              inherit (pkgs) moonlight dolphin-emu;
-              inherit (pkgs.graalvmPackages) graalvm-ce_8;
-            };
-        in
-          overlayedAllPackages
-          // {
-            update = pkgs.writeShellApplication {
-              name = "unstable-update";
-
-              text = lib.concatStringsSep "\n" (
+        apps = {
+          update = {
+            type = "app";
+            program = lib.getExe (pkgs.writeShellScriptBin "update" (
+              lib.concatStringsSep "\n" (
                 lib.mapAttrsToList (
                   attr: drv:
-                    if drv ? updateScript && (lib.isList drv.updateScript) && (lib.length drv.updateScript) > 0
-                    then
-                      lib.escapeShellArgs (
-                        if (lib.match "nix-update|.*/nix-update" (lib.head drv.updateScript) != null)
-                        then
-                          [(lib.getExe pkgs.nix-update) "--flake"]
-                          ++ (lib.tail drv.updateScript)
-                          ++ ["--commit" attr]
-                        else drv.updateScript
-                      )
-                    else builtins.toString drv.updateScript or ""
+                    if drv ? updateScript
+                    then let
+                      injectArgs = cmd:
+                        lib.replaceString "/bin/nix-update" ''/bin/nix-update "--flake" "--commit" "${attr}"'' (toString cmd);
+                    in
+                      injectArgs (lib.escapeShellArgs (lib.toList (drv.updateScript.command or drv.updateScript)))
+                    else ""
                 )
-                (builtins.removeAttrs overlayedAllPackages ["dolphin-emu" "graalvm-ce_8"])
-              );
-            };
+                (removeAttrs (self.packages.${system}) ["dolphin-emu" "graalvm-ce_8"])
+              )
+            ));
+          };
+        };
 
-            update-all = pkgs.writeShellScriptBin "update-all" ''
-              ${self.packages.${system}.update}/bin/unstable-update
-            '';
+        packages = let
+          allPackages = import ./pkgs/all-packages.nix {inherit pkgs;};
+        in
+          (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
+          // {
+            inherit (pkgs) moonlight dolphin-emu;
+            inherit (pkgs.graalvmPackages) graalvm-ce_8;
           };
 
         devShells.default = pkgs.mkShell {
