@@ -14,6 +14,7 @@
   pkg-config,
   libudev-zero,
   nix-update-script,
+  fetchpatch2,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "gcviewer";
@@ -26,8 +27,23 @@ rustPlatform.buildRustPackage (finalAttrs: {
     sha256 = "sha256-U8cyKJ8bWGwFaDowLsI4yhvThvstOcaWkvk2KAIT12A=";
   };
 
+  # FUTURE(Sirius902) Remove once nixpkgs upgrades to rustc 1.92.
+  patches = [
+    (fetchpatch2 {
+      name = "downgrade-wgpu.patch";
+      revert = true;
+      url = "https://github.com/Sirius902/gcviewer/commit/eb1b0e9ad499dbcc2cb90b4a2c133be689c8e2c6.patch?full_index=1";
+      hash = "sha256-QWu96TNew46kB94E5D4obHZkBvOj3AXbXScR8ut2BrU=";
+    })
+  ];
+
   cargoBuildFlags = "--no-default-features";
-  cargoHash = "sha256-ubrVF6WQg1brQoYJxY1sgNnWxwGr+FadO+C+EPJbeRU=";
+  cargoLock = {
+    lockFile = ./Cargo.lock;
+    outputHashes = {
+      "gcinput-3.0.1" = "sha256-svY1skcFqVOSGfKFXD6rzI5vJzBbZuwtkHGerRXO8+w=";
+    };
+  };
 
   nativeBuildInputs =
     [
