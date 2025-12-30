@@ -44,8 +44,8 @@ in
     src = fetchFromGitHub {
       owner = "Zelda64Recomp";
       repo = "Zelda64Recomp";
-      rev = "3008a7f51c25d19b17b062b4506fba4f8261e7c6";
-      hash = "sha256-yV+5E0u8Z31iFsTt/4LQE++2d0hw3voJPjrVfpNkDv0=";
+      rev = "ab677e76615e5e47b3b26c822ca426485752ac77";
+      hash = "sha256-gL/PZTOuNInalIAZZYe/1tOKoMR0dTc8HBHPOuPBGtc=";
       fetchSubmodules = true;
     };
 
