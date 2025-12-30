@@ -119,7 +119,6 @@
       ];
     })
     mcpelauncher-ui-qt
-    protonhax
     protontricks
     scarab
     spotify
