@@ -11,14 +11,6 @@
     ../../modules/openssh.nix
     ../../modules/tailscale.nix
     ../../modules/tmux.nix
-
-    inputs.home-manager.nixosModules.default
-    {
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-      home-manager.extraSpecialArgs = {inherit inputs;};
-      home-manager.users.chris = import ../../modules/home/default.nix;
-    }
   ];
 
   nixpkgs = {
