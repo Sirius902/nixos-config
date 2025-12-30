@@ -91,7 +91,6 @@
     wwrando
     wwrando-ap
     ffmpeg-full
-    gcfeeder
     gcviewer
     gcfeederd
     gimp3
