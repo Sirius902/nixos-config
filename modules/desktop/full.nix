@@ -126,7 +126,7 @@
     transmission_4-gtk
     (discord-canary.override {withMoonlight = true;})
     vlc
-    wineWowPackages.stagingFull
+    wineWowPackages.stableFull
     winetricks
     wgnord
     xivlauncher
