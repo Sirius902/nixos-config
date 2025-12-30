@@ -6,6 +6,7 @@
   gcviewer = pkgs.callPackage ./gcviewer/package.nix {};
 
   gamecube-loader = pkgs.callPackage ./ghidra-extensions/gamecube-loader/package.nix {};
+  xex-loader-wv = pkgs.callPackage ./ghidra-extensions/xex-loader-wv/package.nix {};
 
   kh-melon-mix = pkgs.callPackage ./kh-melon-mix/package.nix {};
 

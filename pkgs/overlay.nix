@@ -8,6 +8,10 @@ in
     ghidra-extensions =
       prev.ghidra-extensions
       // {
-        gamecube-loader = pkgs.gamecube-loader;
+        inherit
+          (pkgs)
+          gamecube-loader
+          xex-loader-wv
+          ;
       };
   }
