@@ -67,7 +67,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     (makeDesktopItem {
       name = "gcviewer";
       icon = "gcviewer";
-      exec = "gcviewer %U";
+      exec = "gcviewer";
       comment = finalAttrs.meta.description;
       desktopName = "gcviewer";
       categories = ["Utility"];

@@ -67,7 +67,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     (makeDesktopItem {
       name = "gcfeederd";
       icon = "gcfeederd";
-      exec = "gcfeederd %U";
+      exec = "gcfeederd";
       comment = finalAttrs.meta.description;
       desktopName = "gcfeederd";
       categories = ["Utility"];
