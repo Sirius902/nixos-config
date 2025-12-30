@@ -98,7 +98,10 @@
     inkscape
     jetbrains.idea
     jetbrains.rider
-    (ghidra.withExtensions (_: [ghidra-extensions.gamecube-loader]))
+    (ghidra.withExtensions (_: [
+      ghidra-extensions.gamecube-loader
+      ghidra-extensions.xex-loader-wv
+    ]))
     heroic
     keymapp
     krita
