@@ -14,9 +14,6 @@
     hash = "sha256-8nhSyifEeYEZj9tqid1x67jhxqmrR61NwQ/g0Z8vbw8=";
   };
 
-  # Remove already applied patch.
-  patches = lib.remove (lib.elemAt prevAttrs.patches 1) prevAttrs.patches;
-
   passthru =
     (prevAttrs.passthru or {})
     // {
