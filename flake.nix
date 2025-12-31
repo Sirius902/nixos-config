@@ -196,7 +196,7 @@
         in
           (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
           // {
-            inherit (pkgs) moonlight dolphin-emu;
+            inherit (pkgs) moonlight dolphin-emu cosmic-applets;
             inherit (pkgs.graalvmPackages) graalvm-ce_8;
           };
 

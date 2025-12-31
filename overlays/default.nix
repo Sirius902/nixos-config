@@ -173,4 +173,45 @@
         '';
     });
   })
+
+  (final: prev: {
+    cosmic-applets = prev.cosmic-applets.overrideAttrs (finalAttrs: prevAttrs: {
+      version = "1.0.1";
+
+      src = prevAttrs.src.override {
+        tag = null;
+        rev = "epoch-1.0.1";
+        hash = "sha256-GhH3bM/mj1fx6cxxtZXZvODJZoSszkBCE8lcq42sZbA=";
+      };
+
+      cargoHash = "sha256-Eq0RSA8TYHKNRx5mg010iyrONigKR0GgGZ3fXnWOmG8=";
+
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          (final.fetchpatch2 {
+            name = "fix-icons.patch";
+            url = "https://github.com/pop-os/cosmic-applets/commit/6b8cffa9fd50b336211dbc24d114d28923694a10.patch?full_index=1";
+            hash = "sha256-t2kMV8k8c/ZJM5cdDeLpi5QzF+Be8Cz48WM7TWgEQ7A=";
+          })
+        ];
+
+      cargoDeps = final.rustPlatform.fetchCargoVendor {
+        inherit (finalAttrs) pname src version;
+        hash = finalAttrs.cargoHash;
+        patches =
+          if builtins.hasAttr "cargoPatches" finalAttrs
+          then finalAttrs.cargoPatches
+          else null;
+      };
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {
+            extraArgs = ["--version-regex=epoch-(.*)"];
+          };
+        };
+    });
+  })
 ]
