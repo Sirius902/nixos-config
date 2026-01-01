@@ -25,6 +25,10 @@ switch *FLAGS: prefetch-inputs
 switch-darwin *FLAGS: prefetch-inputs
     {{ SUDO }} darwin-rebuild switch --flake "path:.#{{ HOST }}" {{ FLAGS }}
 
+switch-to-configuration drv:
+    nix-env -p /nix/var/nix/profiles/system --set "{{ drv }}"
+    "{{ drv }}/bin/switch-to-configuration" switch
+
 build-raspberrypi:
     nix {{ NIX_FLAGS }} build "path:.#nixosConfigurations.raspberrypi.config.system.build.toplevel"
 
