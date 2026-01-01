@@ -173,21 +173,47 @@
         apps = {
           update = {
             type = "app";
-            program = lib.getExe (pkgs.writeShellScriptBin "update" (
-              lib.concatStringsSep "\n" (
-                lib.mapAttrsToList (
-                  attr: drv:
-                    if drv ? updateScript
-                    then let
-                      injectArgs = cmd:
-                        lib.replaceString "/bin/nix-update" ''/bin/nix-update "--flake" "--commit" "${attr}"'' (toString cmd);
-                    in
-                      injectArgs (lib.escapeShellArgs (lib.toList (drv.updateScript.command or drv.updateScript)))
-                    else ""
-                )
-                (removeAttrs (self.packages.${system}) ["dolphin-emu" "graalvm-ce_8"])
-              )
-            ));
+            program = let
+              mkUpdate = attr: drv:
+                if drv ? updateScript
+                then let
+                  injectArgs = cmd:
+                    lib.replaceString "/bin/nix-update" ''/bin/nix-update "--flake" "--commit" "${attr}"''
+                    (toString cmd);
+
+                  cmd = injectArgs (lib.escapeShellArgs (lib.toList (drv.updateScript.command or drv.updateScript)));
+                in ''
+                  update_${attr}() {
+                    ${cmd}
+                  }
+                ''
+                else "";
+
+              defaultPkgs = removeAttrs (self.packages.${system}) ["dolphin-emu" "graalvm-ce_8"];
+            in
+              lib.getExe (pkgs.writeShellScriptBin "update" ''
+                ${lib.concatStringsSep "\n" (lib.mapAttrsToList mkUpdate self.packages.${system})}
+
+                if [ "$#" -eq 0 ]; then
+                  ${lib.concatStringsSep "\n"
+                  (lib.mapAttrsToList
+                    (attr: drv:
+                      if drv ? updateScript
+                      then "update_${attr}"
+                      else "")
+                    defaultPkgs)}
+                else
+                  for attr in "$@"; do
+                    if declare -F "update_$attr" >/dev/null; then
+                      "update_$attr"
+                    else
+                      echo "error: unknown or non-updatable attr '$attr'" >&2
+                      exit 1
+                    fi
+                  done
+                fi
+              '');
+            meta.description = "Updates packages and overlays for this flake.";
           };
         };
 
