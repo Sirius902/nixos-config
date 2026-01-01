@@ -1,5 +1,4 @@
 {
-  lib,
   SDL2,
   sdl3_git,
   nix-update-script,
