@@ -36,7 +36,7 @@
   bzip2,
   libX11,
   sdl_gamecontrollerdb,
-  fetchpatch,
+  fetchpatch2,
   nix-update-script,
 }: let
   # The following would normally get fetched at build time, or a specific version is required
@@ -136,10 +136,10 @@ in
     patches = [
       ./darwin-fixes.patch
       ./disable-downloading-stb_image.patch
-      (fetchpatch {
+      (fetchpatch2 {
         name = "triforce-hunt-gbk.patch";
-        url = "https://github.com/Sirius902/Shipwright/commit/4dfa31e9c3b6bbc5a555042803dc505e71b76447.patch";
-        hash = "sha256-n+4j7D3BaATeGhRD5mMIfL/tWjiZQKhoPLj9Zaf7hLw=";
+        url = "https://github.com/Sirius902/Shipwright/commit/cdcd96799739ae1de86e32a3415dd3c94b37d44c.patch?full_index=1";
+        hash = "sha256-+dIFOX8n6eXZA4yYkGTCrCiL4jPwqHo9/VYdndtKGVo=";
       })
     ];
 
