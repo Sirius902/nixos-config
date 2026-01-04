@@ -175,17 +175,7 @@
   })
 
   (final: prev: {
-    cosmic-applets = prev.cosmic-applets.overrideAttrs (finalAttrs: prevAttrs: {
-      version = "1.0.1";
-
-      src = prevAttrs.src.override {
-        tag = null;
-        rev = "epoch-1.0.1";
-        hash = "sha256-GhH3bM/mj1fx6cxxtZXZvODJZoSszkBCE8lcq42sZbA=";
-      };
-
-      cargoHash = "sha256-Eq0RSA8TYHKNRx5mg010iyrONigKR0GgGZ3fXnWOmG8=";
-
+    cosmic-applets = prev.cosmic-applets.overrideAttrs (prevAttrs: {
       patches =
         (prevAttrs.patches or [])
         ++ [
@@ -195,23 +185,6 @@
             hash = "sha256-t2kMV8k8c/ZJM5cdDeLpi5QzF+Be8Cz48WM7TWgEQ7A=";
           })
         ];
-
-      cargoDeps = final.rustPlatform.fetchCargoVendor {
-        inherit (finalAttrs) pname src version;
-        hash = finalAttrs.cargoHash;
-        patches =
-          if builtins.hasAttr "cargoPatches" finalAttrs
-          then finalAttrs.cargoPatches
-          else null;
-      };
-
-      passthru =
-        (prevAttrs.passthru or {})
-        // {
-          updateScript = final.nix-update-script {
-            extraArgs = ["--version-regex=epoch-(.*)"];
-          };
-        };
     });
   })
 ]
