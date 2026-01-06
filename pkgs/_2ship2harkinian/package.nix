@@ -119,8 +119,8 @@ in
     src = fetchFromGitHub {
       owner = "HarbourMasters";
       repo = "2ship2harkinian";
-      rev = "b2fb5b230563488f030664989fa7b0b0160705c7";
-      hash = "sha256-ZBdLl6c/u8oA6InTJWPkiKuuvKGyHVwAVmnStbcSCek=";
+      rev = "de61cd8a9116f77096a481e3a354494aaa8e6790";
+      hash = "sha256-vRLQcy46UgFlfk9ICHQm6E2GTGXBBpC0ZuXaXbZxZAE=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
