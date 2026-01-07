@@ -1,15 +1,10 @@
 {
-  inputs,
   lib,
   pkgs,
   ...
 }: let
   inherit (pkgs) stdenv;
 in {
-  imports = [
-    inputs.impermanence.homeManagerModules.default
-  ];
-
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "chris";
