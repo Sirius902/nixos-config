@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs?ref=nixpkgs-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -66,12 +65,6 @@
                 url = "https://github.com/NixOS/nixpkgs/compare/78a51b69699c3f6b366dc5c2fb62a567b8334459...1c229bf6f394e65227854061b7d7e5ffa7753ae5.patch?full_index=1";
                 sha256 = "sha256:1b8nny6k1vyyc1lnf123br5w0p006sj8r8ac65v9afk0cgvd0cay";
               })
-              # Ghidra 12.0 https://github.com/NixOS/nixpkgs/pull/469200
-              (builtins.fetchurl {
-                name = "ghidra-12_0.patch";
-                url = "https://github.com/NixOS/nixpkgs/compare/94a0d0855155c299df57ad5c39419465940c9362...165e21d5b4acd522e6efb9b88aac036b87a96874.patch?full_index=1";
-                sha256 = "sha256:1hxpg0vdmfnwsvwphrcks429z94zlf7acvq8q9jzhvw9rsh02sdz";
-              })
             ];
           };
       in {
@@ -79,8 +72,8 @@
 
         nixosConfigurations = {
           sirius-lee = let
+            inherit (inputs) nixpkgs;
             system = "x86_64-linux";
-            nixpkgs = inputs.nixpkgs-unstable;
             nixpkgs' = patchNixpkgs {inherit system nixpkgs;};
             pkgs' = import nixpkgs' {
               inherit system;
@@ -101,8 +94,8 @@
             };
 
           nixtower = let
+            inherit (inputs) nixpkgs;
             system = "x86_64-linux";
-            nixpkgs = inputs.nixpkgs-unstable;
             nixpkgs' = patchNixpkgs {inherit system nixpkgs;};
             pkgs' = import nixpkgs' {
               inherit system;
