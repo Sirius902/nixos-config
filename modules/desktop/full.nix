@@ -122,6 +122,7 @@
     })
     mcpelauncher-ui-qt
     protontricks
+    rpcs3
     scarab
     spotify
     sticky-notes
