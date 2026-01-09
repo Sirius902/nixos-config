@@ -26,7 +26,7 @@ melonDS.overrideAttrs (prevAttrs: {
       lua5_4_compat
     ];
 
-  qtWrapperArgs = (prevAttrs.qtWrapperArgs) ++ ["--set QT_QPA_PLATFORM xcb"];
+  qtWrapperArgs = (prevAttrs.qtWrapperArgs or []) ++ ["--set QT_QPA_PLATFORM xcb"];
 
   postInstall =
     ''
