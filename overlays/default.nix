@@ -187,4 +187,22 @@
         ];
     });
   })
+
+  (final: prev: {
+    rpcs3 = prev.rpcs3.overrideAttrs (prevAttrs: {
+      version = "0.0.39";
+      src = prevAttrs.src.override {
+        hash = "sha256-SMkhr9uNywZMMa4203w7jl1GNlDpHSCpgXmfM2OLPMk=";
+      };
+      patches =
+        builtins.filter
+        (p: (p.name or "") != "fix-build-qt-6.10.patch")
+        (prevAttrs.patches or []);
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {};
+        };
+    });
+  })
 ]
