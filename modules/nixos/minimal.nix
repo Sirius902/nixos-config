@@ -43,6 +43,10 @@
   # Automatically scrub ZFS pools weekly.
   services.zfs.autoScrub.enable = true;
 
+  systemd.tmpfiles.rules = [
+    "d /mnt 0755 root root -"
+  ];
+
   environment.persistence."/persist" = {
     enable = true;
     hideMounts = true;
