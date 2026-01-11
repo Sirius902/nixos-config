@@ -5,7 +5,10 @@
 
   environment.sessionVariables.COSMIC_DATA_CONTROL_ENABLED = 1;
 
-  environment.systemPackages = [pkgs.gnome-system-monitor];
+  environment.systemPackages = [
+    pkgs.gnome-system-monitor
+    pkgs.cosmic-ext-applet-caffeine
+  ];
 
   # TODO(Sirius902) We probably want this for GNOME too?
   # Reset dconf changes made upon launching a KDE session.
