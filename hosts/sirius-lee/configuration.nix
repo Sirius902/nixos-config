@@ -13,9 +13,9 @@
 
   my.vfio.enable = lib.mkForce false;
 
-    boot.extraModprobeConfig = ''
-      softdep amdgpu pre: vfio-pci
-    '';
+  boot.extraModprobeConfig = ''
+    softdep amdgpu pre: vfio-pci
+  '';
 
   virtualisation.libvirtd = {
     deviceACL = [
