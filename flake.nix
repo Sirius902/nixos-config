@@ -32,6 +32,10 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-vfio = {
+      url = "github:j-brn/nixos-vfio";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
