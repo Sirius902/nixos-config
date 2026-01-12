@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs-ghidra-fix.url = "github:nixos/nixpkgs?rev=3497aa5c9457a9d88d71fa93a4a8368816fbeeba";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
