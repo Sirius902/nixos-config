@@ -65,8 +65,8 @@
               # Update rpcs3 https://github.com/NixOS/nixpkgs/pull/478577
               (builtins.fetchurl {
                 name = "update-rpcs3.patch";
-                url = "https://github.com/NixOS/nixpkgs/commit/f99a7370d1c29605b1dca88d40368968cf388d2e.patch?full_index=1";
-                sha256 = "sha256:0fqpbjl8bd3c9g84xlvm9hcx1g3x9q2bifzxf0bwv056ipi7wi26";
+                url = "https://github.com/NixOS/nixpkgs/commit/4310884afc21f3f4c9de97eb0aef2acfd171084d.patch?full_index=1";
+                sha256 = "sha256:074g2fjzy2ix5r0nvk0fwh98920zml6q168lbnmzz8vbx1zqnl10";
               })
             ];
           };
