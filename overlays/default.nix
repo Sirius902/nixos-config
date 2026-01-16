@@ -200,7 +200,20 @@
 
   (final: prev: {
     rpcs3 = prev.rpcs3.overrideAttrs (prevAttrs: {
+      version = "0.0.39-unstable-2026-01-15";
+      src = prevAttrs.src.override {
+        tag = null;
+        rev = "eaebd3426e7050c35beb8f24952d6da4d6a75360";
+        hash = "sha256-KmY/GwEhJtvaA14CfPoVvlMwOqPubdrvsjrHlatHuBE=";
+      };
+
       qtWrapperArgs = (prevAttrs.qtWrapperArgs or []) ++ ["--set QT_QPA_PLATFORM xcb"];
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {extraArgs = ["--version=branch"];};
+        };
     });
   })
 ]
