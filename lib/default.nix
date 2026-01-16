@@ -34,4 +34,27 @@
         ]
         ++ extraModules;
     };
+
+  patchNixpkgs = {
+    system,
+    nixpkgs,
+  }:
+    nixpkgs.legacyPackages.${system}.applyPatches {
+      name = "nixpkgs-patched";
+      src = nixpkgs;
+      patches = [
+        # Add librepods https://github.com/NixOS/nixpkgs/pull/444137
+        (builtins.fetchurl {
+          name = "add-librepods.patch";
+          url = "https://github.com/NixOS/nixpkgs/compare/78a51b69699c3f6b366dc5c2fb62a567b8334459...1c229bf6f394e65227854061b7d7e5ffa7753ae5.patch?full_index=1";
+          sha256 = "sha256:1b8nny6k1vyyc1lnf123br5w0p006sj8r8ac65v9afk0cgvd0cay";
+        })
+        # Update rpcs3 https://github.com/NixOS/nixpkgs/pull/478577
+        (builtins.fetchurl {
+          name = "update-rpcs3.patch";
+          url = "https://github.com/NixOS/nixpkgs/commit/f99a7370d1c29605b1dca88d40368968cf388d2e.patch?full_index=1";
+          sha256 = "sha256:0fqpbjl8bd3c9g84xlvm9hcx1g3x9q2bifzxf0bwv056ipi7wi26";
+        })
+      ];
+    };
 }
