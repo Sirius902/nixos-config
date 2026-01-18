@@ -55,6 +55,12 @@
           url = "https://github.com/NixOS/nixpkgs/commit/4310884afc21f3f4c9de97eb0aef2acfd171084d.patch?full_index=1";
           sha256 = "sha256:074g2fjzy2ix5r0nvk0fwh98920zml6q168lbnmzz8vbx1zqnl10";
         })
+        # Add shadps4-qt https://github.com/NixOS/nixpkgs/pull/474696
+        (builtins.fetchurl {
+          name = "shadps4-qt.patch";
+          url = "https://github.com/NixOS/nixpkgs/compare/02db7bd88772e028ea9d2a1b58b221d0a3938e15...33385599708c1706f5dc148b737bedbd902b6b7e.patch?full_index=1";
+          sha256 = "sha256:1kb50wbsbvwfwlgm7plqa4jz7yrajrvpppnhlg6mq7b8hnd915vi";
+        })
       ];
     };
 }
