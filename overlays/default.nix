@@ -10,7 +10,6 @@
   })
 
   (import ../pkgs/overlay.nix)
-  (import ./moonlight/default.nix)
 
   inputs.nvim-conf.overlays.default
 
