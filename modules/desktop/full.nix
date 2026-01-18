@@ -124,6 +124,7 @@
     protontricks
     rpcs3
     scarab
+    shadps4-qt
     spotify
     sticky-notes
     transmission_4-gtk
