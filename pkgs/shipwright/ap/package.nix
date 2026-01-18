@@ -157,7 +157,7 @@ in
 
     src = fetchFromGitHub {
       owner = "aMannus";
-      repo = "shipwright";
+      repo = "Shipwright";
       rev = "2b726349091d24f988157bb8f8b9c8b83c90cb82";
       hash = "sha256-7fz9nEMYuaVKJXhkX/Tn2fNO0hctjYxQmFWKYjCYv1Y=";
       fetchSubmodules = true;
