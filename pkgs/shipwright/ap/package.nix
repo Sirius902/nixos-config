@@ -156,7 +156,7 @@ in
     version = "0-unstable-2025-12-10";
 
     src = fetchFromGitHub {
-      owner = "Patrick12115";
+      owner = "aMannus";
       repo = "shipwright";
       rev = "562d38c6d50dd99438b23fc205013cdce70b2ee9";
       hash = "sha256-mhzRmlF/9AqYyOm8SieHHyGPq9CDwcYxwWXrAGHvJ6A=";
@@ -352,7 +352,7 @@ in
       })
     ];
 
-    passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=Prevent-Anchor-Sync-in-AP"];};
+    passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=aManchipelago"];};
 
     meta = {
       homepage = "https://github.com/HarbourMasters/Shipwright";
