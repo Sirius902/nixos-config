@@ -202,4 +202,26 @@
       qtWrapperArgs = (prevAttrs.qtWrapperArgs or []) ++ ["--set QT_QPA_PLATFORM xcb"];
     });
   })
+
+  (
+    final: prev: {
+      shadps4-qt = prev.shadps4-qt.overrideAttrs (prevAttrs: {
+        version = "0-unstable-2026-01-19";
+        src = prevAttrs.src.override {
+          rev = "1f4e59f6110d5f991cead5a3e9f72671fced2c70";
+          hash = "sha256-mCmcCuGH8esknd6EJDO/KNXDQnUL/HBV4X7FKvqiYdk=";
+        };
+        passthru =
+          (prevAttrs.passthru or {})
+          // {
+            updateScript = final.nix-update-script {
+              extraArgs = [
+                "--version=branch"
+                "--version-regex=(0-unstable-.*)"
+              ];
+            };
+          };
+      });
+    }
+  )
 ]
