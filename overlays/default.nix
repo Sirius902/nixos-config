@@ -213,6 +213,13 @@
           hash = "sha256-mCmcCuGH8esknd6EJDO/KNXDQnUL/HBV4X7FKvqiYdk=";
         };
 
+        qtWrapperArgs = [
+          "--prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath [
+            final.libpulseaudio
+            final.pipewire
+          ]}"
+        ];
+
         postFixup =
           (prevAttrs.postFixup or "")
           + ''
