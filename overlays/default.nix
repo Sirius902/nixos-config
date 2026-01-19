@@ -207,10 +207,19 @@
     final: prev: {
       shadps4-qt = prev.shadps4-qt.overrideAttrs (prevAttrs: {
         version = "0-unstable-2026-01-19";
+
         src = prevAttrs.src.override {
           rev = "1f4e59f6110d5f991cead5a3e9f72671fced2c70";
           hash = "sha256-mCmcCuGH8esknd6EJDO/KNXDQnUL/HBV4X7FKvqiYdk=";
         };
+
+        postFixup =
+          (prevAttrs.postFixup or "")
+          + ''
+            substituteInPlace $out/share/applications/net.shadps4.shadps4-qtlauncher.desktop \
+              --replace-fail 'Exec=shadPS4QtLauncher' "Exec=''${!outputBin}/bin/shadps4-qt"
+          '';
+
         passthru =
           (prevAttrs.passthru or {})
           // {
