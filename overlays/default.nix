@@ -206,11 +206,11 @@
   (
     final: prev: {
       shadps4-qt = prev.shadps4-qt.overrideAttrs (prevAttrs: {
-        version = "0-unstable-2026-01-19";
+        version = "0-unstable-2026-01-21";
 
         src = prevAttrs.src.override {
-          rev = "1f4e59f6110d5f991cead5a3e9f72671fced2c70";
-          hash = "sha256-mCmcCuGH8esknd6EJDO/KNXDQnUL/HBV4X7FKvqiYdk=";
+          rev = "60e39def38262de5ef37743c7972077d02d5735e";
+          hash = "sha256-NjNXJ6fJQiZLfxMjdxjvakSp0Nrzj4+QLiedj1GEk7Y=";
         };
 
         qtWrapperArgs = [
