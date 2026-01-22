@@ -184,20 +184,6 @@
   })
 
   (final: prev: {
-    cosmic-applets = prev.cosmic-applets.overrideAttrs (prevAttrs: {
-      patches =
-        (prevAttrs.patches or [])
-        ++ [
-          (final.fetchpatch2 {
-            name = "fix-icons.patch";
-            url = "https://github.com/pop-os/cosmic-applets/commit/6b8cffa9fd50b336211dbc24d114d28923694a10.patch?full_index=1";
-            hash = "sha256-t2kMV8k8c/ZJM5cdDeLpi5QzF+Be8Cz48WM7TWgEQ7A=";
-          })
-        ];
-    });
-  })
-
-  (final: prev: {
     rpcs3 = prev.rpcs3.overrideAttrs (prevAttrs: {
       qtWrapperArgs = (prevAttrs.qtWrapperArgs or []) ++ ["--set QT_QPA_PLATFORM xcb"];
     });
