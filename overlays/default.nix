@@ -1,14 +1,4 @@
 {inputs}: [
-  # TODO(Sirius902) Crying myself to sleep.
-  # https://github.com/NixOS/nixpkgs/issues/478986
-  (final: prev: let
-    pkgs = import inputs.nixpkgs-ghidra-fix {
-      inherit (prev.stdenv.hostPlatform) system;
-    };
-  in {
-    inherit (pkgs) ghidra;
-  })
-
   (import ../pkgs/overlay.nix)
 
   inputs.nvim-conf.overlays.default
