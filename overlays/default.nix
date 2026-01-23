@@ -172,19 +172,6 @@
         hash = "sha256-zc3zhFTphty/vwioFEOfhgXttpD9MG2F7+YJYcW0H2w=";
       };
 
-      postFixup =
-        (prevAttrs.postFixup or "")
-        + ''
-          ${final.makeWrapper}/bin/makeWrapper $out/bin/shadps4 \
-            --prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath [
-            final.libpulseaudio
-            final.pipewire
-          ]} \
-            --prefix PATH : ${final.lib.makeBinPath [
-            final.zenity
-          ]}
-        '';
-
       passthru =
         (prevAttrs.passthru or {})
         // {
@@ -208,13 +195,6 @@
           rev = "60e39def38262de5ef37743c7972077d02d5735e";
           hash = "sha256-NjNXJ6fJQiZLfxMjdxjvakSp0Nrzj4+QLiedj1GEk7Y=";
         };
-
-        postFixup =
-          (prevAttrs.postFixup or "")
-          + ''
-            substituteInPlace $out/share/applications/net.shadps4.shadps4-qtlauncher.desktop \
-              --replace-fail 'Exec=shadPS4QtLauncher' "Exec=''${!outputBin}/bin/shadps4-qt"
-          '';
 
         passthru =
           (prevAttrs.passthru or {})
