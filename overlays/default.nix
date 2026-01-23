@@ -193,7 +193,7 @@
         src = prevAttrs.src.override {
           tag = null;
           rev = "60e39def38262de5ef37743c7972077d02d5735e";
-          hash = "sha256-NjNXJ6fJQiZLfxMjdxjvakSp0Nrzj4+QLiedj1GEk7Y=";
+          hash = "sha256-uu4EOYTpIQybUPlgeb0nYoGqLsCAcxT1RaSpXTw9N4U=";
         };
 
         passthru =
