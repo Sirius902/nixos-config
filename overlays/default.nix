@@ -162,22 +162,52 @@
     });
   })
 
+  (final: prev: {
+    shadps4 = prev.shadps4.overrideAttrs (prevAttrs: {
+      version = "0.13.0";
+
+      src = prevAttrs.src.override {
+        tag = null;
+        rev = "c414d1f5a174601d8b3d07f9afd75c106269685c";
+        hash = "sha256-zc3zhFTphty/vwioFEOfhgXttpD9MG2F7+YJYcW0H2w=";
+      };
+
+      postFixup =
+        (prevAttrs.postFixup or "")
+        + ''
+          ${final.makeWrapper}/bin/makeWrapper $out/bin/shadps4 \
+            --prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath [
+            final.libpulseaudio
+            final.pipewire
+          ]} \
+            --prefix PATH : ${final.lib.makeBinPath [
+            final.zenity
+          ]}
+        '';
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {
+            extraArgs = [
+              "--version=branch"
+              "--version-regex=v\\.(.*)"
+            ];
+          };
+        };
+    });
+  })
+
   (
     final: prev: {
       shadps4-qt = prev.shadps4-qt.overrideAttrs (prevAttrs: {
         version = "0-unstable-2026-01-21";
 
         src = prevAttrs.src.override {
+          tag = null;
           rev = "60e39def38262de5ef37743c7972077d02d5735e";
           hash = "sha256-NjNXJ6fJQiZLfxMjdxjvakSp0Nrzj4+QLiedj1GEk7Y=";
         };
-
-        qtWrapperArgs = [
-          "--prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath [
-            final.libpulseaudio
-            final.pipewire
-          ]}"
-        ];
 
         postFixup =
           (prevAttrs.postFixup or "")
