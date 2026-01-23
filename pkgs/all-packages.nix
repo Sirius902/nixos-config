@@ -10,8 +10,6 @@
 
   kh-melon-mix = pkgs.callPackage ./kh-melon-mix/package.nix {};
 
-  observatory = pkgs.callPackage ./observatory/package.nix {};
-
   sdl3_git = pkgs.callPackage ./sdl3_git/package.nix {};
   SDL2_git = pkgs.callPackage ./SDL2_git/package.nix {};
 
