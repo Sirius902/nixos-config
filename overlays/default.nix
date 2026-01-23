@@ -162,23 +162,6 @@
     });
   })
 
-  (final: prev: {
-    wrye-bash = prev.wrye-bash.overrideAttrs (prevAttrs: {
-      postFixup =
-        (prevAttrs.postFixup or "")
-        + ''
-          wrapProgram $out/bin/wrye-bash \
-            --set GDK_BACKEND x11
-        '';
-    });
-  })
-
-  (final: prev: {
-    rpcs3 = prev.rpcs3.overrideAttrs (prevAttrs: {
-      qtWrapperArgs = (prevAttrs.qtWrapperArgs or []) ++ ["--set QT_QPA_PLATFORM xcb"];
-    });
-  })
-
   (
     final: prev: {
       shadps4-qt = prev.shadps4-qt.overrideAttrs (prevAttrs: {
