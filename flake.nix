@@ -68,8 +68,6 @@
               inherit system nixpkgs;
               host = "sirius-lee";
               extraModules = [
-                (import "${nixpkgs'}/nixos/modules/programs/librepods.nix")
-
                 ({lib, ...}: {
                   nixpkgs.pkgs = pkgs';
                   nixpkgs.config = lib.mkForce {};
@@ -90,8 +88,6 @@
               inherit system nixpkgs;
               host = "nixtower";
               extraModules = [
-                (import "${nixpkgs'}/nixos/modules/programs/librepods.nix")
-
                 ({lib, ...}: {
                   nixpkgs.pkgs = pkgs';
                   nixpkgs.config = lib.mkForce {};
