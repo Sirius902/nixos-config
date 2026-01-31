@@ -1,0 +1,22 @@
+diff --git a/src/video_core/buffer_cache/region_manager.h b/src/video_core/buffer_cache/region_manager.h
+index 608b16fb..de714116 100644
+--- a/src/video_core/buffer_cache/region_manager.h
++++ b/src/video_core/buffer_cache/region_manager.h
+@@ -95,8 +95,6 @@ public:
+         }
+         if constexpr (type == Type::CPU) {
+             UpdateProtection<!enable, false>();
+-        } else if (Config::readbacks()) {
+-            UpdateProtection<enable, true>();
+         }
+     }
+ 
+@@ -126,8 +124,6 @@ public:
+             bits.UnsetRange(start_page, end_page);
+             if constexpr (type == Type::CPU) {
+                 UpdateProtection<true, false>();
+-            } else if (Config::readbacks()) {
+-                UpdateProtection<false, true>();
+             }
+         }
+ 
