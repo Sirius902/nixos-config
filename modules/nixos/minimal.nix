@@ -15,6 +15,7 @@
     ../tmux.nix
     ../jdk.nix
     ../vfio.nix
+    ../services/games/svends/default.nix
 
     inputs.home-manager.nixosModules.default
     {

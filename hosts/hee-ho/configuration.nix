@@ -14,6 +14,13 @@
 
   networking.hostId = "b0e08309";
 
+  services.svends = {
+    enable = true;
+    openFirewall = true;
+    insecure = true;
+  };
+  systemd.services.svends.wantedBy = lib.mkForce [];
+
   # Allow ports for mc and hkmp.
   networking.firewall.allowedTCPPorts = [25565 25566 32069];
   networking.firewall.allowedUDPPorts = [25565 25566 32069];
