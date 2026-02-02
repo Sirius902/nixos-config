@@ -15,7 +15,7 @@ in {
     };
 
     maxplayers = lib.mkOption {
-      types = lib.types.int;
+      type = lib.types.int;
       default = 8;
     };
 
@@ -43,9 +43,6 @@ in {
 
       serviceConfig = {
         DynamicUser = true;
-        User = "svends";
-        Group = "svends";
-
         StateDirectory = "svends";
         WorkingDirectory = "/var/lib/svends";
 
@@ -74,30 +71,30 @@ in {
         # @cpu-emulation: vm86 (16-bit legacy support) - SAFE TO BLOCK for 32-bit apps
         # @obsolete: Old unused syscalls
         SystemCallFilter = ["~@clock" "~@module" "~@reboot" "~@swap" "~@cpu-emulation" "~@obsolete"];
+
+        ExecStartPre = pkgs.writeShellScript "update-svends" ''
+          ${pkgs.steamcmd}/bin/steamcmd \
+            +@ShutdownOnFailedCommand 1 \
+            +@NoPromptForPassword 1 \
+            +force_install_dir ${config.systemd.services.svends.serviceConfig.WorkingDirectory} \
+            +login anonymous \
+            +app_update 276060 validate \
+            +quit
+        '';
+
+        ExecStart = pkgs.writeShellScript "run-svends" ''
+          ${pkgs.steam-run}/bin/steam-run ./svends_run \
+            -console \
+            -port ${toString cfg.port} \
+            +maxplayers ${toString cfg.maxplayers} \
+            +map ${cfg.map} \
+            ${lib.optionalString (cfg.hostname != null) "+hostname \"${cfg.hostname}\""} \
+            +log on
+        '';
+
+        Restart = "on-failure";
+        RestartSec = "30s";
       };
-
-      ExecStartPre = pkgs.writeShellScript "update-svends" ''
-        ${pkgs.steamcmd}/bin/steamcmd \
-          +@ShutdownOnFailedCommand 1 \
-          +@NoPromptForPassword 1 \
-          +force_install_dir ${config.systemd.services.svends.serviceConfig.WorkingDirectory} \
-          +login anonymous \
-          +app_update 276060 validate \
-          +quit
-      '';
-
-      ExecStart = pkgs.writeShellScript "run-svends" ''
-        ${pkgs.steam-run}/bin/steam-run ./svends_run \
-          -console \
-          -port ${toString cfg.port} \
-          +maxplayers ${toString cfg.maxplayers} \
-          +map ${cfg.map} \
-          ${lib.optionalString (cfg.hostname != null) "+hostname \"${cfg.hostname}\""} \
-          +log on
-      '';
-
-      Restart = "on-failure";
-      RestartSec = "30s";
     };
   };
 }
