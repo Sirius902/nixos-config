@@ -45,6 +45,7 @@ in {
         DynamicUser = true;
         StateDirectory = "svends";
         WorkingDirectory = "/var/lib/svends";
+        Environment = "HOME=/var/lib/svends";
 
         ProtectSystem = "strict";
         ProtectHome = true;
