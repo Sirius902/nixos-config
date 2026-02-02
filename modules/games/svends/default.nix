@@ -36,16 +36,47 @@ in {
       allowedTCPPorts = [cfg.port];
     };
 
+    systemd.services.svends-updater = {
+      description = "Update Sven Co-op Dedicated Server";
+      after = ["network-online.target"];
+      wants = ["network-online.target"];
+
+      serviceConfig = {
+        Type = "oneshot";
+        DynamicUser = true;
+        StateDirectory = "svends";
+        WorkingDirectory = "/var/lib/svends";
+
+        ProtectSystem = "full";
+
+        ProtectHome = true;
+        PrivateTmp = true;
+        PrivateDevices = true;
+
+        Environment = "HOME=/var/lib/svends";
+
+        ExecStart = pkgs.writeShellScript "update-svends" ''
+          ${pkgs.steamcmd}/bin/steamcmd \
+            +@ShutdownOnFailedCommand 1 \
+            +@NoPromptForPassword 1 \
+            +force_install_dir /var/lib/svends \
+            +login anonymous \
+            +app_update 276060 validate \
+            +quit
+        '';
+      };
+    };
+
     systemd.services.svends = {
       description = "Sven Co-op Dedicated Server";
-      after = ["network-online.target"];
+      after = ["network-online.target" "svends-updater.service"];
+      requires = ["svends-updater.service"];
       wants = ["network-online.target"];
 
       serviceConfig = {
         DynamicUser = true;
         StateDirectory = "svends";
         WorkingDirectory = "/var/lib/svends";
-        Environment = "HOME=/var/lib/svends";
 
         ProtectSystem = "strict";
         ProtectHome = true;
@@ -73,15 +104,7 @@ in {
         # @obsolete: Old unused syscalls
         SystemCallFilter = ["~@clock" "~@module" "~@reboot" "~@swap" "~@cpu-emulation" "~@obsolete"];
 
-        ExecStartPre = pkgs.writeShellScript "update-svends" ''
-          ${pkgs.steamcmd}/bin/steamcmd \
-            +@ShutdownOnFailedCommand 1 \
-            +@NoPromptForPassword 1 \
-            +force_install_dir ${config.systemd.services.svends.serviceConfig.WorkingDirectory} \
-            +login anonymous \
-            +app_update 276060 validate \
-            +quit
-        '';
+        Environment = "HOME=/var/lib/svends";
 
         ExecStart = pkgs.writeShellScript "run-svends" ''
           ${pkgs.steam-run}/bin/steam-run ./svends_run \
