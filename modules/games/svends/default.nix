@@ -36,6 +36,15 @@ in {
       allowedTCPPorts = [cfg.port];
     };
 
+    users.users.svends = {
+      isSystemUser = true;
+      group = "svends";
+      home = "/var/lib/svends";
+      createHome = true;
+    };
+
+    users.groups.svends = {};
+
     systemd.services.svends-updater = {
       description = "Update Sven Co-op Dedicated Server";
       after = ["network-online.target"];
@@ -43,17 +52,19 @@ in {
 
       serviceConfig = {
         Type = "oneshot";
-        DynamicUser = true;
+
+        User = "svends";
+        Group = "svends";
+
         StateDirectory = "svends";
         WorkingDirectory = "/var/lib/svends";
 
-        ProtectSystem = "full";
+        ProtectSystem = "strict";
+        ReadWritePaths = ["/var/lib/svends"];
 
         ProtectHome = true;
         PrivateTmp = true;
         PrivateDevices = true;
-
-        Environment = "HOME=/var/lib/svends";
 
         ExecStart = pkgs.writeShellScript "update-svends" ''
           ${pkgs.steamcmd}/bin/steamcmd \
@@ -74,11 +85,15 @@ in {
       wants = ["network-online.target"];
 
       serviceConfig = {
-        DynamicUser = true;
+        User = "svends";
+        Group = "svends";
+
         StateDirectory = "svends";
         WorkingDirectory = "/var/lib/svends";
 
         ProtectSystem = "strict";
+        ReadWritePaths = ["/var/lib/svends"];
+
         ProtectHome = true;
         PrivateTmp = true;
         PrivateDevices = true;
@@ -95,16 +110,7 @@ in {
 
         SystemCallArchitectures = "native";
 
-        # We block the following groups (~ means deny):
-        # @clock: Setting system time
-        # @module: Loading kernel drivers
-        # @reboot: Rebooting/Powering off
-        # @swap: Managing swap files
-        # @cpu-emulation: vm86 (16-bit legacy support) - SAFE TO BLOCK for 32-bit apps
-        # @obsolete: Old unused syscalls
-        SystemCallFilter = ["~@clock" "~@module" "~@reboot" "~@swap" "~@cpu-emulation" "~@obsolete"];
-
-        Environment = "HOME=/var/lib/svends";
+        SystemCallFilter = ["~@clock" "~@module" "~@reboot" "~@swap" "~@cpu-emulation" "~@obsolete" "~@mount"];
 
         ExecStart = pkgs.writeShellScript "run-svends" ''
           ${pkgs.steam-run}/bin/steam-run ./svends_run \
