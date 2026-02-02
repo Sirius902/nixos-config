@@ -16,6 +16,7 @@
 
   my.games.svends = {
     enable = true;
+    insecure = true;
     hostname = "Oh lordy a white citizen";
   };
 

@@ -14,6 +14,11 @@ in {
       default = 27015;
     };
 
+    insecure = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+    };
+
     maxplayers = lib.mkOption {
       type = lib.types.int;
       default = 8;
@@ -112,6 +117,7 @@ in {
           ${pkgs.steam-run}/bin/steam-run ./svends_run \
             -console \
             -port ${toString cfg.port} \
+            ${lib.optionalString cfg.insecure "-insecure"} \
             +maxplayers ${toString cfg.maxplayers} \
             +map ${cfg.map} \
             ${lib.optionalString (cfg.hostname != null) "+hostname \"${cfg.hostname}\""} \
