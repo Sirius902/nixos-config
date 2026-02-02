@@ -14,6 +14,11 @@
 
   networking.hostId = "b0e08309";
 
+  my.games.svends = {
+    enable = true;
+    hostname = "Oh lordy a white citizen";
+  };
+
   # Allow ports for mc and hkmp.
   networking.firewall.allowedTCPPorts = [25565 25566 32069];
   networking.firewall.allowedUDPPorts = [25565 25566 32069];
