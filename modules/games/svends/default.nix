@@ -81,7 +81,6 @@ in {
     systemd.services.svends = {
       description = "Sven Co-op Dedicated Server";
       after = ["network-online.target" "svends-updater.service"];
-      requires = ["svends-updater.service"];
       wants = ["network-online.target"];
 
       serviceConfig = {
@@ -101,16 +100,13 @@ in {
         ProtectKernelTunables = true;
         ProtectKernelModules = true;
         ProtectControlGroups = true;
-        RestrictNamespaces = true;
         LockPersonality = true;
         NoNewPrivileges = true;
         RestrictRealtime = true;
 
         RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX" "AF_NETLINK"];
 
-        SystemCallArchitectures = "native";
-
-        SystemCallFilter = ["~@clock" "~@module" "~@reboot" "~@swap" "~@cpu-emulation" "~@obsolete" "~@mount"];
+        SystemCallFilter = ["~@clock" "~@module" "~@reboot" "~@swap" "~@cpu-emulation" "~@obsolete"];
 
         ExecStart = pkgs.writeShellScript "run-svends" ''
           ${pkgs.steam-run}/bin/steam-run ./svends_run \
