@@ -60,7 +60,6 @@ in {
 
         User = "svends";
         Group = "svends";
-
         StateDirectory = "svends";
         WorkingDirectory = "/var/lib/svends";
 
@@ -91,7 +90,6 @@ in {
       serviceConfig = {
         User = "svends";
         Group = "svends";
-
         StateDirectory = "svends";
         WorkingDirectory = "/var/lib/svends";
 
