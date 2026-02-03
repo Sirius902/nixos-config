@@ -81,10 +81,26 @@ in {
       };
     };
 
+    systemd.sockets.svends = {
+      bindsTo = ["svends.service"];
+      socketConfig = {
+        ListenFIFO = "/run/svends.stdin";
+        SocketMode = "0660";
+        SocketUser = "svends";
+        SocketGroup = "svends";
+        RemoveOnStop = true;
+        FlushPending = true;
+      };
+    };
+
     systemd.services.svends = {
       description = "Sven Co-op Dedicated Server";
-      after = ["network-online.target" "svends-updater.service"];
-      wants = ["network-online.target"];
+      requires = ["svends.socket"];
+      after = [
+        "network.target"
+        "svends-updater.service"
+        "svends.socket"
+      ];
 
       serviceConfig = {
         User = "svends";
@@ -114,6 +130,11 @@ in {
         RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX" "AF_NETLINK"];
 
         SystemCallFilter = ["~@clock" "~@module" "~@reboot" "~@swap" "~@cpu-emulation" "~@obsolete"];
+
+        Sockets = "svends.socket";
+        StandardInput = "socket";
+        StandardOutput = "journal";
+        StandardError = "journal";
 
         ExecStart = pkgs.writeShellScript "run-svends" ''
           ${pkgs.steam-run}/bin/steam-run ./svends_run \
