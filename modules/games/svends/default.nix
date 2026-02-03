@@ -28,11 +28,6 @@ in {
       type = lib.types.str;
       default = "_server_start";
     };
-
-    hostname = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = null;
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -122,7 +117,6 @@ in {
             ${lib.optionalString cfg.insecure "-insecure"} \
             +maxplayers ${toString cfg.maxplayers} \
             +map ${cfg.map} \
-            ${lib.optionalString (cfg.hostname != null) "+hostname \"${cfg.hostname}\""} \
             +log on
         '';
 
