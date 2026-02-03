@@ -92,6 +92,11 @@ in {
         StateDirectory = "svends";
         WorkingDirectory = "/var/lib/svends";
 
+        CPUQuota = "200%";
+        MemoryMax = "4G";
+        TasksMax = 128;
+        LimitNOFILE = 4096;
+
         ProtectSystem = "strict";
         ReadWritePaths = ["/var/lib/svends"];
 
