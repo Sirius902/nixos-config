@@ -79,6 +79,10 @@ in {
             +app_update 276060 validate \
             +quit
         '';
+
+        Restart = "on-failure";
+        RestartSec = "5s";
+        StartLimitBurst = 2;
       };
     };
 
