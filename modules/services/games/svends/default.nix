@@ -154,6 +154,7 @@ in {
         '';
 
         Restart = "always";
+        SuccessExitStatus = "0 130";
 
         # Hardening
         ProtectSystem = "strict";
