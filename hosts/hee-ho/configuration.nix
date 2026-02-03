@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }: {
@@ -73,7 +72,4 @@
   environment.pathsToLink = [
     "/share/terminfo"
   ];
-
-  # Fix waiting for WiFi on rebuild.
-  systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
 }
