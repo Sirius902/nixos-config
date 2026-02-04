@@ -29,4 +29,8 @@
   wwrando-ap = pkgs.callPackage ./wwrando-ap/package.nix {};
 
   wrye-bash = pkgs.callPackage ./wrye-bash/package.nix {};
+
+  # FUTURE(Sirius902) I hope this PR lives :(
+  # https://github.com/NixOS/nixpkgs/pull/384728
+  xash-sdk = pkgs.callPackage ./xash-sdk/package.nix {};
 }
