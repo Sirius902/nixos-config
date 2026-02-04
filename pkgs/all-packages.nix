@@ -33,4 +33,5 @@
   # FUTURE(Sirius902) I hope this PR lives :(
   # https://github.com/NixOS/nixpkgs/pull/384728
   xash-sdk = pkgs.callPackage ./xash-sdk/package.nix {};
+  xash3d-fwgs = pkgs.callPackage ./xash3d-fwgs/package.nix {};
 }
