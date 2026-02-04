@@ -34,4 +34,5 @@
   # https://github.com/NixOS/nixpkgs/pull/384728
   xash-sdk = pkgs.callPackage ./xash-sdk/package.nix {};
   xash3d-fwgs = pkgs.callPackage ./xash3d-fwgs/package.nix {};
+  xash-dedicated = pkgs.callPackage ./xash-dedicated/package.nix {};
 }
