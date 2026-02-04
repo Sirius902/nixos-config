@@ -133,6 +133,7 @@
     wineWowPackages.stableFull
     winetricks
     wgnord
+    xash3d-fwgs
     xivlauncher
     qemu # Workaround for libvirtd efi not working.
     virtiofsd # For virtio support in QEMU.
