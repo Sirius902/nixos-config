@@ -10,8 +10,6 @@
 
   kh-melon-mix = pkgs.callPackage ./kh-melon-mix/package.nix {};
 
-  sdl3_git = pkgs.callPackage ./sdl3_git/package.nix {};
-
   sdl_gamecontrollerdb = pkgs.callPackage ./sdl_gamecontrollerdb/package.nix {};
 
   shipwright = pkgs.callPackage ./shipwright/package.nix {};
