@@ -52,7 +52,7 @@ stdenv.mkDerivation {
       mkdir -p $out/bin
       mv $out/lib/xash $out/bin/xash_ded-unwrapped
       makeWrapper $out/bin/xash_ded-unwrapped $out/bin/xash_ded \
-        --set XASH3D_RODIR $out/opt/valve \
+        --set XASH3D_RODIR $out/opt \
         --run "export XASH3D_BASEDIR=\$HOME/.xash3d/" \
         --prefix ${
         if stdenv.hostPlatform.isDarwin
@@ -61,7 +61,6 @@ stdenv.mkDerivation {
       } : "$out/lib"
     ''
     + lib.optionalString buildXashSdk ''
-      mkdir -p $out/opt
       cp -TR ${xash-sdk}/valve $out/opt/valve
     '';
 
