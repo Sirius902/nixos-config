@@ -260,6 +260,41 @@
     });
   })
 
+  (final: prev: let
+    override = prevAttrs: {
+      postInstall =
+        (prevAttrs.postInstall or "")
+        + ''
+          # opfor
+          cp -TR ${final.xash-sdk.overrideAttrs (prevAttrs: {
+            src = prevAttrs.src.override {
+              rev = "790be1f135d601ffce1970ea1a7c8c5e49641d11";
+              hash = "sha256-ViKOFVTQpBDRwn7BwHSuW9I+ai7ag+Vz1C2sGb7M/7I=";
+            };
+          })}/gearbox $out/opt/gearbox
+
+          # bshift
+          cp -TR ${final.xash-sdk.overrideAttrs (prevAttrs: {
+            src = prevAttrs.src.override {
+              rev = "8cffc250212a316a4d6ba94ac0b5ce9a7470fbbd";
+              hash = "sha256-iSQJJvuZ2kII7MH7rnxp7Ry07my9lMe5R8NMv1oYxGQ=";
+            };
+          })}/bshift $out/opt/bshift
+
+          # theyhunger
+          cp -TR ${final.xash-sdk.overrideAttrs (prevAttrs: {
+            src = prevAttrs.src.override {
+              rev = "48ebea48f4f324d1a5855b8964fa947d59d69e05";
+              hash = "sha256-BZkfmcFe+dSFnzTpicy5cuAL8jZy2r/LD7/mfg7QyH0=";
+            };
+          })}/Hunger $out/opt/Hunger
+        '';
+    };
+  in {
+    xash3d-fwgs = prev.xash3d-fwgs.overrideAttrs override;
+    xash-dedicated = prev.xash-dedicated.overrideAttrs override;
+  })
+
   # TODO(Sirius902) Crying myself to sleep.
   # https://github.com/NixOS/nixpkgs/issues/482250
   (final: prev: let
