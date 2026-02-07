@@ -266,12 +266,4 @@
     xash3d-fwgs = prev.xash3d-fwgs.override {inherit sdks;};
     xash-dedicated = prev.xash-dedicated.override {inherit sdks;};
   })
-
-  # TODO(Sirius902) Crying myself to sleep.
-  # https://github.com/NixOS/nixpkgs/issues/482250
-  (final: prev: let
-    pkgs = import inputs.nixpkgs-prev {inherit (prev.stdenv.hostPlatform) system;};
-  in {
-    inherit (pkgs) librewolf-unwrapped;
-  })
 ]
