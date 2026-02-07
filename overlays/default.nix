@@ -196,12 +196,12 @@
 
   (final: prev: {
     shadps4 = prev.shadps4.overrideAttrs (prevAttrs: {
-      version = "0.13.0-unstable-2026-02-05";
+      version = "0.13.0-unstable-2026-02-07";
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "b88ec484bafcee9bf8b4a6cd7bad8520ea6f981e";
-        hash = "sha256-M3ZeB6L0qpZ4qz6mqJG5LHroZyUM2jAmPEUF4GVXNzk=";
+        rev = "f911ed23a93f79474cde6fb630f6add13a09c13c";
+        hash = "sha256-HFOni9Os9eKZhwatOPg8uSH9tYue3jS0nR8ctgf4SGY=";
       };
 
       patches = (prevAttrs.patches or []) ++ [../patches/shadps4/readbacks-perf-hack.patch];
