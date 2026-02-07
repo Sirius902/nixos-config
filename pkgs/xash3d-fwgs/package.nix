@@ -79,7 +79,7 @@ stdenv.mkDerivation {
       mkdir -p $out/bin
       mv $out/lib/xash3d $out/bin/xash3d-unwrapped
       makeWrapper $out/bin/xash3d-unwrapped $out/bin/xash3d \
-        --set XASH3D_RODIR $out/opt/valve \
+        --set XASH3D_RODIR $out/opt \
         --run "export XASH3D_BASEDIR=\$HOME/.xash3d/" \
         --prefix ${
         if stdenv.hostPlatform.isDarwin
@@ -87,7 +87,9 @@ stdenv.mkDerivation {
         else "LD_LIBRARY_PATH"
       } : "$out/lib"
     ''
-    + lib.optionalString buildXashSdk ''cp -TR ${xash-sdk}/valve $out/opt/valve'';
+    + lib.optionalString buildXashSdk ''
+      cp -TR ${xash-sdk}/valve $out/opt/valve
+    '';
 
   passthru.updateScript = nix-update-script {
     extraArgs = [
