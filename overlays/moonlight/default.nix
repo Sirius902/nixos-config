@@ -1,12 +1,12 @@
 final: prev: {
   moonlight = prev.moonlight.overrideAttrs (prevAttrs: {
-    version = "1.3.39";
+    version = "2026.2.0";
     src = prevAttrs.src.override {
-      hash = "sha256-85W5OrP9Ju4ZJRUEZLpBreKxgUrHgxxZEv7KzcpqNDo=";
+      hash = "sha256-VqO3pUqnKP2VE1I/HtuY6bF/k/ijh5CBeE35Mpp6rGo=";
     };
     pnpmDeps = prevAttrs.pnpmDeps.override {
       fetcherVersion = 3;
-      hash = "sha256-+wGup5wJIqTzkr4mTo/CxofffQmUz3JD2s/s/oY0viM=";
+      hash = "sha256-mSuk829qkNq+dDDympXCBzqMUJc4L9zqzcmVZwfbXsE=";
     };
   });
 }
