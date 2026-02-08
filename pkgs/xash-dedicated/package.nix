@@ -10,7 +10,7 @@
   makeWrapper,
   nix-update-script,
   # Options
-  buildXashSdk ? true,
+  sdks ? [xash-sdk],
 }:
 stdenv.mkDerivation {
   pname = "xash-dedicated";
@@ -60,9 +60,7 @@ stdenv.mkDerivation {
         else "LD_LIBRARY_PATH"
       } : "$out/lib"
     ''
-    + lib.optionalString buildXashSdk ''
-      cp -TR ${xash-sdk}/valve $out/opt/valve
-    '';
+    + lib.concatLines (lib.map (sdk: "cp -TR ${sdk}/${sdk.modDir} $out/opt/${sdk.modDir}") sdks);
 
   passthru.updateScript = nix-update-script {
     extraArgs = [

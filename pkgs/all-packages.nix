@@ -33,6 +33,10 @@
   # FUTURE(Sirius902) I hope this PR lives :(
   # https://github.com/NixOS/nixpkgs/pull/384728
   xash-sdk = pkgs.callPackage ./xash-sdk/package.nix {};
+  xash-sdk-bshift = pkgs.callPackage ./xash-sdk/mods/bshift.nix {};
+  xash-sdk-opfor = pkgs.callPackage ./xash-sdk/mods/opfor.nix {};
+  xash-sdk-theyhunger = pkgs.callPackage ./xash-sdk/mods/theyhunger.nix {};
+
   xash3d-fwgs = pkgs.callPackage ./xash3d-fwgs/package.nix {};
   xash-dedicated = pkgs.callPackage ./xash-dedicated/package.nix {};
 }

@@ -29,11 +29,15 @@ stdenv.mkDerivation {
 
   wafInstallFlags = ["--destdir=${placeholder "out"}"];
 
-  passthru.updateScript = nix-update-script {
-    extraArgs = [
-      "--version=branch"
-      "--version-regex=(0-unstable-.*)"
-    ];
+  passthru = {
+    modDir = "valve";
+
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--version=branch"
+        "--version-regex=(0-unstable-.*)"
+      ];
+    };
   };
 
   meta = {
