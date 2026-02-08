@@ -165,7 +165,7 @@
                 ''
                 else "";
 
-              defaultPkgs = removeAttrs (self.packages.${system}) ["dolphin-emu" "graalvm-ce_8"];
+              defaultPkgs = removeAttrs (self.packages.${system}) ["dolphin-emu" "graalvm-ce_8" "shipwright"];
             in
               lib.getExe (pkgs.writeShellScriptBin "update" ''
                 ${lib.concatStringsSep "\n" (lib.mapAttrsToList mkUpdate self.packages.${system})}
