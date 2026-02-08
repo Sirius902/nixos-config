@@ -200,8 +200,8 @@
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "341de9aa176440e68861880c04c253cd05816f46";
-        hash = "sha256-++jxj1TYx0efdm7Ar/+TAXCXAv/m0tmrQeL8JTQ2C6E=";
+        rev = "be86b5fe3231570cac207b470449f3edcd87f122";
+        hash = "sha256-6yuypWjPkj65TaDG1D0N31WB1Lu5fPNWvcdQTgqX9UM=";
       };
 
       patches = (prevAttrs.patches or []) ++ [../patches/shadps4/readbacks-perf-hack.patch];
