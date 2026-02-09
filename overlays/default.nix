@@ -249,6 +249,17 @@
     }
   )
 
+  (final: prev: {
+    xash-sdk = prev.xash-sdk.overrideAttrs (prevAttrs: {
+      postPatch =
+        (prevAttrs.postPatch or "")
+        + ''
+          substituteInPlace pm_shared/pm_shared.c \
+            --replace-fail "PM_PreventMegaBunnyJumping();" "(void)0;"
+        '';
+    });
+  })
+
   # TODO(Sirius902) Crying myself to sleep.
   # https://github.com/NixOS/nixpkgs/issues/482250
   (final: prev: let
