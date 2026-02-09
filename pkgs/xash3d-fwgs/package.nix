@@ -7,7 +7,7 @@
   pkg-config,
   wafHook,
   SDL2,
-  xorg,
+  libX11,
   freetype,
   opusfile,
   libopus,
@@ -51,7 +51,7 @@ stdenv.mkDerivation {
       SDL2
     ]
     ++ lib.optionals stdenv.isLinux [
-      xorg.libX11
+      libX11
     ];
 
   dontAddPrefix = true;

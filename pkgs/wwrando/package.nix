@@ -10,9 +10,9 @@
   fetchurl,
   glib,
   libGL,
+  libX11,
   libz,
   fontconfig,
-  xorg,
   libxkbcommon,
   freetype,
   dbus,
@@ -44,7 +44,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     glib
     libGL
     fontconfig
-    xorg.libX11
+    libX11
     libxkbcommon
     freetype
     dbus

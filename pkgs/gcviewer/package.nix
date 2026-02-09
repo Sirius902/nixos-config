@@ -7,10 +7,13 @@
   makeDesktopItem,
   autoPatchelfHook,
   libGL,
+  libX11,
+  libXcursor,
+  libxcb,
+  libXi,
   libxkbcommon,
   vulkan-loader,
   wayland,
-  xorg,
   pkg-config,
   libudev-zero,
   nix-update-script,
@@ -49,10 +52,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
   buildInputs =
     lib.optionals stdenv.hostPlatform.isLinux [
       libGL
-      xorg.libX11
-      xorg.libXcursor
-      xorg.libxcb
-      xorg.libXi
+      libX11
+      libXcursor
+      libxcb
+      libXi
       libudev-zero
     ]
     ++ finalAttrs.runtimeDependencies;
