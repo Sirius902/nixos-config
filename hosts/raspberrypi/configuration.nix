@@ -18,6 +18,16 @@
     config.allowUnfree = true;
   };
 
+  # Cross-compile sops-install-secrets because building with QEMU will not
+  # finish before the heat death of the universe
+  sops.package = let
+    pkgsCross = import inputs.nixpkgs {
+      localSystem = "x86_64-linux";
+      crossSystem = "aarch64-linux";
+    };
+  in
+    (pkgsCross.callPackage inputs.sops-nix {}).sops-install-secrets;
+
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
     trusted-users = ["chris"];
