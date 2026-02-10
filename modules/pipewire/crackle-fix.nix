@@ -1,14 +1,9 @@
 {
-  services.pipewire.wireplumber.extraConfig."92-hdmi-crackle-fix" = {
-    "monitor.alsa.rules" = [
-      {
-        matches = [
-          {"node.nick" = "DELL S2722DGM";}
-        ];
-        actions.update-props = {
-          "api.alsa.headroom" = 1024;
-        };
-      }
-    ];
+  services.pipewire.extraConfig.pipewire."92-hdmi-buffer" = {
+    "context.properties" = {
+      "default.clock.quantum" = 2048;
+      "default.clock.min-quantum" = 1024;
+      "default.clock.max-quantum" = 4096;
+    };
   };
 }
