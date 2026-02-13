@@ -12,8 +12,8 @@
     "hash": "sha256-xW2iIoEZgQIQKeYUgvVQhsJfazLMGSLpL/Sv1FSRs7c="
   },
   "FalloutNV": {
-    "url": "https://raw.githubusercontent.com/loot/falloutnv/c40fc3619eb8b43d4d5fda884217dd7dd017d5d7/masterlist.yaml",
-    "hash": "sha256-aw/6r+vB9eslqB9/7H3iTQ/jZYRI+I0kDShxAAP12/8="
+    "url": "https://raw.githubusercontent.com/loot/falloutnv/0dffd02903684fc890583b93540057e6b22e0b87/masterlist.yaml",
+    "hash": "sha256-d+FMLlQqib7wgwkUsu+W/bw3ua4RCZlFAY/F9opoVDU="
   },
   "Morrowind": {
     "url": "https://raw.githubusercontent.com/loot/morrowind/748db08e41c2bfae6c82e9d4529b796b2df80666/masterlist.yaml",
