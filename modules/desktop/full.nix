@@ -130,7 +130,7 @@
     transmission_4-gtk
     (discord-canary.override {withMoonlight = true;})
     vlc
-    wineWowPackages.stableFull
+    wineWow64Packages.stableFull
     winetricks
     wgnord
     xash3d-fwgs
