@@ -78,7 +78,7 @@
   # For wgnord
   services.resolved.enable = true;
 
-  # melonDS LAN port
+  # melonds LAN port
   networking.firewall.allowedTCPPorts = [7064];
 
   environment.systemPackages = with pkgs; [
@@ -86,7 +86,7 @@
       removeWarningPopup = true;
     })
     dolphin-emu
-    melonDS
+    melonds
     kh-melon-mix
     wwrando
     wwrando-ap

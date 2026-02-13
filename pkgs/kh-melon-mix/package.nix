@@ -3,10 +3,10 @@
   flac,
   lua5_4_compat,
   makeWrapper,
-  melonDS,
+  melonds,
   nix-update-script,
 }:
-melonDS.overrideAttrs (prevAttrs: {
+melonds.overrideAttrs (prevAttrs: {
   pname = "kh-melon-mix";
   version = "0.8.0-unstable-2026-02-12";
 
