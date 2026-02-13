@@ -14,14 +14,14 @@
 }:
 stdenv.mkDerivation {
   pname = "xash-dedicated";
-  version = "0-unstable-2026-02-10";
+  version = "0-unstable-2026-02-12";
 
   src = fetchFromGitHub {
     owner = "FWGS";
     repo = "xash3d-fwgs";
     fetchSubmodules = true;
-    rev = "f0342763547d9bcf486af8ee7418893ebeb972c5";
-    hash = "sha256-4iTwka6V8i4hKIRwfDvDtomlxuXeOw8J4gCdEJBBAPE=";
+    rev = "80e0d45c09ca58094594b5a0ded7d2299e100ac8";
+    hash = "sha256-gtLQUvDclLR6ICCR7v2xQiEnfqlAqaNw0rgxkoYVRs4=";
   };
 
   nativeBuildInputs = [
