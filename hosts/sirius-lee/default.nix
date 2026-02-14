@@ -61,7 +61,8 @@
     pkgs.shipwright-ap
     pkgs.zelda64recomp
     pkgs.waypipe
-    pkgs.wrye-bash
+    # TODO(Sirius902) brokeded
+    # pkgs.wrye-bash
   ];
 
   home-manager.users.chris = {
