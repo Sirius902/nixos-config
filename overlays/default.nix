@@ -266,4 +266,17 @@
     xash3d-fwgs = prev.xash3d-fwgs.override {inherit sdks;};
     xash-dedicated = prev.xash-dedicated.override {inherit sdks;};
   })
+
+  # TODO(Sirius902) brokeded
+  (final: prev: let
+    version = "1.27.1";
+  in {
+    pure-prompt = assert prev.lib.assertMsg (prev.lib.versionOlder prev.pure-prompt.version version) "overlay no longer necessary";
+      prev.pure-prompt.overrideAttrs (prevAttrs: {
+        inherit version;
+        src = prevAttrs.src.override {
+          sha256 = "sha256-Fhk4nlVPS09oh0coLsBnjrKncQGE6cUEynzDO2Skiq8=";
+        };
+      });
+  })
 ]
