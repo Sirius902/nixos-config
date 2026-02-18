@@ -1,4 +1,4 @@
-From a8915a6f5ed8fbab9543cd932a02a140f4c5f090 Mon Sep 17 00:00:00 2001
+From 3648df83b5f43834799b7e30d108f589b0a625b3 Mon Sep 17 00:00:00 2001
 From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
 Date: Wed, 24 Dec 2025 18:40:07 -0800
 Subject: [PATCH 2/3] Don't use internet in helpers/utils.py
@@ -6,11 +6,11 @@ Subject: [PATCH 2/3] Don't use internet in helpers/utils.py
 Importing pygit2 tries to access the internet, which is not allowed in
 a nix build environment.
 ---
- scripts/helpers/utils.py | 17 -----------------
- 1 file changed, 17 deletions(-)
+ scripts/helpers/utils.py | 76 ----------------------------------------
+ 1 file changed, 76 deletions(-)
 
 diff --git a/scripts/helpers/utils.py b/scripts/helpers/utils.py
-index 2aabfb5f8..e1e5658e9 100644
+index df87c1bc8..fe10f8425 100644
 --- a/scripts/helpers/utils.py
 +++ b/scripts/helpers/utils.py
 @@ -35,8 +35,6 @@
@@ -21,29 +21,88 @@ index 2aabfb5f8..e1e5658e9 100644
 -
  # Reusable path definitions
  SCRIPTS_PATH = Path(__file__).absolute().parent.parent
- ROOT_PATH = SCRIPTS_PATH.parent
-@@ -218,21 +216,6 @@ def get_repo_sig(repo):
-             file=sys.stderr)
-         sys.exit(1)
+ ROOT_PATH = SCRIPTS_PATH.parent # the root of the Wrye Bash repository
+@@ -203,80 +201,6 @@ def run_subprocess(command, logger, **kwargs):
+     logger.debug(stdout)
+     logger.debug('---  COMMAND OUTPUT END  ---')
  
--def commit_changes(*, changed_paths: list[os.PathLike | str], commit_msg: str,
--        repo_path: os.PathLike | str = ROOT_PATH):
--    """Commit changes to the specified files by creating a commit with the
--    specified message."""
--    repo = pygit2.Repository(repo_path)
--    user = get_repo_sig(repo)
--    parent = [repo.head.target]
--    for cf in changed_paths:
--        rel_path = os.path.relpath(cf, repo.workdir).replace('\\', '/')
--        if repo.status_file(rel_path) == pygit2.GIT_STATUS_WT_MODIFIED:
--            repo.index.add(rel_path)
--    tree = repo.index.write_tree()
--    repo.create_commit('HEAD', user, user, commit_msg, tree, parent)
--    repo.index.write()
+-class WBRepo(pygit2.Repository):
+-    """A Wrye Bash pygit2 Repository wrapper."""
+-
+-    def get_repo_sig(self):
+-        """Wrapper around pygit2 that shows a helpful error message to the
+-        user if their credentials have not been configured yet."""
+-        try:
+-            return self.default_signature
+-        except KeyError:
+-            print('\n'.join(['', # empty line before the error
+-                'ERROR: You have not set up your git identity yet.',
+-                'This is necessary for the git operations that the build script '
+-                'uses.',
+-                'You can configure them as follows:',
+-                '   git config --global user.name "Your Name"',
+-                '   git config --global user.email "you@example.com"']),
+-                file=sys.stderr)
+-            sys.exit(1)
+-
+-    def commit_changes(self, *, commit_msg: str,
+-                       changed_paths: list[os.PathLike | str]):
+-        """Commit changes to the specified files by creating a commit with the
+-        specified message."""
+-        user = self.get_repo_sig()
+-        parent = [self.head.target]
+-        for cf in changed_paths:
+-            rel_path = os.path.relpath(cf, self.workdir).replace('\\', '/')
+-            if self.status_file(rel_path) == pygit2.GIT_STATUS_WT_MODIFIED:
+-                self.index.add(rel_path)
+-        tree = self.index.write_tree()
+-        self.create_commit('HEAD', user, user, commit_msg, tree, parent)
+-        self.index.write()
+-
+-    def get_head_hash(self) -> str:
+-        """Get the current commit hash of the WB repository."""
+-        return str(self.head.target)
+-
+-    def get_tracked_paths(self, depth: int | None = 1, rev='HEAD') -> set[str]:
+-        """Return tracked blob paths for `rev` and, optionally, its ancestors.
+-        depth=1 matches the single-commit behavior; depth=None walks all
+-        reachable commits. Always return a set of repo-relative posix paths."""
+-        start = self.revparse_single(rev)
+-        if isinstance(start, pygit2.Tag):
+-            start = self[start.target]
+-        if not isinstance(start, pygit2.Commit):
+-            raise TypeError(f'{rev!r} did not resolve to a commit')
+-        if depth is not None and depth < 1:
+-            raise ValueError(f'depth must be >= 1 or None was {depth}')
+-        ever: set[str] = set()
+-        seen_trees: set[pygit2.Oid] = set()
+-        walker = self.walk(start.id, pygit2.GIT_SORT_TOPOLOGICAL)
+-        for i, c in enumerate(walker, start=1):
+-            if depth is not None and i > depth: break
+-            oid = c.tree.id
+-            if oid not in seen_trees:
+-                seen_trees.add(oid)
+-                ever.update(self._iter_tree_paths(c.tree, prefix=''))
+-        return ever
+-
+-    def _iter_tree_paths(self, tree: pygit2.Tree, prefix=''):
+-        stack = [(tree, prefix)]
+-        while stack:
+-            t, pre = stack.pop()
+-            for entry in t:
+-                p = f'{pre}{entry.name}'
+-                if entry.type == pygit2.GIT_OBJECT_BLOB:
+-                    yield p
+-                elif entry.type == pygit2.GIT_OBJECT_TREE:
+-                    stack.append((self[entry.id], f'{p}/'))
+-                else:
+-                    # Conservative: treat unknown as non-file unless it's clearly a
+-                    # tree/blob (note submodules show up as commits)
+-                    continue
 -
  def out_path(dir_=OUT_PATH, name='out.txt'):
      """Returns a path joining the dir_ and name parameters. Will create the
      dirs in dir_ if not existing.
 -- 
-2.51.2
+2.52.0
 
