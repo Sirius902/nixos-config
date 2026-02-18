@@ -1,7 +1,6 @@
 {pkgs}: {
   ghostty-nautilus = pkgs.callPackage ./ghostty-nautilus/package.nix {};
 
-  gcfeeder = pkgs.callPackage ./gcfeeder/package.nix {};
   gcfeederd = pkgs.callPackage ./gcfeederd/package.nix {};
   gcviewer = pkgs.callPackage ./gcviewer/package.nix {};
 
