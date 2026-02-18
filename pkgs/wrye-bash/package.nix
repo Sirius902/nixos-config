@@ -135,8 +135,6 @@ in
     ];
 
     meta = {
-      # TODO(Sirius902) brokeded
-      broken = true;
       homepage = "https://github.com/wrye-bash/wrye-bash";
       description = "A swiss army knife for modding Bethesda games.";
       mainProgram = "wrye-bash";
