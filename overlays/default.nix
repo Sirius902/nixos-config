@@ -81,6 +81,7 @@
             // {
               platforms = builtins.attrNames srcs;
             };
+          passthru = removeAttrs (prevAttrs.passthru or {}) ["updateScript"];
 
           postInstall = ''
             # jni.h expects jni_md.h to be in the header search path.
