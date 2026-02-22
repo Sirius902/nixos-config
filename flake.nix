@@ -203,7 +203,7 @@
         in
           (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
           // {
-            inherit (pkgs) moonlight dolphin-emu rpcs3 shadps4 shadps4-qt;
+            inherit (pkgs) moonlight rpcs3 shadps4 shadps4-qt;
             inherit (pkgs.graalvmPackages) graalvm-ce_8;
           };
 
