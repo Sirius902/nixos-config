@@ -223,12 +223,12 @@
   (
     final: prev: {
       shadps4-qt = prev.shadps4-qt.overrideAttrs (prevAttrs: {
-        version = "0-unstable-2026-02-16";
+        version = "0-unstable-2026-02-23";
 
         src = prevAttrs.src.override {
           tag = null;
-          rev = "dc18ac6e58c36f82570c9483bcff44b2e08098f0";
-          hash = "sha256-Oa7z5y3aIEpdW9KnXcJY3X67vj7RZG26b/7fvkbnWyc=";
+          rev = "6c1ca0800249cf5841a31937c74fae8dcd837114";
+          hash = "sha256-5v6kdiY9SHbEI4PQmtCkd7zef0f1NaaBRdmKkzdW0As=";
         };
 
         passthru =
