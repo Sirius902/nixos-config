@@ -247,6 +247,14 @@
 
   (final: prev: {
     xash-sdk = prev.xash-sdk.overrideAttrs (prevAttrs: {
+      patches = [
+        (final.fetchpatch2 {
+          name = "npc-door-panic.patch";
+          url = "https://github.com/Sirius902/hlsdk-portable/commit/3edcc16cc1d312f56fd495c491e9cfa3a4851bdc.patch?full_index=1";
+          hash = "sha256-bLvv4/A3/IYJAs9eA00zWV8m9t7BH/g6dKR9jIJ9koI=";
+        })
+      ];
+
       postPatch =
         (prevAttrs.postPatch or "")
         + ''
