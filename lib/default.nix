@@ -67,6 +67,12 @@
       name = "nixpkgs-patched";
       src = nixpkgs;
       patches = [
+        # Update ZFS https://github.com/NixOS/nixpkgs/pull/493812
+        (builtins.fetchurl {
+          name = "update-zfs.patch";
+          url = "https://github.com/NixOS/nixpkgs/compare/c9c494411139bf640b22c332f7a92b94e8454de2...25b22531399f1b99b2d2bc964b9f96b806a87fd0.patch?full_index=1";
+          sha256 = "sha256:072c6s0w38v6hlysz349xdxnwr3xilg47hbfhy99ws040pjjbigq";
+        })
         # Add shadps4-qt https://github.com/NixOS/nixpkgs/pull/474696
         # Some extra patches here https://github.com/Sirius902/nixpkgs/tree/shadps4-fixes
         (builtins.fetchurl {

@@ -20,8 +20,8 @@
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_6_18;
-    zfs.package = pkgs.zfs_unstable;
+    kernelPackages = pkgs.linuxPackages_latest;
+    zfs.package = pkgs.zfs_2_4;
   };
 
   programs.git.enable = true;
