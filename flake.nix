@@ -178,7 +178,7 @@
           };
 
         devShells.default = pkgs.mkShell {
-          packages = [pkgs.just];
+          packages = [pkgs.just pkgs.statix];
         };
       };
     };

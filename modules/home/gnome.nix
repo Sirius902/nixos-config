@@ -4,7 +4,7 @@
   ...
 }: {
   dconf = let
-    mkTuple = lib.hm.gvariant.mkTuple;
+    inherit (lib.hm.gvariant) mkTuple;
   in {
     enable = true;
     settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";

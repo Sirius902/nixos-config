@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  micNodeName = config.my.rnnoise.micNodeName;
+  inherit (config.my.rnnoise) micNodeName;
 in {
   options.my.rnnoise.micNodeName = with lib;
     mkOption {
