@@ -177,6 +177,11 @@
             inherit (patchedPkgs.graalvmPackages) graalvm-ce_8;
           };
 
+        checks.statix = pkgs.runCommandLocal "statix-check" {} ''
+          ${lib.getExe pkgs.statix} check ${self} --config ${self}/statix.toml
+          touch $out
+        '';
+
         devShells.default = pkgs.mkShell {
           packages = [pkgs.just pkgs.statix];
         };
