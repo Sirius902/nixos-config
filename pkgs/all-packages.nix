@@ -1,4 +1,6 @@
-{pkgs}: {
+{pkgs}: let
+  mkShipPort = pkgs.callPackage ./shipwright/common.nix {};
+in {
   ghostty-nautilus = pkgs.callPackage ./ghostty-nautilus/package.nix {};
 
   gcfeederd = pkgs.callPackage ./gcfeederd/package.nix {};
@@ -9,9 +11,9 @@
 
   kh-melon-mix = pkgs.callPackage ./kh-melon-mix/package.nix {};
 
-  shipwright = pkgs.callPackage ./shipwright/package.nix {};
-  shipwright-ap = pkgs.callPackage ./shipwright/ap/package.nix {};
-  _2ship2harkinian = pkgs.callPackage ./_2ship2harkinian/package.nix {};
+  shipwright = pkgs.callPackage ./shipwright/package.nix {inherit mkShipPort;};
+  shipwright-ap = pkgs.callPackage ./shipwright/ap/package.nix {inherit mkShipPort;};
+  _2ship2harkinian = pkgs.callPackage ./_2ship2harkinian/package.nix {inherit mkShipPort;};
 
   n64recomp = pkgs.callPackage ./n64recomp/package.nix {};
   z64decompress = pkgs.callPackage ./z64decompress/package.nix {};
