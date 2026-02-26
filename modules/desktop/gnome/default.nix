@@ -9,11 +9,7 @@ in {
   config = lib.mkIf (cfg.enable && cfg.environment == "gnome") {
     services.xserver.enable = true;
 
-    services.displayManager.gdm.enable = true;
     services.desktopManager.gnome.enable = true;
-
-    services.displayManager.cosmic-greeter.enable = lib.mkForce false;
-    services.displayManager.sddm.enable = lib.mkForce false;
 
     environment.gnome.excludePackages = [
       pkgs.gnome-tour

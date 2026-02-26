@@ -8,6 +8,7 @@
 in {
   imports = [
     ./full.nix
+    ./display-manager.nix
     ./rnnoise.nix
     ./cosmic/default.nix
     ./gnome/default.nix

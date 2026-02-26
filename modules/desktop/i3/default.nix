@@ -15,9 +15,5 @@ in {
         extraPackages = with pkgs; [dmenu i3status];
       };
     };
-
-    services.displayManager.cosmic-greeter.enable = lib.mkForce false;
-    services.displayManager.gdm.enable = lib.mkForce false;
-    services.displayManager.sddm.enable = lib.mkForce false;
   };
 }

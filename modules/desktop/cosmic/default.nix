@@ -7,12 +7,8 @@
   cfg = config.my.desktop;
 in {
   config = lib.mkIf (cfg.enable && cfg.environment == "cosmic") {
-    services.displayManager.cosmic-greeter.enable = true;
     services.desktopManager.cosmic.enable = true;
     services.desktopManager.cosmic.xwayland.enable = true;
-
-    services.displayManager.gdm.enable = lib.mkForce false;
-    services.displayManager.sddm.enable = lib.mkForce false;
 
     environment.sessionVariables.COSMIC_DATA_CONTROL_ENABLED = 1;
 
