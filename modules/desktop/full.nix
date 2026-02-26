@@ -76,6 +76,11 @@ in {
     # melonds LAN port
     networking.firewall.allowedTCPPorts = [7064];
 
+    home-manager.users.chris.imports = [
+      ../home/gcviewer.nix
+      ../home/gcfeederd.nix
+    ];
+
     environment.systemPackages = with pkgs; [
       (bottles.override {
         removeWarningPopup = true;

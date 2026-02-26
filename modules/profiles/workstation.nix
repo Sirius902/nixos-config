@@ -24,11 +24,6 @@
 
   services.flatpak.enable = lib.mkDefault true;
 
-  home-manager.users.chris.imports = [
-    ../home/gcviewer.nix
-    ../home/gcfeederd.nix
-  ];
-
   environment.systemPackages = with pkgs; [
     archipelago
     shipwright
