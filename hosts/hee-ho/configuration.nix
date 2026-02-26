@@ -6,13 +6,13 @@
 }: {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/nixos/minimal.nix
-    ../../modules/openssh.nix
-    ../../modules/documentation.nix
-    ../../modules/tailscale.nix
+    ../../modules/nixos/standard.nix
   ];
 
   networking.hostId = "b0e08309";
+
+  my.tailscale.enable = true;
+  my.jdk = pkgs.graalvmPackages.graalvm-oracle;
 
   services.svends = {
     enable = true;
@@ -35,35 +35,6 @@
       "0 * * * *    chris    /media/data/mc/backup-all.sh"
     ];
   };
-
-  # TODO: Get systemd service to work. Use this instead of cron job.
-  # systemd.timers."mc-backup" = {
-  #   wantedBy = [ "timers.target" ];
-  #   timerConfig = {
-  #     OnBootSec = "1h";
-  #     OnUnitActiveSec = "1h";
-  #     Unit = "mc-backup.service";
-  #   };
-  # };
-  #
-  # systemd.services."mc-backup" = {
-  #   path = [
-  #     pkgs.bash
-  #     pkgs.gawk
-  #     pkgs.gnutar
-  #     pkgs.screen
-  #   ];
-  #   script = ''
-  #     set -eu
-  #     ${pkgs.bash}/bin/bash /media/data/mc/backup-all.sh
-  #   '';
-  #   serviceConfig = {
-  #     Type = "oneshot";
-  #     User = "chris";
-  #     Group = "users";
-  #     IgnoreSIGPIPE = false;
-  #   };
-  # };
 
   environment.systemPackages = with pkgs; [
     ghostty.terminfo

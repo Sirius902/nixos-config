@@ -50,45 +50,15 @@
         lib = import ./lib/default.nix {inherit inputs;};
 
         nixosConfigurations = {
-          sirius-lee = let
-            inherit (inputs) nixpkgs;
+          sirius-lee = self.lib.nixosSystem {
             system = "x86_64-linux";
-            nixpkgs' = self.lib.patchNixpkgs {inherit system nixpkgs;};
-            pkgs' = import nixpkgs' {
-              inherit system;
-              config.allowUnfree = true;
-            };
-          in
-            self.lib.nixosSystem {
-              inherit system nixpkgs;
-              host = "sirius-lee";
-              extraModules = [
-                ({lib, ...}: {
-                  nixpkgs.pkgs = pkgs';
-                  nixpkgs.config = lib.mkForce {};
-                })
-              ];
-            };
+            host = "sirius-lee";
+          };
 
-          nixtower = let
-            inherit (inputs) nixpkgs;
+          nixtower = self.lib.nixosSystem {
             system = "x86_64-linux";
-            nixpkgs' = self.lib.patchNixpkgs {inherit system nixpkgs;};
-            pkgs' = import nixpkgs' {
-              inherit system;
-              config.allowUnfree = true;
-            };
-          in
-            self.lib.nixosSystem {
-              inherit system nixpkgs;
-              host = "nixtower";
-              extraModules = [
-                ({lib, ...}: {
-                  nixpkgs.pkgs = pkgs';
-                  nixpkgs.config = lib.mkForce {};
-                })
-              ];
-            };
+            host = "nixtower";
+          };
 
           hee-ho = self.lib.nixosSystem {
             system = "x86_64-linux";
@@ -194,17 +164,17 @@
             inherit system;
             inherit (inputs) nixpkgs;
           };
-          pkgs = import nixpkgs' {
+          patchedPkgs = import nixpkgs' {
             inherit system;
             overlays = import ./overlays/default.nix {inherit inputs;};
             config.allowUnfree = true;
           };
-          allPackages = import ./pkgs/all-packages.nix {inherit pkgs;};
+          allPackages = import ./pkgs/all-packages.nix {pkgs = patchedPkgs;};
         in
-          (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
+          (lib.mapAttrs (name: _: patchedPkgs.${name}) allPackages)
           // {
-            inherit (pkgs) moonlight rpcs3 shadps4 shadps4-qt;
-            inherit (pkgs.graalvmPackages) graalvm-ce_8;
+            inherit (patchedPkgs) moonlight rpcs3 shadps4 shadps4-qt;
+            inherit (patchedPkgs.graalvmPackages) graalvm-ce_8;
           };
 
         devShells.default = pkgs.mkShell {

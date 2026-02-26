@@ -2,11 +2,19 @@
   nixosSystem = {
     system,
     host,
-    nixpkgs ? inputs.nixpkgs,
     setHostName ? true,
     extraModules ? [],
-  }:
-    nixpkgs.lib.nixosSystem {
+  }: let
+    patchedSrc = inputs.self.lib.patchNixpkgs {
+      inherit system;
+      inherit (inputs) nixpkgs;
+    };
+    patchedPkgs = import patchedSrc {
+      inherit system;
+      config.allowUnfree = true;
+    };
+  in
+    inputs.nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {inherit inputs;};
       modules =
@@ -15,6 +23,8 @@
 
           ({lib, ...}: {
             networking.hostName = lib.mkIf setHostName host;
+            nixpkgs.pkgs = patchedPkgs;
+            nixpkgs.config = lib.mkForce {};
           })
         ]
         ++ extraModules;
@@ -24,13 +34,27 @@
     system,
     host,
     extraModules ? [],
-  }:
+  }: let
+    patchedSrc = inputs.self.lib.patchNixpkgs {
+      inherit system;
+      inherit (inputs) nixpkgs;
+    };
+    patchedPkgs = import patchedSrc {
+      inherit system;
+      config.allowUnfree = true;
+    };
+  in
     inputs.nix-darwin.lib.darwinSystem {
       inherit system;
       specialArgs = {inherit inputs;};
       modules =
         [
           (../. + "/hosts/${host}/configuration.nix")
+
+          ({lib, ...}: {
+            nixpkgs.pkgs = patchedPkgs;
+            nixpkgs.config = lib.mkForce {};
+          })
         ]
         ++ extraModules;
     };
