@@ -105,7 +105,7 @@ in {
       heroic
       keymapp
       krita
-      libreoffice
+      # libreoffice
       mangohud
       ntfs3g
       (wrapOBS {
