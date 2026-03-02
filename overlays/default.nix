@@ -205,8 +205,6 @@
         hash = "sha256-vE+74bYUp6xBQ97zNqxn9cwQjgtRn2lAxYQUSjCok88=";
       };
 
-      patches = (prevAttrs.patches or []) ++ [../patches/shadps4/readbacks-perf-hack.patch];
-
       passthru =
         (prevAttrs.passthru or {})
         // {
