@@ -286,10 +286,4 @@
         };
       });
   })
-
-  # TODO(Sirius902) brokeded
-  # https://github.com/NixOS/nixpkgs/issues/493431
-  (final: prev: {
-    lager = prev.lager.override {boost = final.boost188;};
-  })
 ]
