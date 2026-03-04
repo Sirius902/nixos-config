@@ -74,6 +74,12 @@
           url = "https://github.com/Sirius902/nixpkgs/compare/aea86a71ccb9c1c0003507988271015397953833...c8f7707fb26d5d46c852fd7b23426fa8ea3697d9.patch?full_index=1";
           sha256 = "sha256:1qir2rwnnq46bxkl0qrdnx0q92qwiy7aqjgxidvb2c2iy2x1cpgc";
         })
+        # Update pure-prompt https://github.com/NixOS/nixpkgs/pull/491292
+        (builtins.fetchurl {
+          name = "update-pure-prompt.patch";
+          url = "https://github.com/Sirius902/nixpkgs/commit/36fca490d613fd05e006583340b8512f00cc118d.patch?full_index=1";
+          sha256 = "sha256:168s4zs3mri7f2v9wbzfqrynck831mny464xg3waapsqbnqspz5s";
+        })
       ];
     };
 }
