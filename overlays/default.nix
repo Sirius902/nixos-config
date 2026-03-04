@@ -248,8 +248,8 @@
       patches = [
         (final.fetchpatch2 {
           name = "npc-door-panic.patch";
-          url = "https://github.com/Sirius902/hlsdk-portable/commit/3edcc16cc1d312f56fd495c491e9cfa3a4851bdc.patch?full_index=1";
-          hash = "sha256-bLvv4/A3/IYJAs9eA00zWV8m9t7BH/g6dKR9jIJ9koI=";
+          url = "https://github.com/Sirius902/hlsdk-portable/compare/6ba528f2a36622a45c453f832934ab3adaca7c1c...7284904a3fc93173e0d5a5d8e16a0bb2e7e32d49.patch?full_index=1";
+          hash = "sha256-6ccvLCFXvDvUMynEGvQYGooLM2OgLuDWFwkldQj+1T4=";
         })
       ];
 
