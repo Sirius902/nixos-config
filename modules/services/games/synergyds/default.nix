@@ -1,0 +1,219 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  cfg = config.services.synergyds;
+in {
+  options.services.synergyds = {
+    enable = lib.mkEnableOption "synergyds";
+
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 27015;
+    };
+
+    insecure = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+    };
+
+    maxplayers = lib.mkOption {
+      type = lib.types.int;
+      default = 8;
+    };
+
+    map = lib.mkOption {
+      type = lib.types.str;
+      default = "d1_trainstation_01";
+    };
+
+    dataDir = lib.mkOption {
+      type = lib.types.path;
+      default = "/var/lib/synergyds";
+      description = ''
+        Directory to store Synergy state/data files.
+      '';
+    };
+
+    openFirewall = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Whether to open ports in the firewall for the server.
+      '';
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    networking.firewall = lib.mkIf cfg.openFirewall {
+      allowedUDPPorts = [cfg.port] ++ lib.optional (!cfg.insecure) 26900; # Game traffic, VAC
+      allowedTCPPorts = [cfg.port];
+    };
+
+    users.users.synergyds = {
+      description = "Synergy server service user";
+      home = cfg.dataDir;
+      createHome = true;
+      isSystemUser = true;
+      group = "synergyds";
+    };
+
+    users.groups.synergyds = {};
+
+    systemd.services.synergyds-update = {
+      description = "Update Synergy Dedicated Server";
+      after = ["network-online.target"];
+      wants = ["network-online.target"];
+
+      serviceConfig = {
+        Type = "oneshot";
+
+        User = "synergyds";
+        Group = "synergyds";
+        WorkingDirectory = cfg.dataDir;
+
+        # TODO(Sirius902) This isn't going to work, we need to be auth'd as my
+        # Steam account to download the games.
+        ExecStart = pkgs.writeShellScript "synergyds-update-start" ''
+          ${pkgs.steamcmd}/bin/steamcmd \
+            +@ShutdownOnFailedCommand 1 \
+            +@NoPromptForPassword 1 \
+            +force_install_dir ${cfg.dataDir} \
+            +login anonymous \
+            +app_update 220 \
+            +app_update 420 \
+            +app_update 380 \
+            +app_update 17520 validate \
+            +quit
+        '';
+
+        Restart = "on-failure";
+        RestartSec = "5s";
+        StartLimitBurst = 2;
+
+        # Hardening
+        ProtectSystem = "strict";
+        ReadWritePaths = [cfg.dataDir];
+        ProtectHome = true;
+        PrivateTmp = true;
+        PrivateDevices = true;
+      };
+    };
+
+    systemd.sockets.synergyds = {
+      bindsTo = ["synergyds.service"];
+      socketConfig = {
+        ListenFIFO = "/run/synergyds.stdin";
+        SocketMode = "0660";
+        SocketUser = "synergyds";
+        SocketGroup = "synergyds";
+        RemoveOnStop = true;
+        FlushPending = true;
+      };
+    };
+
+    systemd.services.synergyds = {
+      description = "Synergy Dedicated Server";
+      wantedBy = ["multi-user.target"];
+      requires = ["synergyds.socket"];
+      after = [
+        "network.target"
+        "synergyds.socket"
+        "synergyds-update.service"
+      ];
+
+      serviceConfig = {
+        User = "synergyds";
+        Group = "synergyds";
+        WorkingDirectory = cfg.dataDir;
+
+        Environment = "GLIBC_TUNABLES=glibc.rtld.execstack=2";
+
+        StandardInput = "socket";
+        StandardOutput = "journal";
+        StandardError = "journal";
+
+        CPUQuota = "200%";
+        MemoryMax = "4G";
+        TasksMax = 128;
+        LimitNOFILE = 4096;
+
+        # TODO(Sirius902) Idk if we still need this.
+        ExecStartPre = pkgs.writeShellScript "synergyds-prestart" ''
+          mkdir -p ${cfg.dataDir}/.steam/sdk32
+          ln -sf ${cfg.dataDir}/.local/share/Steam/linux32/steamclient.so ${cfg.dataDir}/.steam/sdk32/steamclient.so
+        '';
+
+        # NOTE(Sirius902) script(1) allocates a PTY so srcds_linux sees a real
+        # terminal and uses stdin/stdout as normal.
+        ExecStart = pkgs.writeShellScript "synergyds-start" ''
+          cd ${cfg.dataDir}/.steam/root/Steamapps/common/Synergy
+          ${pkgs.steam-run}/bin/steam-run env SHELL=/bin/bash ${pkgs.util-linux}/bin/script -qfc '
+            env LD_LIBRARY_PATH=".:bin:$LD_LIBRARY_PATH" ./srcds_linux \
+              -console \
+              -game synergy \
+              -port ${toString cfg.port} \
+              ${lib.optionalString cfg.insecure "-insecure"} \
+              +maxplayers ${toString cfg.maxplayers} \
+              +map ${cfg.map} \
+              +log on
+          ' /dev/null
+        '';
+
+        ExecStop = pkgs.writeShellScript "synergyds-stop" ''
+          echo quit > ${config.systemd.sockets.synergyds.socketConfig.ListenFIFO}
+
+          # Wait for the PID of the server to disappear before returning,
+          # so systemd doesn't attempt to SIGKILL it.
+          while kill -0 "$MAINPID" 2> /dev/null; do
+            sleep 1s
+          done
+        '';
+
+        Restart = "always";
+        SuccessExitStatus = "0 130";
+
+        # Hardening
+        ProtectSystem = "strict";
+        ReadWritePaths = [cfg.dataDir];
+
+        CapabilityBoundingSet = [""];
+        DeviceAllow = [""];
+        LockPersonality = true;
+        NoNewPrivileges = true;
+        PrivateDevices = true;
+        PrivateTmp = true;
+        PrivateUsers = true;
+        ProtectClock = true;
+        ProtectControlGroups = true;
+        ProtectHome = true;
+        ProtectHostname = true;
+        ProtectKernelLogs = true;
+        ProtectKernelModules = true;
+        ProtectKernelTunables = true;
+        ProtectProc = "invisible";
+        RestrictAddressFamilies = ["AF_INET" "AF_INET6"];
+        RestrictNamespaces = ["user" "mnt"];
+        RestrictRealtime = true;
+        RestrictSUIDSGID = true;
+        SystemCallArchitectures = ["native" "x86"];
+        SystemCallErrorNumber = "EPERM";
+        SystemCallFilter = [
+          "@system-service"
+          "@mount"
+          "~@clock"
+          "~@cpu-emulation"
+          "~@debug"
+          "~@module"
+          "~@obsolete"
+          "~@raw-io"
+          "~@reboot"
+          "~@swap"
+        ];
+        UMask = "0077";
+      };
+    };
+  };
+}

@@ -21,6 +21,13 @@
   };
   systemd.services.svends.wantedBy = lib.mkForce [];
 
+  services.synergyds = {
+    enable = true;
+    openFirewall = true;
+    insecure = true;
+  };
+  systemd.services.synergyds.wantedBy = lib.mkForce [];
+
   # Allow ports for mc and hkmp.
   networking.firewall.allowedTCPPorts = [25565 25566 32069];
   networking.firewall.allowedUDPPorts = [25565 25566 32069];

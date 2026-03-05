@@ -9,6 +9,7 @@
     ../jdk.nix
     ../vfio.nix
     ../services/games/svends/default.nix
+    ../services/games/synergyds/default.nix
     ../desktop/default.nix
     ../gpu.nix
     ../xrdp.nix
