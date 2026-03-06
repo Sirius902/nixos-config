@@ -193,8 +193,9 @@ in {
         # NOTE(Sirius902) script(1) allocates a PTY so srcds_linux sees a real
         # terminal and uses stdin/stdout as normal.
         ExecStart = let
+          # TODO(Sirius902) Force insecure when preloading stuff like this?
           srcdsScript = pkgs.writeShellScript "synergyds-srcds" ''
-            LD_LIBRARY_PATH=".:bin:$LD_LIBRARY_PATH" ./srcds_linux \
+            LD_PRELOAD="${cfg.dataDir}/libsynergy_abh.so" LD_LIBRARY_PATH=".:bin:$LD_LIBRARY_PATH" ./srcds_linux \
               -console \
               -game synergy \
               -port ${toString cfg.port} \
