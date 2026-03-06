@@ -37,6 +37,14 @@ in {
       '';
     };
 
+    extraCommandLine = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = ''
+        Extra command-line arguments to pass to svends_run.
+      '';
+    };
+
     openFirewall = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -140,7 +148,8 @@ in {
             ${lib.optionalString cfg.insecure "-insecure"} \
             +maxplayers ${toString cfg.maxplayers} \
             +map ${cfg.map} \
-            +log on
+            +log on \
+            ${lib.escapeShellArg cfg.extraCommandLine}
         '';
 
         ExecStop = pkgs.writeShellScript "svends-stop" ''

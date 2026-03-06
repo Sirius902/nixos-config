@@ -37,6 +37,14 @@ in {
       '';
     };
 
+    extraCommandLine = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = ''
+        Extra command-line arguments to pass to srcds_linux.
+      '';
+    };
+
     openFirewall = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -148,9 +156,8 @@ in {
 
         # NOTE(Sirius902) script(1) allocates a PTY so srcds_linux sees a real
         # terminal and uses stdin/stdout as normal.
-        ExecStart = pkgs.writeShellScript "synergyds-start" ''
-          cd ${cfg.dataDir}/.steam/root/Steamapps/common/Synergy
-          ${pkgs.steam-run}/bin/steam-run env SHELL=/bin/bash ${pkgs.util-linux}/bin/script -qfc '
+        ExecStart = let
+          srcdsScript = pkgs.writeShellScript "synergyds-srcds" ''
             env LD_LIBRARY_PATH=".:bin:$LD_LIBRARY_PATH" ./srcds_linux \
               -console \
               -game synergy \
@@ -158,9 +165,14 @@ in {
               ${lib.optionalString cfg.insecure "-insecure"} \
               +maxplayers ${toString cfg.maxplayers} \
               +map ${cfg.map} \
-              +log on
-          ' /dev/null
-        '';
+              +log on \
+              ${lib.escapeShellArg cfg.extraCommandLine}
+          '';
+        in
+          pkgs.writeShellScript "synergyds-start" ''
+            cd ${cfg.dataDir}/.steam/root/Steamapps/common/Synergy
+            ${pkgs.steam-run}/bin/steam-run env SHELL=/bin/bash ${pkgs.util-linux}/bin/script -qfc ${srcdsScript} /dev/null
+          '';
 
         ExecStop = pkgs.writeShellScript "synergyds-stop" ''
           echo quit > ${config.systemd.sockets.synergyds.socketConfig.ListenFIFO}
