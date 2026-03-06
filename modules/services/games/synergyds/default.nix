@@ -12,21 +12,25 @@ in {
     port = lib.mkOption {
       type = lib.types.port;
       default = 27015;
+      description = "Port number for the server to listen on.";
     };
 
     insecure = lib.mkOption {
       type = lib.types.bool;
       default = false;
+      description = "Whether to disable VAC (Valve Anti-Cheat).";
     };
 
     maxplayers = lib.mkOption {
-      type = lib.types.int;
+      type = lib.types.ints.positive;
       default = 8;
+      description = "Maximum number of players allowed on the server.";
     };
 
     map = lib.mkOption {
       type = lib.types.str;
       default = "d1_trainstation_01";
+      description = "Starting map for the server.";
     };
 
     dataDir = lib.mkOption {
@@ -107,6 +111,36 @@ in {
         ProtectHome = true;
         PrivateTmp = true;
         PrivateDevices = true;
+
+        CapabilityBoundingSet = [""];
+        LockPersonality = true;
+        NoNewPrivileges = true;
+        ProtectClock = true;
+        ProtectControlGroups = true;
+        ProtectHostname = true;
+        ProtectKernelLogs = true;
+        ProtectKernelModules = true;
+        ProtectKernelTunables = true;
+        ProtectProc = "invisible";
+        RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
+        RestrictNamespaces = ["user" "mnt"];
+        RestrictRealtime = true;
+        RestrictSUIDSGID = true;
+        SystemCallArchitectures = ["native" "x86"];
+        SystemCallErrorNumber = "EPERM";
+        SystemCallFilter = [
+          "@system-service"
+          "@mount"
+          "~@clock"
+          "~@cpu-emulation"
+          "~@debug"
+          "~@module"
+          "~@obsolete"
+          "~@raw-io"
+          "~@reboot"
+          "~@swap"
+        ];
+        UMask = "0077";
       };
     };
 
@@ -137,6 +171,8 @@ in {
         Group = "synergyds";
         WorkingDirectory = cfg.dataDir;
 
+        # srcds_linux requires an executable stack; glibc >= 2.39 disallows
+        # this by default, so we must opt back in via GLIBC_TUNABLES.
         Environment = "GLIBC_TUNABLES=glibc.rtld.execstack=2";
 
         StandardInput = "socket";
@@ -164,9 +200,9 @@ in {
               -port ${toString cfg.port} \
               ${lib.optionalString cfg.insecure "-insecure"} \
               +maxplayers ${toString cfg.maxplayers} \
-              +map ${cfg.map} \
+              +map ${lib.escapeShellArg cfg.map} \
               +log on \
-              ${lib.escapeShellArg cfg.extraCommandLine}
+              ${lib.optionalString (cfg.extraCommandLine != "") (lib.escapeShellArg cfg.extraCommandLine)}
           '';
         in
           pkgs.writeShellScript "synergyds-start" ''
