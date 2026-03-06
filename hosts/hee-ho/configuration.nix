@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -25,6 +26,7 @@
     enable = true;
     openFirewall = true;
     insecure = true;
+    extraCommandLine = inputs.secrets.lib.srcdsExtraCommandLine;
   };
   systemd.services.synergyds.wantedBy = lib.mkForce [];
 
