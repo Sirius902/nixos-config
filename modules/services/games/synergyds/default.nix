@@ -194,7 +194,7 @@ in {
         # terminal and uses stdin/stdout as normal.
         ExecStart = let
           srcdsScript = pkgs.writeShellScript "synergyds-srcds" ''
-            env LD_LIBRARY_PATH=".:bin:$LD_LIBRARY_PATH" ./srcds_linux \
+            LD_LIBRARY_PATH=".:bin:$LD_LIBRARY_PATH" ./srcds_linux \
               -console \
               -game synergy \
               -port ${toString cfg.port} \
