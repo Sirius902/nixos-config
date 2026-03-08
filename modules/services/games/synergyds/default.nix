@@ -144,25 +144,11 @@ in {
       };
     };
 
-    systemd.sockets.synergyds = {
-      bindsTo = ["synergyds.service"];
-      socketConfig = {
-        ListenFIFO = "/run/synergyds.stdin";
-        SocketMode = "0660";
-        SocketUser = "synergyds";
-        SocketGroup = "synergyds";
-        RemoveOnStop = true;
-        FlushPending = true;
-      };
-    };
-
     systemd.services.synergyds = {
       description = "Synergy Dedicated Server";
       wantedBy = ["multi-user.target"];
-      requires = ["synergyds.socket"];
       after = [
         "network.target"
-        "synergyds.socket"
         "synergyds-update.service"
       ];
 
@@ -175,9 +161,8 @@ in {
         # this by default, so we must opt back in via GLIBC_TUNABLES.
         Environment = "GLIBC_TUNABLES=glibc.rtld.execstack=2";
 
-        StandardInput = "socket";
-        StandardOutput = "journal";
-        StandardError = "journal";
+        RuntimeDirectory = "synergyds";
+        RuntimeDirectoryMode = "0750";
 
         CPUQuota = "200%";
         MemoryMax = "4G";
@@ -190,35 +175,38 @@ in {
           ln -sf ${cfg.dataDir}/.local/share/Steam/linux32/steamclient.so ${cfg.dataDir}/.steam/sdk32/steamclient.so
         '';
 
-        # NOTE(Sirius902) script(1) allocates a PTY so srcds_linux sees a real
-        # terminal and uses stdin/stdout as normal.
         ExecStart = let
           # TODO(Sirius902) Force insecure when preloading stuff like this?
-          srcdsScript = pkgs.writeShellScript "synergyds-srcds" ''
-            LD_PRELOAD="${cfg.dataDir}/libsynergy_abh.so" LD_LIBRARY_PATH=".:bin:$LD_LIBRARY_PATH" ./srcds_linux \
-              -console \
-              -game synergy \
-              -port ${toString cfg.port} \
-              ${lib.optionalString cfg.insecure "-insecure"} \
-              +maxplayers ${toString cfg.maxplayers} \
-              +map ${lib.escapeShellArg cfg.map} \
-              +log on \
-              ${lib.optionalString (cfg.extraCommandLine != "") (lib.escapeShellArg cfg.extraCommandLine)}
+          serverScript = pkgs.writeShellScript "synergyds-server" ''
+            cd ${cfg.dataDir}/.steam/root/Steamapps/common/Synergy
+            ${pkgs.steam-run}/bin/steam-run env \
+              LD_PRELOAD="${cfg.dataDir}/libsynergy_abh.so" \
+              LD_LIBRARY_PATH=".:bin:$LD_LIBRARY_PATH" \
+              ./srcds_linux \
+                -console \
+                -game synergy \
+                -port ${toString cfg.port} \
+                ${lib.optionalString cfg.insecure "-insecure"} \
+                +maxplayers ${toString cfg.maxplayers} \
+                +map ${lib.escapeShellArg cfg.map} \
+                +log on \
+                ${lib.optionalString (cfg.extraCommandLine != "") (lib.escapeShellArg cfg.extraCommandLine)}
           '';
         in
           pkgs.writeShellScript "synergyds-start" ''
-            cd ${cfg.dataDir}/.steam/root/Steamapps/common/Synergy
-            ${pkgs.steam-run}/bin/steam-run env SHELL=/bin/bash ${pkgs.util-linux}/bin/script -qfc ${srcdsScript} /dev/null
+            SOCKET="/run/synergyds/tmux.sock"
+            SHELL=${pkgs.bash}/bin/bash ${pkgs.tmux}/bin/tmux -S "$SOCKET" new-session -d -s synergyds \
+              "${serverScript}; ${pkgs.tmux}/bin/tmux -S $SOCKET wait-for -S synergyds-done"
+            chmod 0660 "$SOCKET"
+
+            ${pkgs.tmux}/bin/tmux -S "$SOCKET" pipe-pane -t synergyds "exec ${pkgs.systemd}/bin/systemd-cat -t synergyds"
+
+            ${pkgs.tmux}/bin/tmux -S "$SOCKET" wait-for synergyds-done
           '';
 
         ExecStop = pkgs.writeShellScript "synergyds-stop" ''
-          echo quit > ${config.systemd.sockets.synergyds.socketConfig.ListenFIFO}
-
-          # Wait for the PID of the server to disappear before returning,
-          # so systemd doesn't attempt to SIGKILL it.
-          while kill -0 "$MAINPID" 2> /dev/null; do
-            sleep 1s
-          done
+          ${pkgs.tmux}/bin/tmux -S /run/synergyds/tmux.sock send-keys -t synergyds "quit" Enter || true
+          ${pkgs.tmux}/bin/tmux -S /run/synergyds/tmux.sock wait-for synergyds-done
         '';
 
         Restart = "always";
@@ -234,7 +222,6 @@ in {
         NoNewPrivileges = true;
         PrivateDevices = true;
         PrivateTmp = true;
-        PrivateUsers = true;
         ProtectClock = true;
         ProtectControlGroups = true;
         ProtectHome = true;
@@ -243,7 +230,7 @@ in {
         ProtectKernelModules = true;
         ProtectKernelTunables = true;
         ProtectProc = "invisible";
-        RestrictAddressFamilies = ["AF_INET" "AF_INET6"];
+        RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
         RestrictNamespaces = ["user" "mnt"];
         RestrictRealtime = true;
         RestrictSUIDSGID = true;
