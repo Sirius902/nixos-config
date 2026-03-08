@@ -49,6 +49,12 @@ in {
       '';
     };
 
+    tmuxUsers = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+      description = "Users to grant read-write access to the server tmux session.";
+    };
+
     openFirewall = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -198,6 +204,10 @@ in {
             SHELL=${pkgs.bash}/bin/bash ${pkgs.tmux}/bin/tmux -S "$SOCKET" new-session -d -s synergyds \
               "${serverScript}; ${pkgs.tmux}/bin/tmux -S $SOCKET wait-for -S synergyds-done"
             chmod 0660 "$SOCKET"
+            ${lib.concatMapStrings (user: ''
+                ${pkgs.tmux}/bin/tmux -S "$SOCKET" server-access -aw ${lib.escapeShellArg user}
+              '')
+              cfg.tmuxUsers}
 
             ${pkgs.tmux}/bin/tmux -S "$SOCKET" pipe-pane -t synergyds "exec ${pkgs.systemd}/bin/systemd-cat -t synergyds"
 
