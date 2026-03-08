@@ -198,7 +198,8 @@ in {
           ${pkgs.tmux}/bin/tmux -S /run/svends/tmux.sock wait-for svends-done
         '';
 
-        Restart = "always";
+        Restart = "on-failure";
+        RestartSec = "5s";
         SuccessExitStatus = "0 130";
 
         # Hardening
