@@ -21,6 +21,7 @@
     enable = true;
     openFirewall = true;
     insecure = true;
+    tmuxUsers = ["chris"];
   };
   systemd.services.svends.wantedBy = lib.mkForce [];
 
@@ -28,6 +29,7 @@
     enable = true;
     openFirewall = true;
     insecure = true;
+    tmuxUsers = ["chris"];
     extraCommandLine = inputs.secrets.lib.srcdsExtraCommandLine;
   };
   systemd.services.synergyds.wantedBy = lib.mkForce [];
