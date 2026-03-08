@@ -219,7 +219,8 @@ in {
           ${pkgs.tmux}/bin/tmux -S /run/synergyds/tmux.sock wait-for synergyds-done
         '';
 
-        Restart = "always";
+        Restart = "on-failure";
+        RestartSec = "5s";
         SuccessExitStatus = "0 130";
 
         # Hardening
