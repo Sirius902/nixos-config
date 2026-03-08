@@ -139,25 +139,11 @@ in {
       };
     };
 
-    systemd.sockets.svends = {
-      bindsTo = ["svends.service"];
-      socketConfig = {
-        ListenFIFO = "/run/svends.stdin";
-        SocketMode = "0660";
-        SocketUser = "svends";
-        SocketGroup = "svends";
-        RemoveOnStop = true;
-        FlushPending = true;
-      };
-    };
-
     systemd.services.svends = {
       description = "Sven Co-op Dedicated Server";
       wantedBy = ["multi-user.target"];
-      requires = ["svends.socket"];
       after = [
         "network.target"
-        "svends.socket"
         "svends-update.service"
       ];
 
@@ -166,34 +152,40 @@ in {
         Group = "svends";
         WorkingDirectory = cfg.dataDir;
 
-        StandardInput = "socket";
-        StandardOutput = "journal";
-        StandardError = "journal";
+        RuntimeDirectory = "svends";
+        RuntimeDirectoryMode = "0750";
 
         CPUQuota = "200%";
         MemoryMax = "4G";
         TasksMax = 128;
         LimitNOFILE = 4096;
 
-        ExecStart = pkgs.writeShellScript "svends-start" ''
-          ${pkgs.steam-run}/bin/steam-run ./svends_run \
-            -console \
-            -port ${toString cfg.port} \
-            ${lib.optionalString cfg.insecure "-insecure"} \
-            +maxplayers ${toString cfg.maxplayers} \
-            +map ${lib.escapeShellArg cfg.map} \
-            +log on \
-            ${lib.optionalString (cfg.extraCommandLine != "") (lib.escapeShellArg cfg.extraCommandLine)}
-        '';
+        ExecStart = let
+          serverScript = pkgs.writeShellScript "svends-server" ''
+            ${pkgs.steam-run}/bin/steam-run ./svends_run \
+              -console \
+              -port ${toString cfg.port} \
+              ${lib.optionalString cfg.insecure "-insecure"} \
+              +maxplayers ${toString cfg.maxplayers} \
+              +map ${lib.escapeShellArg cfg.map} \
+              +log on \
+              ${lib.optionalString (cfg.extraCommandLine != "") (lib.escapeShellArg cfg.extraCommandLine)}
+          '';
+        in
+          pkgs.writeShellScript "svends-start" ''
+            SOCKET="/run/svends/tmux.sock"
+            SHELL=${pkgs.bash}/bin/bash ${pkgs.tmux}/bin/tmux -S "$SOCKET" new-session -d -s svends \
+              "${serverScript}; ${pkgs.tmux}/bin/tmux -S $SOCKET wait-for -S svends-done"
+            chmod 0660 "$SOCKET"
+
+            ${pkgs.tmux}/bin/tmux -S "$SOCKET" pipe-pane -t svends "exec ${pkgs.systemd}/bin/systemd-cat -t svends"
+
+            ${pkgs.tmux}/bin/tmux -S "$SOCKET" wait-for svends-done
+          '';
 
         ExecStop = pkgs.writeShellScript "svends-stop" ''
-          echo quit > ${config.systemd.sockets.svends.socketConfig.ListenFIFO}
-
-          # Wait for the PID of the server to disappear before returning,
-          # so systemd doesn't attempt to SIGKILL it.
-          while kill -0 "$MAINPID" 2> /dev/null; do
-            sleep 1s
-          done
+          ${pkgs.tmux}/bin/tmux -S /run/svends/tmux.sock send-keys -t svends "quit" Enter || true
+          ${pkgs.tmux}/bin/tmux -S /run/svends/tmux.sock wait-for svends-done
         '';
 
         Restart = "always";
@@ -209,7 +201,6 @@ in {
         NoNewPrivileges = true;
         PrivateDevices = true;
         PrivateTmp = true;
-        PrivateUsers = true;
         ProtectClock = true;
         ProtectControlGroups = true;
         ProtectHome = true;
@@ -218,7 +209,7 @@ in {
         ProtectKernelModules = true;
         ProtectKernelTunables = true;
         ProtectProc = "invisible";
-        RestrictAddressFamilies = ["AF_INET" "AF_INET6"];
+        RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
         RestrictNamespaces = ["user" "mnt"];
         RestrictRealtime = true;
         RestrictSUIDSGID = true;
