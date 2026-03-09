@@ -215,7 +215,7 @@ in {
           '';
 
         ExecStop = pkgs.writeShellScript "synergyds-stop" ''
-          ${pkgs.tmux}/bin/tmux -S /run/synergyds/tmux.sock send-keys -t synergyds "quit" Enter || true
+          ${pkgs.tmux}/bin/tmux -S /run/synergyds/tmux.sock send-keys -t synergyds C-u "quit" Enter || true
           ${pkgs.tmux}/bin/tmux -S /run/synergyds/tmux.sock wait-for synergyds-done
         '';
 

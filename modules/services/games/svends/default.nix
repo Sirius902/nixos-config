@@ -194,7 +194,7 @@ in {
           '';
 
         ExecStop = pkgs.writeShellScript "svends-stop" ''
-          ${pkgs.tmux}/bin/tmux -S /run/svends/tmux.sock send-keys -t svends "quit" Enter || true
+          ${pkgs.tmux}/bin/tmux -S /run/svends/tmux.sock send-keys -t svends C-u "quit" Enter || true
           ${pkgs.tmux}/bin/tmux -S /run/svends/tmux.sock wait-for svends-done
         '';
 
