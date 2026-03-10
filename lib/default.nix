@@ -74,12 +74,6 @@
           url = "https://github.com/Sirius902/nixpkgs/compare/aea86a71ccb9c1c0003507988271015397953833...c8f7707fb26d5d46c852fd7b23426fa8ea3697d9.patch?full_index=1";
           sha256 = "sha256:1qir2rwnnq46bxkl0qrdnx0q92qwiy7aqjgxidvb2c2iy2x1cpgc";
         })
-        # https://github.com/NixOS/nixpkgs/pull/496839
-        (builtins.fetchurl {
-          name = "fix-virt-secret-init-encryption.patch";
-          url = "https://github.com/NixOS/nixpkgs/compare/158de8c0902b2c4979afdda75723d4050def1eab...d699415ebe3add131044bcfd355ed1aa849bb646.patch?full_index=1";
-          sha256 = "sha256:1l104b6al48amnff7fq4il5mhhhzj2vc2y80fiqd9wqivr8jlq8d";
-        })
         # Update pure-prompt https://github.com/NixOS/nixpkgs/pull/491292
         (builtins.fetchurl {
           name = "update-pure-prompt.patch";
