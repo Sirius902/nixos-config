@@ -68,6 +68,7 @@ in {
       description = "Synergy server service user";
       home = cfg.dataDir;
       createHome = true;
+      homeMode = "0770";
       isSystemUser = true;
       group = "synergyds";
     };
@@ -141,7 +142,7 @@ in {
           "~@reboot"
           "~@swap"
         ];
-        UMask = "0077";
+        UMask = "0007";
       };
     };
 
@@ -262,7 +263,7 @@ in {
           "~@reboot"
           "~@swap"
         ];
-        UMask = "0077";
+        UMask = "0007";
       };
     };
   };

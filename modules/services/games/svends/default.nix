@@ -68,6 +68,7 @@ in {
       description = "Sven Co-op server service user";
       home = cfg.dataDir;
       createHome = true;
+      homeMode = "0770";
       isSystemUser = true;
       group = "svends";
     };
@@ -135,7 +136,7 @@ in {
           "~@reboot"
           "~@swap"
         ];
-        UMask = "0077";
+        UMask = "0007";
       };
     };
 
@@ -237,7 +238,7 @@ in {
           "~@reboot"
           "~@swap"
         ];
-        UMask = "0077";
+        UMask = "0007";
       };
     };
   };
