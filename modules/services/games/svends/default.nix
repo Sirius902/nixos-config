@@ -218,6 +218,7 @@ in {
         ProtectKernelModules = true;
         ProtectKernelTunables = true;
         ProtectProc = "invisible";
+        RemoveIPC = true;
         RestrictAddressFamilies = ["AF_INET" "AF_INET6"];
         RestrictNamespaces = ["user" "mnt"];
         RestrictRealtime = true;
