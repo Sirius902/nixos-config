@@ -15,6 +15,8 @@
   my.tailscale.enable = true;
   my.jdk = pkgs.graalvmPackages.graalvm-oracle;
 
+  users.users.chris.extraGroups = ["svends" "synergyds"];
+
   services.svends = {
     enable = true;
     openFirewall = true;
