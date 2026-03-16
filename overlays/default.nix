@@ -251,6 +251,11 @@
           url = "https://github.com/Sirius902/hlsdk-portable/compare/6ba528f2a36622a45c453f832934ab3adaca7c1c...7284904a3fc93173e0d5a5d8e16a0bb2e7e32d49.patch?full_index=1";
           hash = "sha256-6ccvLCFXvDvUMynEGvQYGooLM2OgLuDWFwkldQj+1T4=";
         })
+        (final.fetchpatch2 {
+          name = "add-speed-hud.patch";
+          url = "https://github.com/Sirius902/hlsdk-portable/compare/6ba528f2a36622a45c453f832934ab3adaca7c1c...41adb64abbf3c712b5fb83aa2537272698487481.diff?full_index=1";
+          hash = "sha256-h2Cx+r4FuZ2oAh0dLxjpXc6q55iCUiedN472283RaRs=";
+        })
       ];
 
       postPatch =
