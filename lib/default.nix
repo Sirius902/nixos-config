@@ -80,6 +80,12 @@
           url = "https://github.com/Sirius902/nixpkgs/commit/36fca490d613fd05e006583340b8512f00cc118d.patch?full_index=1";
           sha256 = "sha256:168s4zs3mri7f2v9wbzfqrynck831mny464xg3waapsqbnqspz5s";
         })
+        # Fix electron build https://github.com/NixOS/nixpkgs/pull/500223
+        (builtins.fetchurl {
+          name = "electron-fix.patch";
+          url = "https://github.com/NixOS/nixpkgs/commit/336fd4210d57fd69e9e7f14af9f54849efde7fe7.patch?full_index=1";
+          sha256 = "sha256:1rv4sbdgpq9bp9ad9j1vqy8fyqqrbvaa03yxqyq0282wv3xi5xbj";
+        })
       ];
     };
 }
