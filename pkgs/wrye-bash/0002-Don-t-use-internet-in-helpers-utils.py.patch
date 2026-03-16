@@ -1,16 +1,16 @@
-From 3648df83b5f43834799b7e30d108f589b0a625b3 Mon Sep 17 00:00:00 2001
+From cebc1357cf3bc7a7a16213630ce719a4e79a2721 Mon Sep 17 00:00:00 2001
 From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
-Date: Wed, 24 Dec 2025 18:40:07 -0800
+Date: Mon, 16 Mar 2026 16:21:34 -0700
 Subject: [PATCH 2/3] Don't use internet in helpers/utils.py
 
 Importing pygit2 tries to access the internet, which is not allowed in
 a nix build environment.
 ---
- scripts/helpers/utils.py | 76 ----------------------------------------
- 1 file changed, 76 deletions(-)
+ scripts/helpers/utils.py | 79 ----------------------------------------
+ 1 file changed, 79 deletions(-)
 
 diff --git a/scripts/helpers/utils.py b/scripts/helpers/utils.py
-index df87c1bc8..fe10f8425 100644
+index bf2c495fb..fe10f8425 100644
 --- a/scripts/helpers/utils.py
 +++ b/scripts/helpers/utils.py
 @@ -35,8 +35,6 @@
@@ -22,12 +22,15 @@ index df87c1bc8..fe10f8425 100644
  # Reusable path definitions
  SCRIPTS_PATH = Path(__file__).absolute().parent.parent
  ROOT_PATH = SCRIPTS_PATH.parent # the root of the Wrye Bash repository
-@@ -203,80 +201,6 @@ def run_subprocess(command, logger, **kwargs):
+@@ -203,83 +201,6 @@ def run_subprocess(command, logger, **kwargs):
      logger.debug(stdout)
      logger.debug('---  COMMAND OUTPUT END  ---')
  
 -class WBRepo(pygit2.Repository):
 -    """A Wrye Bash pygit2 Repository wrapper."""
+-
+-    def __init__(self, repo_path=ROOT_PATH, *args, **kwargs):
+-        super().__init__(str(repo_path), *args, **kwargs)
 -
 -    def get_repo_sig(self):
 -        """Wrapper around pygit2 that shows a helpful error message to the
@@ -104,5 +107,5 @@ index df87c1bc8..fe10f8425 100644
      """Returns a path joining the dir_ and name parameters. Will create the
      dirs in dir_ if not existing.
 -- 
-2.52.0
+2.53.0
 
