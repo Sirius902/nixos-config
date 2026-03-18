@@ -265,6 +265,17 @@
             --replace-fail "PM_PreventMegaBunnyJumping();" "(void)0;"
         '';
     });
+
+    xash-sdk-opfor = prev.xash-sdk-opfor.overrideAttrs (prevAttrs: {
+      # NOTE(Sirius902) Patch this away, not sure why this check is here. This
+      # is not how the retail game behaves.
+      postPatch =
+        (prevAttrs.postPatch or "")
+        + ''
+          substituteInPlace dlls/gearbox/m249.cpp \
+            --replace-fail "if (m_pPlayer->pev->flags & FL_ONGROUND)" "if (1)"
+        '';
+    });
   })
 
   (final: prev: let
