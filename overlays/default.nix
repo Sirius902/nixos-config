@@ -161,11 +161,11 @@
 
   (final: prev: {
     rpcs3 = prev.rpcs3.overrideAttrs (prevAttrs: {
-      version = "0.0.40-unstable-2026-03-18";
+      version = "0.0.40-unstable-2026-03-19";
       src = prevAttrs.src.override {
         tag = null;
-        rev = "253d4565f1483b19fb8a53f14d4f3a937389ca16";
-        hash = "sha256-ioVqChHDZRpc/zGXXwwVzGZR+3pNGo9pt/WEwPSA68s=";
+        rev = "43799762c74c44962f2df6ed6587357f6eb300ab";
+        hash = "sha256-9CtofJ5/VyabUtD6YKrZRs/wXjCunFKIGl55RhzBTjg=";
       };
 
       postPatch =
