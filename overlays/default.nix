@@ -229,6 +229,17 @@
           hash = "sha256-pGlzKUShKDtEyaREcpXJM/UzLs0kpSvVsUfO1GnHC98=";
         };
 
+        patches = builtins.filter (p:
+          !(
+            builtins.isPath p && baseNameOf p == "hide-version-manager.patch"
+          )) (prevAttrs.patches or []);
+
+        cmakeFlags =
+          (prevAttrs.cmakeFlags or [])
+          ++ [
+            (final.lib.cmakeBool "HIDE_VERSION_MANAGER" true)
+          ];
+
         passthru =
           (prevAttrs.passthru or {})
           // {
