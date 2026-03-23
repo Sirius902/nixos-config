@@ -11,7 +11,7 @@ in {
     then "/Users/chris"
     else "/home/chris";
 
-  home.stateVersion = "23.11";
+  home.stateVersion = "26.05";
 
   programs.zsh = {
     enable = true;

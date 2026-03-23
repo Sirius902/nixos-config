@@ -31,7 +31,7 @@
   };
 
   system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
-  system.stateVersion = 5;
+  system.stateVersion = 6;
 
   nixpkgs.hostPlatform = "aarch64-darwin";
 
