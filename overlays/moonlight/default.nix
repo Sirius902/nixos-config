@@ -1,8 +1,8 @@
 final: prev: {
   moonlight = prev.moonlight.overrideAttrs (prevAttrs: {
-    version = "2026.3.2";
+    version = "2026.3.3";
     src = prevAttrs.src.override {
-      hash = "sha256-VcYHwjm5RUfvkABts5ZP+qqqxBHyiF6JwTcBBG+xABA=";
+      hash = "sha256-hGyUoAR0Pv6mkImRDlrnfYAucgJwg2phj6moxewf3aY=";
     };
     pnpmDeps = prevAttrs.pnpmDeps.override {
       fetcherVersion = 3;
