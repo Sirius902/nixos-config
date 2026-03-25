@@ -28,8 +28,8 @@ stdenv.mkDerivation {
     owner = "FWGS";
     repo = "xash3d-fwgs";
     fetchSubmodules = true;
-    rev = "a04bb01841e961dee097a2841565d622e1906bdb";
-    hash = "sha256-63A0f4918UvCEji8OtrJ23bAXRkbNe3kyaRziKZTMCM=";
+    rev = "c5d5ce5f430713b5c0674d0405574acbcbfb9e76";
+    hash = "sha256-aGiDgnmXplvcNh4l5fvE+Ol+YGSrFzCeA+/4X4P8AdE=";
   };
 
   nativeBuildInputs = [
