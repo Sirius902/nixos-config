@@ -225,8 +225,8 @@
 
         src = prevAttrs.src.override {
           tag = null;
-          rev = "485053e58aebc9e633855cdd8d8f3d9721f158ea";
-          hash = "sha256-TCHeGsZ3xUd3/xpCAFV8/gzEfPpY6TmTCSkBTppmszY=";
+          rev = "b04aea4028a22626ae30e106d8285dd0378c9b72";
+          hash = "sha256-2JXiFBS9eO9j0HYp/Y9+XEx+FspAGf+Q+nTdWP0Y6Rc=";
         };
 
         patches = builtins.filter (p:
