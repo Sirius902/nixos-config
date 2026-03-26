@@ -80,12 +80,6 @@
           url = "https://github.com/Sirius902/nixpkgs/commit/36fca490d613fd05e006583340b8512f00cc118d.patch?full_index=1";
           sha256 = "sha256:168s4zs3mri7f2v9wbzfqrynck831mny464xg3waapsqbnqspz5s";
         })
-        # Fix cosmic https://github.com/NixOS/nixpkgs/pull/502494
-        (builtins.fetchurl {
-          name = "fix-cosmic.patch";
-          url = "https://github.com/NixOS/nixpkgs/compare/ad17cac7345dcd48aed91bfe7fb8b651b63a6242...e16110f94595321a3fa1cd2776bfed236d28eee4.patch?full_index=1";
-          sha256 = "sha256:0hwf09pvrh4slhc86d8025x29c551z5zmqvrqvdnf9r1wm0i1inv";
-        })
       ];
     };
 }
