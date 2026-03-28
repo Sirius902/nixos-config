@@ -35,13 +35,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "wrye-bash";
-    version = "314-unstable-2026-03-16";
+    version = "314-unstable-2026-03-27";
 
     src = fetchFromGitHub {
       owner = "wrye-bash";
       repo = "wrye-bash";
-      rev = "c535b1d95ebec11d4269c7d30be758c05a272cc3";
-      hash = "sha256-FpsGOCKDGLwRGCNtWDH4Drvx5ye4iqhBBj+zFyJUYGo=";
+      rev = "1b87ca506a703db830a554f7f8ed3da757f3da9b";
+      hash = "sha256-BtSCODe3aY7L2pLAr4vnkXeawsgp2g1Tx6MZ4+odi9E=";
     };
 
     patches = [
