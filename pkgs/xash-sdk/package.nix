@@ -8,14 +8,14 @@
 }:
 stdenv.mkDerivation {
   pname = "xash-sdk";
-  version = "0-unstable-2026-03-22";
+  version = "0-unstable-2026-03-26";
 
   src = fetchFromGitHub {
     owner = "FWGS";
     repo = "hlsdk-portable";
     fetchSubmodules = true;
-    rev = "8d304faa7a33e7588cb2e0a3104c74fc89aad07e";
-    hash = "sha256-j992Yhn4P+RiJV0cnH5m12rFMvKEwZVrM4yyGfLcBF4=";
+    rev = "ae84bfc0c3598fcff605a7b3bb963abe8ec3e295";
+    hash = "sha256-UAEFUr2BqOXx3/MklJzELXdUm7EKUttiJE7IjHZ8rHE=";
   };
 
   nativeBuildInputs = [
