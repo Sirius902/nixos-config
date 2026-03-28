@@ -4,11 +4,11 @@
 }:
 xash-sdk.overrideAttrs (prevAttrs: {
   pname = prevAttrs.pname + "-opfor";
-  version = "0-unstable-2025-08-17";
+  version = "0-unstable-2026-03-26";
 
   src = prevAttrs.src.override {
-    rev = "790be1f135d601ffce1970ea1a7c8c5e49641d11";
-    hash = "sha256-ViKOFVTQpBDRwn7BwHSuW9I+ai7ag+Vz1C2sGb7M/7I=";
+    rev = "f7ce421fde685fa252a003189d131dd4e5d2d8c4";
+    hash = "sha256-g2Lqrx7y41tEJTCHAiziFGQJE3e6taI6stvHLZ0K0Ug=";
   };
 
   passthru =
