@@ -36,10 +36,7 @@ in {
           proton-ge-bin
         ];
       };
-      gamescope = {
-        enable = true;
-        capSysNice = true;
-      };
+      gamescope.enable = true;
       coolercontrol.enable = true;
     };
 
