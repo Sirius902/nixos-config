@@ -40,6 +40,21 @@ in {
       coolercontrol.enable = true;
     };
 
+    # FUTURE(Sirius902) Hack to allow renicing gamescope without needing
+    # `cap_sys_nice`.
+    # https://github.com/NixOS/nixpkgs/issues/351516#issuecomment-2607186592
+    services.ananicy = {
+      enable = true;
+      package = pkgs.ananicy-cpp;
+      rulesProvider = pkgs.ananicy-cpp;
+      extraRules = [
+        {
+          "name" = "gamescope";
+          "nice" = -20;
+        }
+      ];
+    };
+
     # NOTE(Sirius902) We can't use `services.udev.extraRules` here as `uaccess` won't work properly.
     # https://github.com/NixOS/nixpkgs/issues/210856
     services.udev.packages = [
