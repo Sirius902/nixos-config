@@ -164,8 +164,8 @@
       version = "0.0.40-unstable-2026-03-31";
       src = prevAttrs.src.override {
         tag = null;
-        rev = "122ccca50e3508905aff79200e5ada12308275eb";
-        hash = "sha256-POphLydTD7Hd7kCyE0E9v0Vr5SPJYxMoPYHQZkIKbcw=";
+        rev = "ac104a519e80a0960f3b6ce0441aa96c77cabcd2";
+        hash = "sha256-nF0sgAmZwzQPngO+rdy3nHdPRYqqcrGRCdTfOb6qi5o=";
       };
 
       postPatch =
