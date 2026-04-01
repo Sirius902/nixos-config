@@ -32,6 +32,7 @@ in {
         remotePlay.openFirewall = true;
         localNetworkGameTransfers.openFirewall = true;
         gamescopeSession.enable = true;
+        protontricks.enable = true;
         extraCompatPackages = with pkgs; [
           proton-ge-bin
         ];
@@ -121,7 +122,6 @@ in {
         ];
       })
       mcpelauncher-ui-qt
-      protontricks
       rpcs3
       scarab
       shadps4-qt
