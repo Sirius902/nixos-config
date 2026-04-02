@@ -151,10 +151,20 @@
       };
   })
 
-  # FUTURE(Sirius902) Disable fast math to fix blurriness on Wayland.
-  # https://github.com/ValveSoftware/gamescope/issues/1622
   (final: prev: {
     gamescope = prev.gamescope.overrideAttrs (prevAttrs: {
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          (final.fetchpatch2 {
+            name = "add-window-cycle.patch";
+            url = "https://github.com/Sirius902/gamescope/commit/7028011baab2b6a7446a1f8dbd2859d665a5e296.patch?full_index=1";
+            hash = "sha256-gkQ/eatGFyvgnMddYU+J6JWneoxCLHWbJa3Tf59xtXs=";
+          })
+        ];
+
+      # FUTURE(Sirius902) Disable fast math to fix blurriness on Wayland.
+      # https://github.com/ValveSoftware/gamescope/issues/1622
       NIX_CFLAGS_COMPILE = (prevAttrs.NIX_CFLAGS_COMPILE or []) ++ ["-fno-fast-math"];
     });
   })
