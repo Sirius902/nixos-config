@@ -26,7 +26,6 @@
 
   environment.systemPackages = with pkgs; [
     archipelago
-    claude-code
     shipwright
     _2ship2harkinian
     shipwright-ap
