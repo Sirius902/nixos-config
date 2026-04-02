@@ -52,10 +52,6 @@ in {
           "name" = "gamescope";
           "nice" = -20;
         }
-        {
-          "name" = "gamescope-wl";
-          "nice" = -20;
-        }
       ];
     };
 
