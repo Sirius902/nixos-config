@@ -28,8 +28,8 @@
     "hash": "sha256-wEQPDySGtPdHBOEsrDSneLXmzT+AZ+UYFnnm6uVa3vg="
   },
   "SkyrimSE": {
-    "url": "https://raw.githubusercontent.com/loot/skyrimse/412d5436a974bf74b25fab5e76f3703aee5dc11a/masterlist.yaml",
-    "hash": "sha256-+X3C8HcFW/RznHkueRHaJtVLikLGZVfkIKzbWqgGA7A="
+    "url": "https://raw.githubusercontent.com/loot/skyrimse/f57e0c4bf43389c4882e326c3af583acc531c977/masterlist.yaml",
+    "hash": "sha256-id3Q/KcKoOyS4CqAEDEFVuXDt0pS4jT39a1D88R0DCU="
   },
   "Starfield": {
     "url": "https://raw.githubusercontent.com/loot/starfield/d43a7c1d50396859b5d78c63c1b9ec0a44b72270/masterlist.yaml",
