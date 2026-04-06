@@ -172,7 +172,7 @@
         in
           (lib.mapAttrs (name: _: patchedPkgs.${name}) allPackages)
           // {
-            inherit (patchedPkgs) moonlight rpcs3 shadps4 shadps4-qt;
+            inherit (patchedPkgs) poptracker moonlight rpcs3 shadps4 shadps4-qt;
             inherit (patchedPkgs.graalvmPackages) graalvm-ce_8;
           };
 

@@ -312,4 +312,13 @@
     xash3d-fwgs = prev.xash3d-fwgs.override {inherit sdks;};
     xash-dedicated = prev.xash-dedicated.override {inherit sdks;};
   })
+
+  (final: prev: {
+    poptracker = prev.poptracker.overrideAttrs (prevAttrs: {
+      version = "0.34.0";
+      src = prevAttrs.src.override {
+        hash = "sha256-4sdwW4P+5Y+JHy2dU55Fobedh0toXoU6pIWTN294GMc=";
+      };
+    });
+  })
 ]
