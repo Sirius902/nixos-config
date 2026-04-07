@@ -1,6 +1,6 @@
 theme = Kanagawa Wave
 font-size = 14
-font-family = Commit Mono
+font-family = JetBrainsMonoNL Nerd Font
 
 keybind = shift+ctrl+up=goto_split:top
 keybind = shift+ctrl+down=goto_split:bottom
