@@ -12,8 +12,8 @@
     "hash": "sha256-xW2iIoEZgQIQKeYUgvVQhsJfazLMGSLpL/Sv1FSRs7c="
   },
   "FalloutNV": {
-    "url": "https://raw.githubusercontent.com/loot/falloutnv/517fc1ea8dacd1b5aac8af8c5c1fd4e7653c71ba/masterlist.yaml",
-    "hash": "sha256-Ngd5xdb8TuX0HYczWEMJ1El0JB2UC2N+uV9ajIz07OU="
+    "url": "https://raw.githubusercontent.com/loot/falloutnv/9f4974fca1684ca8a19600f5d59525017cadfaf7/masterlist.yaml",
+    "hash": "sha256-5zgZgbULC+z+pmYZGHkVq49Rrh8DWpOyM0vw44rcPm4="
   },
   "Morrowind": {
     "url": "https://raw.githubusercontent.com/loot/morrowind/748db08e41c2bfae6c82e9d4529b796b2df80666/masterlist.yaml",
@@ -28,11 +28,11 @@
     "hash": "sha256-wEQPDySGtPdHBOEsrDSneLXmzT+AZ+UYFnnm6uVa3vg="
   },
   "SkyrimSE": {
-    "url": "https://raw.githubusercontent.com/loot/skyrimse/a23bb17f3468b20e4b82ed8ad0890a2eb20e3abf/masterlist.yaml",
-    "hash": "sha256-EJZo4FK64MQePrgNZOKSjECLkeC0cqTnNN6wAeTJLlc="
+    "url": "https://raw.githubusercontent.com/loot/skyrimse/d3e0c65f4e93a39fd8a4e208e5cd7cc76ef771a5/masterlist.yaml",
+    "hash": "sha256-DSsIbYTufc935/LWpec8844Hi++JCDxOI2PyUpdm+M0="
   },
   "Starfield": {
-    "url": "https://raw.githubusercontent.com/loot/starfield/e05df22adf481ed9a287de2ffe2805870af72c63/masterlist.yaml",
-    "hash": "sha256-aVTEwSybtcteo7r2QUwLIYwtgAVjmA3WE7aXFzb4DYY="
+    "url": "https://raw.githubusercontent.com/loot/starfield/82f2cb36e5dad30f4c30278fc6db38d4efc98263/masterlist.yaml",
+    "hash": "sha256-nX4kPfX3VVa7BE4EaDx5Dp5vGgQcPIZ8qQehoiZf+m4="
   }
 }
