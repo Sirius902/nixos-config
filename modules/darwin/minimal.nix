@@ -25,6 +25,8 @@
 
   environment.systemPackages = [pkgs.just];
 
+  fonts.packages = [pkgs.nerd-fonts.jetbrains-mono];
+
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
     trusted-users = ["chris"];
