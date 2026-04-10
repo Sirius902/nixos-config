@@ -71,8 +71,8 @@
         # Some extra patches here https://github.com/Sirius902/nixpkgs/tree/shadps4-fixes
         (builtins.fetchurl {
           name = "shadps4-qt.patch";
-          url = "https://github.com/Sirius902/nixpkgs/compare/aea86a71ccb9c1c0003507988271015397953833...c8f7707fb26d5d46c852fd7b23426fa8ea3697d9.patch?full_index=1";
-          sha256 = "sha256:1qir2rwnnq46bxkl0qrdnx0q92qwiy7aqjgxidvb2c2iy2x1cpgc";
+          url = "https://github.com/Sirius902/nixpkgs/compare/2d4672af3da4241781d1e8f1483619450fa6155f...62e2c275ffcd6595a19c5db085400469c22076ee.patch?full_index=1";
+          sha256 = "sha256:0p1f4m5ij6kmbb1vdgdm0p4v0wly3pr790gmj6j6sinc3wfqyfvh";
         })
         # Update pure-prompt https://github.com/NixOS/nixpkgs/pull/491292
         (builtins.fetchurl {
