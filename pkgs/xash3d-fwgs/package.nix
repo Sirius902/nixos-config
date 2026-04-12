@@ -7,101 +7,109 @@
   pkg-config,
   wafHook,
   SDL2,
-  libX11,
+  libx11,
   freetype,
   opusfile,
   libopus,
   libogg,
   libvorbis,
   bzip2,
-  xash-sdk,
+  hlsdk-portable,
   makeWrapper,
   nix-update-script,
   # Options
-  sdks ? [xash-sdk],
-}:
-stdenv.mkDerivation {
-  pname = "xash3d-fwgs";
-  version = "0-unstable-2026-04-10";
+  sdks ? [hlsdk-portable],
+  buildServer ? false,
+}: let
+  exe =
+    if buildServer
+    then "xash"
+    else "xash3d";
+in
+  stdenv.mkDerivation {
+    pname = "xash3d-fwgs";
+    version = "0-unstable-2026-04-10";
 
-  src = fetchFromGitHub {
-    owner = "FWGS";
-    repo = "xash3d-fwgs";
-    fetchSubmodules = true;
-    rev = "e87f307ac1893cbf7097b00470672b1d5e8ecf7a";
-    hash = "sha256-W7zKjtjZDhb3Lh6Fjp6s3fzbGpn7G6yI2GeQGXrRWdA=";
-  };
+    src = fetchFromGitHub {
+      owner = "FWGS";
+      repo = "xash3d-fwgs";
+      rev = "e87f307ac1893cbf7097b00470672b1d5e8ecf7a";
+      hash = "sha256-2BYmWwsgw2YFaaWdjepvOgwpccqyp61KGJDtwCnEo40=";
+      postCheckout = ''
+        cd $out/3rdparty
+        git submodule update --init --recursive \
+          MultiEmulator extras/xash-extras gl-wes-v2 gl4es/gl4es \
+          libbacktrace/libbacktrace library_suffix maintui mainui nanogl \
+          vgui_support
+      '';
+    };
 
-  nativeBuildInputs = [
-    ensureNewerSourcesForZipFilesHook
-    python3
-    pkg-config
-    wafHook
-    makeWrapper
-  ];
-
-  buildInputs =
-    [
-      freetype
-      opusfile
-      libopus
-      libogg
-      libvorbis
-      bzip2
-      SDL2
-    ]
-    ++ lib.optionals stdenv.isLinux [
-      libX11
+    nativeBuildInputs = [
+      ensureNewerSourcesForZipFilesHook
+      python3
+      pkg-config
+      wafHook
+      makeWrapper
     ];
 
-  dontAddPrefix = true;
+    buildInputs =
+      lib.optionals (!buildServer) [
+        freetype
+        opusfile
+        libopus
+        libogg
+        libvorbis
+        bzip2
+        SDL2
+      ]
+      ++ lib.optionals (!buildServer && stdenv.isLinux) [
+        libx11
+      ];
 
-  wafConfigureFlags =
-    [
-      "-T release"
-      "--sdl-use-pkgconfig"
-    ]
-    ++ lib.optionals stdenv.buildPlatform.is64bit ["-8"];
+    dontAddPrefix = true;
 
-  CFLAGS = "-I${SDL2.dev}/include/SDL2";
+    wafConfigureFlags =
+      [
+        "-T release"
+      ]
+      ++ lib.optionals buildServer [
+        "-d"
+      ]
+      ++ lib.optionals (!buildServer) [
+        "--sdl-use-pkgconfig"
+      ]
+      ++ lib.optionals stdenv.buildPlatform.is64bit ["-8"];
 
-  preInstall = ''
-    mkdir -p $out/lib
-  '';
+    wafInstallFlags = ["--destdir=${placeholder "out"}/lib"];
 
-  wafInstallFlags = ["--destdir=${placeholder "out"}/lib"];
+    postInstall =
+      ''
+        mkdir -p $out/bin
+        mv $out/lib/${exe} $out/bin/${exe}-unwrapped
+        makeWrapper $out/bin/${exe}-unwrapped $out/bin/${exe} \
+          --set XASH3D_RODIR $out/lib \
+          --run "export XASH3D_BASEDIR=\$HOME/.xash3d/" \
+          --prefix ${
+          if stdenv.hostPlatform.isDarwin
+          then "DYLD_LIBRARY_PATH"
+          else "LD_LIBRARY_PATH"
+        } : "$out/lib"
+      ''
+      + lib.concatLines (lib.map (sdk: "cp -TR ${sdk}/${sdk.modDir} $out/lib/${sdk.modDir}") sdks);
 
-  postInstall =
-    ''
-      mkdir -p $out/opt
-      mv $out/lib/valve $out/opt
+    passthru.updateScript = nix-update-script {
+      extraArgs = [
+        "--version=branch"
+        "--version-regex=(0-unstable-.*)"
+      ];
+    };
 
-      mkdir -p $out/bin
-      mv $out/lib/xash3d $out/bin/xash3d-unwrapped
-      makeWrapper $out/bin/xash3d-unwrapped $out/bin/xash3d \
-        --set XASH3D_RODIR $out/opt \
-        --run "export XASH3D_BASEDIR=\$HOME/.xash3d/" \
-        --prefix ${
-        if stdenv.hostPlatform.isDarwin
-        then "DYLD_LIBRARY_PATH"
-        else "LD_LIBRARY_PATH"
-      } : "$out/lib"
-    ''
-    + lib.concatLines (lib.map (sdk: "cp -TR ${sdk}/${sdk.modDir} $out/opt/${sdk.modDir}") sdks);
-
-  passthru.updateScript = nix-update-script {
-    extraArgs = [
-      "--version=branch"
-      "--version-regex=(0-unstable-.*)"
-    ];
-  };
-
-  meta = {
-    homepage = "https://github.com/FWGS/xash3d-fwgs";
-    description = "Xash3D FWGS engine";
-    license = lib.licenses.gpl3Plus;
-    platforms = lib.platforms.all;
-    maintainers = with lib.maintainers; [r4v3n6101];
-    mainProgram = "xash3d";
-  };
-}
+    meta = {
+      homepage = "https://github.com/FWGS/xash3d-fwgs";
+      description = "Xash3D FWGS engine";
+      license = lib.licenses.gpl3Plus;
+      platforms = lib.platforms.all;
+      maintainers = with lib.maintainers; [r4v3n6101];
+      mainProgram = exe;
+    };
+  }

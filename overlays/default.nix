@@ -265,7 +265,7 @@
   )
 
   (final: prev: {
-    xash-sdk = prev.xash-sdk.overrideAttrs (prevAttrs: {
+    hlsdk-portable = prev.hlsdk-portable.overrideAttrs (prevAttrs: {
       patches =
         (prevAttrs.patches or [])
         ++ [
@@ -289,7 +289,7 @@
         '';
     });
 
-    xash-sdk-opfor = prev.xash-sdk-opfor.overrideAttrs (prevAttrs: {
+    hlsdk-portable-opfor = prev.hlsdk-portable-opfor.overrideAttrs (prevAttrs: {
       # NOTE(Sirius902) Patch this away, not sure why this check is here. This
       # is not how the retail game behaves.
       postPatch =
@@ -303,10 +303,10 @@
 
   (final: prev: let
     sdks = [
-      final.xash-sdk
-      final.xash-sdk-opfor
-      final.xash-sdk-bshift
-      final.xash-sdk-theyhunger
+      final.hlsdk-portable
+      final.hlsdk-portable-opfor
+      final.hlsdk-portable-bshift
+      final.hlsdk-portable-theyhunger
     ];
   in {
     xash3d-fwgs = prev.xash3d-fwgs.override {inherit sdks;};

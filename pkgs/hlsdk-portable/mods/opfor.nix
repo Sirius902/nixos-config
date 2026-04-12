@@ -1,24 +1,24 @@
 {
-  xash-sdk,
+  hlsdk-portable,
   nix-update-script,
 }:
-xash-sdk.overrideAttrs (prevAttrs: {
-  pname = prevAttrs.pname + "-theyhunger";
+hlsdk-portable.overrideAttrs (prevAttrs: {
+  pname = prevAttrs.pname + "-opfor";
   version = "0-unstable-2026-03-26";
 
   src = prevAttrs.src.override {
-    rev = "cf57ec1294b020a49742ee626cea59d7512f03cd";
-    hash = "sha256-iLa1cNSV7xj91652O3yZ2YkSBBgWpOmzQQ/hYR/5g8g=";
+    rev = "f7ce421fde685fa252a003189d131dd4e5d2d8c4";
+    hash = "sha256-g2Lqrx7y41tEJTCHAiziFGQJE3e6taI6stvHLZ0K0Ug=";
   };
 
   passthru =
     (prevAttrs.passthru or {})
     // {
-      modDir = "Hunger";
+      modDir = "gearbox";
 
       updateScript = nix-update-script {
         extraArgs = [
-          "--version=branch=theyhunger"
+          "--version=branch=opfor"
           "--version-regex=(0-unstable-.*)"
         ];
       };

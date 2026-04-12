@@ -3,11 +3,11 @@
   fetchFromGitHub,
   stdenv,
   wafHook,
-  python3Packages,
+  python3,
   nix-update-script,
 }:
 stdenv.mkDerivation {
-  pname = "xash-sdk";
+  pname = "hlsdk-portable";
   version = "0-unstable-2026-03-26";
 
   src = fetchFromGitHub {
@@ -19,7 +19,7 @@ stdenv.mkDerivation {
   };
 
   nativeBuildInputs = [
-    python3Packages.python
+    python3
     wafHook
   ];
 

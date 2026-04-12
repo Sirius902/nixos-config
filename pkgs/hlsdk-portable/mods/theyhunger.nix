@@ -1,24 +1,24 @@
 {
-  xash-sdk,
+  hlsdk-portable,
   nix-update-script,
 }:
-xash-sdk.overrideAttrs (prevAttrs: {
-  pname = prevAttrs.pname + "-bshift";
+hlsdk-portable.overrideAttrs (prevAttrs: {
+  pname = prevAttrs.pname + "-theyhunger";
   version = "0-unstable-2026-03-26";
 
   src = prevAttrs.src.override {
-    rev = "df5c27283d4c7409f54aa63bf15143e5598ce02d";
-    hash = "sha256-PqlzwY7z8R8uRZdCtQ6XK+sN6bnbrsX/K8uXBHonPb8=";
+    rev = "cf57ec1294b020a49742ee626cea59d7512f03cd";
+    hash = "sha256-iLa1cNSV7xj91652O3yZ2YkSBBgWpOmzQQ/hYR/5g8g=";
   };
 
   passthru =
     (prevAttrs.passthru or {})
     // {
-      modDir = "bshift";
+      modDir = "Hunger";
 
       updateScript = nix-update-script {
         extraArgs = [
-          "--version=branch=bshift"
+          "--version=branch=theyhunger"
           "--version-regex=(0-unstable-.*)"
         ];
       };
