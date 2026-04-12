@@ -8,9 +8,9 @@
   autoPatchelfHook,
   libGL,
   libx11,
-  libXcursor,
+  libxcursor,
   libxcb,
-  libXi,
+  libxi,
   libxkbcommon,
   vulkan-loader,
   wayland,
@@ -29,7 +29,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     sha256 = "sha256-U8cyKJ8bWGwFaDowLsI4yhvThvstOcaWkvk2KAIT12A=";
   };
 
-  cargoBuildFlags = "--no-default-features";
+  cargoBuildFlags = ["--no-default-features"];
   cargoHash = "sha256-ubrVF6WQg1brQoYJxY1sgNnWxwGr+FadO+C+EPJbeRU=";
 
   nativeBuildInputs =
@@ -53,9 +53,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
     lib.optionals stdenv.hostPlatform.isLinux [
       libGL
       libx11
-      libXcursor
+      libxcursor
       libxcb
-      libXi
+      libxi
       libudev-zero
     ]
     ++ finalAttrs.runtimeDependencies;
@@ -79,10 +79,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=serial"];};
 
-  meta = with lib; {
-    description = "A customizable input viewer.";
+  meta = {
+    description = "Customizable input viewer";
     homepage = "https://github.com/Sirius902/gcviewer";
-    platforms = platforms.linux ++ platforms.darwin;
+    platforms = lib.platforms.linux ++ lib.platforms.darwin;
     mainProgram = "gcviewer";
   };
 })

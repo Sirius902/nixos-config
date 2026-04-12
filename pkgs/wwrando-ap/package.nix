@@ -41,10 +41,12 @@ wwrando.overrideAttrs (finalAttrs: prevAttrs: {
     done <<< "$frames"
   '';
 
-  postFixup = ''
-    wrapProgram $out/bin/${finalAttrs.pname} \
-      --set XKB_CONFIG_ROOT "${xkeyboard_config}/share/X11/xkb"
-  '';
+  postFixup =
+    (prevAttrs.postFixup or "")
+    + ''
+      wrapProgram $out/bin/${finalAttrs.pname} \
+        --set XKB_CONFIG_ROOT "${xkeyboard_config}/share/X11/xkb"
+    '';
 
   desktopItem = prevAttrs.desktopItem.override {
     desktopName = "Wind Waker Archipelago Randomizer";

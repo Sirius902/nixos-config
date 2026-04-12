@@ -136,7 +136,7 @@ in
 
     meta = {
       homepage = "https://github.com/wrye-bash/wrye-bash";
-      description = "A swiss army knife for modding Bethesda games.";
+      description = "Swiss army knife for modding Bethesda games";
       mainProgram = "wrye-bash";
       license = lib.licenses.gpl3Only;
       platforms = lib.platforms.linux;

@@ -3,7 +3,6 @@
 {
   lib,
   stdenvNoCC,
-  ghostty,
 }:
 stdenvNoCC.mkDerivation {
   pname = "ghostty-nautilus";
@@ -16,11 +15,16 @@ stdenvNoCC.mkDerivation {
     ];
   };
 
-  buildInputs = [ghostty];
-
   installPhase = ''
+    runHook preInstall
     install -Dm644 "ghostty-nautilus.py" -t "$out/share/nautilus-python/extensions"
+    runHook postInstall
   '';
 
-  meta.platforms = lib.platforms.linux;
+  meta = {
+    description = "Nautilus integration with Ghostty terminal";
+    homepage = "https://ghostty.org";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.linux;
+  };
 }

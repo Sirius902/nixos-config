@@ -43,4 +43,11 @@ melonds.overrideAttrs (prevAttrs: {
     '';
 
   passthru.updateScript = nix-update-script {extraArgs = ["--version=branch"];};
+
+  meta =
+    (prevAttrs.meta or {})
+    // {
+      homepage = "https://github.com/vitor251093/KHMelonMix";
+      mainProgram = "MelonMix";
+    };
 })

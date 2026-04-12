@@ -106,8 +106,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   passthru.updateScript = nix-update-script {};
 
   meta = {
-    # TODO(Sirius902) better description?
-    description = "This is a randomizer for The Legend of Zelda: The Wind Waker.";
+    description = "Randomizer for The Legend of Zelda: The Wind Waker";
     homepage = "https://lagolunatic.github.io/wwrando";
     changelog = "https://github.com/LagoLunatic/wwrando/releases/tag/${finalAttrs.version}";
     license = lib.licenses.mit;

@@ -24,7 +24,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     sha256 = "sha256-6jtMsRH4NXqmZr0ubcybz0grYLpx8eNNZXHatFWlCfM=";
   };
 
-  cargoBuildFlags = "-p gcfeederd --no-default-features";
+  cargoBuildFlags = ["-p" "gcfeederd" "--no-default-features"];
   cargoHash = "sha256-OHQnnYG1yK5kRWBJgdM87InCVzvAS2SXeMd283wlhfo=";
 
   # TODO(Sirius902) Remove once these tests pass.
@@ -76,8 +76,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=linux-daemon"];};
 
-  meta = with lib; {
-    description = "A ViGEm / evdev feeder for GameCube controllers using the GameCube Controller Adapter.";
+  meta = {
+    description = "ViGEm / evdev feeder for GameCube controllers using the GameCube Controller Adapter";
     longDescription = ''
       A ViGEm / evdev feeder for GameCube controllers using the GameCube Controller Adapter.
 
@@ -86,7 +86,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
         services.udev.packages = [ pkgs.gcfeederd ]
     '';
     homepage = "https://github.com/Sirius902/gcfeeder";
-    platforms = platforms.linux ++ platforms.darwin;
+    license = lib.licenses.mit;
+    platforms = lib.platforms.linux ++ lib.platforms.darwin;
     mainProgram = "gcfeederd";
   };
 })
