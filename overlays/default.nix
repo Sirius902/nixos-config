@@ -343,4 +343,67 @@
         };
     });
   })
+
+  (final: prev: {
+    n64recomp = prev.n64recomp.overrideAttrs (prevAttrs: {
+      version = "0-unstable-2026-01-17";
+      src = prevAttrs.src.override {
+        rev = "81213c1831fab2521a6a5459c67b63437d67e253";
+        hash = "sha256-BfZTmKAXn+9b0lHg0SbTP4/ZTjk7IqvPc78ab8XNFoM=";
+      };
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {
+            extraArgs = [
+              "--version=branch"
+              "--version-regex=(0-unstable-.*)"
+            ];
+          };
+        };
+    });
+  })
+
+  (final: prev: {
+    z64decompress = prev.z64decompress.overrideAttrs (prevAttrs: {
+      version = "1.0.3-unstable-2023-12-21";
+      src = prevAttrs.src.override {
+        rev = "e2b3707271994a2a1b3afc6c3997a7cf6b479765";
+        hash = "sha256-PHiOeEB9njJPsl6ScdoDVwJXGqOdIIJCZRbIXSieBIY=";
+      };
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {
+            extraArgs = [
+              "--version=branch"
+              "--version-regex=v(.*)"
+            ];
+          };
+        };
+    });
+  })
+
+  (final: prev: {
+    zelda64recomp = prev.zelda64recomp.overrideAttrs (prevAttrs: {
+      version = "1.2.2-unstable-2025-12-29";
+      src = prevAttrs.src.override {
+        rev = "ab677e76615e5e47b3b26c822ca426485752ac77";
+        hash = "sha256-gL/PZTOuNInalIAZZYe/1tOKoMR0dTc8HBHPOuPBGtc=";
+      };
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {
+            extraArgs = [
+              "--version=branch"
+              "--version-regex=v(.*)"
+            ];
+          };
+        };
+    });
+  })
 ]

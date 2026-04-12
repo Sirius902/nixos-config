@@ -13,10 +13,6 @@
   shipwright-ap = pkgs.callPackage ./shipwright/ap/package.nix {};
   _2ship2harkinian = pkgs.callPackage ./_2ship2harkinian/package.nix {};
 
-  n64recomp = pkgs.callPackage ./n64recomp/package.nix {};
-  z64decompress = pkgs.callPackage ./z64decompress/package.nix {};
-  zelda64recomp = pkgs.callPackage ./zelda64recomp/package.nix {};
-
   wwrando = pkgs.callPackage ./wwrando/package.nix {};
   wwrando-ap = pkgs.callPackage ./wwrando-ap/package.nix {};
 
