@@ -12,8 +12,8 @@
   glew,
   boost,
   SDL2,
-  SDL2_net,
   pkg-config,
+  libGL,
   libpulseaudio,
   libpng,
   imagemagick,
@@ -159,9 +159,7 @@ in
     buildInputs =
       [
         boost
-        glew
         SDL2
-        SDL2_net
         libpng
         libzip
         nlohmann_json
@@ -175,13 +173,16 @@ in
         libx11
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
+        libGL
         libpulseaudio
         zenity
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isDarwin [
+        glew
       ];
 
     cmakeFlags =
       [
-        (lib.cmakeBool "BUILD_REMOTE_CONTROL" true)
         (lib.cmakeBool "NON_PORTABLE" true)
         (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/lib")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
@@ -201,6 +202,8 @@ in
     env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
 
     strictDeps = true;
+    __structuredAttrs = true;
+    enableParallelBuilding = true;
 
     dontAddPrefix = true;
 
@@ -224,6 +227,7 @@ in
 
     postBuild = ''
       port_ver=$(grep CMAKE_PROJECT_VERSION: "$PWD/CMakeCache.txt" | cut -d= -f2)
+      cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
       pushd ../OTRExporter
       python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../mm/assets/xml --custom-assets-path ../mm/assets/custom --custom-otr-file 2ship.o2r --port-ver $port_ver
       popd
@@ -232,14 +236,13 @@ in
     preInstall = ''
       # Cmake likes it here for its install paths
       cp ../OTRExporter/2ship.o2r mm/2ship.o2r
-      install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
     '';
 
     postInstall =
       lib.optionalString stdenv.hostPlatform.isLinux ''
         mkdir -p $out/bin
         ln -s $out/lib/2s2h.elf $out/bin/2s2h
-        install -Dm644 ../mm/macosx/2s2hIcon.png $out/share/pixmaps/2s2h.png
+        install -Dm644 ../mm/linux/2s2hIcon.png $out/share/icons/hicolor/512x512/apps/2s2h.png
       ''
       + lib.optionalString stdenv.hostPlatform.isDarwin ''
         # Recreate the macOS bundle (without using cpack)
@@ -266,16 +269,22 @@ in
         # TODO(Sirius902) This seems like an issue upstream in ship maybe?
         # Move gamecontrollerdb.txt to the proper place for app bundle
         install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
-          $out/Applications/soh.app/Contents/Resources/gamecontrollerdb.txt
+          $out/Applications/2s2h.app/Contents/Resources/gamecontrollerdb.txt
 
         # Codesign (ad-hoc)
         codesign -f -s - $out/Applications/2s2h.app/Contents/MacOS/2s2h
+      ''
+      + ''
+        install -Dm644 -t $out/share/licenses/2ship2harkinian ../LICENSE
+        install -Dm644 -t $out/share/licenses/2ship2harkinian/OTRExporter ../OTRExporter/LICENSE
+        install -Dm644 -t $out/share/licenses/2ship2harkinian/ZAPDTR ../ZAPDTR/LICENSE
+        install -Dm644 -t $out/share/licenses/2ship2harkinian/libgfxd ${libgfxd}/LICENSE
+        install -Dm644 -t $out/share/licenses/2ship2harkinian/libultraship ../libultraship/LICENSE
+        install -Dm644 -t $out/share/licenses/2ship2harkinian/thread_pool ${thread_pool}/LICENSE.txt
       '';
 
-    fixupPhase = lib.optionalString stdenv.hostPlatform.isLinux ''
-      runHook preFixup
+    postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
       wrapProgram $out/lib/2s2h.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
-      runHook postFixup
     '';
 
     desktopItems = [

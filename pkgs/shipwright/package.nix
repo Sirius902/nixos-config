@@ -14,6 +14,7 @@
   SDL2,
   SDL2_net,
   pkg-config,
+  libGL,
   libpulseaudio,
   libpng,
   imagemagick,
@@ -159,7 +160,6 @@ in
     buildInputs =
       [
         boost
-        glew
         SDL2
         SDL2_net
         libpng
@@ -175,8 +175,12 @@ in
         libx11
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
+        libGL
         libpulseaudio
         zenity
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isDarwin [
+        glew
       ];
 
     cmakeFlags =
@@ -199,6 +203,8 @@ in
     env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
 
     strictDeps = true;
+    __structuredAttrs = true;
+    enableParallelBuilding = true;
 
     dontAddPrefix = true;
 
@@ -222,6 +228,7 @@ in
 
     postBuild = ''
       port_ver=$(grep CMAKE_PROJECT_VERSION: "$PWD/CMakeCache.txt" | cut -d= -f2)
+      cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
       mv ../libultraship/src/fast/shaders ../soh/assets/custom
       pushd ../OTRExporter
       python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../soh/assets/xml --custom-assets-path ../soh/assets/custom --custom-otr-file soh.o2r --port-ver $port_ver
@@ -231,14 +238,13 @@ in
     preInstall = ''
       # Cmake likes it here for its install paths
       cp ../OTRExporter/soh.o2r soh/soh.o2r
-      install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
     '';
 
     postInstall =
       lib.optionalString stdenv.hostPlatform.isLinux ''
         mkdir -p $out/bin
         ln -s $out/lib/soh.elf $out/bin/soh
-        install -Dm644 ../soh/macosx/sohIcon.png $out/share/pixmaps/soh.png
+        install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/1024x1024/apps/soh.png
       ''
       + lib.optionalString stdenv.hostPlatform.isDarwin ''
         # Recreate the macOS bundle (without using cpack)
@@ -269,12 +275,21 @@ in
 
         # Codesign (ad-hoc)
         codesign -f -s - $out/Applications/soh.app/Contents/MacOS/soh
+      ''
+      + ''
+        # TODO(Sirius902) Uncomment when upstream adds a root LICENSE file.
+        # install -Dm644 -t $out/share/licenses/shipwright ../LICENSE
+        test ! -f ../LICENSE || (echo "upstream LICENSE exists now, install it!" && false)
+
+        install -Dm644 -t $out/share/licenses/shipwright/OTRExporter ../OTRExporter/LICENSE
+        install -Dm644 -t $out/share/licenses/shipwright/ZAPDTR ../ZAPDTR/LICENSE
+        install -Dm644 -t $out/share/licenses/shipwright/libgfxd ${libgfxd}/LICENSE
+        install -Dm644 -t $out/share/licenses/shipwright/libultraship ../libultraship/LICENSE
+        install -Dm644 -t $out/share/licenses/shipwright/thread_pool ${thread_pool}/LICENSE.txt
       '';
 
-    fixupPhase = lib.optionalString stdenv.hostPlatform.isLinux ''
-      runHook preFixup
+    postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
       wrapProgram $out/lib/soh.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
-      runHook postFixup
     '';
 
     desktopItems = [
