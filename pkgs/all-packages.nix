@@ -28,5 +28,7 @@
   hlsdk-portable-theyhunger = pkgs.callPackage ./hlsdk-portable/mods/theyhunger.nix {};
 
   xash3d-fwgs = pkgs.callPackage ./xash3d-fwgs/package.nix {};
-  xash-dedicated = pkgs.callPackage ./xash3d-fwgs/package.nix {buildServer = true;};
+  xash-dedicated = (pkgs.callPackage ./xash3d-fwgs/package.nix {buildServer = true;}).overrideAttrs (prevAttrs: {
+    passthru = removeAttrs (prevAttrs.passthru or {}) ["updateScript"];
+  });
 }
