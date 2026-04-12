@@ -23,6 +23,7 @@
       inputs.sops-nix.follows = "sops-nix";
     };
     nvim-conf.url = "github:Sirius902/nvim-conf";
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
