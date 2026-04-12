@@ -319,6 +319,12 @@
       src = prevAttrs.src.override {
         hash = "sha256-YPYGK1yDw0K5/gbJ9jwFSbpIJGKpkGy2iIcMiA9/xmA=";
       };
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {};
+        };
     });
   })
 
@@ -329,6 +335,12 @@
         url = "https://github.com/ArchipelagoMW/Archipelago/releases/download/${finalAttrs.version}/Archipelago_${finalAttrs.version}_linux-x86_64.AppImage";
         hash = "sha256-a5UazzqGu7q4Zg1AYHnbQjCTQNdcNaL/gZUjYV3Rk5Q=";
       };
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {};
+        };
     });
   })
 ]
