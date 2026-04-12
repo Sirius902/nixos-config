@@ -37,6 +37,7 @@
   bzip2,
   libx11,
   sdl_gamecontrollerdb,
+  cacert,
   runCommand,
   asio,
   openssl,
@@ -142,14 +143,9 @@
     hash = "sha256-/pUa51tZmFL15moMO1KlX5iBmMcx/vYMhqO6PZckIPo=";
   };
 
-  cacert = fetchurl {
-    url = "https://curl.se/ca/cacert-2025-09-09.pem";
-    sha256 = "sha256-8pDmrK+QSkEhQkyj691wZSeAcH4o6K+ZkiF4a4a7GXU=";
-  };
-
   sslCertStore = runCommand "sslCertStore-dir" {} ''
     mkdir -p $out
-    cp ${cacert} $out/cacert.pem
+    cp ${cacert}/etc/ssl/certs/ca-bundle.crt $out/cacert.pem
   '';
 in
   stdenv.mkDerivation (finalAttrs: {
@@ -269,8 +265,6 @@ in
       substituteInPlace libultraship/cmake/dependencies/common.cmake \
         --replace-fail "\''${STB_DIR}" "$(readlink -f ./stb)"
 
-      mkdir -p ./soh/networking
-      cp ${cacert} ./soh/networking/cacert.pem
     '';
 
     postPatch = ''
