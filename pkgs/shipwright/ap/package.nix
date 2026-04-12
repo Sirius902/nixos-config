@@ -34,7 +34,7 @@
   libogg,
   libvorbis,
   bzip2,
-  libX11,
+  libx11,
   sdl_gamecontrollerdb,
   runCommand,
   asio,
@@ -214,7 +214,7 @@ in
         libogg
         libvorbis
         bzip2
-        libX11
+        libx11
         asio
         openssl
         valijson

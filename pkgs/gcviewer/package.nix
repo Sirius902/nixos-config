@@ -7,7 +7,7 @@
   makeDesktopItem,
   autoPatchelfHook,
   libGL,
-  libX11,
+  libx11,
   libXcursor,
   libxcb,
   libXi,
@@ -52,7 +52,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   buildInputs =
     lib.optionals stdenv.hostPlatform.isLinux [
       libGL
-      libX11
+      libx11
       libXcursor
       libxcb
       libXi
