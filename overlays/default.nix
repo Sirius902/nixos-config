@@ -409,4 +409,16 @@
         };
     });
   })
+
+  # TODO(Sirius902) Ugh I need to PR this...
+  (final: prev: {
+    bottles-unwrapped = prev.bottles-unwrapped.overrideAttrs (prevAttrs: {
+      postPatch =
+        (prevAttrs.postPatch or "")
+        + ''
+          substituteInPlace bottles/backend/utils/vulkan.py \
+            --replace-fail '"vulkaninfo"' '"${final.vulkan-tools}/bin/vulkaninfo"'
+        '';
+    });
+  })
 ]
