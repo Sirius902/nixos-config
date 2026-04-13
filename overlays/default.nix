@@ -211,8 +211,8 @@
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "311c2dd1cd967253af6da69b336369ff4dd971b2";
-        hash = "sha256-05/BJxm+ChTMi4WGyl+M5AHYgEsq+WoJDnrXBeoFZPM=";
+        rev = "cead66d3c65c026e0f812c9460df5ede74feb23a";
+        hash = "sha256-fcnB7mAk02dtPV0f4OxykJSN8F4eNA+zOHmlFhInc2g=";
         fetchSubmodules = false;
 
         leaveDotGit = false;
@@ -230,6 +230,7 @@
             hwinfo \
             libusb \
             sdl3 \
+            sdl3_image \
             sdl3_mixer \
             sirit \
             tracy \
