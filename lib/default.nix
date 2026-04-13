@@ -70,7 +70,7 @@
         # Add shadps4-qt https://github.com/NixOS/nixpkgs/pull/474696
         (builtins.fetchurl {
           name = "shadps4-qt.patch";
-          url = "https://github.com/Sirius902/nixpkgs/compare/2d4672af3da4241781d1e8f1483619450fa6155f...306c7efa8796bca0611b5434d53880d698e258ac.patch?full_index=1";
+          url = "https://github.com/ryand56/nixpkgs/compare/2d4672af3da4241781d1e8f1483619450fa6155f...306c7efa8796bca0611b5434d53880d698e258ac.patch?full_index=1";
           sha256 = "sha256:0zbxzbp4sf41g6knd63v9hc15w3ffpvr5mp1ylxsdpz4wgrm0wrm";
         })
         # Update pure-prompt https://github.com/NixOS/nixpkgs/pull/491292
