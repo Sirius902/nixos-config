@@ -212,8 +212,44 @@
       src = prevAttrs.src.override {
         tag = null;
         rev = "311c2dd1cd967253af6da69b336369ff4dd971b2";
-        hash = "sha256-vXUdbfN+Fu7Rgm/qSI6YK2IGLci/SQGTKC9U8i8/uQ4=";
+        hash = "sha256-05/BJxm+ChTMi4WGyl+M5AHYgEsq+WoJDnrXBeoFZPM=";
+        fetchSubmodules = false;
+
+        leaveDotGit = false;
+        postCheckout = ''
+          cd "$out"
+
+          # Only fetch required submodules
+          git -C externals submodule update --init --depth 1 \
+            LibAtrac9 \
+            aacdec/fdk-aac \
+            cpp-httplib \
+            dear_imgui \
+            discord-rpc \
+            glslang \
+            hwinfo \
+            libusb \
+            sdl3 \
+            sdl3_mixer \
+            sirit \
+            tracy \
+            zydis
+          git -C externals/sirit submodule update --init --depth 1 externals/SPIRV-Headers
+
+          git rev-parse --short=8 HEAD > $out/COMMIT
+          date -u -d "@$(git log -1 --pretty=%ct)" "+%Y-%m-%dT%H:%M:%SZ" > $out/SOURCE_DATE_EPOCH
+        '';
       };
+
+      buildInputs =
+        (prevAttrs.buildInputs or [])
+        ++ [
+          final.cli11
+          final.libpng
+          final.miniz
+          final.nlohmann_json
+          final.openal-soft
+        ];
 
       passthru =
         (prevAttrs.passthru or {})
@@ -236,19 +272,23 @@
         src = prevAttrs.src.override {
           tag = null;
           rev = "51b62bd25588d7087c8fe85ce67c8736b1eb7b60";
-          hash = "sha256-78DyR0A3iYxwy3JT5OOg1MQK9g/henP5SkVBANcrXXE=";
+          hash = "sha256-JqaMDp7odzBoA41/N7o1kFdqzv4bk/CZBKvcb8INo1Y=";
+          fetchSubmodules = false;
+
+          leaveDotGit = false;
+          postCheckout = ''
+            cd "$out"
+
+            # Only fetch required submodules
+            git -C externals submodule update --init --depth 1 \
+              json \
+              sdl3 \
+              volk
+
+            git rev-parse --short=8 HEAD > $out/COMMIT
+            date -u -d "@$(git log -1 --pretty=%ct)" "+%Y-%m-%dT%H:%M:%SZ" > $out/SOURCE_DATE_EPOCH
+          '';
         };
-
-        patches = builtins.filter (p:
-          !(
-            builtins.isPath p && baseNameOf p == "hide-version-manager.patch"
-          )) (prevAttrs.patches or []);
-
-        cmakeFlags =
-          (prevAttrs.cmakeFlags or [])
-          ++ [
-            (final.lib.cmakeBool "HIDE_VERSION_MANAGER" true)
-          ];
 
         passthru =
           (prevAttrs.passthru or {})
