@@ -32,6 +32,11 @@ in {
       ''
       + (lib.optionalString stdenv.hostPlatform.isLinux ''
         alias open='xdg-open 2>/dev/null'
+
+        launch() {
+          ("$@" &)
+          exit
+        }
       '')
       + (lib.optionalString stdenv.hostPlatform.isDarwin ''
         export PATH="/opt/homebrew/bin:$PATH"
