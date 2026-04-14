@@ -4,6 +4,8 @@
   gcfeederd = pkgs.callPackage ./gcfeederd/package.nix {};
   gcviewer = pkgs.callPackage ./gcviewer/package.nix {};
 
+  fvs2 = pkgs.callPackage ./fvs2/package.nix {};
+
   gamecube-loader = pkgs.callPackage ./ghidra-extensions/gamecube-loader/package.nix {};
   xex-loader-wv = pkgs.callPackage ./ghidra-extensions/xex-loader-wv/package.nix {};
 
