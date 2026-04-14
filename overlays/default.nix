@@ -459,6 +459,9 @@
         + ''
           substituteInPlace bottles/backend/utils/vulkan.py \
             --replace-fail '"vulkaninfo"' '"${final.vulkan-tools}/bin/vulkaninfo"'
+
+          substituteInPlace bottles/fvs/repo.py \
+            --replace-fail '"fvs2"' '"${final.fvs2}/bin/fvs2"'
         '';
     });
   })
