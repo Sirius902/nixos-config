@@ -76,5 +76,6 @@
     sops
     usbutils
     xxd
+    zellij
   ];
 }
