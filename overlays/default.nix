@@ -272,7 +272,7 @@
         src = prevAttrs.src.override {
           tag = null;
           rev = "0673421b2c8e086ed554103901dfe828ab70f66a";
-          hash = "sha256-/kJPZgeIne75NSt9eGdLhsrZo+n39EhXo9W400Qj0e0=";
+          hash = "sha256-BmecxQsVht8mb3DUxV7ccrVUVfsgHmHP7LN0+Hiwpug=";
           fetchSubmodules = false;
 
           leaveDotGit = false;
@@ -282,7 +282,6 @@
             # Only fetch required submodules
             git -C externals submodule update --init --depth 1 \
               json \
-              sdl3 \
               volk
 
             git rev-parse --short=8 HEAD > $out/COMMIT
