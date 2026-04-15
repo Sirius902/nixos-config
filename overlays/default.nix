@@ -212,7 +212,7 @@
       src = prevAttrs.src.override {
         tag = null;
         rev = "be224a455682825762234130538f9fbcc6c3035f";
-        hash = "sha256-dTtg1ilJt72cumbzOdpCpknAa3mZEBX2Bia1Mw4KEys=";
+        hash = "sha256-RRL0OomHv28EBXg3nTeCsTyuhoVc5IHHVPiXUXIKMwU=";
         fetchSubmodules = false;
 
         leaveDotGit = false;
@@ -229,7 +229,7 @@
             glslang \
             hwinfo \
             libusb \
-            sdl3 \
+            minimp3 \
             sirit \
             tracy \
             zydis
@@ -248,6 +248,7 @@
           final.miniz
           final.nlohmann_json
           final.openal-soft
+          final.sdl3
         ];
 
       passthru =
