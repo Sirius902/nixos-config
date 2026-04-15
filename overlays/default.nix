@@ -266,12 +266,12 @@
   (
     final: prev: {
       shadps4-qt = prev.shadps4-qt.overrideAttrs (prevAttrs: {
-        version = "0-unstable-2026-04-14";
+        version = "0-unstable-2026-04-15";
 
         src = prevAttrs.src.override {
           tag = null;
-          rev = "fbb4b4f77db854d1fd6efd9c8ac79657a8e4f18e";
-          hash = "sha256-B4ES1VNyGsucsBVQWspfpUb2GNPiBSvLwaON0625Wio=";
+          rev = "0673421b2c8e086ed554103901dfe828ab70f66a";
+          hash = "sha256-/kJPZgeIne75NSt9eGdLhsrZo+n39EhXo9W400Qj0e0=";
           fetchSubmodules = false;
 
           leaveDotGit = false;
