@@ -86,6 +86,9 @@ in {
         removeWarningPopup = true;
       })
       dolphin-emu
+      (retroarch.withCores (cores: [
+        cores.mupen64plus
+      ]))
       melonds
       kh-melon-mix
       wwrando
