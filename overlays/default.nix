@@ -207,12 +207,12 @@
 
   (final: prev: {
     shadps4 = prev.shadps4.overrideAttrs (prevAttrs: {
-      version = "0.15.0-unstable-2026-04-14";
+      version = "0.15.0-unstable-2026-04-15";
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "c1e496efcde74f4e04c1515b916bbdd54cb2fd03";
-        hash = "sha256-Nvb3jhpmZibzChjqtfXi3Dd815SXnQf/t5nQG7mE5OY=";
+        rev = "be224a455682825762234130538f9fbcc6c3035f";
+        hash = "sha256-dTtg1ilJt72cumbzOdpCpknAa3mZEBX2Bia1Mw4KEys=";
         fetchSubmodules = false;
 
         leaveDotGit = false;
@@ -230,8 +230,6 @@
             hwinfo \
             libusb \
             sdl3 \
-            sdl3_image \
-            sdl3_mixer \
             sirit \
             tracy \
             zydis
