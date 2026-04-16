@@ -471,6 +471,8 @@
         ++ [
           ../patches/zellij/0001-feat-pass-OSC-52-clipboard-read-through-to-host-term.patch
         ];
+
+      passthru = removeAttrs (prevAttrs.passthru or {}) ["updateScript"];
     });
   })
 ]
