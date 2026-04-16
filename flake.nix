@@ -173,7 +173,7 @@
         in
           (lib.mapAttrs (name: _: patchedPkgs.${name}) allPackages)
           // {
-            inherit (patchedPkgs) poptracker moonlight rpcs3 shadps4 shadps4-qt archipelago n64recomp z64decompress zelda64recomp;
+            inherit (patchedPkgs) poptracker moonlight rpcs3 shadps4 shadps4-qt archipelago n64recomp z64decompress zelda64recomp zellij;
             inherit (patchedPkgs.graalvmPackages) graalvm-ce_8;
           };
 

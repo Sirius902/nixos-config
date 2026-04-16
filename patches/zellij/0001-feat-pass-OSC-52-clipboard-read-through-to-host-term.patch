@@ -1,0 +1,224 @@
+From 9c6cf7e3fc652facb969a195269c808952f837e3 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Wed, 15 Apr 2026 16:48:03 -0700
+Subject: [PATCH] feat: pass OSC 52 clipboard-read through to host terminal
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Forward `\x1b]52;<sel>;?...` queries from panes out to the host terminal
+and route the terminal's reply back to the focused pane. This lets apps
+inside zellij (e.g. remote nvim) use OSC 52 paste without zellij adding
+a second permissions layer on top of the host terminal's own prompt.
+
+Mirrors the existing OSC 99 desktop-notification plumbing. OSC 52 writes
+(copy) are untouched — those already work via ClipboardProvider.
+
+Refs zellij-org/zellij#2647
+
+Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+---
+ zellij-client/src/input_handler.rs       | 14 +++++++++++
+ zellij-client/src/lib.rs                 |  3 +++
+ zellij-client/src/stdin_handler.rs       | 19 +++++++++++++++
+ zellij-server/src/panes/grid.rs          | 14 ++++++++++-
+ zellij-server/src/panes/terminal_pane.rs |  4 +++
+ zellij-server/src/tab/mod.rs             | 31 ++++++++++++++++++++++++
+ 6 files changed, 84 insertions(+), 1 deletion(-)
+
+diff --git a/zellij-client/src/input_handler.rs b/zellij-client/src/input_handler.rs
+index 8b404f7..4792e92 100644
+--- a/zellij-client/src/input_handler.rs
++++ b/zellij-client/src/input_handler.rs
+@@ -253,6 +253,20 @@ impl InputHandler {
+                             raw_bytes,
+                         });
+                 },
++                Ok((InputInstruction::Osc52Response(raw_bytes), _error_context)) => {
++                    // Deliver the raw OSC 52 response to the focused pane's PTY by
++                    // reusing the existing Write action — no new IPC message needed.
++                    // Intentionally mode-agnostic: this isn't user keyboard input,
++                    // it's a reply to a query the focused pane just made.
++                    self.dispatch_action(
++                        Action::Write {
++                            key_with_modifier: None,
++                            bytes: raw_bytes,
++                            is_kitty_keyboard_protocol: false,
++                        },
++                        None,
++                    );
++                },
+                 Ok((InputInstruction::StartedParsing, _error_context)) => {
+                     self.send_client_instructions
+                         .send(ClientInstruction::StartedParsingStdinQuery)
+diff --git a/zellij-client/src/lib.rs b/zellij-client/src/lib.rs
+index fbebb18..37d0c9e 100644
+--- a/zellij-client/src/lib.rs
++++ b/zellij-client/src/lib.rs
+@@ -405,6 +405,9 @@ pub(crate) enum InputInstruction {
+     MouseEvent(zellij_utils::input::mouse::MouseEvent),
+     AnsiStdinInstructions(Vec<AnsiStdinInstruction>),
+     DesktopNotificationResponse(Vec<u8>),
++    /// Raw OSC 52 clipboard response from the host terminal. Carries the full
++    /// `\x1b]52;...\x1b\\` sequence, to be written verbatim to the focused pane.
++    Osc52Response(Vec<u8>),
+     StartedParsing,
+     DoneParsing,
+     Exit,
+diff --git a/zellij-client/src/stdin_handler.rs b/zellij-client/src/stdin_handler.rs
+index dc948b0..d7c8ba8 100644
+--- a/zellij-client/src/stdin_handler.rs
++++ b/zellij-client/src/stdin_handler.rs
+@@ -210,6 +210,17 @@ pub(crate) fn stdin_loop(
+                                                 notification_payload,
+                                             ),
+                                         );
++                                    } else if payload.starts_with(b"52;") {
++                                        // OSC 52 clipboard response from the host
++                                        // terminal — reconstruct the raw sequence and
++                                        // forward it to the focused pane so the app
++                                        // that issued the `?` query receives its reply.
++                                        let mut raw = Vec::with_capacity(payload.len() + 4);
++                                        raw.extend_from_slice(b"\x1b]");
++                                        raw.extend_from_slice(payload);
++                                        raw.extend_from_slice(b"\x1b\\");
++                                        let _ = send_input_instructions
++                                            .send(InputInstruction::Osc52Response(raw));
+                                     }
+                                     // Other OSC types at runtime: silently drop.
+                                 },
+@@ -275,6 +286,14 @@ fn finalize_events(
+                     let _ = send_input_instructions.send(
+                         InputInstruction::DesktopNotificationResponse(notification_payload),
+                     );
++                } else if payload.starts_with(b"52;") {
++                    // OSC 52 clipboard response from the host terminal — see the
++                    // matching branch in the main event loop for the rationale.
++                    let mut raw = Vec::with_capacity(payload.len() + 4);
++                    raw.extend_from_slice(b"\x1b]");
++                    raw.extend_from_slice(payload);
++                    raw.extend_from_slice(b"\x1b\\");
++                    let _ = send_input_instructions.send(InputInstruction::Osc52Response(raw));
+                 }
+                 // Other OSC types at runtime: silently drop.
+             },
+diff --git a/zellij-server/src/panes/grid.rs b/zellij-server/src/panes/grid.rs
+index 1445435..8204d6e 100644
+--- a/zellij-server/src/panes/grid.rs
++++ b/zellij-server/src/panes/grid.rs
+@@ -608,6 +608,9 @@ pub struct Grid {
+     /// Pending desktop notifications: (payload, terminator)
+     /// Payload is the semicolon-joined params after "99", terminator is "\x07" or "\x1b\\"
+     pub pending_desktop_notifications: Vec<(String, String)>,
++    /// Pending OSC 52 passthrough sequences to forward to the host terminal.
++    /// Each entry is a fully-reconstructed `\x1b]52;...<terminator>` sequence.
++    pub pending_osc52_passthrough: Vec<String>,
+     ui_component_bytes: Option<Vec<u8>>,
+     style: Style,
+     debug: bool,
+@@ -893,6 +896,7 @@ impl Grid {
+             sixel_grid,
+             pending_clipboard_update: None,
+             pending_desktop_notifications: Vec::new(),
++            pending_osc52_passthrough: Vec::new(),
+             ui_component_bytes: None,
+             style,
+             debug,
+@@ -3546,7 +3550,15 @@ impl Perform for Grid {
+                 let _clipboard = params[1].get(0).unwrap_or(&b'c');
+                 match params[2] {
+                     b"?" => {
+-                        // TBD: paste from own clipboard - currently unsupported
++                        // Pass the query through to the host terminal so it (e.g.
++                        // Ghostty) can prompt the user and reply with the clipboard
++                        // contents. The response arrives back on the client's stdin
++                        // and is routed to the focused pane — see
++                        // zellij-client/src/stdin_handler.rs.
++                        let selector = str::from_utf8(params[1]).unwrap_or("c");
++                        let selector = if selector.is_empty() { "c" } else { selector };
++                        self.pending_osc52_passthrough
++                            .push(format!("\u{1b}]52;{};?{}", selector, terminator));
+                     },
+                     base64 => {
+                         if let Ok(bytes) = base64::decode(base64) {
+diff --git a/zellij-server/src/panes/terminal_pane.rs b/zellij-server/src/panes/terminal_pane.rs
+index bed9881..066e528 100644
+--- a/zellij-server/src/panes/terminal_pane.rs
++++ b/zellij-server/src/panes/terminal_pane.rs
+@@ -594,6 +594,10 @@ impl Pane for TerminalPane {
+         self.grid.pending_desktop_notifications.drain(..).collect()
+     }
+ 
++    fn drain_osc52_passthrough(&mut self) -> Vec<String> {
++        self.grid.pending_osc52_passthrough.drain(..).collect()
++    }
++
+     fn start_selection(&mut self, start: &Position, _client_id: ClientId) {
+         self.grid.start_selection(start);
+         self.set_should_render(true);
+diff --git a/zellij-server/src/tab/mod.rs b/zellij-server/src/tab/mod.rs
+index 0eb953c..3f963cf 100644
+--- a/zellij-server/src/tab/mod.rs
++++ b/zellij-server/src/tab/mod.rs
+@@ -415,6 +415,9 @@ pub trait Pane {
+     fn drain_desktop_notifications(&mut self) -> Vec<(String, String)> {
+         vec![]
+     }
++    fn drain_osc52_passthrough(&mut self) -> Vec<String> {
++        vec![]
++    }
+     fn render_full_viewport(&mut self) {}
+     fn relative_position(&self, position_on_screen: &Position) -> Position {
+         position_on_screen.relative_to(self.get_content_y(), self.get_content_x())
+@@ -2720,6 +2723,7 @@ impl Tab {
+             let messages_to_pty = terminal_output.drain_messages_to_pty();
+             let clipboard_update = terminal_output.drain_clipboard_update();
+             let desktop_notifications = terminal_output.drain_desktop_notifications();
++            let osc52_queries = terminal_output.drain_osc52_passthrough();
+             for message in messages_to_pty {
+                 self.write_to_pane_id_without_preprocessing(message, PaneId::Terminal(pid))
+                     .with_context(err_context)?;
+@@ -2732,6 +2736,10 @@ impl Tab {
+                 self.forward_desktop_notifications(desktop_notifications, pid)
+                     .with_context(err_context)?;
+             }
++            if !osc52_queries.is_empty() {
++                self.forward_osc52_queries(osc52_queries)
++                    .with_context(err_context)?;
++            }
+         }
+         Ok(())
+     }
+@@ -4704,6 +4712,29 @@ impl Tab {
+             .with_context(err_context)?;
+         Ok(())
+     }
++    fn forward_osc52_queries(&self, queries: Vec<String>) -> Result<()> {
++        // Forward OSC 52 clipboard-read queries (`\x1b]52;<sel>;?<term>`) emitted
++        // by apps inside a pane out to the host terminal so it can prompt the
++        // user and reply. The reply comes back on the client's stdin and is
++        // routed to the focused pane via `InputInstruction::Osc52Response`.
++        let err_context = || "failed to forward osc52 queries to host terminal".to_string();
++        let mut output = Output::default();
++        let all_clients: HashSet<ClientId> = self
++            .connected_clients_in_app
++            .borrow()
++            .keys()
++            .copied()
++            .collect();
++        output.add_clients(&all_clients, self.link_handler.clone(), None);
++        for raw in queries {
++            output.add_post_vte_instruction_to_multiple_clients(all_clients.iter().copied(), &raw);
++        }
++        let serialized_output = output.serialize().with_context(err_context)?;
++        self.senders
++            .send_to_server(ServerInstruction::Render(Some(serialized_output)))
++            .with_context(err_context)?;
++        Ok(())
++    }
+     pub fn visible(&mut self, visible: bool) -> Result<()> {
+         let pids_in_this_tab = self.tiled_panes.pane_ids().filter_map(|p| match p {
+             PaneId::Plugin(pid) => Some(pid),
+-- 
+2.53.0
+

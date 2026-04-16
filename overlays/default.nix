@@ -463,4 +463,14 @@
         '';
     });
   })
+
+  (final: prev: {
+    zellij = prev.zellij.overrideAttrs (prevAttrs: {
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          ../patches/zellij/0001-feat-pass-OSC-52-clipboard-read-through-to-host-term.patch
+        ];
+    });
+  })
 ]
