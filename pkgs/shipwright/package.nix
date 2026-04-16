@@ -244,7 +244,7 @@ in
       lib.optionalString stdenv.hostPlatform.isLinux ''
         mkdir -p $out/bin
         ln -s $out/lib/soh.elf $out/bin/soh
-        install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/1024x1024/apps/soh.png
+        install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/512x512/apps/soh.png
       ''
       + lib.optionalString stdenv.hostPlatform.isDarwin ''
         # Recreate the macOS bundle (without using cpack)
