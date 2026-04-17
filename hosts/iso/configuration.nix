@@ -20,7 +20,7 @@
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_6_19;
+    kernelPackages = pkgs.linuxPackages_latest;
     zfs.package = pkgs.zfs_2_4;
   };
 
