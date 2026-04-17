@@ -79,6 +79,11 @@
           url = "https://github.com/Sirius902/nixpkgs/commit/36fca490d613fd05e006583340b8512f00cc118d.patch?full_index=1";
           sha256 = "sha256:168s4zs3mri7f2v9wbzfqrynck831mny464xg3waapsqbnqspz5s";
         })
+        (builtins.fetchurl {
+          name = "linux_7_0-amdgpu-regression-fix.patch";
+          url = "https://github.com/Sirius902/nixpkgs/commit/90857910e2c08f625d84c0b585c24a4b471a2295.patch?full_index=1";
+          sha256 = "sha256:1dfdi6d3nffnr511dp0h9i076616bl5xlz78923wd8y599mgjszj";
+        })
       ];
     };
 }
