@@ -110,6 +110,7 @@ in {
       krita
       # libreoffice
       mangohud
+      me3
       ntfs3g
       (wrapOBS {
         plugins = with pkgs.obs-studio-plugins; [
