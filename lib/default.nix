@@ -87,8 +87,8 @@
         })
         (builtins.fetchurl {
           name = "linux_7_0-amdgpu-regression-fix.patch";
-          url = "https://github.com/Sirius902/nixpkgs/commit/90857910e2c08f625d84c0b585c24a4b471a2295.patch?full_index=1";
-          sha256 = "sha256:1dfdi6d3nffnr511dp0h9i076616bl5xlz78923wd8y599mgjszj";
+          url = "https://github.com/Sirius902/nixpkgs/commit/3c3e0d2c8f8accf03078dc6cc5f7c61cbe57aef8.patch?full_index=1";
+          sha256 = "sha256:0f5dx5w2xqh96bh1z0mzma75xa35nwcg5zcy8qb2pjj50frpvq8f";
         })
       ];
     };
