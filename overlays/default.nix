@@ -207,12 +207,12 @@
 
   (final: prev: {
     shadps4 = prev.shadps4.overrideAttrs (prevAttrs: {
-      version = "0.15.0-unstable-2026-04-16";
+      version = "0.15.0-unstable-2026-04-18";
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "2d559a4f77b2e78f17ea809fd062016f8a6c6d7a";
-        hash = "sha256-9pUNRgB4AcgKPI8+Ab1stez2iKBmoKn5tk5CGB2BI1I=";
+        rev = "ed553054c66cf159bcbd23b05c56a646fec7793f";
+        hash = "sha256-JtCozqqw0viFH7lXpm7+YIGjBz6/2ucz2K/e1aRLFfk=";
         fetchSubmodules = false;
 
         leaveDotGit = false;
@@ -221,6 +221,7 @@
 
           # Only fetch required submodules
           git -C externals submodule update --init --depth 1 \
+            ImGuiFileDialog \
             LibAtrac9 \
             aacdec/fdk-aac \
             cpp-httplib \
