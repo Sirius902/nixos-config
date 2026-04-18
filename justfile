@@ -22,6 +22,9 @@ prefetch-inputs:
 switch *FLAGS: prefetch-inputs
     {{ SUDO }} nixos-rebuild switch --flake "path:.#{{ HOST }}" {{ FLAGS }}
 
+boot *FLAGS: prefetch-inputs
+    {{ SUDO }} nixos-rebuild boot --flake "path:.#{{ HOST }}" {{ FLAGS }}
+
 switch-darwin *FLAGS: prefetch-inputs
     {{ SUDO }} darwin-rebuild switch --flake "path:.#{{ HOST }}" {{ FLAGS }}
 
