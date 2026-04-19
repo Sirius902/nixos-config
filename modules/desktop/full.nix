@@ -108,7 +108,7 @@ in {
       heroic
       keymapp
       krita
-      # libreoffice
+      libreoffice
       mangohud
       me3
       ntfs3g
