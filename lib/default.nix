@@ -79,12 +79,6 @@
           url = "https://github.com/Sirius902/nixpkgs/commit/36fca490d613fd05e006583340b8512f00cc118d.patch?full_index=1";
           sha256 = "sha256:168s4zs3mri7f2v9wbzfqrynck831mny464xg3waapsqbnqspz5s";
         })
-        # Add openzfs Linux kernel 7.0 patches
-        (builtins.fetchurl {
-          name = "zfs-kernel-7_0.patch";
-          url = "https://github.com/Sirius902/nixpkgs/commit/8898bdb3fa3c8057d6034112e8dc6ced077e229d.patch?full_index=1";
-          sha256 = "sha256:11nkqbpn33h71z95jg06dnybgrhcz8gwm6bgsdi2bwh6n430wspr";
-        })
         (builtins.fetchurl {
           name = "linux_7_0-amdgpu-regression-fix.patch";
           url = "https://github.com/Sirius902/nixpkgs/commit/90857910e2c08f625d84c0b585c24a4b471a2295.patch?full_index=1";
