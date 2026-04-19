@@ -79,6 +79,12 @@
           url = "https://github.com/Sirius902/nixpkgs/commit/36fca490d613fd05e006583340b8512f00cc118d.patch?full_index=1";
           sha256 = "sha256:168s4zs3mri7f2v9wbzfqrynck831mny464xg3waapsqbnqspz5s";
         })
+        # Add cosmic-ext-applet-clipboard-manager https://github.com/NixOS/nixpkgs/pull/496706
+        (builtins.fetchurl {
+          name = "add-cosmic-ext-applet-clipboard-manager.patch";
+          url = "https://github.com/kritdass/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.patch?full_index=1";
+          sha256 = "sha256:16779qpfk85k8hf9n333663xnjvhr0snzpr1fzvwz1ycbn2ksxks";
+        })
       ];
     };
 }
