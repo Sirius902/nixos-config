@@ -1,0 +1,107 @@
+From d78a5f9fc463439e5e21cb939e5519bcdf1f2c0a Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Tue, 7 Apr 2026 21:32:05 -0700
+Subject: [PATCH] main: Strip gameoverlayrenderer.so from gamescope's own
+ LD_PRELOAD
+
+Steam injects gameoverlayrenderer.so via LD_PRELOAD for game processes,
+but gamescope inherits it too since it wraps the game command. The overlay
+instance running inside the gamescope compositor opens shared memory IPC
+channels that time out after ~25 minutes (CSharedMemStream::PutInternal
+mutex timeouts), blocking the compositor thread and causing frame times
+to spike from 6ms to 50ms.
+
+Fix by detecting gameoverlayrenderer.so in LD_PRELOAD at startup,
+saving the original value for child processes, stripping the overlay,
+and re-execing so the dynamic linker loads gamescope cleanly.
+LaunchNestedChildren restores the original LD_PRELOAD for game processes.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+---
+ src/main.cpp         | 45 ++++++++++++++++++++++++++++++++++++++++++++
+ src/steamcompmgr.cpp |  6 +++++-
+ 2 files changed, 50 insertions(+), 1 deletion(-)
+
+diff --git a/src/main.cpp b/src/main.cpp
+index 1397028..c7ac437 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -8,6 +8,7 @@
+ #include <vector>
+ #include <cstring>
+ #include <string>
++#include <string_view>
+ #if HAVE_LIBCAP
+ #include <sys/capability.h>
+ #endif
+@@ -702,6 +703,50 @@ char **g_argv;
+ 
+ int main(int argc, char **argv)
+ {
++	// Strip gameoverlayrenderer.so from LD_PRELOAD and re-exec if needed.
++	// The overlay is meant for game processes, not the compositor. When loaded
++	// into gamescope, its shared memory IPC times out after ~25 minutes and
++	// blocks the compositor thread, causing frame time spikes.
++	{
++		const char *pszPreload = getenv( "LD_PRELOAD" );
++		if ( pszPreload && strstr( pszPreload, "gameoverlayrenderer.so" ) )
++		{
++			// Save original for child processes
++			setenv( "GAMESCOPE_ORIGINAL_LD_PRELOAD", pszPreload, 1 );
++
++			// Rebuild LD_PRELOAD without gameoverlayrenderer.so
++			std::string sNewPreload;
++			const char *p = pszPreload;
++			while ( *p )
++			{
++				const char *sep = strpbrk( p, " :" );
++				size_t len = sep ? (size_t)( sep - p ) : strlen( p );
++
++				if ( len > 0 )
++				{
++					std::string_view entry( p, len );
++					if ( entry.find( "gameoverlayrenderer.so" ) == std::string_view::npos )
++					{
++						if ( !sNewPreload.empty() )
++							sNewPreload += ':';
++						sNewPreload.append( entry );
++					}
++				}
++
++				p += len;
++				if ( *p ) p++; // skip separator
++			}
++
++			if ( sNewPreload.empty() )
++				unsetenv( "LD_PRELOAD" );
++			else
++				setenv( "LD_PRELOAD", sNewPreload.c_str(), 1 );
++
++			// Re-exec so the dynamic linker loads us without the overlay
++			execv( "/proc/self/exe", argv );
++		}
++	}
++
+ 	g_argc = argc;
+ 	g_argv = argv;
+ 
+diff --git a/src/steamcompmgr.cpp b/src/steamcompmgr.cpp
+index f7f6db9..d4312e6 100644
+--- a/src/steamcompmgr.cpp
++++ b/src/steamcompmgr.cpp
+@@ -8036,7 +8036,11 @@ void LaunchNestedChildren( char **ppPrimaryChildArgv )
+ {
+ 	std::string sNewPreload;
+ 	{
+-		const char *pszCurrentPreload = getenv( "LD_PRELOAD" );
++		// Prefer the original LD_PRELOAD saved before gamescope stripped
++		// gameoverlayrenderer.so from itself via re-exec.
++		const char *pszCurrentPreload = getenv( "GAMESCOPE_ORIGINAL_LD_PRELOAD" );
++		if ( !pszCurrentPreload )
++			pszCurrentPreload = getenv( "LD_PRELOAD" );
+ 		if ( pszCurrentPreload && *pszCurrentPreload )
+ 		{
+ 			// Remove gameoverlayrenderer.so from the child if Gamescope
+-- 
+2.53.0
+

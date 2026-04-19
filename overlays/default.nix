@@ -161,6 +161,7 @@
             url = "https://github.com/Sirius902/gamescope/commit/40641060430bfdf2a7e96832058fd41a86e59f46.patch?full_index=1";
             hash = "sha256-PTt0hQrbfWXiPCppJwRamcMqyb2iNmXyMXv8wkLgjIc=";
           })
+          ../patches/gamescope/0001-main-Strip-gameoverlayrenderer.so-from-gamescope-s-o.patch
         ];
 
       # FUTURE(Sirius902) Disable fast math to fix blurriness on Wayland.
