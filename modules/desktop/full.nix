@@ -68,6 +68,15 @@ in {
         '';
         destination = "/etc/udev/rules.d/50-electromodder.rules";
       })
+      (pkgs.writeTextFile {
+        name = "moonlander-no-joystick-rules";
+        text = ''
+          # ZSA Moonlander Mark I - prevent keyboard from appearing as joystick, causes issues in Dark Souls II
+          SUBSYSTEM=="input", ATTRS{idVendor}=="3297", ATTRS{idProduct}=="1969", ENV{ID_INPUT_JOYSTICK}=="?*", ENV{ID_INPUT_JOYSTICK}=""
+          SUBSYSTEM=="input", ATTRS{idVendor}=="3297", ATTRS{idProduct}=="1969", KERNEL=="js[0-9]*", MODE="0000", ENV{ID_INPUT_JOYSTICK}=""
+        '';
+        destination = "/etc/udev/rules.d/99-moonlander-no-joystick.rules";
+      })
     ];
 
     # For wgnord
