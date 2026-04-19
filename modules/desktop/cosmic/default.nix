@@ -15,6 +15,7 @@ in {
     environment.systemPackages = [
       pkgs.gnome-system-monitor
       pkgs.cosmic-ext-applet-caffeine
+      pkgs.cosmic-ext-applet-sysinfo
     ];
 
     # TODO(Sirius902) We probably want this for GNOME too?
