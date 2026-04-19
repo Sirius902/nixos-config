@@ -29,6 +29,22 @@ in {
     programs = {
       steam = {
         enable = true;
+
+        # FUTURE(Sirius902) Remove once this is resolved.
+        # https://github.com/NixOS/nixpkgs/issues/505824
+        package = pkgs.steam.override {
+          buildFHSEnv = args:
+            pkgs.buildFHSEnv (args
+              // {
+                extraBuildCommands =
+                  (args.extraBuildCommands or "")
+                  + ''
+                    rm -f $out/usr/sbin/ldconfig
+                    cp ${pkgs.glibc.bin}/bin/ldconfig $out/usr/sbin/ldconfig
+                  '';
+              });
+        };
+
         remotePlay.openFirewall = true;
         localNetworkGameTransfers.openFirewall = true;
         protontricks.enable = true;
