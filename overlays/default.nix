@@ -212,7 +212,7 @@
       src = prevAttrs.src.override {
         tag = null;
         rev = "854b291c63360ff24e590809aff54cf5ab2dd4c9";
-        hash = "sha256-dUmW6Vva2wObydm19WSRqZAFDyf2icqx2fV3pM0W6qE=";
+        hash = "sha256-FAvjCAoBH7Jgta01eiOcNEsFotnW6aTRhx146xBt6es=";
         fetchSubmodules = false;
 
         leaveDotGit = false;
@@ -232,6 +232,7 @@
             libusb \
             minimp3 \
             sirit \
+            spdlog \
             tracy \
             zydis
           git -C externals/sirit submodule update --init --depth 1 externals/SPIRV-Headers
@@ -240,6 +241,12 @@
           date -u -d "@$(git log -1 --pretty=%ct)" "+%Y-%m-%dT%H:%M:%SZ" > $out/SOURCE_DATE_EPOCH
         '';
       };
+
+      cmakeFlags =
+        (prevAttrs.cmakeFlags or [])
+        ++ [
+          (final.lib.cmakeBool "SPDLOG_FMT_EXTERNAL" true)
+        ];
 
       buildInputs =
         (prevAttrs.buildInputs or [])
@@ -273,7 +280,7 @@
         src = prevAttrs.src.override {
           tag = null;
           rev = "e7d736af3487b08d9bf2e39a493e980d6657f61d";
-          hash = "sha256-RTTeEbG0OcXwHYgOn6JwowDsW13TLv5CmxC7+99DKaY=";
+          hash = "sha256-1vsSn46qwPFV2P0JCksztJ475rRHpdJ9TOmMMB/PvO8=";
           fetchSubmodules = false;
 
           leaveDotGit = false;
@@ -283,12 +290,19 @@
             # Only fetch required submodules
             git -C externals submodule update --init --depth 1 \
               json \
+              spdlog \
               volk
 
             git rev-parse --short=8 HEAD > $out/COMMIT
             date -u -d "@$(git log -1 --pretty=%ct)" "+%Y-%m-%dT%H:%M:%SZ" > $out/SOURCE_DATE_EPOCH
           '';
         };
+
+        cmakeFlags =
+          (prevAttrs.cmakeFlags or [])
+          ++ [
+            (final.lib.cmakeBool "SPDLOG_FMT_EXTERNAL" true)
+          ];
 
         passthru =
           (prevAttrs.passthru or {})
