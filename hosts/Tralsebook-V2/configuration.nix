@@ -12,6 +12,7 @@
       enable = true;
       ephemeral = true;
       config = {
+        imports = [../../modules/nixos-raspberrypi-cache.nix];
         virtualisation = {
           cores = 8;
           darwin-builder.memorySize = 8 * 1024;

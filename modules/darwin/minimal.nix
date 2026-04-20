@@ -5,6 +5,7 @@
 }: {
   imports = [
     ../nixpkgs.nix
+    ../nixos-raspberrypi-cache.nix
     inputs.secrets.darwinModules.default
     inputs.nix-index-database.darwinModules.default
     ../tmux.nix
