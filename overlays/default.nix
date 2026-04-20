@@ -162,6 +162,11 @@
             hash = "sha256-PTt0hQrbfWXiPCppJwRamcMqyb2iNmXyMXv8wkLgjIc=";
           })
           ../patches/gamescope/0001-main-Strip-gameoverlayrenderer.so-from-gamescope-s-o.patch
+          (final.fetchpatch2 {
+            name = "clamp-cursor-adaptive-sync.patch";
+            url = "https://github.com/ValveSoftware/gamescope/commit/2b18c4eee02bc8600ce11705cada906e6bbe8232.patch?full_index=1";
+            hash = "sha256-5ssDVIlQYBZlk5xcFSMbt9gAjsmM7Jv/IEM7R+4pF/M=";
+          })
         ];
 
       # FUTURE(Sirius902) Disable fast math to fix blurriness on Wayland.
