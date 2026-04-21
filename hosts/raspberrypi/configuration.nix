@@ -12,8 +12,6 @@
   boot.loader.grub.enable = false;
   boot.loader.generic-extlinux-compatible.enable = true;
 
-  boot.kernelPackages = inputs.nixos-raspberrypi.packages.${pkgs.stdenv.hostPlatform.system}.linuxPackages_rpi3;
-
   hardware.enableRedistributableFirmware = true;
 
   networking.hostId = "4786fd98";
