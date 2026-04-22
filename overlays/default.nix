@@ -25,6 +25,28 @@
 
   inputs.nvim-conf.overlays.default
 
+  # FUTURE(Sirius902) https://github.com/pop-os/cosmic-comp/issues/2307
+  (final: prev: {
+    cosmic-comp = prev.cosmic-comp.overrideAttrs (prevAttrs: {
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          (final.fetchpatch2 {
+            name = "revert-2204.patch";
+            url = "https://github.com/pop-os/cosmic-comp/commit/3a0b1ae5d24b48dad1d6a8655ce778362f61d7b3.patch?full_index=1";
+            hash = "sha256-Y8MFdkNiT0VBLUc0KL3V36maQ1sDwV5kSO0wuifoJbs=";
+            revert = true;
+          })
+          (final.fetchpatch2 {
+            name = "revert-2147.patch";
+            url = "https://github.com/pop-os/cosmic-comp/commit/1dc9c53a415905153d36f2a04d1c8389b5dfe222.patch?full_index=1";
+            hash = "sha256-3kbC2AUBDFh2wD7nEIg9MTz42BHPJ4/5zCI1bdyRBSs=";
+            revert = true;
+          })
+        ];
+    });
+  })
+
   # FUTURE(Sirius902) Rando fork for macOS?
   # Add extra libs for MMRecompRando.
   (final: prev: {
