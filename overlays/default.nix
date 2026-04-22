@@ -1,4 +1,25 @@
 {inputs}: [
+  (final: prev: let
+    pkgs = import inputs.nixpkgs-dotnet {
+      inherit (final.stdenv.hostPlatform) system;
+      config.allowUnfree = true;
+    };
+  in {
+    xivlauncher = prev.xivlauncher.override {
+      inherit
+        (pkgs)
+        buildDotnetModule
+        dotnetCorePackages
+        ;
+    };
+
+    jetbrains =
+      prev.jetbrains
+      // {
+        inherit (pkgs.jetbrains) rider;
+      };
+  })
+
   (import ../pkgs/overlay.nix)
   (import ./moonlight/default.nix)
 
