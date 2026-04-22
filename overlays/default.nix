@@ -25,19 +25,6 @@
 
   inputs.nvim-conf.overlays.default
 
-  (final: prev: {
-    cosmic-comp = prev.cosmic-comp.overrideAttrs (finalAttrs: prevAttrs: {
-      version = "1.0.11";
-      src = prevAttrs.src.override {
-        hash = "sha256-4QvJONL+jel8QsDv3xShQyGe6nvlRV4b1Lkspy/MkpA=";
-      };
-      cargoDeps = final.rustPlatform.fetchCargoVendor {
-        inherit (finalAttrs) pname version src;
-        hash = "sha256-80xojIrLd8Foxu9Qbf/cCImP4T4I7otA1iJbr7/lEb8=";
-      };
-    });
-  })
-
   # FUTURE(Sirius902) https://github.com/pop-os/cosmic-comp/issues/2307
   (final: prev: {
     cosmic-comp = prev.cosmic-comp.overrideAttrs (prevAttrs: {
