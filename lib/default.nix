@@ -85,6 +85,12 @@
           url = "https://github.com/kritdass/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.patch?full_index=1";
           sha256 = "sha256:16779qpfk85k8hf9n333663xnjvhr0snzpr1fzvwz1ycbn2ksxks";
         })
+        # COSMIC 1.0.11
+        (builtins.fetchurl {
+          name = "cosmic-1_0_11.patch";
+          url = "https://github.com/NixOS/nixpkgs/compare/274c537c291b53d4e7315d423da8d4ae38d7528f...a52a7021a88f52e8fcf663ef3acca58482f0c541.patch?full_index=1";
+          sha256 = "sha256:0imb2p4254rq1klfj72g4qq577yqjll2fqyw2rcjjmpp4a0y19im";
+        })
       ];
     };
 }
