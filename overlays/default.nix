@@ -47,6 +47,42 @@
     });
   })
 
+  # FUTURE(Sirius902) https://github.com/cosmic-utils/clipboard-manager/pull/207
+  (final: prev: {
+    cosmic-ext-applet-clipboard-manager = prev.cosmic-ext-applet-clipboard-manager.overrideAttrs (finalAttrs: prevAttrs: {
+      version = "0-unstable-2026-03-24";
+      src = prevAttrs.src.override {
+        rev = "d473e8f09e8bc2289a76707898063a13714c79dc";
+        hash = "sha256-RNRSShrT7wS4GmQNd3tXtT8G/4qLM9zxntXgBQ6C7ps=";
+      };
+      cargoDeps = final.rustPlatform.fetchCargoVendor {
+        inherit (finalAttrs) pname version src;
+        hash = "sha256-+yqFV8HdPjkVny+6FKkZFEQAq1rwe7JXmoTJ7zge8bg=";
+      };
+
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          (final.fetchpatch2 {
+            name = "fix-clipboard-freeze.patch";
+            url = "https://github.com/cosmic-utils/clipboard-manager/compare/d473e8f09e8bc2289a76707898063a13714c79dc...5cf8419b5043055acfef201f5f52669cd293846d.diff?full_index=1";
+            hash = "sha256-y7ZBV7KNX6zdHsA6AW8/4NlUbaYGfAP7QOaINP5FSQo=";
+          })
+        ];
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {
+            extraArgs = [
+              "--version=branch"
+              "--version-regex=(0-unstable-.*)"
+            ];
+          };
+        };
+    });
+  })
+
   # FUTURE(Sirius902) Rando fork for macOS?
   # Add extra libs for MMRecompRando.
   (final: prev: {
