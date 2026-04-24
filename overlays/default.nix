@@ -308,6 +308,7 @@
         fetchSubmodules = false;
 
         leaveDotGit = false;
+        postFetch = null;
         postCheckout = ''
           cd "$out"
 

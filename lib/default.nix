@@ -73,7 +73,14 @@
         (pkgs.fetchpatch2 {
           name = "shadps4-qt.patch";
           url = "https://github.com/ryand56/nixpkgs/compare/2d4672af3da4241781d1e8f1483619450fa6155f...306c7efa8796bca0611b5434d53880d698e258ac.patch?full_index=1";
-          hash = "sha256-klqOVnhR6hgBE8e1hTz/dibNMN9o0UPq9byE3UiCH5w=";
+          hash = "sha256-xkjfmRy9rJRwWxst/AXp1Imj7UtanR2CgIbWW1ojbj4=";
+          excludes = ["pkgs/by-name/sh/shadps4/package.nix"];
+        })
+        # TODO(Sirius902) shadps4-qt patch does not apply cleanly...
+        (pkgs.fetchpatch2 {
+          name = "shadps4-fixes.patch";
+          url = "https://github.com/Sirius902/nixpkgs/compare/a0c87fd9a4a7d620fc31adf1bab143afd9a6712c...6fc9aeda805963a2dd67e9485f7e1f48fd7af76e.patch?full_index=1";
+          hash = "sha256-WUJrdtpLDTwnSMDHMYwuuFXNDfnreM8yM12eiPNkPMM=";
         })
         # Update pure-prompt https://github.com/NixOS/nixpkgs/pull/491292
         (pkgs.fetchpatch2 {
