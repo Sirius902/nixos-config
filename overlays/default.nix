@@ -470,7 +470,9 @@
       passthru =
         (prevAttrs.passthru or {})
         // {
-          updateScript = final.nix-update-script {};
+          updateScript = final.nix-update-script {
+            extraArgs = ["--version-regex=v([0-9.]+(-rc[0-9]+)?)"];
+          };
         };
     });
   })
