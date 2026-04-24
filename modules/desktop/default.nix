@@ -55,6 +55,11 @@ in {
       pulse.enable = true;
     };
 
+    # FUTURE(Sirius902) Force SDL applications to use PulseAudio instead of
+    # native PipeWire so that Discord's PulseAudio-based stream capture can
+    # see their audio.
+    environment.sessionVariables.SDL_AUDIODRIVER = "pulse";
+
     programs.appimage = {
       enable = true;
       binfmt = true;
