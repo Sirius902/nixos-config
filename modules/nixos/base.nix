@@ -38,6 +38,15 @@
     }
   ];
 
+  security.pam.loginLimits = [
+    {
+      domain = "chris";
+      type = "-";
+      item = "nice";
+      value = "-20";
+    }
+  ];
+
   networking.networkmanager.enable = true;
 
   time.timeZone = "America/Los_Angeles";
