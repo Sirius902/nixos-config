@@ -62,34 +62,36 @@
   patchNixpkgs = {
     system,
     nixpkgs,
-  }:
-    nixpkgs.legacyPackages.${system}.applyPatches {
+  }: let
+    pkgs = nixpkgs.legacyPackages.${system};
+  in
+    pkgs.applyPatches {
       name = "nixpkgs-patched";
       src = nixpkgs;
       patches = [
         # Add shadps4-qt https://github.com/NixOS/nixpkgs/pull/474696
-        (builtins.fetchurl {
+        (pkgs.fetchpatch2 {
           name = "shadps4-qt.patch";
           url = "https://github.com/ryand56/nixpkgs/compare/2d4672af3da4241781d1e8f1483619450fa6155f...306c7efa8796bca0611b5434d53880d698e258ac.patch?full_index=1";
-          sha256 = "sha256:0zbxzbp4sf41g6knd63v9hc15w3ffpvr5mp1ylxsdpz4wgrm0wrm";
+          hash = "sha256-klqOVnhR6hgBE8e1hTz/dibNMN9o0UPq9byE3UiCH5w=";
         })
         # Update pure-prompt https://github.com/NixOS/nixpkgs/pull/491292
-        (builtins.fetchurl {
+        (pkgs.fetchpatch2 {
           name = "update-pure-prompt.patch";
           url = "https://github.com/Sirius902/nixpkgs/commit/36fca490d613fd05e006583340b8512f00cc118d.patch?full_index=1";
-          sha256 = "sha256:168s4zs3mri7f2v9wbzfqrynck831mny464xg3waapsqbnqspz5s";
+          hash = "sha256-zNZK/Q4x72FRpHReGHuI3YYyNry9yrnJGnmdxlxpZyI=";
         })
         # Add cosmic-ext-applet-clipboard-manager https://github.com/NixOS/nixpkgs/pull/496706
-        (builtins.fetchurl {
+        (pkgs.fetchpatch2 {
           name = "add-cosmic-ext-applet-clipboard-manager.patch";
           url = "https://github.com/kritdass/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.patch?full_index=1";
-          sha256 = "sha256:16779qpfk85k8hf9n333663xnjvhr0snzpr1fzvwz1ycbn2ksxks";
+          hash = "sha256-TvrGKoaPnrkIZyntbv/C6m55e2p2kLECtxH7/fViXM4=";
         })
         # COSMIC 1.0.11
-        (builtins.fetchurl {
+        (pkgs.fetchpatch2 {
           name = "cosmic-1_0_11.patch";
           url = "https://github.com/NixOS/nixpkgs/compare/274c537c291b53d4e7315d423da8d4ae38d7528f...a52a7021a88f52e8fcf663ef3acca58482f0c541.patch?full_index=1";
-          sha256 = "sha256:0imb2p4254rq1klfj72g4qq577yqjll2fqyw2rcjjmpp4a0y19im";
+          hash = "sha256-RlY7VXH/EitWWFORd4yTvt6IQJAQ1QchFjp+Fdmpvek=";
         })
       ];
     };
