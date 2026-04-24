@@ -43,6 +43,13 @@
             hash = "sha256-3kbC2AUBDFh2wD7nEIg9MTz42BHPJ4/5zCI1bdyRBSs=";
             revert = true;
           })
+          # FUTURE(Sirius902) Workaround for Wayland popups.
+          # https://github.com/pop-os/cosmic-comp/pull/2243
+          (final.fetchpatch2 {
+            name = "remove-popup-serial-check.patch";
+            url = "https://github.com/pop-os/cosmic-comp/commit/e334a29cc2a3bae0b13cd4668a22a72ea20a9229.patch?full_index=1";
+            hash = "sha256-6hI12eWay6L4DZcJxcmJK/nMi71qTqaWtLrxOuhaYtA=";
+          })
         ];
     });
   })
