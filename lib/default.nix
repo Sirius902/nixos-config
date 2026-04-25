@@ -94,7 +94,7 @@
           url = "https://github.com/kritdass/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.patch?full_index=1";
           hash = "sha256-TvrGKoaPnrkIZyntbv/C6m55e2p2kLECtxH7/fViXM4=";
         })
-        # COSMIC 1.0.11
+        # COSMIC 1.0.11 https://github.com/NixOS/nixpkgs/pull/512264
         (pkgs.fetchpatch2 {
           name = "cosmic-1_0_11.patch";
           url = "https://github.com/NixOS/nixpkgs/compare/274c537c291b53d4e7315d423da8d4ae38d7528f...a52a7021a88f52e8fcf663ef3acca58482f0c541.patch?full_index=1";
