@@ -553,6 +553,39 @@
     });
   })
 
+  # FUTURE(Sirius902) openldap has evil tests
+  # https://github.com/NixOS/nixpkgs/issues/440594
+  # I guess hydra doesn't have openldap cached for i686-linux so it has to
+  # build from source for bottles...
+  (final: prev: {
+    bottles = prev.bottles.override {
+      buildFHSEnv = fhsArgs: let
+        patchPkgs = pkgs:
+          pkgs
+          // {
+            openldap = pkgs.openldap.overrideAttrs (prevAttrs: {
+              preCheck =
+                (prevAttrs.preCheck or "")
+                + ''
+                  rm -f \
+                    tests/scripts/test*-sync* \
+                    tests/scripts/test*-delta-* \
+                    tests/scripts/test*-dsee-* \
+                    tests/scripts/test*-dirsync \
+                    tests/scripts/test*-persistent-sessionlog \
+                    tests/scripts/test*-consumer-config
+                '';
+            });
+          };
+      in
+        prev.buildFHSEnv (fhsArgs
+          // {
+            targetPkgs = pkgs: (fhsArgs.targetPkgs or (_: [])) (patchPkgs pkgs);
+            multiPkgs = pkgs: (fhsArgs.multiPkgs or (_: [])) (patchPkgs pkgs);
+          });
+    };
+  })
+
   (final: prev: {
     zellij = prev.zellij.overrideAttrs (prevAttrs: {
       patches =
