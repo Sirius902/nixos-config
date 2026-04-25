@@ -11,11 +11,7 @@ in {
     then "/Users/chris"
     else "/home/chris";
 
-  # FUTURE(Sirius902) https://github.com/nix-community/home-manager/issues/8336
-  home.stateVersion =
-    if stdenv.hostPlatform.isDarwin
-    then "25.05"
-    else "26.05";
+  home.stateVersion = "26.05";
 
   programs.zsh = {
     enable = true;
