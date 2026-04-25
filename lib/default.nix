@@ -63,7 +63,7 @@
     system,
     nixpkgs,
   }: let
-    pkgs = nixpkgs.legacyPackages.${system};
+    pkgs = nixpkgs.legacyPackages.${builtins.currentSystem or system};
   in
     pkgs.applyPatches {
       name = "nixpkgs-patched";
