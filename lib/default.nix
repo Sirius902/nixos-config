@@ -4,7 +4,12 @@ in {
   nixpkgsConfig = system: {
     inherit system;
     overlays = import ../overlays/default.nix {inherit inputs;};
-    config.allowUnfree = true;
+    config = {
+      allowUnfree = true;
+      permittedInsecurePackages = [
+        "openssl-1.1.1w"
+      ];
+    };
   };
 
   nixosSystem = {
