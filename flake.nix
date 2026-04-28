@@ -103,11 +103,7 @@
       };
 
       perSystem = {system, ...}: let
-        pkgs = import inputs.nixpkgs {
-          inherit system;
-          overlays = import ./overlays/default.nix {inherit inputs;};
-          config.allowUnfree = true;
-        };
+        pkgs = import inputs.nixpkgs (self.lib.nixpkgsConfig system);
         inherit (pkgs) lib;
       in {
         formatter = pkgs.alejandra;
@@ -164,11 +160,7 @@
             inherit system;
             inherit (inputs) nixpkgs;
           };
-          patchedPkgs = import nixpkgs' {
-            inherit system;
-            overlays = import ./overlays/default.nix {inherit inputs;};
-            config.allowUnfree = true;
-          };
+          patchedPkgs = import nixpkgs' (self.lib.nixpkgsConfig system);
           allPackages = import ./pkgs/all-packages.nix {pkgs = patchedPkgs;};
         in
           (lib.mapAttrs (name: _: patchedPkgs.${name}) allPackages)

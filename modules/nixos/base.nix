@@ -4,7 +4,6 @@
   ...
 }: {
   imports = [
-    ../nixpkgs.nix
     inputs.impermanence.nixosModules.default
     inputs.secrets.nixosModules.default
     ../tmux.nix

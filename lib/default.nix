@@ -1,4 +1,12 @@
-{inputs}: {
+{inputs}: let
+  inherit (inputs) self;
+in {
+  nixpkgsConfig = system: {
+    inherit system;
+    overlays = import ../overlays/default.nix {inherit inputs;};
+    config.allowUnfree = true;
+  };
+
   nixosSystem = {
     system,
     host,
@@ -9,10 +17,7 @@
       inherit system;
       inherit (inputs) nixpkgs;
     };
-    patchedPkgs = import patchedSrc {
-      inherit system;
-      config.allowUnfree = true;
-    };
+    patchedPkgs = import patchedSrc (self.lib.nixpkgsConfig system);
   in
     inputs.nixpkgs.lib.nixosSystem {
       inherit system;
@@ -39,10 +44,7 @@
       inherit system;
       inherit (inputs) nixpkgs;
     };
-    patchedPkgs = import patchedSrc {
-      inherit system;
-      config.allowUnfree = true;
-    };
+    patchedPkgs = import patchedSrc (self.lib.nixpkgsConfig system);
   in
     inputs.nix-darwin.lib.darwinSystem {
       inherit system;
