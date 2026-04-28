@@ -97,8 +97,8 @@
         # COSMIC 1.0.11 https://github.com/NixOS/nixpkgs/pull/512264
         (pkgs.fetchpatch2 {
           name = "cosmic-1_0_11.patch";
-          url = "https://github.com/NixOS/nixpkgs/compare/274c537c291b53d4e7315d423da8d4ae38d7528f...a52a7021a88f52e8fcf663ef3acca58482f0c541.patch?full_index=1";
-          hash = "sha256-RlY7VXH/EitWWFORd4yTvt6IQJAQ1QchFjp+Fdmpvek=";
+          url = "https://github.com/NixOS/nixpkgs/compare/c7770b178a7a476028305dface3476680eb4eb04...c66f5d931ed1c6daab0f4870e5ea0429545a18c7.patch?full_index=1";
+          hash = "sha256-1zvCeeE30cWGp64THYGdALSPhOaAG81JB7INhxCQa+I=";
         })
       ];
     };
