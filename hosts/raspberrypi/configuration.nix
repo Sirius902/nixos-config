@@ -16,6 +16,9 @@
 
   networking.hostId = "4786fd98";
 
+  # FUTURE(Sirius902) https://github.com/NixOS/nixpkgs/pull/513771
+  boot.kernel.sysctl."vm.mmap_rnd_bits" = 24;
+
   my.tailscale.enable = true;
 
   environment.systemPackages = with pkgs; [
