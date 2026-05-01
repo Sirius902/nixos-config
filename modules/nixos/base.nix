@@ -1,5 +1,7 @@
 {
+  config,
   inputs,
+  lib,
   pkgs,
   ...
 }: {
@@ -16,6 +18,18 @@
     experimental-features = ["nix-command" "flakes"];
     trusted-users = ["chris"];
   };
+
+  # FUTURE(Sirius902) Temporary https://copy.fail/ mitigation.
+  # https://discourse.nixos.org/t/is-nixos-affected-by-copy-fail-edit-yes-it-is/77317/10
+  boot.extraModprobeConfig = let
+    kernelVersion = config.boot.kernelPackages.kernel.version;
+    needsMitigation =
+      (lib.versionOlder kernelVersion "6.18.22")
+      || (lib.versionAtLeast kernelVersion "6.19" && lib.versionOlder kernelVersion "6.19.12");
+  in
+    lib.optionalString needsMitigation ''
+      install algif_aead ${pkgs.coreutils}/bin/false
+    '';
 
   environment.persistence."/persist" = {
     enable = true;
