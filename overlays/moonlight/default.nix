@@ -1,8 +1,10 @@
 final: prev: {
   moonlight = prev.moonlight.overrideAttrs (prevAttrs: {
-    version = "2026.4.0";
+    version = "2026.4.0-unstable-2026-05-01";
     src = prevAttrs.src.override {
-      hash = "sha256-jbIdFHPomN0zD2I6UoClofvSNVdOqpf0nM1s5pbn7ew=";
+      rev = "946d729a0a174fa928fef2d7e2b38a4e7cd7687c";
+      tag = null;
+      hash = "sha256-laaOma5KtSO13Ojppy8KBwmRebFZG2+VxmqXU+W/FT8=";
     };
     patches = [
       (final.fetchurl {
@@ -15,5 +17,15 @@ final: prev: {
       fetcherVersion = 3;
       hash = "sha256-veZx/b+cvpcRh1xXO8Y34dJtY2cgncqVSYYywb85Geo=";
     };
+
+    passthru =
+      (prevAttrs.passthru or {})
+      // {
+        updateScript = final.nix-update-script {
+          extraArgs = [
+            "--version=branch"
+          ];
+        };
+      };
   });
 }
