@@ -42,7 +42,12 @@ melonds.overrideAttrs (prevAttrs: {
         --run 'CWD_DIR="''${XDG_CONFIG_HOME:-$HOME/.config}/kh-melon-mix"; mkdir -p "$CWD_DIR"; cd "$CWD_DIR"'
     '';
 
-  passthru.updateScript = nix-update-script {extraArgs = ["--version=branch"];};
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--version=branch"
+      "--version-regex=v(.*)"
+    ];
+  };
 
   meta =
     (prevAttrs.meta or {})

@@ -271,7 +271,12 @@
       passthru =
         (prevAttrs.passthru or {})
         // {
-          updateScript = final.nix-update-script {extraArgs = ["--version=branch"];};
+          updateScript = final.nix-update-script {
+            extraArgs = [
+              "--version=branch"
+              "--version-regex=v(\\d+\\.\\d+\\.\\d+.*)"
+            ];
+          };
         };
     });
   })

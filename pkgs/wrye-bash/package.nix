@@ -126,7 +126,10 @@ in
 
     passthru.updateScript = _experimental-update-script-combinators.sequence [
       (nix-update-script {
-        extraArgs = ["--version=branch"];
+        extraArgs = [
+          "--version=branch"
+          "--version-regex=v(.*)"
+        ];
       })
       {
         command = [./update-taglists.py];

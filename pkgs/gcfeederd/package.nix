@@ -74,7 +74,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     })
   ];
 
-  passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=linux-daemon"];};
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--version=branch=linux-daemon"
+      "--version-regex=v(.*)"
+    ];
+  };
 
   meta = {
     description = "ViGEm / evdev feeder for GameCube controllers using the GameCube Controller Adapter";

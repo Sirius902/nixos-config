@@ -77,7 +77,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     })
   ];
 
-  passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=serial"];};
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--version=branch=serial"
+      "--version-regex=v(.*)"
+    ];
+  };
 
   meta = {
     description = "Customizable input viewer";

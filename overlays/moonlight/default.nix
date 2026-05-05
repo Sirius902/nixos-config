@@ -24,6 +24,7 @@ final: prev: {
         updateScript = final.nix-update-script {
           extraArgs = [
             "--version=branch"
+            "--version-regex=v(.*)"
           ];
         };
       };
