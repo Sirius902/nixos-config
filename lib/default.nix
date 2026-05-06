@@ -101,11 +101,11 @@ in {
           url = "https://github.com/kritdass/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.patch?full_index=1";
           hash = "sha256-TvrGKoaPnrkIZyntbv/C6m55e2p2kLECtxH7/fViXM4=";
         })
-        # COSMIC 1.0.11 https://github.com/NixOS/nixpkgs/pull/512264
+        # COSMIC 1.0.12 https://github.com/NixOS/nixpkgs/pull/517052
         (pkgs.fetchpatch2 {
-          name = "cosmic-1_0_11.patch";
-          url = "https://github.com/NixOS/nixpkgs/compare/c7770b178a7a476028305dface3476680eb4eb04...c66f5d931ed1c6daab0f4870e5ea0429545a18c7.patch?full_index=1";
-          hash = "sha256-1zvCeeE30cWGp64THYGdALSPhOaAG81JB7INhxCQa+I=";
+          name = "cosmic-1_0_12.patch";
+          url = "https://github.com/NixOS/nixpkgs/compare/c7770b178a7a476028305dface3476680eb4eb04...3dc7be1fe354f2890b70d0bb3ca592c0e7ba936c.patch?full_index=1";
+          hash = "sha256-6qiTx9zhNk5IPwN8hNGJeAVH9V245L1qsVwTiHlxFlA=";
         })
       ];
     };
