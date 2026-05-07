@@ -13,6 +13,8 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 
+  boot.zfs.forceImportRoot = false;
+
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   environment.systemPackages = [

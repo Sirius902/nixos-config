@@ -19,6 +19,8 @@
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
+  boot.zfs.forceImportRoot = false;
+
   programs.git.enable = true;
 
   environment.systemPackages = [
