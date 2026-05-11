@@ -1,0 +1,24 @@
+diff --git a/src/backend/render/element.rs b/src/backend/render/element.rs
+index 496702d..d7cc4b0 100644
+--- a/src/backend/render/element.rs
++++ b/src/backend/render/element.rs
+@@ -172,18 +172,7 @@ where
+         }
+     }
+ 
+-    fn kind(&self) -> Kind {
+-        match self {
+-            CosmicElement::Workspace(elem) => elem.kind(),
+-            CosmicElement::Cursor(elem) => elem.kind(),
+-            CosmicElement::Dnd(elem) => elem.kind(),
+-            CosmicElement::MoveGrab(elem) => elem.kind(),
+-            CosmicElement::Postprocess(elem) => elem.kind(),
+-            CosmicElement::Zoom(elem) => elem.kind(),
+-            #[cfg(feature = "debug")]
+-            CosmicElement::Egui(elem) => elem.kind(),
+-        }
+-    }
++    fn kind(&self) -> Kind { Kind::Unspecified }
+ 
+     fn is_framebuffer_effect(&self) -> bool {
+         match self {

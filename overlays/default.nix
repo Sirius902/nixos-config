@@ -10,6 +10,12 @@
       patches =
         (prevAttrs.patches or [])
         ++ [
+          # FUTURE(Sirius902) RDNA4 workaround: kind() delegation causes smithay to use
+          # the hardware cursor plane, triggering a kernel bug where commit_minimal_transition_state
+          # programs DCN cursor hardware with pitch=0.
+          # https://gitlab.freedesktop.org/drm/amd/-/issues/4970
+          # https://github.com/pop-os/cosmic-comp/issues/2361
+          ../patches/cosmic-comp/default-kind.patch
           (final.fetchpatch2 {
             name = "revert-2204.patch";
             url = "https://github.com/pop-os/cosmic-comp/commit/3a0b1ae5d24b48dad1d6a8655ce778362f61d7b3.patch?full_index=1";
