@@ -101,6 +101,12 @@ in {
           url = "https://github.com/kritdass/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.patch?full_index=1";
           hash = "sha256-TvrGKoaPnrkIZyntbv/C6m55e2p2kLECtxH7/fViXM4=";
         })
+        # Bump ZFS version
+        (pkgs.fetchpatch2 {
+          name = "zfs-bump.patch";
+          url = "https://github.com/Sirius902/nixpkgs/compare/85eb70255b4311b60ec4cb6379907da0fcfdf230...922a53036b2d883c0f816f6697bda784655c0599.patch?full_index=1";
+          hash = "sha256-mBZ4MBiJAM9SJrz9By/cCa5kde3HK+QhKVTSJx3RhI4=";
+        })
       ];
     };
 }
