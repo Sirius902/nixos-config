@@ -10,6 +10,8 @@
   boot.kernelModules = ["ntsync"];
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   services.tailscale.useRoutingFeatures = "client";
 
   my.vfio = {
