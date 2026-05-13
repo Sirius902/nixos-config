@@ -54,6 +54,7 @@ in {
     extraPackages = [
       pkgs.nixd
       pkgs.rust-analyzer
+      pkgs.taplo
       pkgs.zls
     ];
     extraConfig = ''
