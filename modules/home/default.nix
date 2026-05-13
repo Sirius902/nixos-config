@@ -71,6 +71,12 @@ in {
       # FUTURE(Sirius902) Enable sticky context once this is resolved.
       # https://github.com/helix-editor/helix/issues/396
     '';
+    # FUTURE(Sirius902) Remove once this is fixed from taplo I guess.
+    # https://github.com/helix-editor/helix/pull/9915#issuecomment-2214001123
+    languages = {
+      name = "toml";
+      roots = ["."];
+    };
   };
 
   home.packages = [
