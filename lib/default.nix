@@ -35,7 +35,6 @@ in {
           ({lib, ...}: {
             networking.hostName = lib.mkIf setHostName host;
             nixpkgs.pkgs = patchedPkgs;
-            nixpkgs.config = lib.mkForce {};
           })
         ]
         ++ extraModules;
@@ -60,10 +59,9 @@ in {
         [
           (../. + "/hosts/${host}/configuration.nix")
 
-          ({lib, ...}: {
+          {
             nixpkgs.pkgs = patchedPkgs;
-            nixpkgs.config = lib.mkForce {};
-          })
+          }
         ]
         ++ extraModules;
     };
