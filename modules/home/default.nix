@@ -48,15 +48,28 @@ in {
     nix-direnv.enable = true;
   };
 
-  # TODO: For some reason setting defaultEditor below isn't working.
-  home.sessionVariables.EDITOR = "${pkgs.nvim}/bin/nvim";
-  home.sessionVariables.VISUAL = "${pkgs.nvim}/bin/nvim";
+  programs.helix = {
+    enable = true;
+    defaultEditor = true;
+    extraConfig = ''
+      theme = "kanagawa"
+
+      [editor]
+      line-number = "relative"
+
+      [editor.indent-guides]
+      render = true
+      # character = "┊"
+
+      # FUTURE(Sirius902) Enable sticky context once this is resolved.
+      # https://github.com/helix-editor/helix/issues/396
+    '';
+  };
 
   home.packages = [
     # TODO: Add vimdiff alias somehow.
     pkgs.nvim
     pkgs.pure-prompt
-    pkgs.nixd
   ];
 
   programs.home-manager.enable = true;
