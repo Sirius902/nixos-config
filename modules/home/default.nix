@@ -85,6 +85,11 @@ in {
     };
   };
 
+  programs.zellij = {
+    enable = true;
+    extraConfig = builtins.readFile ../../dotfiles/zellij/config.kdl;
+  };
+
   home.packages = [
     # TODO: Add vimdiff alias somehow.
     pkgs.nvim
