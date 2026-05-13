@@ -51,6 +51,11 @@ in {
   programs.helix = {
     enable = true;
     defaultEditor = true;
+    extraPackages = [
+      pkgs.nixd
+      pkgs.rust-analyzer
+      pkgs.zls
+    ];
     extraConfig = ''
       theme = "kanagawa"
 
