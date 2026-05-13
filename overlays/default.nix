@@ -240,6 +240,17 @@
     });
   })
 
+  # FUTURE(Sirius902) mangoapp: stop unmap/remap on HUD toggle to prevent focus loss.
+  (final: prev: {
+    mangohud = prev.mangohud.overrideAttrs (prevAttrs: {
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          ../patches/mangohud/mangoapp-no-hide-window.patch
+        ];
+    });
+  })
+
   (final: prev: {
     rpcs3 = prev.rpcs3.overrideAttrs (prevAttrs: {
       version = "0.0.40-unstable-2026-05-12";

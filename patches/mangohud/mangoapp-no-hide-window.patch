@@ -1,0 +1,63 @@
+From ae88d9dfc944b1366456fca04f36926f18e12717 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Tue, 12 May 2026 20:12:26 -0700
+Subject: [PATCH] fix(mangoapp): stop hiding/showing X11 window on HUD toggle
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Remove glfwHideWindow/glfwShowWindow calls when toggling the HUD.
+These cause X11 UnmapNotify/MapNotify events on gamescope's internal
+Xwayland, which triggers focus recalculation and can cause the game
+to receive a transient FocusOut event. Games react by pausing audio
+and releasing input capture.
+
+The GAMESCOPE_EXTERNAL_OVERLAY atom (set to 0/1) already controls
+whether gamescope composites the overlay — the window unmap/remap
+is redundant.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+---
+ src/app/main.cpp | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/src/app/main.cpp b/src/app/main.cpp
+index 709bcb6..bc9504d 100644
+--- a/src/app/main.cpp
++++ b/src/app/main.cpp
+@@ -387,7 +387,6 @@ int main(int, char**)
+         check_keybinds(*real_params);
+         if (!real_params->no_display && new_frame){
+             if (mangoapp_paused){
+-                glfwShowWindow(window);
+                 render(window, *real_params);
+                 uint32_t value = 1;
+                 XChangeProperty(x11_display, x11_window, overlay_atom, XA_CARDINAL, 32, PropModeReplace, (unsigned char *)&value, 1);
+@@ -427,7 +426,6 @@ int main(int, char**)
+             glClearColor(0, 0, 0, 0);
+             glClear(GL_COLOR_BUFFER_BIT);
+             glfwSwapBuffers(window);
+-            glfwHideWindow(window);
+             uint32_t value = 0;
+             XChangeProperty(x11_display, x11_window, overlay_atom, XA_CARDINAL, 32, PropModeReplace, (unsigned char *)&value, 1);
+             XSync(x11_display, 0);
+@@ -436,16 +434,6 @@ int main(int, char**)
+             if (gpus)
+                 for (auto gpu : gpus->available_gpus)
+                     gpu->pause();
+-
+-            // If mangoapp is hidden, using mangoapp_cv.wait() causes a hang.
+-            // Because of this hang, we can't detect if the user presses R_SHIFT + F12,
+-            // which prevents mangoapp from being unhidden.
+-            // To address this, replace mangoapp_cv.wait() with sleep().
+-            //
+-            // If severe power usage issues arise, find an alternative solution.
+-
+-            // std::unique_lock<std::mutex> lk(mangoapp_m);
+-            // mangoapp_cv.wait(lk, []{return !get_params()->no_display;});
+         } else {
+             usleep(500000);
+         }
+-- 
+2.53.0
+
