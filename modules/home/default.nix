@@ -61,6 +61,7 @@ in {
 
       [editor]
       line-number = "relative"
+      trim-trailing-whitespace = true
 
       [editor.indent-guides]
       render = true
