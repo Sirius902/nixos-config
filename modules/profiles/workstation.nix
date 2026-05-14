@@ -27,6 +27,7 @@
   environment.systemPackages = with pkgs; [
     archipelago
     poptracker
+    dusklight
     shipwright
     _2ship2harkinian
     shipwright-ap

@@ -24,6 +24,7 @@
   };
 
   environment.systemPackages = [
+    pkgs.dusklight
     pkgs.shipwright
     pkgs.shipwright-ap
     pkgs._2ship2harkinian
