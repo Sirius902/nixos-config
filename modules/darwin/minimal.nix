@@ -5,7 +5,6 @@
 }: {
   imports = [
     inputs.secrets.darwinModules.default
-    inputs.nix-index-database.darwinModules.default
     ../tmux.nix
 
     inputs.home-manager.darwinModules.default

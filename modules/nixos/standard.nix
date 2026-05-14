@@ -5,7 +5,6 @@
 }: {
   imports = [
     ./base.nix
-    inputs.nix-index-database.nixosModules.default
     ../jdk.nix
     ../vfio.nix
     ../services/games/svends/default.nix
