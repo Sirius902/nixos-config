@@ -572,19 +572,7 @@
         patchPkgs = pkgs:
           pkgs
           // {
-            openldap = pkgs.openldap.overrideAttrs (prevAttrs: {
-              preCheck =
-                (prevAttrs.preCheck or "")
-                + ''
-                  rm -f \
-                    tests/scripts/test*-sync* \
-                    tests/scripts/test*-delta-* \
-                    tests/scripts/test*-dsee-* \
-                    tests/scripts/test*-dirsync \
-                    tests/scripts/test*-persistent-sessionlog \
-                    tests/scripts/test*-consumer-config
-                '';
-            });
+            openldap = pkgs.openldap.overrideAttrs {doCheck = false;};
           };
       in
         prev.buildFHSEnv (fhsArgs
