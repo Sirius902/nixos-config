@@ -16,6 +16,8 @@ in {
   programs.zsh = {
     enable = true;
     enableCompletion = true;
+    # Avoid double compinit — NixOS already calls it in /etc/zshrc.
+    completionInit = "";
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
