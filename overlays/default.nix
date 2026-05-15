@@ -292,8 +292,8 @@
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "1e58af0cc29a2adf6757a892976140e4ec55b77e";
-        hash = "sha256-/FqDE+UtRrxclM1DvLxWm53gB0E+d0pfyJn5NzZTW+E=";
+        rev = "5b23711d04c8b512d53e3781abbf0122c420738f";
+        hash = "sha256-I9aRZ3Rn5PTs4lZhW6NF36CU5U7tLkIw/GE1x8FU1bE=";
         fetchSubmodules = false;
 
         leaveDotGit = false;
