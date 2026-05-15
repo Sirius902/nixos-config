@@ -32,7 +32,7 @@
   nlohmann_json,
   nix-update-script,
 }: let
-  rev = "a913f1699ffcc87c2d3c24cb62389dd3ff2dbd9e";
+  rev = "af8300a77c7aee7e9b433e92432938a6b1fc8a29";
 
   dawn-src = fetchzip {
     url = let
@@ -81,13 +81,13 @@
 in
   stdenv.mkDerivation {
     pname = "dusklight";
-    version = "0-unstable-2026-05-13";
+    version = "0-unstable-2026-05-15";
 
     src = fetchFromGitHub {
       owner = "TwilitRealm";
       repo = "dusklight";
       inherit rev;
-      hash = "sha256-LGjMGxpcujuSFt9d5wVThvmUxMk+rFn3AVuJal5sCyo=";
+      hash = "sha256-CgMunFpkbdpie0IWDsPQFoSs44P5NWqpGHfrdx2Gbpg=";
       fetchSubmodules = true;
     };
 
