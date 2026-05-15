@@ -293,7 +293,7 @@
       src = prevAttrs.src.override {
         tag = null;
         rev = "5b23711d04c8b512d53e3781abbf0122c420738f";
-        hash = "sha256-I9aRZ3Rn5PTs4lZhW6NF36CU5U7tLkIw/GE1x8FU1bE=";
+        hash = "sha256-L6cv8kkOyT1lQcSIeRSmsEDAT8VV0hZO0cw36M4+CtI=";
         fetchSubmodules = false;
 
         leaveDotGit = false;
@@ -311,6 +311,7 @@
             discord-rpc \
             glslang \
             hwinfo \
+            libressl \
             libusb \
             minimp3 \
             sirit \
