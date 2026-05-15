@@ -72,10 +72,10 @@ in {
       # character = "┊"
 
       [keys.normal]
-      S-y = "yank_joined"
+      Y = "yank_joined"
 
       [keys.select]
-      S-y = "yank_joined"
+      Y = "yank_joined"
 
       # FUTURE(Sirius902) Enable sticky context once this is resolved.
       # https://github.com/helix-editor/helix/issues/396
