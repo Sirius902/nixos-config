@@ -90,6 +90,7 @@ in {
       wl-clipboard
       xclip
       vscode
+      zed-editor
     ];
 
     home-manager.users.chris.imports = [

@@ -78,6 +78,7 @@
     file
     fzf
     htop
+    jq
     just
     nvd
     parted

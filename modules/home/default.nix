@@ -93,6 +93,7 @@ in {
   };
 
   home.packages = [
+    pkgs.claude-code
     # TODO: Add vimdiff alias somehow.
     pkgs.nvim
     pkgs.pure-prompt
