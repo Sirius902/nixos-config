@@ -152,7 +152,7 @@ in
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         libicns
-        darwin.sigtool
+        darwin.autoSignDarwinBinariesHook
         fixDarwinDylibNames
       ];
 
@@ -271,8 +271,6 @@ in
         install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
           $out/Applications/2s2h.app/Contents/Resources/gamecontrollerdb.txt
 
-        # Codesign (ad-hoc)
-        codesign -f -s - $out/Applications/2s2h.app/Contents/MacOS/2s2h
       ''
       + ''
         install -Dm644 -t $out/share/licenses/2ship2harkinian ../LICENSE

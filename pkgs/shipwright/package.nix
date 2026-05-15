@@ -153,7 +153,7 @@ in
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         libicns
-        darwin.sigtool
+        darwin.autoSignDarwinBinariesHook
         fixDarwinDylibNames
       ];
 
@@ -273,8 +273,6 @@ in
         install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
           $out/Applications/soh.app/Contents/Resources/gamecontrollerdb.txt
 
-        # Codesign (ad-hoc)
-        codesign -f -s - $out/Applications/soh.app/Contents/MacOS/soh
       ''
       + ''
         # TODO(Sirius902) Uncomment when upstream adds a root LICENSE file.

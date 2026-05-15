@@ -105,7 +105,7 @@ in
         wayland
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        darwin.sigtool
+        darwin.autoSignDarwinBinariesHook
       ];
 
     buildInputs =
@@ -177,7 +177,6 @@ in
       + lib.optionalString stdenv.hostPlatform.isDarwin ''
         mkdir -p $out/Applications
         mv Dusklight.app $out/Applications/Dusklight.app
-        codesign -f -s - $out/Applications/Dusklight.app/Contents/MacOS/dusklight
       ''
       + ''
         runHook postInstall
