@@ -39,6 +39,11 @@
         --replace-fail \
         '<arg value="sleighArgs.txt"/>' \
         ""
+
+      substituteInPlace src/main/java/gamecubeloader/rso/RSOHeader.java \
+        --replace-fail \
+        'public boolean IsValid(BinaryReader reader)' \
+        'public boolean IsValid(BinaryReader reader) throws IOException'
     '';
 
     configurePhase = ''
