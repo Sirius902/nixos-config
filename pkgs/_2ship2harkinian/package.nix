@@ -114,13 +114,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "2ship2harkinian";
-    version = "4.0.2-unstable-2026-05-10";
+    version = "4.0.2-unstable-2026-05-19";
 
     src = fetchFromGitHub {
       owner = "HarbourMasters";
       repo = "2ship2harkinian";
-      rev = "2a1766e9d8b345ef3d94b0c5eb5dd2c1efe861fa";
-      hash = "sha256-dJ8gCwUdNLC4GC8/kiGgxmPFLIF9FkHbuCTZ/SnQMfk=";
+      rev = "55b70ec598c38029da4ae63afbfd01441be5708f";
+      hash = "sha256-ITC6vfSl1ki8/4SM5318yiF8dQn9OfBN18Kfvh3RqTc=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
