@@ -137,16 +137,25 @@
                   done
                 else
                   for pattern in "$@"; do
-                    matched=0
-                    for attr in "''${updatable_attrs[@]}"; do
-                      if [[ "$attr" == $pattern ]]; then
-                        "update_$attr"
-                        matched=1
+                    if [[ "$pattern" == *[\*\?\[]* ]]; then
+                      matched=0
+                      for attr in "''${updatable_attrs[@]}"; do
+                        if [[ "$attr" == $pattern ]]; then
+                          "update_$attr"
+                          matched=1
+                        fi
+                      done
+                      if [ "$matched" -eq 0 ]; then
+                        echo "error: no packages matched '$pattern'" >&2
+                        exit 1
                       fi
-                    done
-                    if [ "$matched" -eq 0 ]; then
-                      echo "error: no packages matched '$pattern'" >&2
-                      exit 1
+                    else
+                      if declare -F "update_$pattern" >/dev/null; then
+                        "update_$pattern"
+                      else
+                        echo "error: unknown or non-updatable attr '$pattern'" >&2
+                        exit 1
+                      fi
                     fi
                   done
                 fi
