@@ -124,24 +124,28 @@
                 else "";
 
               defaultPkgs = self.packages.${system};
+              updatableAttrs = lib.attrNames (lib.filterAttrs (_: drv: drv ? updateScript) defaultPkgs);
             in
               lib.getExe (pkgs.writeShellScriptBin "update" ''
                 ${lib.concatStringsSep "\n" (lib.mapAttrsToList mkUpdate self.packages.${system})}
 
+                updatable_attrs=(${lib.concatMapStringsSep " " lib.escapeShellArg updatableAttrs})
+
                 if [ "$#" -eq 0 ]; then
-                  ${lib.concatStringsSep "\n"
-                  (lib.mapAttrsToList
-                    (attr: drv:
-                      if drv ? updateScript
-                      then "update_${attr}"
-                      else "")
-                    defaultPkgs)}
+                  for attr in "''${updatable_attrs[@]}"; do
+                    "update_$attr"
+                  done
                 else
-                  for attr in "$@"; do
-                    if declare -F "update_$attr" >/dev/null; then
-                      "update_$attr"
-                    else
-                      echo "error: unknown or non-updatable attr '$attr'" >&2
+                  for pattern in "$@"; do
+                    matched=0
+                    for attr in "''${updatable_attrs[@]}"; do
+                      if [[ "$attr" == $pattern ]]; then
+                        "update_$attr"
+                        matched=1
+                      fi
+                    done
+                    if [ "$matched" -eq 0 ]; then
+                      echo "error: no packages matched '$pattern'" >&2
                       exit 1
                     fi
                   done
