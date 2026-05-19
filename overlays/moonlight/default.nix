@@ -1,10 +1,10 @@
 final: prev: {
   moonlight = prev.moonlight.overrideAttrs (prevAttrs: {
-    version = "2026.5.0-unstable-2026-05-17";
+    version = "2026.5.1-unstable-2026-05-19";
     src = prevAttrs.src.override {
-      rev = "81c0fb818abf2b665f262e014f0387a1b73fdc34";
+      rev = "12d0299e4ed3ed6c4a2fb12366d9a76b0db409c5";
       tag = null;
-      hash = "sha256-ULi+OP3QKCb4dpv+whJ/71ysnYDojFL8+oqcLheZFqM=";
+      hash = "sha256-CZYzVUGRw7RriO484/TIhkjkqQ+ajd0E2JQ5buipIm4=";
     };
     patches = [
       (final.fetchurl {
