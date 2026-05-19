@@ -6,7 +6,7 @@
   ant,
   nix-update-script,
 }: let
-  version = "1.3.0-unstable-2025-12-15";
+  version = "1.3.0-unstable-2026-05-19";
   self = ghidra.buildGhidraExtension {
     pname = "GameCubeLoader";
     inherit version;
@@ -14,8 +14,8 @@
     src = fetchFromGitHub {
       owner = "Cuyler36";
       repo = "Ghidra-GameCube-Loader";
-      rev = "c61f08fdddfb655f2f1fd39dc53d8220530c8b52";
-      hash = "sha256-w/onDdTSl6MidJL56e6sozOS9OsVwBhfCm3N1uGLmGQ=";
+      rev = "921504c9ddba6e8d9b3655b665a60f1a33306220";
+      hash = "sha256-onzLJ1MwoWxyjHIHShJIcXnsua/794O5sFQo0Up9/cA=";
     };
 
     nativeBuildInputs = [ant];
