@@ -1,4 +1,5 @@
 default_mode "locked"
+session_serialization false
 show_startup_tips false
 
 keybinds clear-defaults=true {
