@@ -25,6 +25,10 @@ in {
 
     initContent =
       ''
+        autoload -Uz edit-command-line
+        zle -N edit-command-line
+        bindkey '^x^e' edit-command-line
+
         bindkey '^R' history-incremental-search-backward
         prompt pure
       ''
