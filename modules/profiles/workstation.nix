@@ -8,6 +8,8 @@
     ../ssl-dev.nix
   ];
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   my.desktop = {
     enable = true;
     full = true;
