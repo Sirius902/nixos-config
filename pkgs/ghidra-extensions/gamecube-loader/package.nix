@@ -6,7 +6,7 @@
   ant,
   nix-update-script,
 }: let
-  version = "1.3.0-unstable-2026-05-19";
+  version = "1.3.1-unstable-2026-05-19";
   self = ghidra.buildGhidraExtension {
     pname = "GameCubeLoader";
     inherit version;
