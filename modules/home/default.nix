@@ -97,12 +97,13 @@ in {
     extraConfig = builtins.readFile ../../dotfiles/zellij/config.kdl;
   };
 
-  home.packages = [
-    pkgs.claude-code
-    # TODO: Add vimdiff alias somehow.
-    pkgs.nvim
-    pkgs.pure-prompt
-  ];
+  home.packages =
+    [
+      # TODO: Add vimdiff alias somehow.
+      pkgs.nvim
+      pkgs.pure-prompt
+    ]
+    ++ (lib.optionals (!stdenv.hostPlatform.isDarwin) [pkgs.claude-code]);
 
   programs.home-manager.enable = true;
 }
