@@ -6,6 +6,8 @@
   makeWrapper,
   fetchFromGitHub,
   fetchzip,
+  apple-sdk_15,
+  darwinMinVersionHook,
   darwin,
   # Linux
   wayland,
@@ -40,11 +42,11 @@
         if stdenv.hostPlatform.isDarwin
         then "darwin-arm64"
         else "linux-x86_64";
-    in "https://github.com/encounter/dawn-build/releases/download/v20260423.175430/dawn-${platform}.tar.gz";
+    in "https://github.com/encounter/dawn-build/releases/download/v20260523.201736/dawn-${platform}.tar.gz";
     hash =
       if stdenv.hostPlatform.isDarwin
-      then "sha256-eQnzrBp6gjiBek1VYQ9A5W13ClYWrDDKjIqv/7eNTR4="
-      else "sha256-HXfKTLHtMPwupnFnaflCARtXVPuS/0PoCePXidjE5xs=";
+      then "sha256-7Y80mwxoV4kVk0ecOS02ZKTpmS0gqP7hWODZKMo9mj4="
+      else "sha256-KkdlSeiaw2gbQa+phZOpgbequshxQaFITzFdiuGBZvc=";
     stripRoot = false;
   };
 
@@ -106,6 +108,7 @@ in
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         darwin.autoSignDarwinBinariesHook
+        (darwinMinVersionHook "15.0")
       ];
 
     buildInputs =
@@ -117,6 +120,9 @@ in
         tracy
         freetype
         zstd
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isDarwin [
+        apple-sdk_15
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         libGL
