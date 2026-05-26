@@ -36,13 +36,16 @@
 }: let
   rev = "a7790d7323aefec1cea60211168d24dc2967756c";
 
+  dawnVersion = "v20260523.201736";
+  nodVersion = "v2.0.0-alpha.8";
+
   dawn-src = fetchzip {
     url = let
       platform =
         if stdenv.hostPlatform.isDarwin
         then "darwin-arm64"
         else "linux-x86_64";
-    in "https://github.com/encounter/dawn-build/releases/download/v20260523.201736/dawn-${platform}.tar.gz";
+    in "https://github.com/encounter/dawn-build/releases/download/${dawnVersion}/dawn-${platform}.tar.gz";
     hash =
       if stdenv.hostPlatform.isDarwin
       then "sha256-7Y80mwxoV4kVk0ecOS02ZKTpmS0gqP7hWODZKMo9mj4="
@@ -56,7 +59,7 @@
         if stdenv.hostPlatform.isDarwin
         then "macos-arm64"
         else "linux-x86_64";
-    in "https://github.com/encounter/nod/releases/download/v2.0.0-alpha.8/libnod-${platform}.tar.gz";
+    in "https://github.com/encounter/nod/releases/download/${nodVersion}/libnod-${platform}.tar.gz";
     hash =
       if stdenv.hostPlatform.isDarwin
       then "sha256-UPy1ywCcv0K6VJOU3uUelJuUdBh3UNaPRlyP5LOBeDw="
@@ -95,6 +98,20 @@ in
 
     postPatch = ''
       sed -i '/add_subdirectory(tests)/d' extern/aurora/CMakeLists.txt
+
+      check_version() {
+        local name="$1" expected="$2" var="$3" file="$4"
+        actual=$(sed -n "s/.*set($var \"\([^\"]*\)\".*/\1/p" "$file")
+        if [[ "$actual" != "$expected" ]]; then
+          echo "error: $name version mismatch: expected '$expected', got '$actual'"
+          echo "update $name in package.nix"
+          exit 1
+        fi
+      }
+      check_version "dawn" "${dawnVersion}" \
+        AURORA_DAWN_VERSION extern/aurora/CMakeLists.txt
+      check_version "nod" "${nodVersion}" \
+        AURORA_NOD_VERSION extern/aurora/CMakeLists.txt
     '';
 
     nativeBuildInputs =
