@@ -485,11 +485,11 @@
 
   (final: prev: {
     n64recomp = prev.n64recomp.overrideAttrs (prevAttrs: {
-      version = "0-unstable-2026-05-17";
+      version = "0-unstable-2026-05-27";
       src = prevAttrs.src.override {
         tag = null;
-        rev = "70a894aad8d3491ca0fccee1f94dae8190845686";
-        hash = "sha256-4y1Cb2lmVZi+IoIBY9AZuWa+XPoBejdd1rL/uTjM07E=";
+        rev = "ffb39cdad1da5de07eaaa48bd1db4a89a7986771";
+        hash = "sha256-/MmRvLWxh/uaFXp0eiNdrnMKrrYQvjxmw/+/o5lXyFU=";
       };
 
       passthru =
