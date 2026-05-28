@@ -16,6 +16,11 @@ default:
 fmt:
     nix {{ NIX_FLAGS }} fmt .
 
+update:
+    nix {{ NIX_FLAGS }} flake update
+    git diff --quiet flake.lock || git commit -m "chore: nix flake update" flake.lock
+    nix {{ NIX_FLAGS }} run "path:.#update"
+
 prefetch-inputs:
     nix {{ NIX_FLAGS }} flake prefetch-inputs
 
