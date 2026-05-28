@@ -5,6 +5,22 @@
 
   inputs.nvim-conf.overlays.default
 
+  # FUTURE(Sirius902) Fix invisible dialog select text from const signature mismatch.
+  # https://github.com/Sirius902/dusklight/commit/59db717
+  (final: prev: {
+    dusklight = prev.dusklight.overrideAttrs (prevAttrs: {
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          (final.fetchpatch2 {
+            name = "fix-item-and-talk-rendering.patch";
+            url = "https://github.com/Sirius902/dusklight/commit/59db7170e596f1355c6a7a461410e9d082a2a1ae.patch?full_index=1";
+            hash = "sha256-BEnnzqbWeyNtorJ/gW11vRP+vI2RLz3vcuzeqTdfW+8=";
+          })
+        ];
+    });
+  })
+
   (final: prev: {
     cosmic-comp = prev.cosmic-comp.overrideAttrs (prevAttrs: {
       patches =
