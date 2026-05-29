@@ -34,7 +34,7 @@
   nlohmann_json,
   nix-update-script,
 }: let
-  rev = "e5c032f6e606cedfc4920a8f159fdb27a39bba24";
+  rev = "bf0dc854687fd09c01bb29882e766bc0df62092f";
 
   dawnVersion = "v20260523.201736";
   nodVersion = "v2.0.0-alpha.8";
