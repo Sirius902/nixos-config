@@ -596,4 +596,32 @@
       passthru = removeAttrs (prevAttrs.passthru or {}) ["updateScript"];
     });
   })
+
+  (final: prev: {
+    dolphin-emu = prev.dolphin-emu.overrideAttrs (prevAttrs: {
+      version = "2603a-unstable-2026-05-31";
+
+      src = prevAttrs.src.override {
+        tag = null;
+        rev = "8427b8c0f1c034c1a40c1333a97a1ffc1e776ad9";
+        hash = "sha256-+TT706a6BCXt4mt0fAJFTKtauBHY95+1sOGPEVvW90U=";
+
+        leaveDotGit = false;
+        postFetch = ''
+          echo 8427b8c0f1c034c1a40c1333a97a1ffc1e776ad9 > $out/COMMIT
+        '';
+      };
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {
+            extraArgs = [
+              "--version=branch"
+              "--version-regex=([0-9]+[a-z]+-unstable-.*)"
+            ];
+          };
+        };
+    });
+  })
 ]
