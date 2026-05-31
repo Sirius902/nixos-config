@@ -14,6 +14,7 @@ in {
     ./gnome/default.nix
     ./kde/default.nix
     ./i3/default.nix
+    ./niri/default.nix
     ./fcitx.nix
     ./ibus.nix
     ../disable-hsp.nix
