@@ -4,7 +4,6 @@
   ...
 }: {
   imports = [
-    inputs.nixos-hardware.nixosModules.raspberry-pi-3
     ../../modules/nixos/base.nix
     ./hardware-configuration.nix
     inputs.home-manager.nixosModules.default
@@ -16,6 +15,7 @@
     }
   ];
 
+  boot.kernelPackages = pkgs.linuxPackages;
   boot.loader.grub.enable = false;
   boot.loader.generic-extlinux-compatible.enable = true;
 
