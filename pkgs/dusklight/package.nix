@@ -34,7 +34,7 @@
   nlohmann_json,
   nix-update-script,
 }: let
-  rev = "81caa89e12e4611113c20c5a653531f7c0c4594c";
+  rev = "b26f3f7f5131a20fe591cf8a6d8e9d829c220462";
 
   dawnVersion = "v20260523.201736";
   nodVersion = "v2.0.0-alpha.8";
@@ -92,7 +92,7 @@ in
       owner = "TwilitRealm";
       repo = "dusklight";
       inherit rev;
-      hash = "sha256-j5zEU1bIrn7CIJExQuCkYJWYVlsNDEZSA5WYZNGRoIo=";
+      hash = "sha256-bjY9VQOyYktVZU6p7AH1auYdkVpyBcD0DxJXI6O5/l8=";
       fetchSubmodules = true;
     };
 
