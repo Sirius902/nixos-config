@@ -39,6 +39,12 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    qt = {
+      enable = true;
+      platformTheme = "gnome";
+      style = "adwaita-dark";
+    };
+
     services.xserver.xkb = {
       layout = "us";
       variant = "";
