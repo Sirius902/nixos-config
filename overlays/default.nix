@@ -140,8 +140,6 @@
             // {
               platforms = builtins.attrNames srcs;
             };
-          passthru = removeAttrs (prevAttrs.passthru or {}) ["updateScript"];
-
           postInstall = ''
             # jni.h expects jni_md.h to be in the header search path.
             ln -sf $out/include/linux/*_md.h $out/include/
@@ -592,8 +590,6 @@
         ++ [
           ../patches/zellij/0001-feat-pass-OSC-52-clipboard-read-through-to-host-term.patch
         ];
-
-      passthru = removeAttrs (prevAttrs.passthru or {}) ["updateScript"];
     });
   })
 

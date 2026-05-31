@@ -170,10 +170,28 @@
           };
           patchedPkgs = import nixpkgs' (self.lib.nixpkgsConfig system);
           allPackages = import ./pkgs/all-packages.nix {pkgs = patchedPkgs;};
+          overlayNames = let
+            overlays = import ./overlays/default.nix {inherit inputs;};
+            tryGetNames = o: let
+              result = builtins.tryEval (builtins.attrNames (o {} patchedPkgs));
+            in
+              if result.success
+              then result.value
+              else [];
+          in
+            lib.unique (builtins.concatMap tryGetNames overlays);
+          overlayPackages = let
+            isUpdatable = name: let
+              passthru = patchedPkgs.${name}.passthru or {};
+              updatePos = builtins.unsafeGetAttrPos "updateScript" passthru;
+            in
+              updatePos != null && lib.hasPrefix (toString ./.) updatePos.file;
+          in
+            lib.genAttrs (builtins.filter isUpdatable overlayNames) (name: patchedPkgs.${name});
         in
           (lib.mapAttrs (name: _: patchedPkgs.${name}) allPackages)
+          // overlayPackages
           // {
-            inherit (patchedPkgs) claude-code poptracker moonlight rpcs3 shadps4 shadps4-qt archipelago n64recomp z64decompress zelda64recomp zellij cosmic-ext-applet-clipboard-manager;
             inherit (patchedPkgs.graalvmPackages) graalvm-ce_8;
           };
 
