@@ -77,6 +77,7 @@
         Mod+D { spawn "fuzzel"; }
         Mod+Q { close-window; }
         Mod+Shift+Slash { show-hotkey-overlay; }
+        Mod+W { toggle-overview; }
         Mod+Escape { spawn "swaylock" "-f"; }
 
         // Focus
