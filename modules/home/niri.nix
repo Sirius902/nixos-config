@@ -100,12 +100,6 @@
         Mod+Shift+Down      { move-window-down; }
         Mod+Shift+Up        { move-window-up; }
 
-        // Scroll navigation
-        Mod+WheelScrollDown       cooldown-ms=150 { focus-column-right; }
-        Mod+WheelScrollUp         cooldown-ms=150 { focus-column-left; }
-        Mod+Shift+WheelScrollDown cooldown-ms=150 { focus-window-down; }
-        Mod+Shift+WheelScrollUp   cooldown-ms=150 { focus-window-up; }
-
         // Column / window manipulation
         Mod+R       { switch-preset-column-width; }
         Mod+F       { maximize-column; }
@@ -139,12 +133,8 @@
         Mod+Ctrl+Page_Up   { move-workspace-up; }
 
         // Monitors
-        Mod+Ctrl+H     { focus-monitor-left; }
-        Mod+Ctrl+L     { focus-monitor-right; }
         Mod+Ctrl+Left  { focus-monitor-left; }
         Mod+Ctrl+Right { focus-monitor-right; }
-        Mod+Ctrl+Shift+H     { move-window-to-monitor-left; }
-        Mod+Ctrl+Shift+L     { move-window-to-monitor-right; }
         Mod+Ctrl+Shift+Left  { move-window-to-monitor-left; }
         Mod+Ctrl+Shift+Right { move-window-to-monitor-right; }
 
