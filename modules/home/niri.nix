@@ -59,13 +59,12 @@
     screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
     // Startup
-    spawn-at-startup "sh" "-c" "${pkgs.imagemagick}/bin/magick /var/lib/AccountsService/icons/$(whoami) -resize 384x384^ -gravity center -crop 384x384+0+0 +repage /tmp/hyprlock-avatar.png"
     spawn-at-startup "xwayland-satellite"
     spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/chris/Pictures/Screenshot_2025-05-08_23-50-08.png"
     spawn-at-startup "waybar"
     spawn-at-startup "mako"
     spawn-at-startup "sunsetr"
-    spawn-at-startup "swayidle" "-w" "timeout" "300" "hyprlock" "timeout" "600" "niri msg action power-off-monitors" "resume" "niri msg action power-on-monitors"
+    spawn-at-startup "swayidle" "-w" "timeout" "300" "swaylock -f" "timeout" "600" "niri msg action power-off-monitors" "resume" "niri msg action power-on-monitors"
     spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
 
     hotkey-overlay {
@@ -79,7 +78,7 @@
         Mod+Q { close-window; }
         Mod+Shift+Slash { show-hotkey-overlay; }
         Mod+W { toggle-overview; }
-        Mod+Escape { spawn "hyprlock"; }
+        Mod+Escape { spawn "swaylock" "-f"; }
 
         // Focus
         Mod+H     { focus-column-left; }
@@ -171,89 +170,21 @@
     }
   '';
 
-  xdg.configFile."hypr/hyprlock.conf".text = ''
-    $accent = rgb(7263df)
-    $accentAlpha = 7263dfee
-    $font = JetBrainsMono Nerd Font
-
-    general {
-        hide_cursor = true
-    }
-
-    animations {
-        enabled = true
-        bezier = linear, 1, 1, 0, 0
-        animation = fadeIn, 1, 5, linear
-        animation = fadeOut, 1, 3, linear
-        animation = inputFieldDots, 1, 2, linear
-    }
-
-    background {
-        monitor =
-        path = /home/chris/Pictures/Screenshot_2025-05-08_23-50-08.png
-        blur_passes = 3
-    }
-
-    # Time — top right
-    label {
-        monitor =
-        text = $TIME12
-        color = rgb(e0e0e0)
-        font_size = 90
-        font_family = $font
-        position = -30, 0
-        halign = right
-        valign = top
-    }
-
-    # Date — below time
-    label {
-        monitor =
-        text = cmd[update:43200000] date +"%A, %B %d"
-        color = rgb(aaaaaa)
-        font_size = 25
-        font_family = $font
-        position = -30, -150
-        halign = right
-        valign = top
-    }
-
-    # Profile picture — centered
-    image {
-        monitor =
-        path = /tmp/hyprlock-avatar.png
-        size = 100
-        border_color = $accent
-        border_size = 3
-        rounding = -1
-        position = 0, 75
-        halign = center
-        valign = center
-    }
-
-    # Input field — below avatar
-    input-field {
-        monitor =
-        size = 300, 55
-        outline_thickness = 3
-        dots_size = 0.2
-        dots_spacing = 0.2
-        dots_center = true
-        outer_color = $accent
-        inner_color = rgba(27, 27, 27, 0.9)
-        font_color = rgb(e0e0e0)
-        fade_on_empty = false
-        font_family = $font
-        placeholder_text = <span foreground="##$accentAlpha"><i>$USER</i></span>
-        hide_input = false
-        check_color = $accent
-        fail_color = rgb(204, 102, 102)
-        fail_text = <i>$FAIL ($ATTEMPTS)</i>
-        rounding = 15
-        position = 0, -47
-        halign = center
-        valign = center
-    }
+  xdg.configFile."swaylock/config".text = ''
+    image=/home/chris/Pictures/Screenshot_2025-05-08_23-50-08.png
+    scaling=fill
+    color=1b1b1b
+    inside-color=1b1b1b
+    ring-color=4c4c4c
+    key-hl-color=7263df
+    line-color=1b1b1b
+    text-color=e0e0e0
+    inside-ver-color=1b1b1b
+    ring-ver-color=7263df
+    inside-wrong-color=1b1b1b
+    ring-wrong-color=cc6666
+    text-wrong-color=cc6666
+    bs-hl-color=cc6666
   '';
 
   xdg.configFile."waybar/config".text = builtins.toJSON {
