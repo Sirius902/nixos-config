@@ -24,7 +24,7 @@ in {
     systemd.user.services.reset-dconf-cosmic = {
       enable = true;
       before = ["cosmic-session.target"];
-      wantedBy = ["graphical-session.target"];
+      wantedBy = ["cosmic-session.target"];
       description = "Reset dconf for COSMIC";
       serviceConfig = {
         Type = "oneshot";
