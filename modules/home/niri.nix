@@ -170,6 +170,23 @@
     }
   '';
 
+  xdg.configFile."swaylock/config".text = ''
+    image=/home/chris/Pictures/Screenshot_2025-05-08_23-50-08.png
+    scaling=fill
+    color=1b1b1b
+    inside-color=1b1b1b
+    ring-color=4c4c4c
+    key-hl-color=7263df
+    line-color=1b1b1b
+    text-color=e0e0e0
+    inside-ver-color=1b1b1b
+    ring-ver-color=7263df
+    inside-wrong-color=1b1b1b
+    ring-wrong-color=cc6666
+    text-wrong-color=cc6666
+    bs-hl-color=cc6666
+  '';
+
   xdg.configFile."waybar/config".text = builtins.toJSON {
     layer = "top";
     position = "top";
