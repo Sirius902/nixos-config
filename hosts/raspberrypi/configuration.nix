@@ -45,6 +45,8 @@
 
   networking.hostId = "4786fd98";
 
+  services.journald.extraConfig = "SystemMaxUse=100M";
+
   my.tailscale.enable = true;
 
   environment.systemPackages = with pkgs; [

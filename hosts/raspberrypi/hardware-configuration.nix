@@ -2,9 +2,7 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 {
-  config,
   lib,
-  pkgs,
   modulesPath,
   ...
 }: {
@@ -22,49 +20,8 @@
     options = ["mode=0755" "size=20%"];
   };
 
-  fileSystems."/nix" = {
-    device = "/dev/disk/by-label/ROOTFS";
-    fsType = "btrfs";
-    options = ["subvol=@nix" "compress=zstd" "noatime"];
-  };
-
-  fileSystems."/persist" = {
-    device = "/dev/disk/by-label/ROOTFS";
-    fsType = "btrfs";
-    options = ["subvol=@persist" "compress=zstd" "noatime"];
-    neededForBoot = true;
-  };
-
-  fileSystems."/var/cache" = {
-    device = "/dev/disk/by-label/ROOTFS";
-    fsType = "btrfs";
-    options = ["subvol=@var-cache" "compress=zstd:1" "noatime"];
-    neededForBoot = true;
-  };
-
-  fileSystems."/var/lib" = {
-    device = "/dev/disk/by-label/ROOTFS";
-    fsType = "btrfs";
-    options = ["subvol=@var-lib" "compress=zstd" "noatime"];
-    neededForBoot = true;
-  };
-
-  fileSystems."/var/log" = {
-    device = "/dev/disk/by-label/ROOTFS";
-    fsType = "btrfs";
-    options = ["subvol=@var-log" "compress=zstd" "noatime"];
-    neededForBoot = true;
-  };
-
-  fileSystems."/var/tmp" = {
-    device = "/dev/disk/by-label/ROOTFS";
-    fsType = "btrfs";
-    options = ["subvol=@var-tmp" "compress=zstd:1" "noatime"];
-    neededForBoot = true;
-  };
-
   fileSystems."/boot" = {
-    device = "/dev/disk/by-label/NIXOS_SD";
+    device = "/dev/disk/by-label/BOOT";
     fsType = "ext4";
   };
 
@@ -74,27 +31,39 @@
     options = ["fmask=0077" "dmask=0077"];
   };
 
+  fileSystems."/nix" = {
+    device = "/dev/nixos-sd/nix";
+    fsType = "f2fs";
+    options = ["compress_algorithm=zstd" "compress_chksum" "atgc" "gc_merge" "noatime"];
+  };
+
+  fileSystems."/persist" = {
+    device = "/dev/nixos-sd/persist";
+    fsType = "f2fs";
+    options = ["compress_algorithm=zstd" "compress_chksum" "atgc" "gc_merge" "noatime"];
+    neededForBoot = true;
+  };
+
+  fileSystems."/var" = {
+    device = "/dev/nixos-sd/var";
+    fsType = "f2fs";
+    options = ["compress_algorithm=zstd" "compress_chksum" "atgc" "gc_merge" "noatime"];
+    neededForBoot = true;
+  };
+
   fileSystems."/home/chris" = {
-    device = "/dev/disk/by-label/ROOTFS";
-    fsType = "btrfs";
-    options = ["subvol=@home-chris" "compress=zstd" "noatime"];
+    device = "/dev/nixos-sd/home";
+    fsType = "f2fs";
+    options = ["compress_algorithm=zstd" "compress_chksum" "atgc" "gc_merge" "noatime"];
   };
 
-  fileSystems."/home/chris/.cache" = {
-    device = "/dev/disk/by-label/ROOTFS";
+  fileSystems."/media/storage" = {
+    device = "/dev/disk/by-label/STORAGE";
     fsType = "btrfs";
-    options = ["subvol=@home-chris-cache" "compress=zstd:1" "noatime"];
+    options = ["compress=zstd" "noatime" "nofail"];
   };
 
-  fileSystems."/swap" = {
-    device = "/dev/disk/by-label/ROOTFS";
-    fsType = "btrfs";
-    options = ["subvol=@swap" "compress=no" "noatime"];
-  };
-
-  swapDevices = [
-    {device = "/swap/swapfile";}
-  ];
+  zramSwap.enable = true;
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 }
