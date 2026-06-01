@@ -6,15 +6,29 @@
 }: let
   cfg = config.my.desktop;
 in {
-  # Niri is installed as a secondary session alongside `cfg.environment` —
-  # pick it from the greeter's session menu at login.
   config = lib.mkIf cfg.enable {
-    programs.niri.enable = true;
+    programs.niri = {
+      enable = true;
+      useNautilus = false;
+    };
+
+    security.pam.services.swaylock = {};
 
     environment.systemPackages = with pkgs; [
       fuzzel
+      mako
+      playerctl
+      swaybg
+      sunsetr
+      swayidle
+      swaylock
+      waybar
+      xwayland-satellite
     ];
 
-    home-manager.users.chris.imports = [../../home/niri.nix];
+    home-manager.users.chris.imports = [
+      ../../home/cosmic.nix
+      ../../home/niri.nix
+    ];
   };
 }
