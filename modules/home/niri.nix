@@ -75,6 +75,7 @@
         // Apps
         Mod+Return { spawn "ghostty"; }
         Mod+D { spawn "fuzzel"; }
+        Mod+E { spawn "cosmic-files"; }
         Mod+Q { close-window; }
         Mod+Shift+Slash { show-hotkey-overlay; }
         Mod+W { toggle-overview; }
