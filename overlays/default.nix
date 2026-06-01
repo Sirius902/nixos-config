@@ -608,6 +608,29 @@
         '';
       };
 
+      # Allow Archipelago's dolphin-memory-engine to read Dolphin's memory
+      # via process_vm_readv despite ptrace_scope=1.
+      qtWrapperArgs =
+        (prevAttrs.qtWrapperArgs or [])
+        ++ (let
+          allowPtrace = final.stdenv.mkDerivation {
+            name = "allow-ptrace";
+            dontUnpack = true;
+            installPhase = ''
+              mkdir -p $out/lib
+              $CC -shared -fPIC -o $out/lib/allow-ptrace.so -x c - <<'CSRC'
+              #include <sys/prctl.h>
+              __attribute__((constructor))
+              static void allow_ptrace(void) {
+                prctl(0x59616d61, -1L, 0, 0, 0);
+              }
+              CSRC
+            '';
+          };
+        in [
+          "--prefix LD_PRELOAD : ${allowPtrace}/lib/allow-ptrace.so"
+        ]);
+
       passthru =
         (prevAttrs.passthru or {})
         // {
