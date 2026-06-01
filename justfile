@@ -38,10 +38,10 @@ switch-to-configuration drv:
     "{{ drv }}/bin/switch-to-configuration" switch
 
 build-raspberrypi:
-    nix {{ NIX_FLAGS }} build "path:.#nixosConfigurations.raspberrypi.config.system.build.toplevel"
+    nix {{ NIX_FLAGS }} build --no-link --print-out-paths "path:.#nixosConfigurations.raspberrypi.config.system.build.toplevel"
 
 build-iso:
-    nix {{ NIX_FLAGS }} build "path:.#nixosConfigurations.iso.config.system.build.isoImage"
+    nix {{ NIX_FLAGS }} build --no-link --print-out-paths "path:.#nixosConfigurations.iso.config.system.build.isoImage"
 
 anywhere ip:
     #!/usr/bin/env bash
