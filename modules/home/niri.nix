@@ -1,7 +1,16 @@
-_: {
+{pkgs, ...}: {
+  dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+
+  xdg.configFile."autostart/nm-applet.desktop".text = ''
+    [Desktop Entry]
+    Hidden=true
+  '';
+
   xdg.configFile."niri/config.kdl".text = ''
     input {
         keyboard {
+            repeat-delay 400
+            repeat-rate 25
             xkb {
                 layout "us"
             }
@@ -10,6 +19,16 @@ _: {
             tap
             natural-scroll
         }
+    }
+
+    output "DP-1" {
+        mode "2560x1440@165.080"
+        variable-refresh-rate on-demand=true
+    }
+
+    output "DP-2" {
+        mode "2560x1440@165.080"
+        variable-refresh-rate on-demand=true
     }
 
     layout {
@@ -23,39 +42,68 @@ _: {
         }
 
         focus-ring {
-            width 2
-            active-color "#7fc8ff"
+            width 3
+            active-color "#7263df"
             inactive-color "#4c4c4c"
         }
     }
 
+    // Match COSMIC window corner rounding
+    window-rule {
+        geometry-corner-radius 8 8 8 8
+        clip-to-geometry true
+    }
+
     prefer-no-csd
+
+    screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+    // Startup
+    spawn-at-startup "xwayland-satellite"
+    spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/chris/Pictures/Screenshot_2025-05-08_23-50-08.png"
+    spawn-at-startup "waybar"
+    spawn-at-startup "mako"
+    spawn-at-startup "sunsetr"
+    spawn-at-startup "swayidle" "-w" "timeout" "300" "swaylock -f" "timeout" "600" "niri msg action power-off-monitors" "resume" "niri msg action power-on-monitors"
+    spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
+
+    hotkey-overlay {
+        skip-at-startup
+    }
 
     binds {
         // Apps
         Mod+Return { spawn "ghostty"; }
         Mod+D { spawn "fuzzel"; }
         Mod+Q { close-window; }
+        Mod+Shift+Slash { show-hotkey-overlay; }
+        Mod+Escape { spawn "swaylock" "-f"; }
 
         // Focus
         Mod+H     { focus-column-left; }
         Mod+L     { focus-column-right; }
         Mod+J     { focus-window-down; }
         Mod+K     { focus-window-up; }
-        Mod+Left  { focus-column-left; }
-        Mod+Right { focus-column-right; }
-        Mod+Down  { focus-window-down; }
-        Mod+Up    { focus-window-up; }
+        Mod+Left      { focus-column-left; }
+        Mod+Right     { focus-column-right; }
+        Mod+Down      { focus-window-down; }
+        Mod+Up        { focus-window-up; }
 
         // Move
         Mod+Shift+H     { move-column-left; }
         Mod+Shift+L     { move-column-right; }
         Mod+Shift+J     { move-window-down; }
         Mod+Shift+K     { move-window-up; }
-        Mod+Shift+Left  { move-column-left; }
-        Mod+Shift+Right { move-column-right; }
-        Mod+Shift+Down  { move-window-down; }
-        Mod+Shift+Up    { move-window-up; }
+        Mod+Shift+Left      { move-column-left; }
+        Mod+Shift+Right     { move-column-right; }
+        Mod+Shift+Down      { move-window-down; }
+        Mod+Shift+Up        { move-window-up; }
+
+        // Scroll navigation
+        Mod+WheelScrollDown       cooldown-ms=150 { focus-column-right; }
+        Mod+WheelScrollUp         cooldown-ms=150 { focus-column-left; }
+        Mod+Shift+WheelScrollDown cooldown-ms=150 { focus-window-down; }
+        Mod+Shift+WheelScrollUp   cooldown-ms=150 { focus-window-up; }
 
         // Column / window manipulation
         Mod+R       { switch-preset-column-width; }
@@ -63,6 +111,7 @@ _: {
         Mod+Shift+F { fullscreen-window; }
         Mod+Comma   { consume-window-into-column; }
         Mod+Period  { expel-window-from-column; }
+        Mod+C       { center-column; }
 
         // Workspaces
         Mod+1 { focus-workspace 1; }
@@ -70,26 +119,171 @@ _: {
         Mod+3 { focus-workspace 3; }
         Mod+4 { focus-workspace 4; }
         Mod+5 { focus-workspace 5; }
+        Mod+6 { focus-workspace 6; }
+        Mod+7 { focus-workspace 7; }
+        Mod+8 { focus-workspace 8; }
+        Mod+9 { focus-workspace 9; }
         Mod+Shift+1 { move-window-to-workspace 1; }
         Mod+Shift+2 { move-window-to-workspace 2; }
         Mod+Shift+3 { move-window-to-workspace 3; }
         Mod+Shift+4 { move-window-to-workspace 4; }
         Mod+Shift+5 { move-window-to-workspace 5; }
-        Mod+Page_Down { focus-workspace-down; }
-        Mod+Page_Up   { focus-workspace-up; }
+        Mod+Shift+6 { move-window-to-workspace 6; }
+        Mod+Shift+7 { move-window-to-workspace 7; }
+        Mod+Shift+8 { move-window-to-workspace 8; }
+        Mod+Shift+9 { move-window-to-workspace 9; }
+        Mod+Page_Down      { focus-workspace-down; }
+        Mod+Page_Up        { focus-workspace-up; }
+        Mod+Ctrl+Page_Down { move-workspace-down; }
+        Mod+Ctrl+Page_Up   { move-workspace-up; }
+
+        // Monitors
+        Mod+Ctrl+H     { focus-monitor-left; }
+        Mod+Ctrl+L     { focus-monitor-right; }
+        Mod+Ctrl+Left  { focus-monitor-left; }
+        Mod+Ctrl+Right { focus-monitor-right; }
+        Mod+Ctrl+Shift+H     { move-window-to-monitor-left; }
+        Mod+Ctrl+Shift+L     { move-window-to-monitor-right; }
+        Mod+Ctrl+Shift+Left  { move-window-to-monitor-left; }
+        Mod+Ctrl+Shift+Right { move-window-to-monitor-right; }
 
         // Screenshots
         Print           { screenshot; }
         Mod+Print       { screenshot-screen; }
         Mod+Shift+Print { screenshot-window; }
 
-        // Audio
-        XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
-        XF86AudioLowerVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05-"; }
-        XF86AudioMute        { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+        // Audio / Media
+        XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
+        XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05-"; }
+        XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+        XF86AudioPlay        allow-when-locked=true { spawn "playerctl" "play-pause"; }
+        XF86AudioNext        allow-when-locked=true { spawn "playerctl" "next"; }
+        XF86AudioPrev        allow-when-locked=true { spawn "playerctl" "previous"; }
+
+        // Night shift toggle
+        Mod+N { spawn "sh" "-c" "if sunsetr status | grep -q 'Active preset: night'; then sunsetr preset default; else sunsetr preset night; fi"; }
 
         // Session
         Mod+Shift+E { quit; }
+        Mod+Shift+P { power-off-monitors; }
     }
+  '';
+
+  xdg.configFile."waybar/config".text = builtins.toJSON {
+    layer = "top";
+    position = "top";
+    height = 30;
+    modules-left = ["niri/workspaces" "niri/window"];
+    modules-center = ["clock"];
+    modules-right = ["tray" "pulseaudio" "network"];
+    "niri/workspaces" = {
+      format = "{icon}";
+      format-icons = {
+        active = "";
+        default = "";
+      };
+    };
+    "niri/window" = {
+      max-length = 50;
+    };
+    clock = {
+      format = "{:%a %b %d  %I:%M %p}";
+      tooltip-format = "<tt>{calendar}</tt>";
+    };
+    pulseaudio = {
+      format = "{icon} {volume}%";
+      format-muted = " muted";
+      format-icons.default = ["" "" ""];
+      on-click = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+    };
+    network = {
+      format-wifi = " {essid}";
+      format-ethernet = " {ifname}";
+      format-disconnected = " disconnected";
+      tooltip-format = "{ipaddr}";
+    };
+    tray = {
+      spacing = 8;
+    };
+  };
+
+  xdg.configFile."waybar/style.css".text = ''
+    * {
+        font-family: "JetBrainsMono Nerd Font", monospace;
+        font-size: 13px;
+    }
+
+    window#waybar {
+        background-color: rgba(27, 27, 27, 0.9);
+        color: #e0e0e0;
+    }
+
+    #workspaces button {
+        padding: 0 6px;
+        color: #888;
+        border: none;
+        border-radius: 0;
+    }
+
+    #workspaces button.active {
+        color: #7263df;
+    }
+
+    #clock, #pulseaudio, #network, #tray {
+        padding: 0 10px;
+    }
+
+    #window {
+        padding: 0 10px;
+        color: #aaa;
+    }
+  '';
+
+  xdg.configFile."fuzzel/fuzzel.ini".text = ''
+    [main]
+    font=JetBrainsMono Nerd Font:size=12
+    terminal=ghostty -e
+    layer=overlay
+
+    [colors]
+    background=1b1b1bee
+    text=e0e0e0ff
+    match=7263dfff
+    selection=7263df40
+    selection-text=e0e0e0ff
+    border=7263dfff
+    prompt=7263dfff
+
+    [border]
+    radius=8
+    width=2
+  '';
+
+  xdg.configFile."mako/config".text = ''
+    font=JetBrainsMono Nerd Font 11
+    background-color=#1b1b1bee
+    text-color=#e0e0e0
+    border-color=#7263df
+    border-radius=8
+    border-size=2
+    padding=12
+    default-timeout=5000
+  '';
+
+  xdg.configFile."sunsetr/sunsetr.toml".text = ''
+    transition_mode = "finish_by"
+    sunset = "20:00:00"
+    sunrise = "07:00:00"
+    transition_duration = 45
+    night_temp = 3400
+    day_temp = 6500
+    night_gamma = 100
+    day_gamma = 100
+  '';
+
+  xdg.configFile."sunsetr/presets/night/sunsetr.toml".text = ''
+    transition_mode = "static"
+    static_temp = 3400
+    static_gamma = 100
   '';
 }
