@@ -33,6 +33,7 @@
 
     layout {
         gaps 8
+        center-focused-column "on-overflow"
         default-column-width { proportion 0.5; }
 
         preset-column-widths {
