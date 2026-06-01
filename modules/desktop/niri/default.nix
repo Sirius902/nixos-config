@@ -12,7 +12,7 @@ in {
       useNautilus = false;
     };
 
-    security.pam.services.swaylock = {};
+    security.pam.services.hyprlock = {};
 
     environment.systemPackages = with pkgs; [
       fuzzel
@@ -21,7 +21,7 @@ in {
       swaybg
       sunsetr
       swayidle
-      swaylock
+      hyprlock
       waybar
       xwayland-satellite
     ];
