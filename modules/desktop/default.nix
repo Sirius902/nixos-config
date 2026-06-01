@@ -65,6 +65,7 @@ in {
     # native PipeWire so that Discord's PulseAudio-based stream capture can
     # see their audio.
     environment.sessionVariables.SDL_AUDIODRIVER = "pulse";
+    environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
     programs.appimage = {
       enable = true;
