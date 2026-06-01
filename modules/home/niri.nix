@@ -1,4 +1,15 @@
-{pkgs, ...}: {
+{pkgs, ...}: let
+  powerMenu = pkgs.writeShellScript "power-menu" ''
+    choice=$(printf "Lock\nSuspend\nReboot\nShutdown\nLogout" | fuzzel --dmenu --prompt "Power: ")
+    case "$choice" in
+      Lock) swaylock -f ;;
+      Suspend) systemctl suspend ;;
+      Reboot) systemctl reboot ;;
+      Shutdown) systemctl poweroff ;;
+      Logout) niri msg action quit ;;
+    esac
+  '';
+in {
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
 
   xdg.configFile."autostart/nm-applet.desktop".text = ''
@@ -157,7 +168,7 @@
         Mod+N { spawn "sh" "-c" "if sunsetr status | grep -q 'Active preset: night'; then sunsetr preset default; else sunsetr preset night; fi"; }
 
         // Session
-        Mod+Shift+E { quit; }
+        Mod+Shift+Escape { spawn "${powerMenu}"; }
         Mod+Shift+P { power-off-monitors; }
     }
   '';
