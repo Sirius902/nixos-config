@@ -262,6 +262,11 @@
     font=JetBrainsMono Nerd Font:size=12
     terminal=ghostty -e
     layer=overlay
+    show-actions=yes
+    match-mode=fzf
+    icon-theme=Cosmic
+    placeholder=Search apps...
+    selection-radius=8
 
     [colors]
     background=1b1b1bee
