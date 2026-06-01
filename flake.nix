@@ -108,7 +108,7 @@
             type = "app";
             program = let
               mkUpdate = attr: drv:
-                if drv ? updateScript
+                if isOurUpdate attr drv
                 then let
                   injectArgs = cmd:
                     lib.replaceString "/bin/nix-update" ''/bin/nix-update "--flake" "--commit" "${attr}"''
@@ -123,7 +123,12 @@
                 else "";
 
               defaultPkgs = self.packages.${system};
-              updatableAttrs = lib.attrNames (lib.filterAttrs (_: drv: drv ? updateScript) defaultPkgs);
+              isOurUpdate = _: drv: let
+                passthru = drv.passthru or {};
+                updatePos = builtins.unsafeGetAttrPos "updateScript" passthru;
+              in
+                updatePos != null && lib.hasPrefix (toString ./.) updatePos.file;
+              updatableAttrs = lib.attrNames (lib.filterAttrs isOurUpdate defaultPkgs);
             in
               lib.getExe (pkgs.writeShellScriptBin "update" ''
                 ${lib.concatStringsSep "\n" (lib.mapAttrsToList mkUpdate self.packages.${system})}
@@ -181,13 +186,12 @@
           in
             lib.unique (builtins.concatMap tryGetNames overlays);
           overlayPackages = let
-            isUpdatable = name: let
-              passthru = patchedPkgs.${name}.passthru or {};
-              updatePos = builtins.unsafeGetAttrPos "updateScript" passthru;
+            isDerivation = name: let
+              result = builtins.tryEval (lib.isDerivation patchedPkgs.${name});
             in
-              updatePos != null && lib.hasPrefix (toString ./.) updatePos.file;
+              result.success && result.value;
           in
-            lib.genAttrs (builtins.filter isUpdatable overlayNames) (name: patchedPkgs.${name});
+            lib.genAttrs (builtins.filter isDerivation overlayNames) (name: patchedPkgs.${name});
         in
           (lib.mapAttrs (name: _: patchedPkgs.${name}) allPackages)
           // overlayPackages
