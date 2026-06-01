@@ -2,6 +2,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/profiles/workstation.nix
+    ../../modules/pipewire/nommo-volume-fix.nix
   ];
 
   networking.hostId = "1a14084a";
