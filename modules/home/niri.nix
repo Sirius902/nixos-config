@@ -165,7 +165,7 @@ in {
         XF86AudioPrev        allow-when-locked=true { spawn "playerctl" "previous"; }
 
         // Night shift toggle
-        Mod+N { spawn "sh" "-c" "if sunsetr status | grep -q 'Active preset: night'; then sunsetr preset default; else sunsetr preset night; fi"; }
+        Mod+N { spawn "sh" "-c" "if sunsetr status | grep -q 'State: static'; then sunsetr set transition_mode=finish_by; else sunsetr set transition_mode=static; fi"; }
 
         // Session
         Mod+Shift+Escape { spawn "${powerMenu}"; }
@@ -305,10 +305,6 @@ in {
     day_temp = 6500
     night_gamma = 100
     day_gamma = 100
-  '';
-
-  xdg.configFile."sunsetr/presets/night/sunsetr.toml".text = ''
-    transition_mode = "static"
     static_temp = 3400
     static_gamma = 100
   '';
