@@ -175,6 +175,7 @@ in
       (lib.cmakeFeature "AURORA_SDL3_PROVIDER" "system")
       (lib.cmakeFeature "AURORA_NOD_PROVIDER" "package")
       (lib.cmakeBool "CMAKE_CROSSCOMPILING" true)
+      (lib.cmakeBool "CMAKE_BUILD_WITH_INSTALL_RPATH" true)
     ];
 
     strictDeps = true;
@@ -185,9 +186,14 @@ in
         runHook preInstall
       ''
       + lib.optionalString stdenv.hostPlatform.isLinux ''
-        mkdir -p $out/bin
+        mkdir -p $out/bin $out/lib
         cp dusklight $out/bin/dusklight
         cp -r ./res $out/bin/res
+
+        cp librmlui.so librmlui_debugger.so $out/lib/
+        cp libs/freeverb/libfreeverb.so $out/lib/
+        cp _deps/tracy-build/libTracyClient.so* $out/lib/
+        patchelf --set-rpath "$(patchelf --print-rpath $out/bin/dusklight):$out/lib" $out/bin/dusklight
 
         install -Dm644 $src/platforms/freedesktop/dev.twilitrealm.dusk.desktop \
           $out/share/applications/dev.twilitrealm.dusk.desktop
