@@ -343,7 +343,6 @@ in {
 
   xdg.configFile."mako/config".text = ''
     font=JetBrainsMono Nerd Font 11
-    width=400
     background-color=#1b1b1bee
     text-color=#e0e0e0
     border-color=#7263df
