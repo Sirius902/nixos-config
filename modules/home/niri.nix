@@ -29,6 +29,9 @@
 in {
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
 
+  # GTK3 default (500ms) makes waybar tooltips feel sluggish.
+  gtk.gtk3.extraConfig."gtk-tooltip-timeout" = 100;
+
   xdg.configFile."systemd/user/xdg-desktop-portal-gtk.service.d/dark-theme.conf".text = ''
     [Service]
     Environment=GTK_THEME=Adwaita:dark
