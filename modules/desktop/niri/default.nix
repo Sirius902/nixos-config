@@ -20,8 +20,10 @@ in {
 
     environment.systemPackages = with pkgs; [
       fuzzel
+      grim
       mako
       playerctl
+      slurp
       swaybg
       sunsetr
       swayidle
