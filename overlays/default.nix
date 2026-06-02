@@ -608,7 +608,7 @@
   })
 
   (final: prev: {
-    zellij = prev.zellij.overrideAttrs (prevAttrs: {
+    zellij-unwrapped = prev.zellij-unwrapped.overrideAttrs (prevAttrs: {
       patches =
         (prevAttrs.patches or [])
         ++ [
