@@ -31,6 +31,14 @@ in {
 
         bindkey '^R' history-incremental-search-backward
         prompt pure
+
+        scratch() {
+          local dir=$(mktemp -d)
+          echo "Scratch dir: $dir"
+          (cd "$dir" && exec $SHELL)
+          rm -rf "$dir"
+          echo "Cleaned up $dir"
+        }
       ''
       + (lib.optionalString stdenv.hostPlatform.isLinux ''
         alias open='xdg-open 2>/dev/null'
