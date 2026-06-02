@@ -102,6 +102,12 @@ in {
             url = "https://github.com/thefossguy/nixpkgs/commit/88cfc54552d5678f27d292fd75df963aecd3b357.patch?full_index=1";
             hash = "sha256-x5139yPSao3+j4FbXRoNQtpvW7Ou1NImXcbxoGUOJlc=";
           })
+          # Split zellij-unwrapped into separate package https://github.com/NixOS/nixpkgs/pull/527096
+          (pkgs.fetchpatch2 {
+            name = "split-zellij-unwrapped.patch";
+            url = "https://github.com/NixOS/nixpkgs/commit/a5f62e1a28e7cd37807d2bf447dab391e94dbcd2.patch?full_index=1";
+            hash = "sha256-ISYqtoWKeuvs7Diqesg9WRPl/WvSekAgw653oATlK9I=";
+          })
         ]
         ++ (extraPatches pkgs);
     };
