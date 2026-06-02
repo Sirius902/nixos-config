@@ -94,7 +94,7 @@ in {
 
     prefer-no-csd
 
-    screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+    screenshot-path "~/Pictures/Screenshots/Screenshot_%Y-%m-%d_%H-%M-%S.png"
 
     // Startup
     spawn-at-startup "xwayland-satellite"
