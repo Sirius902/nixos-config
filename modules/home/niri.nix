@@ -105,7 +105,7 @@ in {
     spawn-at-startup "waybar"
     spawn-at-startup "mako"
     spawn-at-startup "sunsetr"
-    spawn-at-startup "swayidle" "-w" "timeout" "300" "swaylock -f" "timeout" "600" "niri msg action power-off-monitors" "resume" "niri msg action power-on-monitors"
+    spawn-at-startup "swayidle" "-w" "timeout" "300" "swaylock -f" "timeout" "300" "niri msg action power-off-monitors" "resume" "niri msg action power-on-monitors"
     spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
 
     hotkey-overlay {
