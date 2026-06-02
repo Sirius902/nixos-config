@@ -34,7 +34,7 @@
   nlohmann_json,
   nix-update-script,
 }: let
-  rev = "b26f3f7f5131a20fe591cf8a6d8e9d829c220462";
+  rev = "08c4442fdf52d1c314ce13e97738baadcd880d6e";
 
   dawnVersion = "v20260523.201736";
   nodVersion = "v2.0.0-alpha.8";
@@ -86,13 +86,13 @@
 in
   stdenv.mkDerivation {
     pname = "dusklight";
-    version = "0-unstable-2026-05-31";
+    version = "0-unstable-2026-06-04";
 
     src = fetchFromGitHub {
       owner = "TwilitRealm";
       repo = "dusklight";
       inherit rev;
-      hash = "sha256-bjY9VQOyYktVZU6p7AH1auYdkVpyBcD0DxJXI6O5/l8=";
+      hash = "sha256-pMYdgpSiFQxqbs0VD+4pB+CRX0wqK157Ab36te3OPbw=";
       fetchSubmodules = true;
     };
 
