@@ -167,6 +167,8 @@ in {
         Mod+Ctrl+Right { focus-monitor-right; }
         Mod+Ctrl+Shift+Left  { move-window-to-monitor-left; }
         Mod+Ctrl+Shift+Right { move-window-to-monitor-right; }
+        Mod+Home { move-workspace-to-monitor-left; }
+        Mod+End  { move-workspace-to-monitor-right; }
 
         // Screenshots
         Print           { screenshot; }
