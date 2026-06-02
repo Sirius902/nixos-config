@@ -340,12 +340,14 @@ in {
 
   xdg.configFile."mako/config".text = ''
     font=JetBrainsMono Nerd Font 11
+    width=400
     background-color=#1b1b1bee
     text-color=#e0e0e0
     border-color=#7263df
     border-radius=8
     border-size=2
     padding=12
+    max-visible=5
     default-timeout=5000
   '';
 
