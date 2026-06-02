@@ -16,33 +16,6 @@
     fi
   '';
 
-  screenshotDir = "$HOME/Pictures/Screenshots";
-  screenshotName = "Screenshot_$(date +%Y-%m-%d_%H-%M-%S).png";
-
-  # Usage: niri-screenshot <mode> [--save]
-  #   mode: region | screen | window
-  #   --save: also save to file (always copies to clipboard)
-  niriScreenshot = pkgs.writeShellScript "niri-screenshot" ''
-    mode="$1"
-    save="$2"
-    tmp=$(mktemp /tmp/screenshot-XXXXXX.png)
-    trap 'rm -f "$tmp"' EXIT
-
-    case "$mode" in
-      region) grim -g "$(slurp)" "$tmp" || exit 0 ;;
-      screen) grim "$tmp" ;;
-      window) grim -g "$(niri msg --json focused-window | ${pkgs.jq}/bin/jq -r '"\(.x),\(.y) \(.width)x\(.height)"')" "$tmp" ;;
-    esac
-
-    wl-copy < "$tmp"
-
-    if [ "$save" = "--save" ]; then
-      dir="${screenshotDir}"
-      mkdir -p "$dir"
-      cp "$tmp" "$dir/${screenshotName}"
-    fi
-  '';
-
   powerMenu = pkgs.writeShellScript "power-menu" ''
     choice=$(printf "Lock\nSuspend\nReboot\nShutdown\nLogout" | fuzzel --dmenu --prompt "Power: ")
     case "$choice" in
@@ -124,7 +97,7 @@ in {
 
     prefer-no-csd
 
-    screenshot-path null
+    screenshot-path "~/Pictures/Screenshots/Screenshot_%Y-%m-%d_%H-%M-%S.png"
 
     // Startup
     spawn-at-startup "xwayland-satellite"
@@ -209,14 +182,10 @@ in {
         Mod+Home { move-workspace-to-monitor-left; }
         Mod+End  { move-workspace-to-monitor-right; }
 
-        // Screenshots (clipboard only)
-        Print           { spawn "${niriScreenshot}" "region"; }
-        Mod+Print       { spawn "${niriScreenshot}" "screen"; }
-        Mod+Shift+Print { spawn "${niriScreenshot}" "window"; }
-        // Screenshots (save to file + clipboard)
-        Shift+Print           { spawn "${niriScreenshot}" "region" "--save"; }
-        Mod+Ctrl+Print        { spawn "${niriScreenshot}" "screen" "--save"; }
-        Mod+Ctrl+Shift+Print  { spawn "${niriScreenshot}" "window" "--save"; }
+        // Screenshots
+        Print           { screenshot; }
+        Mod+Print       { screenshot-screen; }
+        Mod+Shift+Print { screenshot-window; }
 
         // Audio / Media
         XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
