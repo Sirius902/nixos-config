@@ -28,6 +28,7 @@
   '';
 in {
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+  home.sessionVariables.GTK_THEME = "Adwaita:dark";
 
   xdg.configFile."autostart/nm-applet.desktop".text = ''
     [Desktop Entry]
