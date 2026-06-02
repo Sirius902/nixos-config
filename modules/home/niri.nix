@@ -207,18 +207,39 @@ in {
   xdg.configFile."swaylock/config".text = ''
     image=/home/chris/Pictures/Screenshot_2025-05-08_23-50-08.png
     scaling=fill
-    color=1b1b1b
-    inside-color=1b1b1b
-    ring-color=4c4c4c
-    key-hl-color=7263df
-    line-color=1b1b1b
+    effect-blur=20x6
+    effect-vignette=0.3:0.8
+
+    clock
+    timestr=%I:%M %p
+    datestr=%A, %B %e
+
+    font=JetBrainsMono Nerd Font
+    font-size=48
     text-color=e0e0e0
-    inside-ver-color=1b1b1b
+
+    indicator
+    indicator-radius=120
+    indicator-thickness=8
+
+    color=1b1b1b
+    inside-color=1b1b1b00
+    ring-color=4c4c4c80
+    key-hl-color=7263df
+    line-color=00000000
+    separator-color=00000000
+
+    inside-ver-color=1b1b1b00
     ring-ver-color=7263df
-    inside-wrong-color=1b1b1b
+    text-ver-color=e0e0e0
+    inside-wrong-color=1b1b1b00
     ring-wrong-color=cc6666
     text-wrong-color=cc6666
     bs-hl-color=cc6666
+
+    inside-clear-color=1b1b1b00
+    ring-clear-color=e6c84d
+    text-clear-color=e0e0e0
   '';
 
   xdg.configFile."waybar/config".text = builtins.toJSON {

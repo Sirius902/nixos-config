@@ -25,7 +25,7 @@ in {
       swaybg
       sunsetr
       swayidle
-      swaylock
+      swaylock-effects
       waybar
       xwayland-satellite
     ];
