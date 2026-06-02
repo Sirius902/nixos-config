@@ -346,6 +346,7 @@ in {
     border-radius=8
     border-size=2
     padding=12
+    max-visible=5
     default-timeout=5000
   '';
 
