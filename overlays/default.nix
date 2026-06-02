@@ -215,8 +215,8 @@
         ++ [
           (final.fetchpatch2 {
             name = "add-window-cycle.patch";
-            url = "https://github.com/Sirius902/gamescope/commit/40641060430bfdf2a7e96832058fd41a86e59f46.patch?full_index=1";
-            hash = "sha256-PTt0hQrbfWXiPCppJwRamcMqyb2iNmXyMXv8wkLgjIc=";
+            url = "https://github.com/Sirius902/gamescope/commit/9d6513068846f1b9fea5afc326fc9d2758079fdb.patch?full_index=1";
+            hash = "sha256-yNu7axkkgilokv5qjmZdr5HcTOkQ9AE5tUkb7QcRHbk=";
           })
           ../patches/gamescope/0001-main-Strip-gameoverlayrenderer.so-from-gamescope-s-o.patch
           (final.fetchpatch2 {
