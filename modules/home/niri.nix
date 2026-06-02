@@ -196,7 +196,7 @@ in {
     height = 30;
     modules-left = ["niri/workspaces" "niri/window"];
     modules-center = ["clock"];
-    modules-right = ["tray" "pulseaudio" "network"];
+    modules-right = ["tray" "wireplumber" "network"];
     "niri/workspaces" = {
       format = "{icon}";
       format-icons = {
@@ -211,11 +211,12 @@ in {
       format = "{:%a %b %d  %I:%M %p}";
       tooltip-format = "<tt>{calendar}</tt>";
     };
-    pulseaudio = {
+    wireplumber = {
       format = "{icon} {volume}%";
       format-muted = " muted";
-      format-icons.default = ["" "" ""];
+      format-icons = ["" "" ""];
       on-click = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+      on-click-right = "cosmic-settings sound";
     };
     network = {
       format-wifi = " {essid}";
@@ -250,7 +251,7 @@ in {
         color: #7263df;
     }
 
-    #clock, #pulseaudio, #network, #tray {
+    #clock, #wireplumber, #network, #tray {
         padding: 0 10px;
     }
 
