@@ -103,12 +103,6 @@ in {
             url = "https://github.com/kritdass/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.patch?full_index=1";
             hash = "sha256-TvrGKoaPnrkIZyntbv/C6m55e2p2kLECtxH7/fViXM4=";
           })
-          # Fix fetchgit non-determinism https://github.com/NixOS/nixpkgs/pull/524430
-          (pkgs.fetchpatch2 {
-            name = "fetchgit-disable-maintenance.patch";
-            url = "https://github.com/me-and/nixpkgs/commit/011471c7f24920fb29e18124da24232d9faf29b0.patch?full_index=1";
-            hash = "sha256-CgBC2jq9IcjUrWgWSeXhvKJOJMdJ+KWwsBxxqY//5F0=";
-          })
           # Fix fetchgit non-determinism for submodules https://github.com/NixOS/nixpkgs/pull/525255
           (pkgs.fetchpatch2 {
             name = "fetchgit-disable-maintenance-via-env.patch";
