@@ -1,4 +1,21 @@
 {pkgs, ...}: let
+  caffeineToggle = pkgs.writeShellScript "caffeine-toggle" ''
+    if pgrep -f 'systemd-inhibit.*caffeine' >/dev/null 2>&1; then
+      pkill -f 'systemd-inhibit.*caffeine'
+    else
+      systemd-inhibit --what=idle --why=caffeine --who=waybar sleep infinity &
+    fi
+    pkill -RTMIN+8 waybar
+  '';
+
+  caffeineStatus = pkgs.writeShellScript "caffeine-status" ''
+    if pgrep -f 'systemd-inhibit.*caffeine' >/dev/null 2>&1; then
+      echo '{"text": "☕", "tooltip": "Caffeine on", "class": "activated"}'
+    else
+      echo '{"text": "💤", "tooltip": "Caffeine off", "class": "deactivated"}'
+    fi
+  '';
+
   powerMenu = pkgs.writeShellScript "power-menu" ''
     choice=$(printf "Lock\nSuspend\nReboot\nShutdown\nLogout" | fuzzel --dmenu --prompt "Power: ")
     case "$choice" in
@@ -196,7 +213,7 @@ in {
     height = 30;
     modules-left = ["niri/workspaces" "niri/window"];
     modules-center = ["clock"];
-    modules-right = ["tray" "wireplumber" "network"];
+    modules-right = ["custom/caffeine" "cpu" "memory" "tray" "wireplumber" "network"];
     "niri/workspaces" = {
       format = "{icon}";
       format-icons = {
@@ -210,6 +227,29 @@ in {
     clock = {
       format = "{:%a %b %d  %I:%M %p}";
       tooltip-format = "<tt>{calendar}</tt>";
+    };
+    "custom/caffeine" = {
+      exec = "${caffeineStatus}";
+      return-type = "json";
+      interval = "once";
+      signal = 8;
+      on-click = "${caffeineToggle}";
+    };
+    cpu = {
+      format = "CPU {usage}%";
+      interval = 5;
+      states = {
+        warning = 50;
+        critical = 80;
+      };
+    };
+    memory = {
+      format = "RAM {percentage}%";
+      interval = 5;
+      states = {
+        warning = 50;
+        critical = 80;
+      };
     };
     wireplumber = {
       format = "{icon} {volume}%";
@@ -251,8 +291,20 @@ in {
         color: #7263df;
     }
 
-    #clock, #wireplumber, #network, #tray {
+    #clock, #wireplumber, #network, #tray, #cpu, #memory, #idle-inhibitor {
         padding: 0 10px;
+    }
+
+    #custom-caffeine.activated {
+        color: #7263df;
+    }
+
+    #cpu.warning, #memory.warning {
+        color: #e6c84d;
+    }
+
+    #cpu.critical, #memory.critical {
+        color: #cc6666;
     }
 
     #window {
