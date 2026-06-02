@@ -285,21 +285,20 @@
   })
 
   (final: prev: {
-    shadps4 = prev.shadps4.overrideAttrs (prevAttrs: {
+    shadps4 = prev.shadps4.overrideAttrs (finalAttrs: prevAttrs: {
       version = "0.15.0-unstable-2026-05-31";
 
       src = prevAttrs.src.override {
         tag = null;
         rev = "2736ce8c2e38ac637b985b59df259702d5481f68";
-        hash = "sha256-4xl8UkMyOCM8OQ8D/bmNStw0cG5f7i/uSp+jy0pCNIo=";
-        fetchSubmodules = false;
+        hash = "sha256-68soQyV8Yzs+N9KXT36HVKkEOibBOjxzK0ys4HsP8TE=";
 
-        leaveDotGit = false;
-        postFetch = null;
         postCheckout = ''
           cd "$out"
 
-          # Only fetch required submodules
+          git rev-parse --short=8 HEAD > $out/COMMIT
+          date -u -d "@$(git log -1 --pretty=%ct)" "+%Y-%m-%dT%H:%M:%SZ" > $out/SOURCE_DATE_EPOCH
+
           git -C externals submodule update --init --depth 1 \
             ImGuiFileDialog \
             LibAtrac9 \
@@ -317,11 +316,18 @@
             tracy \
             zydis
           git -C externals/sirit submodule update --init --depth 1 externals/SPIRV-Headers
-
-          git rev-parse --short=8 HEAD > $out/COMMIT
-          date -u -d "@$(git log -1 --pretty=%ct)" "+%Y-%m-%dT%H:%M:%SZ" > $out/SOURCE_DATE_EPOCH
+          git -C externals/zydis submodule update --init --depth 1 dependencies/zycore
         '';
       };
+
+      postPatch = ''
+        substituteInPlace src/common/scm_rev.cpp.in \
+          --replace-fail @APP_VERSION@ ${finalAttrs.version} \
+          --replace-fail @GIT_REV@ $(cat COMMIT) \
+          --replace-fail @GIT_BRANCH@ ${finalAttrs.version} \
+          --replace-fail @GIT_DESC@ nixpkgs \
+          --replace-fail @BUILD_DATE@ $(cat SOURCE_DATE_EPOCH)
+      '';
 
       cmakeFlags =
         (prevAttrs.cmakeFlags or [])
@@ -332,12 +338,8 @@
       buildInputs =
         (prevAttrs.buildInputs or [])
         ++ [
-          final.cli11
-          final.libpng
-          final.miniz
-          final.nlohmann_json
+          final.glslang
           final.openal-soft
-          final.sdl3
         ];
 
       passthru =
@@ -351,53 +353,75 @@
           };
         };
     });
-  })
 
-  (
-    final: prev: {
-      shadps4-qt = prev.shadps4-qt.overrideAttrs (prevAttrs: {
-        version = "0-unstable-2026-05-28";
+    shadps4-qtlauncher = prev.shadps4-qtlauncher.overrideAttrs (finalAttrs: prevAttrs: {
+      version = "0-unstable-2026-05-28";
 
-        src = prevAttrs.src.override {
-          tag = null;
-          rev = "18683e84b8c51e59554155546febe9931f685b6f";
-          hash = "sha256-2NJl8mYmtYtDOkBiwKOS2fRrhg2ElzR8lsAPI24xrFg=";
-          fetchSubmodules = false;
+      src = prevAttrs.src.override {
+        tag = null;
+        rev = "18683e84b8c51e59554155546febe9931f685b6f";
+        hash = "sha256-2NJl8mYmtYtDOkBiwKOS2fRrhg2ElzR8lsAPI24xrFg=";
 
-          leaveDotGit = false;
-          postCheckout = ''
-            cd "$out"
+        postCheckout = ''
+          cd "$out"
 
-            # Only fetch required submodules
-            git -C externals submodule update --init --depth 1 \
-              json \
-              spdlog \
-              volk
+          git rev-parse --short=8 HEAD > $out/COMMIT
+          date -u -d "@$(git log -1 --pretty=%ct)" "+%Y-%m-%dT%H:%M:%SZ" > $out/SOURCE_DATE_EPOCH
 
-            git rev-parse --short=8 HEAD > $out/COMMIT
-            date -u -d "@$(git log -1 --pretty=%ct)" "+%Y-%m-%dT%H:%M:%SZ" > $out/SOURCE_DATE_EPOCH
-          '';
-        };
+          git -C externals submodule update --init --depth 1 \
+            json \
+            spdlog \
+            volk
+        '';
+      };
 
-        cmakeFlags =
-          (prevAttrs.cmakeFlags or [])
-          ++ [
-            (final.lib.cmakeBool "SPDLOG_FMT_EXTERNAL" true)
-          ];
+      postPatch = ''
+        substituteInPlace src/common/scm_rev.cpp.in \
+          --replace-fail @APP_VERSION@ ${finalAttrs.version} \
+          --replace-fail @GIT_REV@ $(cat COMMIT) \
+          --replace-fail @GIT_BRANCH@ ${finalAttrs.version} \
+          --replace-fail @GIT_DESC@ nixpkgs \
+          --replace-fail @BUILD_DATE@ $(cat SOURCE_DATE_EPOCH)
 
-        passthru =
-          (prevAttrs.passthru or {})
-          // {
-            updateScript = final.nix-update-script {
-              extraArgs = [
-                "--version=branch"
-                "--version-regex=(0-unstable-.*)"
-              ];
-            };
+        substituteInPlace src/common/versions.cpp \
+          --replace-fail "@shadps4-qt@" "$out"
+
+        substituteInPlace src/qt_gui/gui_settings.cpp \
+          --replace-fail "@shadps4-qt@" "$out"
+
+        substituteInPlace src/qt_gui/version_dialog.cpp \
+          --replace-fail "@shadps4-qt@" "$out"
+      '';
+
+      cmakeFlags =
+        (prevAttrs.cmakeFlags or [])
+        ++ [
+          (final.lib.cmakeBool "SPDLOG_FMT_EXTERNAL" true)
+        ];
+
+      buildInputs =
+        (prevAttrs.buildInputs or [])
+        ++ [
+          final.openal-soft
+        ];
+
+      patches =
+        builtins.filter
+        (p: !final.lib.hasSuffix "version-directory.patch" (baseNameOf (toString p)))
+        prevAttrs.patches;
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {
+            extraArgs = [
+              "--version=branch"
+              "--version-regex=(0-unstable-.*)"
+            ];
           };
-      });
-    }
-  )
+        };
+    });
+  })
 
   (final: prev: {
     hlsdk-portable = prev.hlsdk-portable.overrideAttrs (prevAttrs: {

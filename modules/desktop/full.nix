@@ -141,7 +141,7 @@ in {
       mcpelauncher-ui-qt
       rpcs3
       scarab
-      shadps4-qt
+      shadps4-qtlauncher
       spotify
       sticky-notes
       transmission_4-gtk
