@@ -13,6 +13,7 @@
     enable = true;
     # Workaround for KDE being annoying.
     gtk2.force = true;
+    theme.name = "Adwaita-dark";
     gtk3.extraConfig."gtk-application-prefer-dark-theme" = 1;
   };
 
