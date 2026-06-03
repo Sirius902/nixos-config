@@ -36,8 +36,8 @@
 }: let
   rev = "08c4442fdf52d1c314ce13e97738baadcd880d6e";
 
-  dawnVersion = "v20260523.201736";
-  nodVersion = "v2.0.0-alpha.8";
+  dawnVersion = "v20260603.191052";
+  nodVersion = "v2.0.0-alpha.10";
 
   dawn-src = fetchzip {
     url = let
@@ -48,8 +48,8 @@
     in "https://github.com/encounter/dawn-build/releases/download/${dawnVersion}/dawn-${platform}.tar.gz";
     hash =
       if stdenv.hostPlatform.isDarwin
-      then "sha256-7Y80mwxoV4kVk0ecOS02ZKTpmS0gqP7hWODZKMo9mj4="
-      else "sha256-KkdlSeiaw2gbQa+phZOpgbequshxQaFITzFdiuGBZvc=";
+      then "sha256-Uh31kwVzhabZfjqszoYDryihc29S/wideE/FuWyA9qk="
+      else "sha256-yTanM4TUIv6akgpt2tai/2W6q4RAt48CxKobRgxK8WU=";
     stripRoot = false;
   };
 
@@ -62,8 +62,8 @@
     in "https://github.com/encounter/nod/releases/download/${nodVersion}/libnod-${platform}.tar.gz";
     hash =
       if stdenv.hostPlatform.isDarwin
-      then "sha256-UPy1ywCcv0K6VJOU3uUelJuUdBh3UNaPRlyP5LOBeDw="
-      else "sha256-mUqvLsbsqaZ+HAjMmHYPYO+MgtanGRTw7Gzn5uXR5rE=";
+      then "sha256-8ZEejxksVgShNKUVRCBYaLOp9x/qOC9pAeVrElQUGUk="
+      else "sha256-FVQWECVA2gWdc+n5OQ/Tvwn8z0qdgjSd1WlFt5HKOec=";
     stripRoot = false;
   };
 
@@ -174,6 +174,7 @@ in
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_RMLUI" "${rmlui-src}")
       (lib.cmakeFeature "AURORA_SDL3_PROVIDER" "system")
       (lib.cmakeFeature "AURORA_NOD_PROVIDER" "package")
+      (lib.cmakeBool "BUILD_SHARED_LIBS" false)
       (lib.cmakeBool "CMAKE_CROSSCOMPILING" true)
       (lib.cmakeBool "CMAKE_BUILD_WITH_INSTALL_RPATH" true)
     ];
@@ -186,14 +187,9 @@ in
         runHook preInstall
       ''
       + lib.optionalString stdenv.hostPlatform.isLinux ''
-        mkdir -p $out/bin $out/lib
+        mkdir -p $out/bin
         cp dusklight $out/bin/dusklight
         cp -r ./res $out/bin/res
-
-        cp librmlui.so librmlui_debugger.so $out/lib/
-        cp libs/freeverb/libfreeverb.so $out/lib/
-        cp _deps/tracy-build/libTracyClient.so* $out/lib/
-        patchelf --set-rpath "$(patchelf --print-rpath $out/bin/dusklight):$out/lib" $out/bin/dusklight
 
         install -Dm644 $src/platforms/freedesktop/dev.twilitrealm.dusk.desktop \
           $out/share/applications/dev.twilitrealm.dusk.desktop
