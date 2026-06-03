@@ -102,7 +102,7 @@ in {
     // Startup
     spawn-at-startup "xwayland-satellite"
     spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/chris/Pictures/Screenshot_2025-05-08_23-50-08.png"
-    spawn-at-startup "waybar"
+    spawn-at-startup "env" "GTK_THEME=Adwaita:dark" "waybar"
     spawn-at-startup "mako"
     spawn-at-startup "sunsetr"
     spawn-at-startup "swayidle" "-w" "timeout" "300" "swaylock -f" "timeout" "300" "niri msg action power-off-monitors" "resume" "niri msg action power-on-monitors"
