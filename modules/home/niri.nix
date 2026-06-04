@@ -368,6 +368,7 @@ in {
     match=7263dfff
     selection=7263df40
     selection-text=e0e0e0ff
+    selection-match=7263dfff
     border=7263dfff
     prompt=7263dfff
 
