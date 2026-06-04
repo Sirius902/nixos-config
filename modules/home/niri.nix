@@ -215,16 +215,16 @@ in {
     datestr=%A, %B %e
 
     font=JetBrainsMono Nerd Font
-    font-size=48
+    font-size=28
     text-color=e0e0e0
 
     indicator
-    indicator-radius=120
-    indicator-thickness=8
+    indicator-radius=150
+    indicator-thickness=6
 
     color=1b1b1b
     inside-color=1b1b1b00
-    ring-color=4c4c4c80
+    ring-color=7263df40
     key-hl-color=7263df
     line-color=00000000
     separator-color=00000000
