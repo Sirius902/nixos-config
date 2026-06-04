@@ -20,7 +20,7 @@
     choice=$(printf "Lock\nSuspend\nReboot\nShutdown\nLogout" | fuzzel --dmenu --prompt "Power: ")
     case "$choice" in
       Lock) swaylock -f ;;
-      Suspend) systemctl suspend ;;
+      Suspend) swaylock -f && systemctl suspend ;;
       Reboot) systemctl reboot ;;
       Shutdown) systemctl poweroff ;;
       Logout) niri msg action quit ;;
