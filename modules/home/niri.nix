@@ -1,15 +1,15 @@
 {pkgs, ...}: let
   caffeineToggle = pkgs.writeShellScript "caffeine-toggle" ''
-    if pgrep -f 'systemd-inhibit.*caffeine' >/dev/null 2>&1; then
-      pkill -f 'systemd-inhibit.*caffeine'
+    if systemctl --user is-active --quiet caffeine; then
+      systemctl --user stop caffeine
     else
-      systemd-inhibit --what=idle --why=caffeine --who=waybar sleep infinity &
+      systemctl --user start caffeine
     fi
     pkill -RTMIN+8 waybar
   '';
 
   caffeineStatus = pkgs.writeShellScript "caffeine-status" ''
-    if pgrep -f 'systemd-inhibit.*caffeine' >/dev/null 2>&1; then
+    if systemctl --user is-active --quiet caffeine; then
       echo '{"text": "☕", "tooltip": "Caffeine on", "class": "activated"}'
     else
       echo '{"text": "💤", "tooltip": "Caffeine off", "class": "deactivated"}'
@@ -27,6 +27,14 @@
     esac
   '';
 in {
+  systemd.user.services.caffeine = {
+    Unit.Description = "Caffeine idle inhibitor";
+    Service = {
+      Type = "exec";
+      ExecStart = "${pkgs.systemd}/bin/systemd-inhibit --what=idle --why=caffeine --who=waybar sleep infinity";
+    };
+  };
+
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
 
   # GTK3 default (500ms) makes waybar tooltips feel sluggish.
