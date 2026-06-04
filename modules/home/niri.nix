@@ -150,6 +150,12 @@ in {
         Mod+Period  { expel-window-from-column; }
         Mod+C       { center-column; }
 
+        // Resize
+        Mod+Ctrl+H { set-column-width "-5%"; }
+        Mod+Ctrl+L { set-column-width "+5%"; }
+        Mod+Ctrl+K { set-window-height "-5%"; }
+        Mod+Ctrl+J { set-window-height "+5%"; }
+
         // Workspaces
         Mod+1 { focus-workspace 1; }
         Mod+2 { focus-workspace 2; }
