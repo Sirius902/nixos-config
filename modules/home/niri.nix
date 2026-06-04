@@ -205,6 +205,10 @@ in {
         // Night shift toggle
         Mod+N { spawn "sh" "-c" "if sunsetr status | grep -q 'State: static'; then sunsetr set transition_mode=finish_by; else sunsetr set transition_mode=static; fi"; }
 
+        // Notifications
+        Mod+X       { spawn "makoctl" "dismiss"; }
+        Mod+Shift+X { spawn "makoctl" "dismiss" "--all"; }
+
         // Session
         Mod+Shift+Escape { spawn "${powerMenu}"; }
         Mod+Shift+P { power-off-monitors; }
