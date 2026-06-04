@@ -382,7 +382,7 @@ in {
     border-size=2
     padding=12
     max-visible=5
-    max-lines=10
+    height=175
     default-timeout=5000
   '';
 
