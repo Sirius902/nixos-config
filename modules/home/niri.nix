@@ -127,7 +127,7 @@ in {
         Mod+E { spawn "cosmic-files"; }
         Mod+Q { close-window; }
         Mod+Shift+Slash { show-hotkey-overlay; }
-        Mod+W { toggle-overview; }
+        Mod+O { toggle-overview; }
         Mod+Escape { spawn "swaylock" "-f"; }
 
         // Focus
