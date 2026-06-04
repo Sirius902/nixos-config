@@ -135,20 +135,12 @@ in {
         Mod+L     { focus-column-right; }
         Mod+J     { focus-window-down; }
         Mod+K     { focus-window-up; }
-        Mod+Left      { focus-column-left; }
-        Mod+Right     { focus-column-right; }
-        Mod+Down      { focus-window-down; }
-        Mod+Up        { focus-window-up; }
 
         // Move
         Mod+Shift+H     { move-column-left; }
         Mod+Shift+L     { move-column-right; }
         Mod+Shift+J     { move-window-down; }
         Mod+Shift+K     { move-window-up; }
-        Mod+Shift+Left      { move-column-left; }
-        Mod+Shift+Right     { move-column-right; }
-        Mod+Shift+Down      { move-window-down; }
-        Mod+Shift+Up        { move-window-up; }
 
         // Column / window manipulation
         Mod+R       { switch-preset-column-width; }
@@ -177,18 +169,19 @@ in {
         Mod+Shift+7 { move-window-to-workspace 7; }
         Mod+Shift+8 { move-window-to-workspace 8; }
         Mod+Shift+9 { move-window-to-workspace 9; }
-        Mod+Page_Down      { focus-workspace-down; }
-        Mod+Page_Up        { focus-workspace-up; }
-        Mod+Ctrl+Page_Down { move-workspace-down; }
-        Mod+Ctrl+Page_Up   { move-workspace-up; }
-
-        // Monitors
-        Mod+Ctrl+Left  { focus-monitor-left; }
-        Mod+Ctrl+Right { focus-monitor-right; }
-        Mod+Ctrl+Shift+Left  { move-window-to-monitor-left; }
-        Mod+Ctrl+Shift+Right { move-window-to-monitor-right; }
+        // Monitors (arrow left/right)
+        Mod+Left       { focus-monitor-left; }
+        Mod+Right      { focus-monitor-right; }
+        Mod+Shift+Left  { move-window-to-monitor-left; }
+        Mod+Shift+Right { move-window-to-monitor-right; }
         Mod+Home { move-workspace-to-monitor-left; }
         Mod+End  { move-workspace-to-monitor-right; }
+
+        // Workspace cycling (arrow up/down)
+        Mod+Up         { focus-workspace-up; }
+        Mod+Down       { focus-workspace-down; }
+        Mod+Shift+Up   { move-workspace-up; }
+        Mod+Shift+Down { move-workspace-down; }
 
         // Screenshots
         Print           { screenshot; }
