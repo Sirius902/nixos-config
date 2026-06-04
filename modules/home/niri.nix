@@ -404,6 +404,11 @@ in {
     max-visible=5
     height=175
     default-timeout=5000
+    group-by=app-name
+
+    [urgency=critical]
+    border-color=#cc6666
+    default-timeout=0
   '';
 
   xdg.configFile."sunsetr/sunsetr.toml".text = ''
