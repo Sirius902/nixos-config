@@ -231,14 +231,17 @@ in {
 
     inside-ver-color=1b1b1b00
     ring-ver-color=7263df
+    line-ver-color=00000000
     text-ver-color=e0e0e0
     inside-wrong-color=1b1b1b00
     ring-wrong-color=cc6666
+    line-wrong-color=00000000
     text-wrong-color=cc6666
     bs-hl-color=cc6666
 
     inside-clear-color=1b1b1b00
     ring-clear-color=e6c84d
+    line-clear-color=00000000
     text-clear-color=e0e0e0
   '';
 
