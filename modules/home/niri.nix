@@ -156,6 +156,11 @@ in {
         Mod+Ctrl+K { set-window-height "-5%"; }
         Mod+Ctrl+J { set-window-height "+5%"; }
 
+        // Floating / tabbed
+        Mod+V       { toggle-window-floating; }
+        Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+        Mod+T       { toggle-column-tabbed-display; }
+
         // Workspaces
         Mod+1 { focus-workspace 1; }
         Mod+2 { focus-workspace 2; }
