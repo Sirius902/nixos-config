@@ -198,6 +198,9 @@ in {
         Print           { screenshot; }
         Mod+Print       { screenshot-screen; }
         Mod+Shift+Print { screenshot-window; }
+        Mod+S           { screenshot; }
+        Mod+Shift+S     { screenshot-window; }
+        Mod+Ctrl+S      { screenshot-screen; }
 
         // Audio / Media
         XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
