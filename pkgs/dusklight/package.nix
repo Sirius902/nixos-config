@@ -206,10 +206,7 @@ in
       '';
 
     passthru.updateScript = nix-update-script {
-      extraArgs = [
-        "--version=branch"
-        "--version-regex=(0-unstable-.*)"
-      ];
+      extraArgs = ["--version=branch"];
     };
 
     meta = {
