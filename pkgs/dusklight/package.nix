@@ -84,7 +84,7 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "dusklight";
-    version = "0-unstable-2026-06-05";
+    version = "1.3.1-unstable-2026-06-05";
 
     src = fetchFromGitHub {
       owner = "TwilitRealm";
