@@ -669,7 +669,8 @@
   })
 
   (final: prev: {
-    dusklight-rando = prev.dusklight.overrideAttrs (prevAttrs: {
+    dusklight-rando = prev.dusklight.overrideAttrs (finalAttrs: prevAttrs: {
+      pname = "dusklight-rando";
       version = "0-unstable-2026-06-05";
       src = prevAttrs.src.override {
         rev = "1868d698f58329385a37062f4612e64e0c06c78f";
@@ -729,15 +730,18 @@
       postInstall =
         (prevAttrs.postInstall or "")
         + final.lib.optionalString final.stdenv.hostPlatform.isLinux ''
+          mv $out/bin/dusklight $out/bin/dusklight-rando
+
           mv $out/share/applications/dev.twilitrealm.dusk.desktop \
            $out/share/applications/dev.twilitrealm.dusk-rando.desktop
 
-          for f in $out/share/icons/hicolor/*/apps/dusk.png; do
+          for f in $out/share/icons/hicolor/*/apps/*dusk.png; do
             mv "$f" "''${f%dusk.png}dusk-rando.png"
           done
 
           substituteInPlace $out/share/applications/dev.twilitrealm.dusk-rando.desktop \
-            --replace-fail "Name=Dusklight" "Name=Dusklight Randomizer" \
+            --replace-fail "Exec=dusklight" "Exec=dusklight-rando" \
+            --replace-fail "''\nName=Dusklight''\n" "''\nName=Dusklight Randomizer''\n" \
             --replace-fail "GenericName=Dusklight" "GenericName=Dusklight Randomizer" \
             --replace-fail "Icon=dev.twilitrealm.dusk" "Icon=dev.twilitrealm.dusk-rando"
         ''
