@@ -33,8 +33,8 @@ in
     src = fetchFromGitHub {
       owner = "FWGS";
       repo = "xash3d-fwgs";
-      rev = "8fad3bbad6c7a093026ada592f1d8e95285d0a3c";
-      hash = "sha256-cC/o2F84Tmv2qhyJ+RK1Lpa3hRslDEBcIpiS66ULV/0=";
+      rev = "51d1bfbe08b11671e4961e7c71474869bacd59b3";
+      hash = "sha256-fAWcVTrHlsMKPhQQ2EczckyETO2rqb7dAAlfb+ZmoxI=";
       postCheckout = ''
         cd $out/3rdparty
         git submodule update --init --recursive \
