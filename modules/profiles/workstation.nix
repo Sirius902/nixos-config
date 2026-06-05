@@ -30,6 +30,7 @@
     archipelago
     poptracker
     dusklight
+    dusklight-rando
     shipwright
     _2ship2harkinian
     shipwright-ap
