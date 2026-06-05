@@ -6,6 +6,23 @@
   inputs.nvim-conf.overlays.default
 
   (final: prev: {
+    niri = prev.niri.overrideAttrs (prevAttrs: {
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          # FUTURE(Sirius902) Add SHM screencast fallback so Discord/Electron
+          # consumers that don't accept dmabuf modifiers can negotiate a format.
+          # https://github.com/niri-wm/niri/pull/1791 (fixes #455)
+          (final.fetchpatch2 {
+            name = "niri-pr-1791-shm-sharing.patch";
+            url = "https://github.com/niri-wm/niri/compare/dd1c3bcb9f1ef416df33ffa22d1d9bcee1398e7d...6c1613cee488515f3021ae9d8ef9233d6719c13f.patch?full_index=1";
+            hash = "sha256-Ipw5BbDfNPQOGOzCH979axJosC01bfTgz/Hi1iBgC84=";
+          })
+        ];
+    });
+  })
+
+  (final: prev: {
     cosmic-comp = prev.cosmic-comp.overrideAttrs (prevAttrs: {
       patches =
         (prevAttrs.patches or [])
