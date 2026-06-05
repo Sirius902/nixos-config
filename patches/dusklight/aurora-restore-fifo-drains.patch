@@ -1,0 +1,53 @@
+Restore per-draw FIFO drains in aurora's GX immediate-mode and display-list paths.
+
+Aurora commit 71d8462 ("Introduce render worker & revamp RmlUi backend")
+commented out the per-draw fifo::drain() calls in GXEnd() and
+GXCallDisplayList() with "TEMP: debugging aid" markers, intending to
+defer FIFO processing into a buffered path. The texture-replacement
+hash code (texture_replacement.cpp:compute_referenced_tlut_hash) still
+reads s_loadedTluts[obj.tlut], which GXLoadTlut overwrites synchronously
+on the game thread. With drains removed, FIFO commands accumulate while
+the game blasts through subsequent GXLoadTlut calls, so by the time the
+FIFO actually drains the s_loadedTluts slot has been overwritten and
+find_replacement computes the wrong tlutHash for earlier queued draws,
+missing user texture-pack entries.
+
+Restoring the drains forces FIFO processing per-draw, keeping
+s_loadedTluts consistent with the draw being processed. This is a
+stop-gap revert of aurora's stop-gap until upstream lands a proper fix.
+
+diff --git a/extern/aurora/lib/dolphin/gx/GXDispList.cpp b/extern/aurora/lib/dolphin/gx/GXDispList.cpp
+--- a/extern/aurora/lib/dolphin/gx/GXDispList.cpp
++++ b/extern/aurora/lib/dolphin/gx/GXDispList.cpp
+@@ -58,12 +58,8 @@ void GXCallDisplayList(const void* data, u32 nbytes) {
+     __GXSendFlushPrim();
+   }
+
+-  // Write display list contents to the FIFO
+-  aurora::gx::fifo::write_data(data, nbytes);
+-
+-  // TEMP: debugging aid
+-  // aurora::gx::fifo::drain();
+-  // aurora::gx::fifo::process(static_cast<const u8*>(data), nbytes, true);
++  aurora::gx::fifo::drain();
++  aurora::gx::fifo::process(static_cast<const u8*>(data), nbytes, true);
+ }
+
+ void GXCallDisplayListLE(const void* data, u32 nbytes) {
+diff --git a/extern/aurora/lib/dolphin/gx/GXVert.cpp b/extern/aurora/lib/dolphin/gx/GXVert.cpp
+--- a/extern/aurora/lib/dolphin/gx/GXVert.cpp
++++ b/extern/aurora/lib/dolphin/gx/GXVert.cpp
+@@ -48,10 +48,9 @@ void GXEnd() {
+     }
+     sInBegin = false;
+   }
+-  // TEMP: debugging aid
+-  // if (!aurora::gx::fifo::in_display_list()) {
+-  //   aurora::gx::fifo::drain();
+-  // }
++  if (!aurora::gx::fifo::in_display_list()) {
++    aurora::gx::fifo::drain();
++  }
+ }
+
+ void GXPosition3f32(f32 x, f32 y, f32 z) {

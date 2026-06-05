@@ -94,6 +94,10 @@ in
       fetchSubmodules = true;
     };
 
+    patches = [
+      ../../patches/dusklight/aurora-restore-fifo-drains.patch
+    ];
+
     postPatch = ''
       sed -i '/add_subdirectory(tests)/d' extern/aurora/CMakeLists.txt
 
