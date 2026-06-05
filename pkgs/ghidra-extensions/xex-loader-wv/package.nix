@@ -6,7 +6,7 @@
   ant,
   nix-update-script,
 }: let
-  version = "12.0.4-unstable-2026-03-29";
+  version = "12.1-unstable-2026-06-05";
   self = ghidra.buildGhidraExtension rec {
     pname = "XEXLoaderWV";
     inherit version;
@@ -14,8 +14,8 @@
     src = fetchFromGitHub {
       owner = "zeroKilo";
       repo = "XEXLoaderWV";
-      rev = "978755ca77eeaa992080d86b4a6d98633314e90b";
-      hash = "sha256-guv0xCSjcX72lSgEyV/fLDigWlSxe7luEJ2gQJVNKpc=";
+      rev = "d0af801aee083c86950b90c3db78b2e1c642067f";
+      hash = "sha256-RHKXHE2zhfJGR6mj9I8up7VIsndHv1llDkm5MwPAKAQ=";
     };
 
     sourceRoot = "${src.name}/XEXLoaderWV";
