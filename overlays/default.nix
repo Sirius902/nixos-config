@@ -667,4 +667,94 @@
         };
     });
   })
+
+  (final: prev: {
+    dusklight-rando = prev.dusklight.overrideAttrs (prevAttrs: {
+      version = "0-unstable-2026-06-05";
+      src = prevAttrs.src.override {
+        rev = "1868d698f58329385a37062f4612e64e0c06c78f";
+        hash = "sha256-1akzzF/D17xZ1eMn8TOgEWD6dsa9Xyo6G+bSVxuqj80=";
+      };
+
+      # FUTURE(Sirius902) Every thread, including the numerous mesa threads, will get
+      # this buffer and crash. Mark this as `static` instead and hope it's safe until
+      # it's addressed upstream.
+      postPatch =
+        (prevAttrs.postPatch or "")
+        + ''
+          substituteInPlace src/dusk/randomizer/generator/utility/thread_local.hpp \
+            --replace-fail "inline static thread_local T data;" "inline static T data;"
+
+          substituteInPlace extern/aurora/lib/dolphin/card.cpp \
+            --replace-fail 'return "USA";' 'return "USA-rando";' \
+            --replace-fail 'return "EUR";' 'return "EUR-rando";' \
+            --replace-fail 'return "JAP";' 'return "JAP-rando";'
+        '';
+
+      preConfigure =
+        (prevAttrs.preConfigure or "")
+        + ''
+          cp -r --no-preserve=mode ${
+            final.fetchFromGitHub {
+              owner = "matheusgomes28";
+              repo = "base64pp";
+              rev = "v0.2.0-rc0";
+              hash = "sha256-DYdnjbdZmQFOizg2SwAu35kWA0F72tE6ywe00azlqxk=";
+            }
+          } base64pp-src
+          cmakeFlagsArray+=("-DFETCHCONTENT_SOURCE_DIR_BASE64PP=$PWD/base64pp-src")
+        '';
+
+      cmakeFlags =
+        prevAttrs.cmakeFlags
+        ++ [
+          (prev.lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_YAML-CPP" "${
+            final.fetchFromGitHub {
+              owner = "jbeder";
+              repo = "yaml-cpp";
+              rev = "yaml-cpp-0.9.0";
+              hash = "sha256-+FOsPQY44h1g9tEw3O281LkiYKXdW2jnFKw+oTRkhGw=";
+            }
+          }")
+          (prev.lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_BATTERY-EMBED" "${
+            final.fetchFromGitHub {
+              owner = "batterycenter";
+              repo = "embed";
+              rev = "fdbae3f";
+              hash = "sha256-yCLADGd8VITzIWr3aEt+jrzUDAKTk3YljNOuToK1zio=";
+            }
+          }")
+        ];
+
+      postInstall =
+        (prevAttrs.postInstall or "")
+        + final.lib.optionalString final.stdenv.hostPlatform.isLinux ''
+          mv $out/share/applications/dev.twilitrealm.dusk.desktop \
+           $out/share/applications/dev.twilitrealm.dusk-rando.desktop
+
+          for f in $out/share/icons/hicolor/*/apps/dusk.png; do
+            mv "$f" "''${f%dusk.png}dusk-rando.png"
+          done
+
+          substituteInPlace $out/share/applications/dev.twilitrealm.dusk-rando.desktop \
+            --replace-fail "Name=Dusklight" "Name=Dusklight Randomizer" \
+            --replace-fail "GenericName=Dusklight" "GenericName=Dusklight Randomizer" \
+            --replace-fail "Icon=dev.twilitrealm.dusk" "Icon=dev.twilitrealm.dusk-rando"
+        ''
+        + final.lib.optionalString final.stdenv.hostPlatform.isDarwin ''
+          mv $out/Applications/Dusklight.app $out/Applications/DusklightRandomizer.app
+        '';
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {
+            extraArgs = [
+              "--version=branch=randomizer"
+              "--version-regex=(0-unstable-.*)"
+            ];
+          };
+        };
+    });
+  })
 ]

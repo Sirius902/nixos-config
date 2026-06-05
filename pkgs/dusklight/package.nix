@@ -156,7 +156,7 @@ in
       ];
 
     cmakeFlags = [
-      (lib.cmakeFeature "DUSK_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.rev}")
+      (lib.cmakeFeature "DUSK_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.src.rev}")
       (lib.cmakeBool "FETCHCONTENT_FULLY_DISCONNECTED" true)
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_CXXOPTS" "${cxxopts.src}")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_JSON" "${nlohmann_json.src}")
