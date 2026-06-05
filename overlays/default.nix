@@ -431,12 +431,12 @@
           (final.fetchpatch2 {
             name = "npc-door-panic.patch";
             url = "https://github.com/Sirius902/hlsdk-portable/compare/6ba528f2a36622a45c453f832934ab3adaca7c1c...7284904a3fc93173e0d5a5d8e16a0bb2e7e32d49.patch?full_index=1";
-            hash = "sha256-6ccvLCFXvDvUMynEGvQYGooLM2OgLuDWFwkldQj+1T4=";
+            hash = "sha256-N2JYSVrsOBwm0ep1Wlh8/3FWZbhL84CXOFgaXL01dVw=";
           })
           (final.fetchpatch2 {
             name = "add-speed-hud.patch";
             url = "https://github.com/Sirius902/hlsdk-portable/compare/6ba528f2a36622a45c453f832934ab3adaca7c1c...9f354d92d0b5123246449ac95a1c751f3cb43f93.diff?full_index=1";
-            hash = "sha256-p+0pt1DJFRHAOdgg16cxe2bXfykezCBDYtHgzYQWptM=";
+            hash = "sha256-Z8leyEG7/gZ/Ux73n2UYJH775EWr4IHVR7TGrAy8hRM=";
           })
         ];
 
