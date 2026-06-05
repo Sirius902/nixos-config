@@ -18,18 +18,6 @@ in {
 
     security.pam.services.swaylock = {};
 
-    # FUTURE(Sirius902) Niri's Mutter ScreenCast PipeWire stream doesn't
-    # offer SHM fallback formats, breaking Discord/Electron screen sharing.
-    # Route ScreenCast through the wlr portal which handles this correctly.
-    # Remove when niri-wm/niri#455 is fixed.
-    xdg.portal = {
-      extraPortals = [pkgs.xdg-desktop-portal-wlr];
-      config.niri = {
-        "org.freedesktop.impl.portal.ScreenCast" = lib.mkForce "wlr";
-        "org.freedesktop.impl.portal.Screenshot" = lib.mkForce "wlr";
-      };
-    };
-
     environment.systemPackages = with pkgs; [
       fuzzel
       mako
