@@ -34,8 +34,6 @@
   nlohmann_json,
   nix-update-script,
 }: let
-  rev = "d9d9966f8f325472ee486235401b4fd366a25643";
-
   dawnVersion = "v20260603.191052";
   nodVersion = "v2.0.0-alpha.10";
 
@@ -84,14 +82,14 @@
     hash = "sha256-g4O/JZUrrcseOz8o2QJRt+2CeuiLnVeuDJc906xvuIg=";
   };
 in
-  stdenv.mkDerivation {
+  stdenv.mkDerivation (finalAttrs: {
     pname = "dusklight";
     version = "0-unstable-2026-06-05";
 
     src = fetchFromGitHub {
       owner = "TwilitRealm";
       repo = "dusklight";
-      inherit rev;
+      rev = "d9d9966f8f325472ee486235401b4fd366a25643";
       hash = "sha256-X3fk8IrTGTPz7Yh54p2/t2kMVtoLt8mSGzU3o+RLbvw=";
       fetchSubmodules = true;
     };
@@ -158,7 +156,7 @@ in
       ];
 
     cmakeFlags = [
-      (lib.cmakeFeature "DUSK_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 rev}")
+      (lib.cmakeFeature "DUSK_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.rev}")
       (lib.cmakeBool "FETCHCONTENT_FULLY_DISCONNECTED" true)
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_CXXOPTS" "${cxxopts.src}")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_JSON" "${nlohmann_json.src}")
@@ -221,4 +219,4 @@ in
       platforms = ["x86_64-linux" "aarch64-darwin"];
       license = with lib.licenses; [unfree];
     };
-  }
+  })
