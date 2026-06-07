@@ -32,20 +32,7 @@ in
     src = prevAttrs.src.override {
       rev = "1868d698f58329385a37062f4612e64e0c06c78f";
       hash = "sha256-1akzzF/D17xZ1eMn8TOgEWD6dsa9Xyo6G+bSVxuqj80=";
-
-      postCheckout = ''
-        cd "$out"
-        if git apply --check ${../../../patches/dusklight/aurora-restore-fifo-drains.patch} 2>/dev/null; then
-          echo "dusklight-rando: aurora-restore-fifo-drains.patch applies — drop the patches filter in pkgs/dusklight/rando/package.nix" >&2
-          exit 1
-        fi
-      '';
     };
-
-    patches =
-      builtins.filter
-      (p: !lib.hasSuffix "aurora-restore-fifo-drains.patch" (baseNameOf (toString p)))
-      prevAttrs.patches;
 
     # FUTURE(Sirius902) Every thread, including the numerous mesa threads, will get
     # this buffer and crash. Mark this as `static` instead and hope it's safe until
