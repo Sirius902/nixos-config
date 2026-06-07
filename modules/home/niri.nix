@@ -17,9 +17,10 @@
   '';
 
   powerMenu = pkgs.writeShellScript "power-menu" ''
-    choice=$(printf "Lock\nSuspend\nReboot\nShutdown\nLogout" | fuzzel --dmenu --prompt "> " --placeholder "Power...")
+    choice=$(printf "Lock\nLock & Display Off\nSuspend\nReboot\nShutdown\nLogout" | fuzzel --dmenu --prompt "> " --placeholder "Power...")
     case "$choice" in
       Lock) swaylock -f ;;
+      "Lock & Display Off") swaylock -f && niri msg action power-off-monitors ;;
       Suspend) swaylock -f && systemctl suspend ;;
       Reboot) systemctl reboot ;;
       Shutdown) systemctl poweroff ;;
