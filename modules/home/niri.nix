@@ -147,6 +147,7 @@ in {
         Mod+R       { switch-preset-column-width; }
         Mod+F       { maximize-column; }
         Mod+Shift+F { fullscreen-window; }
+        Mod+Ctrl+F  { expand-column-to-available-width; }
         Mod+Comma   { consume-window-into-column; }
         Mod+Period  { expel-window-from-column; }
         Mod+C       { center-column; }
