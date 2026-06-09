@@ -34,13 +34,13 @@ in
       owner = "FWGS";
       repo = "xash3d-fwgs";
       rev = "b2a5f0db5a2f4a38106f60532659df7e615026de";
-      hash = "sha256-uY73BtRaALVsejaFKt2LQ8Sx6pzE1l9ydOnU+37679o=";
+      hash = "sha256-TAzEcJ2JAoq2NUhpRNe12TZbIyV3bk20vH+mA5s7FaE=";
       postCheckout = ''
         cd $out/3rdparty
         git submodule update --init --recursive \
           MultiEmulator extras/xash-extras gl-wes-v2 gl4es/gl4es \
-          libbacktrace/libbacktrace library_suffix maintui mainui nanogl \
-          vgui_support
+          libbacktrace/libbacktrace library_suffix maintui mainui mbedtls \
+          nanogl vgui_support
       '';
     };
 
