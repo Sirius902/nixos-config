@@ -45,6 +45,10 @@
 
   networking.hostId = "4786fd98";
 
+  # Must be enabled due to https://github.com/tailscale/tailscale/issues/4254.
+  services.resolved.enable = true;
+  services.tailscale.useRoutingFeatures = "server";
+
   services.journald.extraConfig = "SystemMaxUse=100M";
 
   my.tailscale.enable = true;
