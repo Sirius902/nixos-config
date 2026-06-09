@@ -232,6 +232,9 @@ in
       --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
       --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
       --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
+
+      substituteInPlace libultraship/src/ship/Context.cpp \
+        --replace-fail "GetInstance()->mShortName" "GetRawInstance()->mShortName" \
     '';
 
     postBuild = ''
