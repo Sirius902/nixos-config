@@ -34,19 +34,19 @@ in
       hash = "sha256-1akzzF/D17xZ1eMn8TOgEWD6dsa9Xyo6G+bSVxuqj80=";
     };
 
-    # FUTURE(Sirius902) Every thread, including the numerous mesa threads, will get
-    # this buffer and crash. Mark this as `static` instead and hope it's safe until
-    # it's addressed upstream.
     postPatch =
       (prevAttrs.postPatch or "")
       + ''
+        # FUTURE(Sirius902) Every thread, including the numerous mesa threads, will get
+        # this buffer and crash. Mark this as `static` instead and hope it's safe until
+        # it's addressed upstream.
         substituteInPlace src/dusk/randomizer/generator/utility/thread_local.hpp \
           --replace-fail "inline static thread_local T data;" "inline static T data;"
 
-        substituteInPlace extern/aurora/lib/dolphin/card.cpp \
-          --replace-fail 'return "USA";' 'return "USA-rando";' \
-          --replace-fail 'return "EUR";' 'return "EUR-rando";' \
-          --replace-fail 'return "JAP";' 'return "JAP-rando";'
+        # Store data under TwilitRealm/DusklightRandomizer.
+        substituteInPlace include/dusk/app_info.hpp \
+          --replace-fail 'AppName = "Dusklight"' 'AppName = "DusklightRandomizer"' \
+          --replace-fail 'LegacyAppName = "Dusk"' 'LegacyAppName = "DusklightRandomizer"'
       '';
 
     preConfigure =
