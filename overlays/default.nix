@@ -243,8 +243,38 @@
     });
   })
 
-  (final: prev: {
-    rpcs3 = prev.rpcs3.overrideAttrs (prevAttrs: {
+  (final: prev: let
+    # https://github.com/NixOS/nixpkgs/pull/526521
+    glew = prev.glew.overrideAttrs (finalAttrs: prevAttrs: {
+      version = "2.2.0";
+      src = final.fetchurl {
+        url = "mirror://sourceforge/glew/glew-${finalAttrs.version}.tgz";
+        hash = "sha256-1PyCiTz7ABCVeNChojN/uMozWzzsz5e5flzH8I5DU+E=";
+      };
+
+      patches = [
+        # https://github.com/nigels-com/glew/pull/342
+        (final.fetchpatch {
+          url = "https://github.com/nigels-com/glew/commit/966e53fa153175864e151ec8a8e11f688c3e752d.diff";
+          hash = "sha256-xsSwdAbdWZA4KVoQhaLlkYvO711i3QlHGtv6v1Omkhw=";
+        })
+
+        # don't make EGL support disable GLX, use the same patch as ArchLinux
+        # https://gitlab.archlinux.org/archlinux/packaging/packages/glew/-/blob/ca08ff5d4cd3548a593eb1118d0a84b0c3670349/egl+glx.patch
+        (final.fetchpatch {
+          url = "https://gitlab.archlinux.org/archlinux/packaging/packages/glew/-/raw/ca08ff5d4cd3548a593eb1118d0a84b0c3670349/egl+glx.patch?inline=false";
+          hash = "sha256-IG3FPhhaor1kshEH3Kr8yzIHqBhczRwCqH7ZeDwlzGE=";
+        })
+
+        # cmake 4 compatibility
+        (final.fetchpatch {
+          url = "https://github.com/nigels-com/glew/commit/a4d8b2a2a30576eb1b984ba5d573702acfc5b92e.diff";
+          hash = "sha256-S6Om0A4y5po2rHl8OXcue2zOcBpCmBZYvf10LfKEYfI=";
+        })
+      ];
+    });
+  in {
+    rpcs3 = (prev.rpcs3.override {inherit glew;}).overrideAttrs (prevAttrs: {
       version = "0.0.41-unstable-2026-06-09";
       src = prevAttrs.src.override {
         tag = null;
