@@ -1,18 +1,20 @@
 {pkgs, ...}: let
+  # Caffeine = inhibit idle by stopping the idle manager. ON when swayidle is
+  # stopped (no auto lock/blank/suspend); OFF when swayidle is running.
   caffeineToggle = pkgs.writeShellScript "caffeine-toggle" ''
-    if systemctl --user is-active --quiet caffeine; then
-      systemctl --user stop caffeine
+    if systemctl --user is-active --quiet swayidle; then
+      systemctl --user stop swayidle
     else
-      systemctl --user start caffeine
+      systemctl --user start swayidle
     fi
     pkill -RTMIN+8 waybar
   '';
 
   caffeineStatus = pkgs.writeShellScript "caffeine-status" ''
-    if systemctl --user is-active --quiet caffeine; then
-      echo '{"text": "☕", "tooltip": "Caffeine on", "class": "activated"}'
+    if systemctl --user is-active --quiet swayidle; then
+      echo '{"text": "💤", "tooltip": "Caffeine off — auto lock/suspend active", "class": "deactivated"}'
     else
-      echo '{"text": "💤", "tooltip": "Caffeine off", "class": "deactivated"}'
+      echo '{"text": "☕", "tooltip": "Caffeine on — staying awake", "class": "activated"}'
     fi
   '';
 
@@ -27,13 +29,32 @@
       Logout) niri msg action quit ;;
     esac
   '';
+
+  # swayidle invocation for the niri idle ladder (see swayidle.service below).
+  idleManager = pkgs.writeShellScript "niri-idle" ''
+    exec ${pkgs.swayidle}/bin/swayidle -w \
+      timeout 300 'swaylock -f' \
+      timeout 300 'niri msg action power-off-monitors' resume 'niri msg action power-on-monitors' \
+      timeout 900 'systemctl suspend' \
+      before-sleep 'swaylock -f' \
+      after-resume 'niri msg action power-on-monitors'
+  '';
 in {
-  systemd.user.services.caffeine = {
-    Unit.Description = "Caffeine idle inhibitor";
-    Service = {
-      Type = "exec";
-      ExecStart = "${pkgs.systemd}/bin/systemd-inhibit --what=idle --why=caffeine --who=waybar sleep infinity";
+  # Idle ladder: lock + blank monitors at 5 min, suspend at 15 min. Bound to
+  # niri.service so it runs only under niri; the caffeine toggle stops it to
+  # inhibit the entire ladder at once.
+  systemd.user.services.swayidle = {
+    Unit = {
+      Description = "Idle manager (lock, DPMS, suspend)";
+      PartOf = ["niri.service"];
+      After = ["niri.service"];
     };
+    Service = {
+      Type = "simple";
+      ExecStart = "${idleManager}";
+      Restart = "on-failure";
+    };
+    Install.WantedBy = ["niri.service"];
   };
 
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
@@ -114,7 +135,6 @@ in {
     spawn-at-startup "env" "GTK_THEME=Adwaita:dark" "waybar"
     spawn-at-startup "mako"
     spawn-at-startup "sunsetr"
-    spawn-at-startup "swayidle" "-w" "timeout" "300" "swaylock -f" "timeout" "300" "niri msg action power-off-monitors" "resume" "niri msg action power-on-monitors"
     spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
 
     hotkey-overlay {
