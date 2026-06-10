@@ -37,12 +37,6 @@ in
     postPatch =
       (prevAttrs.postPatch or "")
       + ''
-        # FUTURE(Sirius902) Every thread, including the numerous mesa threads, will get
-        # this buffer and crash. Mark this as `static` instead and hope it's safe until
-        # it's addressed upstream.
-        substituteInPlace src/dusk/randomizer/generator/utility/thread_local.hpp \
-          --replace-fail "inline static thread_local T data;" "inline static T data;"
-
         # Store data under TwilitRealm/DusklightRandomizer.
         substituteInPlace include/dusk/app_info.hpp \
           --replace-fail 'AppName = "Dusklight"' 'AppName = "DusklightRandomizer"' \
