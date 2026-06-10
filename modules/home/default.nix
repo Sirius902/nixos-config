@@ -51,6 +51,7 @@ in {
       + (lib.optionalString stdenv.hostPlatform.isDarwin ''
         export PATH="$HOME/.local/bin:$PATH"
         export PATH="/opt/homebrew/bin:$PATH"
+        export PATH="/usr/local/zfs/bin:$PATH"
       '');
 
     envExtra = lib.mkIf stdenv.hostPlatform.isDarwin ''
