@@ -321,7 +321,7 @@
       src = prevAttrs.src.override {
         tag = null;
         rev = "2d93feb5a5d576acf8cf9146da0dd7bf8e6546a1";
-        hash = "sha256-JjpRX/yACl+mSFly79ljCy0+yigKAb/A2KvITImvZt0=";
+        hash = "sha256-QDPiM7T90wezvQG8oCs2Pc2VUt8oTF9dZB2sr4ja4pY=";
 
         postCheckout = ''
           cd "$out"
@@ -336,6 +336,7 @@
             cpp-httplib \
             dear_imgui \
             discord-rpc \
+            freetype \
             glslang \
             hwinfo \
             libressl \
