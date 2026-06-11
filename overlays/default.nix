@@ -316,12 +316,12 @@
 
   (final: prev: {
     shadps4 = prev.shadps4.overrideAttrs (finalAttrs: prevAttrs: {
-      version = "0.16.0-unstable-2026-06-10";
+      version = "0.16.0-unstable-2026-06-11";
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "e369d8f78de000ef73b1acace48c28505831c3ce";
-        hash = "sha256-kNVRf28wQh7R5bPO+cNuDEL1APcFFj6NAGOxRe9pmIU=";
+        rev = "041ba9975ea2f65eb4802bd749e8907821382db2";
+        hash = "sha256-Ai+NG8c3M1i46QWiUawfuF3iuXAeNeE4OjdRu1y4DvE=";
 
         postCheckout = ''
           cd "$out"
