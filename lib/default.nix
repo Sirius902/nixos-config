@@ -84,12 +84,6 @@ in {
             url = "https://github.com/Sirius902/nixpkgs/commit/65d5989484ecc179b8dc1a864629a954da097be2.patch?full_index=1";
             hash = "sha256-wOEEgyNjViyvmAK71D0shNsQsiOWhKi07l9T/BpZ/MY=";
           })
-          # Update pure-prompt https://github.com/NixOS/nixpkgs/pull/491292
-          (pkgs.fetchpatch2 {
-            name = "update-pure-prompt.patch";
-            url = "https://github.com/Sirius902/nixpkgs/commit/36fca490d613fd05e006583340b8512f00cc118d.patch?full_index=1";
-            hash = "sha256-zNZK/Q4x72FRpHReGHuI3YYyNry9yrnJGnmdxlxpZyI=";
-          })
           # Add cosmic-ext-applet-clipboard-manager https://github.com/NixOS/nixpkgs/pull/496706
           (pkgs.fetchpatch2 {
             name = "add-cosmic-ext-applet-clipboard-manager.patch";
