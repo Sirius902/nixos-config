@@ -321,7 +321,7 @@
       src = prevAttrs.src.override {
         tag = null;
         rev = "b5b7cb54597910d6cf69dd5af1d12ae99b93e111";
-        hash = "sha256-2aVw5wn5BaLahSo7YikgqJT4+R6SxgxBUkZgUKiNHyM=";
+        hash = "sha256-rgGTPYQIgV4T5Iwr25hGw0Y2c1mrgyALPij8QtAoMKI=";
 
         postCheckout = ''
           cd "$out"
@@ -342,6 +342,7 @@
             libressl \
             libusb \
             minimp3 \
+            miniupnp \
             sirit \
             spdlog \
             tracy \
