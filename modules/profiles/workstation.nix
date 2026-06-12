@@ -29,6 +29,7 @@
     poptracker
     dusklight
     dusklight-rando
+    dusklight-ap
     shipwright
     _2ship2harkinian
     shipwright-ap

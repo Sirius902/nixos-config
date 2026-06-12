@@ -20,6 +20,7 @@
 
   dusklight = pkgs.callPackage ./dusklight/package.nix {};
   dusklight-rando = pkgs.callPackage ./dusklight/rando/package.nix {};
+  dusklight-ap = pkgs.callPackage ./dusklight/ap/package.nix {};
 
   wrye-bash = pkgs.callPackage ./wrye-bash/package.nix {};
 
