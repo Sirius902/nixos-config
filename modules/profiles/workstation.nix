@@ -30,6 +30,7 @@
     dusklight
     dusklight-rando
     dusklight-ap
+    dusklight-tphd
     shipwright
     _2ship2harkinian
     shipwright-ap
