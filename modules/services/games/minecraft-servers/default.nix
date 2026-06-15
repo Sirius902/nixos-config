@@ -1,0 +1,364 @@
+# Generic, multi-instance Minecraft server framework.
+#
+# Each server runs as its own hardened systemd service `mc-<name>`, takes
+# console input over a FIFO socket (`/run/mc-<name>.stdin`, drive it with
+# `jscreen mc-<name>`) and logs to the journal. Backups are per-server ZFS
+# snapshots via sanoid, flushed through the console before each snapshot.
+#
+# Modelled on ../svends/default.nix (socket + FIFO + ExecStop poll + hardening),
+# generalised to multiple instances and to any modloader/vanilla via a
+# per-server foreground `start.sh` entry point.
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  cfg = config.services.minecraft-servers;
+
+  # Default JRE: the host's `my.jdk` if set, else a sane headless JDK 21.
+  defaultJdk =
+    if config.my.jdk != null
+    then config.my.jdk
+    else pkgs.jdk21_headless;
+
+  fifo = name: "/run/mc-${name}.stdin";
+
+  zfs = "/run/booted-system/sw/bin/zfs"; # stable API, matches running kernel module
+  systemctl = "${config.systemd.package}/bin/systemctl";
+
+  serverOpts = {name, ...} @ args: let
+    server = args.config;
+  in {
+    options = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether to define units for this server.";
+      };
+
+      autoStart = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = ''
+          Whether to start this server on boot (sets `wantedBy`). When false,
+          the unit still exists and is started on demand with
+          `systemctl start mc-<name>` (which also brings up its FIFO socket).
+        '';
+      };
+
+      dataDir = lib.mkOption {
+        type = lib.types.path;
+        default = "/media/data/mc/servers/${name}";
+        description = "Server working directory (world, mods, configs, start.sh).";
+      };
+
+      package = lib.mkOption {
+        type = lib.types.package;
+        default = defaultJdk;
+        defaultText = lib.literalExpression "config.my.jdk or pkgs.jdk21_headless";
+        description = ''
+          JRE used to launch the server; placed on PATH for `start.sh`. MUST
+          match the Minecraft version (1.12 -> 8, 1.20.x -> 17, 1.21 -> 21).
+        '';
+      };
+
+      startScript = lib.mkOption {
+        type = lib.types.str;
+        default = "${server.dataDir}/start.sh";
+        defaultText = lib.literalExpression ''"''${dataDir}/start.sh"'';
+        description = ''
+          Foreground entry point run as ExecStart. Must NOT use screen/`&`/a
+          restart loop and should end in `exec java ... nogui` so the JVM is the
+          main process (inherits the FIFO as stdin, receives SIGTERM).
+        '';
+      };
+
+      stopCommand = lib.mkOption {
+        type = lib.types.str;
+        default = "stop";
+        description = "Console command written to the FIFO to stop gracefully.";
+      };
+
+      stopTimeout = lib.mkOption {
+        type = lib.types.str;
+        default = "120s";
+        description = "TimeoutStopSec; modded worlds can take a while to save.";
+      };
+
+      port = lib.mkOption {
+        type = lib.types.port;
+        default = 25565;
+        description = "Primary port to open in the firewall (must match server.properties).";
+      };
+
+      extraPorts = {
+        tcp = lib.mkOption {
+          type = lib.types.listOf lib.types.port;
+          default = [];
+          description = "Additional TCP ports to open when openFirewall is set.";
+        };
+        udp = lib.mkOption {
+          type = lib.types.listOf lib.types.port;
+          default = [];
+          description = "Additional UDP ports to open when openFirewall is set (e.g. voice chat).";
+        };
+      };
+
+      openFirewall = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Whether to open this server's ports in the firewall.";
+      };
+
+      memoryMax = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        example = "10G";
+        description = "Optional MemoryMax cgroup ceiling; give headroom over the JVM -Xmx.";
+      };
+
+      zfsDataset = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        example = "data/mc/atm10";
+        description = "ZFS dataset backing dataDir; null disables ZFS snapshot backups.";
+      };
+
+      backup.enable = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether to schedule sanoid snapshots for this server (needs zfsDataset).";
+      };
+
+      serviceConfig = lib.mkOption {
+        type = lib.types.attrs;
+        default = {};
+        description = "Escape hatch merged last into serviceConfig (e.g. relax SystemCallFilter).";
+      };
+    };
+  };
+
+  enabledServers = lib.filterAttrs (_: s: s.enable) cfg.servers;
+  backupServers = lib.filterAttrs (_: s: s.backup.enable && s.zfsDataset != null) enabledServers;
+
+  # Hardening, ported from svends/synergyds + the upstream minecraft-server
+  # module. Deliberately NO MemoryDenyWriteExecute (the JVM JIT needs W^X).
+  hardening = dataDir: {
+    ProtectSystem = "strict";
+    ReadWritePaths = [dataDir];
+
+    CapabilityBoundingSet = [""];
+    DeviceAllow = [""];
+    LockPersonality = true;
+    NoNewPrivileges = true;
+    PrivateDevices = true;
+    PrivateTmp = true;
+    # PrivateUsers is intentionally NOT enabled: it runs the service in a user
+    # namespace, but ZFS does not translate dataset file ownership into a userns,
+    # so the service sees its own files (start.sh, the world) as unowned and gets
+    # EACCES exec'ing/writing them. Re-add via serviceConfig on non-ZFS dataDirs.
+    ProtectClock = true;
+    ProtectControlGroups = true;
+    ProtectHome = true;
+    ProtectHostname = true;
+    ProtectKernelLogs = true;
+    ProtectKernelModules = true;
+    ProtectKernelTunables = true;
+    ProtectProc = "invisible";
+    RemoveIPC = true;
+    RestrictAddressFamilies = ["AF_INET" "AF_INET6"];
+    RestrictNamespaces = ["user" "mnt"];
+    RestrictRealtime = true;
+    RestrictSUIDSGID = true;
+    SystemCallArchitectures = "native";
+    SystemCallErrorNumber = "EPERM";
+    SystemCallFilter = [
+      "@system-service"
+      "~@clock"
+      "~@cpu-emulation"
+      "~@debug"
+      "~@module"
+      "~@obsolete"
+      "~@raw-io"
+      "~@reboot"
+      "~@swap"
+    ];
+    UMask = "0007";
+  };
+
+  mkSocket = name: _: {
+    bindsTo = ["mc-${name}.service"];
+    socketConfig = {
+      ListenFIFO = fifo name;
+      SocketMode = "0660";
+      SocketUser = "mc-${name}";
+      SocketGroup = cfg.group;
+      RemoveOnStop = true;
+      FlushPending = true;
+    };
+  };
+
+  mkService = name: s: {
+    description = "Minecraft server: ${name}";
+    wantedBy = lib.optionals s.autoStart ["multi-user.target"];
+    requires = ["mc-${name}.socket"];
+    after = ["network.target" "mc-${name}.socket" "zfs-mount.service"];
+
+    # dataDir often lives on a ZFS extra pool mounted late in boot; don't start
+    # until it's actually mounted (matters for autoStart after a reboot).
+    unitConfig.RequiresMountsFor = [s.dataDir];
+
+    path = [s.package];
+
+    startLimitIntervalSec = 300;
+    startLimitBurst = 5;
+
+    serviceConfig =
+      {
+        User = "mc-${name}";
+        Group = "mc-${name}";
+        WorkingDirectory = s.dataDir;
+
+        StandardInput = "socket";
+        StandardOutput = "journal";
+        StandardError = "journal";
+
+        TasksMax = 512;
+        LimitNOFILE = 65536;
+
+        # Run start.sh via the system shell (absolute path) rather than exec'ing
+        # it directly: the unit's PATH has the JRE but no shell, so a
+        # `#!/usr/bin/env sh` shebang would fail with "env: 'sh': not found".
+        # This also means start.sh need not be executable.
+        ExecStart = "${pkgs.runtimeShell} ${s.startScript}";
+
+        ExecStop = pkgs.writeShellScript "mc-${name}-stop" ''
+          echo ${lib.escapeShellArg s.stopCommand} > ${fifo name}
+
+          # Wait for the server PID to disappear before returning, so systemd
+          # doesn't SIGKILL a still-saving world.
+          while kill -0 "$MAINPID" 2> /dev/null; do
+            sleep 1s
+          done
+        '';
+        TimeoutStopSec = s.stopTimeout;
+
+        Restart = "always";
+        RestartSec = "10s";
+        SuccessExitStatus = "0 130";
+      }
+      // (hardening s.dataDir)
+      // lib.optionalAttrs (s.memoryMax != null) {MemoryMax = s.memoryMax;}
+      // s.serviceConfig;
+  };
+
+  # sanoid pre-snapshot hook: skip if the server is off AND unchanged since the
+  # last snapshot; flush the world (for a consistent snapshot) if it is running.
+  mkPreScript = name: ds:
+    pkgs.writeShellScript "mc-${name}-presnap" ''
+      set -u
+      unit="mc-${name}.service"
+      pipe=${lib.escapeShellArg (fifo name)}
+
+      if ! ${systemctl} is-active --quiet "$unit"; then
+        written=$(${zfs} get -Hp -o value written ${lib.escapeShellArg ds})
+        [ "$written" = "0" ] && exit 1   # off and unchanged -> skip this snapshot
+        exit 0                           # off but changed -> snapshot on-disk state, no flush
+      fi
+
+      # Running: flush to disk so the snapshot is world-consistent.
+      printf 'save-off\n'       > "$pipe"
+      printf 'save-all flush\n' > "$pipe"
+      sleep 3
+      exit 0
+    '';
+
+  mkPostScript = name:
+    pkgs.writeShellScript "mc-${name}-postsnap" ''
+      unit="mc-${name}.service"
+      pipe=${lib.escapeShellArg (fifo name)}
+      if ${systemctl} is-active --quiet "$unit"; then
+        printf 'save-on\n' > "$pipe"
+      fi
+      exit 0
+    '';
+in {
+  options.services.minecraft-servers = {
+    enable = lib.mkEnableOption "the Minecraft servers framework";
+
+    group = lib.mkOption {
+      type = lib.types.str;
+      default = "minecraft";
+      description = ''
+        Shared group owning each server's FIFO socket and (via the setgid data
+        dir) its files. Add trusted admins to this group so `jscreen` can write
+        the console and they can manage server files. Per-server service users
+        are NOT in this group, keeping servers isolated from each other.
+      '';
+    };
+
+    servers = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.submodule serverOpts);
+      default = {};
+      description = "Minecraft server instances, keyed by name (unit = mc-<name>).";
+    };
+  };
+
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    {
+      users.users = lib.mapAttrs' (name: s:
+        lib.nameValuePair "mc-${name}" {
+          description = "Minecraft server (${name}) service user";
+          isSystemUser = true;
+          group = "mc-${name}";
+          home = s.dataDir;
+        })
+      enabledServers;
+
+      users.groups =
+        (lib.mapAttrs' (name: _: lib.nameValuePair "mc-${name}" {}) enabledServers)
+        // {${cfg.group} = {};};
+
+      systemd.services =
+        lib.mapAttrs' (name: s: lib.nameValuePair "mc-${name}" (mkService name s)) enabledServers;
+
+      systemd.sockets =
+        lib.mapAttrs' (name: s: lib.nameValuePair "mc-${name}" (mkSocket name s)) enabledServers;
+
+      networking.firewall.allowedTCPPorts =
+        lib.concatMap (s: lib.optionals s.openFirewall ([s.port] ++ s.extraPorts.tcp))
+        (lib.attrValues enabledServers);
+      networking.firewall.allowedUDPPorts =
+        lib.concatMap (s: lib.optionals s.openFirewall ([s.port] ++ s.extraPorts.udp))
+        (lib.attrValues enabledServers);
+    }
+
+    (lib.mkIf (backupServers != {}) {
+      services.sanoid = {
+        enable = true;
+        templates.minecraft = {
+          hourly = 36;
+          daily = 14;
+          weekly = 8; # via sanoid freeform settings (no typed option upstream)
+          autosnap = true;
+          autoprune = true;
+          no_inconsistent_snapshot = true; # skip the snapshot if the pre script exits non-zero
+          force_post_snapshot_script = true; # always re-enable saving
+          script_timeout = 60;
+        };
+        datasets = lib.mapAttrs' (name: s:
+          lib.nameValuePair s.zfsDataset {
+            useTemplate = ["minecraft"];
+            pre_snapshot_script = "${mkPreScript name s.zfsDataset}";
+            post_snapshot_script = "${mkPostScript name}";
+          })
+        backupServers;
+      };
+
+      # sanoid runs as an unprivileged DynamicUser; let its hooks write the
+      # group-owned FIFOs so the world flush can reach running servers.
+      systemd.services.sanoid.serviceConfig.SupplementaryGroups = [cfg.group];
+    })
+  ]);
+}

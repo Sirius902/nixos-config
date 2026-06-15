@@ -5,6 +5,7 @@
     ../vfio.nix
     ../services/games/svends/default.nix
     ../services/games/synergyds/default.nix
+    ../services/games/minecraft-servers/default.nix
     ../desktop/default.nix
     ../gpu.nix
     ../xrdp.nix
