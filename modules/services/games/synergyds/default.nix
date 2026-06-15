@@ -9,6 +9,15 @@ in {
   options.services.synergyds = {
     enable = lib.mkEnableOption "synergyds";
 
+    autoStart = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = ''
+        Whether to start the server on boot (sets `wantedBy`). When false, the
+        unit still exists and is started on demand with `systemctl start synergyds`.
+      '';
+    };
+
     port = lib.mkOption {
       type = lib.types.port;
       default = 27015;
@@ -169,7 +178,7 @@ in {
 
     systemd.services.synergyds = {
       description = "Synergy Dedicated Server";
-      wantedBy = ["multi-user.target"];
+      wantedBy = lib.optionals cfg.autoStart ["multi-user.target"];
       requires = ["synergyds.socket"];
       after = [
         "network.target"

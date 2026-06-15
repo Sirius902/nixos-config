@@ -9,6 +9,15 @@ in {
   options.services.svends = {
     enable = lib.mkEnableOption "svends";
 
+    autoStart = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = ''
+        Whether to start the server on boot (sets `wantedBy`). When false, the
+        unit still exists and is started on demand with `systemctl start svends`.
+      '';
+    };
+
     port = lib.mkOption {
       type = lib.types.port;
       default = 27015;
@@ -163,7 +172,7 @@ in {
 
     systemd.services.svends = {
       description = "Sven Co-op Dedicated Server";
-      wantedBy = ["multi-user.target"];
+      wantedBy = lib.optionals cfg.autoStart ["multi-user.target"];
       requires = ["svends.socket"];
       after = [
         "network.target"

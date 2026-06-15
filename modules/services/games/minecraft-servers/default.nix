@@ -118,6 +118,29 @@
         description = "Optional MemoryMax cgroup ceiling; give headroom over the JVM -Xmx.";
       };
 
+      cpuQuota = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        example = "1400%";
+        description = ''
+          Optional CPUQuota hard cap (100% = one core). Unset means no cap, so the
+          server bursts across all cores while cgroup fair-sharing still keeps it
+          from starving other processes. Set e.g. "1400%" to always reserve cores
+          for the rest of the system.
+        '';
+      };
+
+      cpuWeight = lib.mkOption {
+        type = lib.types.nullOr lib.types.int;
+        default = null;
+        example = 50;
+        description = ''
+          Optional CPUWeight (1-10000, default 100). Lower it (e.g. 50) to make the
+          server yield to higher-weight processes (like an interactive desktop)
+          under contention, while still bursting to free cores when they are idle.
+        '';
+      };
+
       zfsDataset = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
@@ -254,6 +277,8 @@
       }
       // (hardening s.dataDir)
       // lib.optionalAttrs (s.memoryMax != null) {MemoryMax = s.memoryMax;}
+      // lib.optionalAttrs (s.cpuQuota != null) {CPUQuota = s.cpuQuota;}
+      // lib.optionalAttrs (s.cpuWeight != null) {CPUWeight = s.cpuWeight;}
       // s.serviceConfig;
   };
 
