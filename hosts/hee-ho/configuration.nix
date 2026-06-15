@@ -24,24 +24,24 @@
 
   services.svends = {
     enable = true;
+    autoStart = false;
     openFirewall = true;
     insecure = true;
   };
-  systemd.services.svends.wantedBy = lib.mkForce [];
 
   services.synergyds = {
     enable = true;
+    autoStart = false;
     openFirewall = true;
     insecure = true;
     extraCommandLine = inputs.secrets.lib.srcdsExtraCommandLine;
   };
-  systemd.services.synergyds.wantedBy = lib.mkForce [];
 
   services.minecraft-servers = {
     enable = true;
     servers.atm10 = {
       openFirewall = true; # opens 25565
-      memoryMax = "10G"; # headroom over the pack's -Xmx8G
+      memoryMax = "12G"; # cgroup memory.peak ~8.6G (8G pretouched heap + ~0.6G non-heap); headroom for native/worldgen growth
       zfsDataset = "data/mc/atm10";
     };
   };
