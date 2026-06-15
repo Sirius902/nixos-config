@@ -20,7 +20,7 @@
     arcMaxGiB = 8; # ARC down from the derived 12 to clear the 12G Minecraft JVM cgroup
   };
 
-  users.users.chris.extraGroups = ["svends" "synergyds"];
+  users.users.chris.extraGroups = ["svends" "synergyds" "minecraft"];
 
   services.svends = {
     enable = true;
@@ -37,24 +37,26 @@
   };
   systemd.services.synergyds.wantedBy = lib.mkForce [];
 
-  # Allow ports for mc and hkmp.
-  networking.firewall.allowedTCPPorts = [25565 25566 32069];
-  networking.firewall.allowedUDPPorts = [25565 25566 32069];
+  services.minecraft-servers = {
+    enable = true;
+    servers.atm10 = {
+      openFirewall = true; # opens 25565
+      memoryMax = "10G"; # headroom over the pack's -Xmx8G
+      zfsDataset = "data/mc/atm10";
+    };
+  };
+
+  # Allow ports for a second (not-yet-ported) mc server and hkmp.
+  # atm10's 25565 is opened by services.minecraft-servers.
+  networking.firewall.allowedTCPPorts = [25566 32069];
+  networking.firewall.allowedUDPPorts = [25566 32069];
 
   # Must be enabled due to https://github.com/tailscale/tailscale/issues/4254.
   services.resolved.enable = true;
   services.tailscale.useRoutingFeatures = "server";
 
-  services.cron = {
-    enable = true;
-    systemCronJobs = [
-      "0 * * * *    chris    /media/data/mc/backup-all.sh"
-    ];
-  };
-
   environment.systemPackages = with pkgs; [
     ghostty.terminfo
-    screen
     config.my.jdk
   ];
 
