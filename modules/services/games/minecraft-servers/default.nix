@@ -168,7 +168,11 @@
     ProtectProc = "invisible";
     RemoveIPC = true;
     RestrictAddressFamilies = ["AF_INET" "AF_INET6"];
-    RestrictNamespaces = ["user" "mnt"];
+    # Deny all namespace creation. svends/synergyds must allow "user"+"mnt" for
+    # steam-run (bwrap); a pure-Java server creates none, so match the stricter
+    # upstream services.minecraft-server setting. systemd's own PrivateTmp/
+    # PrivateDevices sandboxing is unaffected (set up by the manager, not us).
+    RestrictNamespaces = true;
     RestrictRealtime = true;
     RestrictSUIDSGID = true;
     SystemCallArchitectures = "native";
