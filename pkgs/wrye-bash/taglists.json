@@ -20,8 +20,8 @@
     "hash": "sha256-/9NrwI31VWXprV8Xm3L/5T5EBMBuyMRnc97+NUovacY="
   },
   "Oblivion": {
-    "url": "https://raw.githubusercontent.com/loot/oblivion/87007f5076cb45e819dcb5bec879783af9a81ef9/masterlist.yaml",
-    "hash": "sha256-DBB6pj6kST9xTW5GcfMYLY1BaPfECwSVCLo64gwWRpM="
+    "url": "https://raw.githubusercontent.com/loot/oblivion/6b3b09dbd8c7f74da504cb031f135bfbdb96e887/masterlist.yaml",
+    "hash": "sha256-F/8mE0fJoH4zCNsySWtjatLXG8Wjyb1KBmLDMtPYrx0="
   },
   "Skyrim": {
     "url": "https://raw.githubusercontent.com/loot/skyrim/8b1a4e98806c8cdb6651bf5c96ff63daa009e00d/masterlist.yaml",
