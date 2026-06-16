@@ -41,7 +41,7 @@
     enable = true;
     servers.atm10 = {
       openFirewall = true; # opens 25565
-      memoryMax = "12G"; # cgroup memory.peak ~8.6G (8G pretouched heap + ~0.6G non-heap); headroom for native/worldgen growth
+      memoryMax = "11G"; # cgroup memory.peak ~8.8G over 22h (oom_kill=0); ~peak+25% for non-heap warmup + player-load native spikes
       zfsDataset = "data/mc/atm10";
     };
   };
