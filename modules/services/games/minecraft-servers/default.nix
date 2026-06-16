@@ -74,6 +74,18 @@
         '';
       };
 
+      extraJvmOpts = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = ["-XX:+ExitOnOutOfMemoryError"];
+        description = ''
+          Extra JVM options injected ONLY into the systemd service (via
+          JDK_JAVA_OPTIONS), on top of whatever start.sh passes to java. A manual
+          `start.sh` run does not see these, so it stays clean. The default makes
+          the JVM exit on OutOfMemoryError (incl. the GC-overhead-limit case) so
+          systemd restarts it, instead of leaving a wedged-but-alive process.
+        '';
+      };
+
       stopCommand = lib.mkOption {
         type = lib.types.str;
         default = "stop";
@@ -238,6 +250,10 @@
 
     path = [s.package];
 
+    environment = lib.optionalAttrs (s.extraJvmOpts != []) {
+      JDK_JAVA_OPTIONS = lib.concatStringsSep " " s.extraJvmOpts;
+    };
+
     startLimitIntervalSec = 300;
     startLimitBurst = 5;
 
@@ -367,9 +383,14 @@ in {
       services.sanoid = {
         enable = true;
         templates.minecraft = {
-          hourly = 36;
-          daily = 14;
-          weekly = 8; # via sanoid freeform settings (no typed option upstream)
+          # Disaster-recovery focus: fine-grained recent history + a trimmed tail.
+          # (weekly/frequently are sanoid freeform; the rest are typed options.)
+          frequently = 0;
+          hourly = 48; # 2 days of hourly — the primary "catch it fast" window
+          daily = 14; # 2 weeks
+          weekly = 4; # ~1 month
+          monthly = 3; # ~3 months tail; pinned (else sanoid's default keeps 6)
+          yearly = 0;
           autosnap = true;
           autoprune = true;
           no_inconsistent_snapshot = true; # skip the snapshot if the pre script exits non-zero
