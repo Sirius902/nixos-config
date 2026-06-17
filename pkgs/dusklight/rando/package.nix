@@ -28,10 +28,10 @@
 in
   dusklight.overrideAttrs (finalAttrs: prevAttrs: {
     pname = "dusklight-rando";
-    version = "0-unstable-2026-06-16";
+    version = "0-unstable-2026-06-17";
     src = prevAttrs.src.override {
-      rev = "1790ad6fafedd363bb8a716a28a2246aa06f1798";
-      hash = "sha256-qYK6NS+fWRCzdfWFymIO3dYIV1NjaPo8sjlmRSmKVTM=";
+      rev = "08345d01ed22c0393bff44922036f1626443c0ed";
+      hash = "sha256-siZaYw9lFC6PqvoH84Q7foGT2UoGSyDXo/IG6PeJrs8=";
     };
 
     postPatch =
