@@ -22,6 +22,7 @@
   libjpeg,
   libxkbcommon,
   libglvnd,
+  vulkan-loader,
   # Common
   cxxopts,
   abseil-cpp,
@@ -154,6 +155,7 @@ in
         libXtst
         libxkbcommon
         libglvnd
+        vulkan-loader
       ]
       ++ [
         libjpeg
@@ -208,6 +210,15 @@ in
       + ''
         runHook postInstall
       '';
+
+    # The bundled Dawn (WebGPU) dlopens libvulkan.so.1 / libEGL.so by soname at
+    # runtime; nothing links them, so Nix's RPATH shrink drops them and the GPU
+    # backends fall back to Null (no window). Re-add the loaders to the RUNPATH.
+    postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
+      for bin in $out/bin/dusklight*; do
+        patchelf --add-rpath "${lib.makeLibraryPath [vulkan-loader libglvnd]}" "$bin"
+      done
+    '';
 
     passthru.updateScript = nix-update-script {
       extraArgs = ["--version=branch"];
