@@ -7,7 +7,7 @@
 
   networking.hostId = "49e32584";
 
-  boot.kernelModules = ["ntsync"];
+  boot.kernelModules = ["ntsync" "nct6683"];
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
   services.tailscale.useRoutingFeatures = "client";
