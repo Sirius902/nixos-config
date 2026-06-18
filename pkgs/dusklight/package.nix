@@ -34,7 +34,7 @@
   nlohmann_json,
   nix-update-script,
 }: let
-  dawnVersion = "v20260603.191052";
+  dawnVersion = "v20260618.032059";
   nodVersion = "v2.0.0-alpha.10";
 
   dawn-src = fetchzip {
@@ -43,11 +43,11 @@
         if stdenv.hostPlatform.isDarwin
         then "darwin-arm64"
         else "linux-x86_64";
-    in "https://github.com/encounter/dawn-build/releases/download/${dawnVersion}/dawn-${platform}.tar.gz";
+    in "https://github.com/encounter/dawn/releases/download/${dawnVersion}/dawn-${platform}.tar.gz";
     hash =
       if stdenv.hostPlatform.isDarwin
-      then "sha256-Uh31kwVzhabZfjqszoYDryihc29S/wideE/FuWyA9qk="
-      else "sha256-yTanM4TUIv6akgpt2tai/2W6q4RAt48CxKobRgxK8WU=";
+      then "sha256-HT+qtlLaSHyoXPrUcXgcTGa877X5YfzbxRD4bJb7i1Y="
+      else "sha256-GFSd573b+VQx/VmFdNQgWDd0V9ayQlcw0Zuopke12ak=";
     stripRoot = false;
   };
 
@@ -103,7 +103,7 @@ in
 
       check_version() {
         local name="$1" expected="$2" var="$3" file="$4"
-        actual=$(sed -n "s/.*set($var \"\([^\"]*\)\".*/\1/p" "$file")
+        actual=$(sed -n "s/.*_aurora_dependency_version($var \"\([^\"]*\)\".*/\1/p" "$file")
         if [[ "$actual" != "$expected" ]]; then
           echo "error: $name version mismatch: expected '$expected', got '$actual'"
           echo "update $name in package.nix"
