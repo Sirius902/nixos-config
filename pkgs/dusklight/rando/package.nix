@@ -50,10 +50,10 @@
 in
   dusklight.overrideAttrs (finalAttrs: prevAttrs: {
     pname = "dusklight-rando";
-    version = "0-unstable-2026-06-17";
+    version = "0-unstable-2026-06-19";
     src = prevAttrs.src.override {
-      rev = "08345d01ed22c0393bff44922036f1626443c0ed";
-      hash = "sha256-siZaYw9lFC6PqvoH84Q7foGT2UoGSyDXo/IG6PeJrs8=";
+      rev = "a3de85fb4b3ac271d2f67a43bf633a911a1efdb4";
+      hash = "sha256-DXDr7lxVr52MI56WA6iLY/xbQBvmECtn3pPMOK78E3E=";
     };
 
     # Replaces the base postPatch: its inherited check_version targets the base's
