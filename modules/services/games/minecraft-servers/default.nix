@@ -287,6 +287,12 @@
         TasksMax = 512;
         LimitNOFILE = 65536;
 
+        # Never let the JVM heap (committed up-front by AlwaysPreTouch) be paged
+        # to swap — a swapped heap is a GC-stall disaster. This keeps it resident;
+        # it is complementary to ExitOnOutOfMemoryError (which handles -Xmx heap
+        # exhaustion), NOT a trigger for it. MemoryMax stays the outer OOM cap.
+        MemorySwapMax = 0;
+
         # Run start.sh via the system shell (absolute path) rather than exec'ing
         # it directly: the unit's PATH has the JRE but no shell, so a
         # `#!/usr/bin/env sh` shebang would fail with "env: 'sh': not found".
