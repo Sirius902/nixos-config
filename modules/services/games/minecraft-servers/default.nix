@@ -16,15 +16,20 @@
 }: let
   cfg = config.services.minecraft-servers;
 
-  # Default JRE: the host's `my.jdk` if set, else a sane headless JDK 21.
-  defaultJdk =
-    if config.my.jdk != null
+  # Resolve a server's JDK: its own `jdk`, else the host-wide `my.jdk`, else a
+  # hard eval failure (we never silently fall back to some arbitrary JDK).
+  serverJdk = name: s:
+    if s.jdk != null
+    then s.jdk
+    else if config.my.jdk != null
     then config.my.jdk
-    else pkgs.jdk21_headless;
+    else throw "services.minecraft-servers.servers.${name}: no JDK selected — set its `jdk` option or the host-wide `my.jdk`.";
 
   fifo = name: "/run/mc-${name}.stdin";
 
-  zfs = "/run/booted-system/sw/bin/zfs"; # stable API, matches running kernel module
+  # The system's own ZFS userland, which is guaranteed to match the loaded
+  # kernel module. Don't hardcode a path; take whatever the host is running.
+  zfs = "${config.boot.zfs.package}/bin/zfs";
   systemctl = "${config.systemd.package}/bin/systemctl";
 
   serverOpts = {name, ...} @ args: let
@@ -53,13 +58,15 @@
         description = "Server working directory (world, mods, configs, start.sh).";
       };
 
-      package = lib.mkOption {
-        type = lib.types.package;
-        default = defaultJdk;
-        defaultText = lib.literalExpression "config.my.jdk or pkgs.jdk21_headless";
+      jdk = lib.mkOption {
+        type = lib.types.nullOr lib.types.package;
+        default = null;
+        defaultText = lib.literalExpression "config.my.jdk";
         description = ''
-          JRE used to launch the server; placed on PATH for `start.sh`. MUST
-          match the Minecraft version (1.12 -> 8, 1.20.x -> 17, 1.21 -> 21).
+          JDK/JRE used to launch the server; placed on PATH for `start.sh`. MUST
+          match the Minecraft version (1.12 -> 8, 1.20.x -> 17, 1.21 -> 21). When
+          null it falls back to the host-wide `my.jdk`; if that is also null,
+          evaluation fails — no JDK is ever chosen implicitly.
         '';
       };
 
@@ -126,8 +133,18 @@
       memoryMax = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
-        example = "10G";
-        description = "Optional MemoryMax cgroup ceiling; give headroom over the JVM -Xmx.";
+        example = "12G";
+        description = ''
+          Hard cgroup memory ceiling for the WHOLE process (systemd MemoryMax) —
+          NOT the JVM heap. This is deliberately not -Xmx: the JVM needs non-heap
+          memory too (metaspace, thread stacks, GC structures, direct byte
+          buffers, JIT code cache, mmap'd region files), so set this to the
+          server's -Xmx plus ~4G of headroom (e.g. -Xmx8G -> "12G"). It is a
+          runaway backstop the kernel OOM-kills the cgroup against, so it must sit
+          above the real working set, never at it. null means no limit.
+
+          (Named after the systemd directive, like cpuQuota/cpuWeight.)
+        '';
       };
 
       cpuQuota = lib.mkOption {
@@ -232,7 +249,7 @@
       ListenFIFO = fifo name;
       SocketMode = "0660";
       SocketUser = "mc-${name}";
-      SocketGroup = cfg.group;
+      SocketGroup = "mc-${name}";
       RemoveOnStop = true;
       FlushPending = true;
     };
@@ -248,7 +265,7 @@
     # until it's actually mounted (matters for autoStart after a reboot).
     unitConfig.RequiresMountsFor = [s.dataDir];
 
-    path = [s.package];
+    path = [(serverJdk name s)];
 
     environment = lib.optionalAttrs (s.extraJvmOpts != []) {
       JDK_JAVA_OPTIONS = lib.concatStringsSep " " s.extraJvmOpts;
@@ -332,14 +349,17 @@ in {
   options.services.minecraft-servers = {
     enable = lib.mkEnableOption "the Minecraft servers framework";
 
-    group = lib.mkOption {
-      type = lib.types.str;
-      default = "minecraft";
+    admins = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+      example = ["chris"];
       description = ''
-        Shared group owning each server's FIFO socket and (via the setgid data
-        dir) its files. Add trusted admins to this group so `jscreen` can write
-        the console and they can manage server files. Per-server service users
-        are NOT in this group, keeping servers isolated from each other.
+        Users added to every server's per-server group (`mc-<name>`). That lets
+        them drive the console FIFO with `jscreen` and read/write the server's
+        files directly (the data dir is setgid + group-writable). Each server
+        keeps its OWN group, so admins can reach every server while the servers
+        stay isolated from one another (one server's user cannot touch another's
+        files). The server's own service user is the group's primary member.
       '';
     };
 
@@ -361,9 +381,12 @@ in {
         })
       enabledServers;
 
-      users.groups =
-        (lib.mapAttrs' (name: _: lib.nameValuePair "mc-${name}" {}) enabledServers)
-        // {${cfg.group} = {};};
+      # One group per server (admins joined in), used for both the data dir and
+      # the console FIFO. Servers never share a group, so they cannot touch each
+      # other's files; the service user is each group's primary member.
+      users.groups = lib.mapAttrs' (name: _:
+        lib.nameValuePair "mc-${name}" {members = cfg.admins;})
+      enabledServers;
 
       systemd.services =
         lib.mapAttrs' (name: s: lib.nameValuePair "mc-${name}" (mkService name s)) enabledServers;
@@ -406,9 +429,11 @@ in {
         backupServers;
       };
 
-      # sanoid runs as an unprivileged DynamicUser; let its hooks write the
-      # group-owned FIFOs so the world flush can reach running servers.
-      systemd.services.sanoid.serviceConfig.SupplementaryGroups = [cfg.group];
+      # sanoid runs as an unprivileged DynamicUser; add it to each backed-up
+      # server's group so its pre/post hooks can write the group-owned FIFOs
+      # (the world flush) for running servers.
+      systemd.services.sanoid.serviceConfig.SupplementaryGroups =
+        lib.mapAttrsToList (name: _: "mc-${name}") backupServers;
     })
   ]);
 }

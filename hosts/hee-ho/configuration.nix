@@ -19,7 +19,7 @@
     arcMaxGiB = 8; # ARC down from the derived 12 to clear the 12G Minecraft JVM cgroup
   };
 
-  users.users.chris.extraGroups = ["svends" "synergyds" "minecraft"];
+  users.users.chris.extraGroups = ["svends" "synergyds"];
 
   services.svends = {
     enable = true;
@@ -39,9 +39,10 @@
 
   services.minecraft-servers = {
     enable = true;
+    admins = ["chris"]; # chris joins each mc-<name> group: console (jscreen) + file access
     servers.atm10 = {
       openFirewall = true; # opens 25565
-      memoryMax = "11G"; # cgroup memory.peak ~8.8G over 22h (oom_kill=0); ~peak+25% for non-heap warmup + player-load native spikes
+      memoryMax = "12G"; # -Xmx8G + 4G headroom for non-heap (metaspace, threads, direct buffers, mmap); observed peak ~8.8G
       zfsDataset = "data/mc/atm10";
     };
   };
