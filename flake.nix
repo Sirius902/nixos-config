@@ -197,6 +197,19 @@
           // overlayPackages
           // {
             inherit (patchedPkgs.graalvmPackages) graalvm-ce_8;
+
+            deck-games = patchedPkgs.linkFarm "deck-games" {
+              inherit
+                (patchedPkgs)
+                _2ship2harkinian
+                dusklight
+                dusklight-rando
+                shipwright
+                shipwright-ap
+                xash3d-fwgs
+                zelda64recomp
+                ;
+            };
           };
 
         checks.statix = pkgs.runCommandLocal "statix-check" {} ''
