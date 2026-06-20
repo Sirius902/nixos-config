@@ -63,7 +63,5 @@
     options = ["compress=zstd" "noatime" "nofail"];
   };
 
-  zramSwap.enable = true;
-
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 }

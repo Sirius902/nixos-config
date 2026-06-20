@@ -7,6 +7,11 @@
 
   networking.hostId = "1a14084a";
 
+  my.memory = {
+    enable = true;
+    ramGiB = 32; # derives: zram 33%, swappiness 133, ARC 12G (lower arcMaxGiB if big VMs need the RAM)
+  };
+
   boot.zfs.requestEncryptionCredentials = false;
 
   my.vfio = {

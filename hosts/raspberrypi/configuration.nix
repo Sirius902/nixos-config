@@ -52,6 +52,11 @@
   services.journald.extraConfig = "SystemMaxUse=100M";
 
   my.tailscale.enable = true;
+  my.memory = {
+    enable = true;
+    ramGiB = 1;
+    zramAlgorithm = "lz4"; # cheap on the Pi 3's weak cores; ratio matters less than latency here
+  };
 
   environment.systemPackages = with pkgs; [
     ghostty.terminfo

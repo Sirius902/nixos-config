@@ -11,6 +11,7 @@
     ../documentation.nix
     ../openssh.nix
     ../mitigations.nix
+    ../memory.nix
   ];
 
   nix.settings = {

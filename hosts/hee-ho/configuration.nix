@@ -14,6 +14,11 @@
 
   my.tailscale.enable = true;
   my.jdk = pkgs.graalvmPackages.graalvm-oracle;
+  my.memory = {
+    enable = true;
+    ramGiB = 32;
+    arcMaxGiB = 8; # ARC down from the derived 12 to clear the 12G Minecraft JVM cgroup
+  };
 
   users.users.chris.extraGroups = ["svends" "synergyds"];
 

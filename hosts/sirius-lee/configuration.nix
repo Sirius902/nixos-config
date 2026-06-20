@@ -7,6 +7,11 @@
 
   networking.hostId = "49e32584";
 
+  my.memory = {
+    enable = true;
+    ramGiB = 64; # derives: zram 25%, swappiness 133, ARC 24G
+  };
+
   boot.kernelModules = ["ntsync" "nct6683"];
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
