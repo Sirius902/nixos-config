@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -24,16 +25,21 @@
 
   services.flatpak.enable = lib.mkDefault true;
 
-  environment.systemPackages = with pkgs; [
-    archipelago
-    poptracker
-    dusklight
-    dusklight-rando
-    shipwright
-    _2ship2harkinian
-    shipwright-ap
-    zelda64recomp
-    waypipe
-    wrye-bash
-  ];
+  # Configurable gaming mice (Logitech G600 etc.): ratbagctl CLI + Piper GUI
+  services.ratbagd.enable = lib.mkDefault true;
+
+  environment.systemPackages = with pkgs;
+    [
+      archipelago
+      poptracker
+      dusklight
+      dusklight-rando
+      shipwright
+      _2ship2harkinian
+      shipwright-ap
+      zelda64recomp
+      waypipe
+      wrye-bash
+    ]
+    ++ lib.optional config.services.ratbagd.enable piper;
 }
