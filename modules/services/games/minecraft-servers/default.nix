@@ -322,7 +322,8 @@
   };
 
   # sanoid pre-snapshot hook: skip if the server is off AND unchanged since the
-  # last snapshot; flush the world (for a consistent snapshot) if it is running.
+  # last snapshot. If running, briefly pause autosave (NO flush) so the atomic
+  # snapshot lands on a quiescent, crash-consistent on-disk state.
   mkPreScript = name: ds:
     pkgs.writeShellScript "mc-${name}-presnap" ''
       set -u
@@ -332,13 +333,16 @@
       if ! ${systemctl} is-active --quiet "$unit"; then
         written=$(${zfs} get -Hp -o value written ${lib.escapeShellArg ds})
         [ "$written" = "0" ] && exit 1   # off and unchanged -> skip this snapshot
-        exit 0                           # off but changed -> snapshot on-disk state, no flush
+        exit 0                           # off but changed -> snapshot on-disk state
       fi
 
-      # Running: flush to disk so the snapshot is world-consistent.
-      printf 'save-off\n'       > "$pipe"
-      printf 'save-all flush\n' > "$pipe"
-      sleep 3
+      # Running: pause autosave, let in-flight writes settle, then return for the
+      # caller to snapshot. Deliberately NO `save-all flush` — it serializes every
+      # loaded chunk + tile-entity on the server thread, a multi-second tick freeze
+      # on a big modded world. The ZFS snapshot is atomic and Minecraft recovers
+      # from the resulting crash-consistent state (as the old tar backup relied on).
+      printf 'save-off\n' > "$pipe"
+      sleep 1
       exit 0
     '';
 
