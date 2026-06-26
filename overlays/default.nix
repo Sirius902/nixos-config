@@ -314,14 +314,21 @@
     });
   })
 
-  (final: prev: {
+  (final: prev: let
+    absl = final.fetchFromGitHub {
+      owner = "abseil";
+      repo = "abseil-cpp";
+      rev = "20250512.1";
+      hash = "sha256-eB7OqTO9Vwts9nYQ/Mdq0Ds4T1KgmmpYdzU09VPWOhk=";
+    };
+  in {
     shadps4 = prev.shadps4.overrideAttrs (finalAttrs: prevAttrs: {
       version = "0.16.0-unstable-2026-06-26";
 
       src = prevAttrs.src.override {
         tag = null;
         rev = "c795c04301ca294570a369c4aec78df28d6559c3";
-        hash = "sha256-2ffaux1VzW4TyJOYG8JDxde8Il17hUx+YIqYsuzsJK4=";
+        hash = "sha256-CRSu9dXxthD1BwpTy39GEu1qfam8ccl6JjcQt2TYwPE=";
 
         postCheckout = ''
           cd "$out"
@@ -343,6 +350,7 @@
             libusb \
             minimp3 \
             miniupnp \
+            protobuf \
             sirit \
             spdlog \
             tracy \
@@ -366,6 +374,7 @@
         ++ [
           (final.lib.cmakeBool "ENABLE_SYSTEM_LIBRARIES" true)
           (final.lib.cmakeBool "SPDLOG_FMT_EXTERNAL" true)
+          (final.lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_ABSL" "${absl}")
         ];
 
       buildInputs =
