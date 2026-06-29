@@ -709,26 +709,4 @@
         };
     });
   })
-
-  # FUTURE(Sirius902) QEMU 11.0 enabled HVF SME2 acceleration, but its runtime
-  # self-check `g_assert(HV_SYS_REG_SMCR_EL1 == KVMID_TO_HVF(...))` in
-  # hvf_arch_init_vcpu aborts on Apple Silicon with SME (M4) + macOS 15.2+, so the
-  # linux-builder VM dies on boot under HVF. It is only a consistency assert (the
-  # actual sysreg sync is guarded by `if (ri)`), so neutralizing it restores HVF.
-  # QEMU 10.x dodged this by disabling SME under HVF entirely.
-  # Remove once nixpkgs ships a QEMU with the HVF SME fix.
-  # https://gitlab.com/qemu-project/qemu/-/issues/2665
-  (final: prev:
-    prev.lib.optionalAttrs prev.stdenv.hostPlatform.isDarwin {
-      qemu_kvm = prev.qemu_kvm.overrideAttrs (prevAttrs: {
-        postPatch =
-          (prevAttrs.postPatch or "")
-          + ''
-            substituteInPlace target/arm/hvf/hvf.c \
-              --replace-fail \
-              'g_assert(HVF_ID == KVMID_TO_HVF(KVMID_AA64_SYS_REG64(__VA_ARGS__)));' \
-              '(void)(HVF_ID);'
-          '';
-      });
-    })
 ]
