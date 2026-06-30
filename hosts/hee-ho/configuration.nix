@@ -7,6 +7,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/nixos/standard.nix
+    ./atm10-test.nix
   ];
 
   networking.hostId = "b0e08309";

@@ -23,6 +23,10 @@
       inputs.sops-nix.follows = "sops-nix";
     };
     nvim-conf.url = "github:Sirius902/nvim-conf";
+    microvm = {
+      url = "github:microvm-nix/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
