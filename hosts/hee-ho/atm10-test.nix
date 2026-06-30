@@ -95,12 +95,20 @@ in {
             source = "/nix/store";
             mountPoint = "/nix/store";
             proto = "virtiofs";
+            # Immutable and read-only → cache aggressively, sparing the per-file
+            # round-trips when switch-root reads the stage-2 closure.
+            readOnly = true;
+            cache = "always";
           }
           {
             tag = "atm10-data";
             source = dataDir;
             mountPoint = dataDir;
             proto = "virtiofs";
+            # Single-writer → cache and buffer writes, sparing the per-chunk
+            # round-trips that slow live generation. A crash can lose buffered
+            # writes, but MC auto-saves and this is a throwaway test world.
+            cache = "always";
           }
         ];
         interfaces = [
