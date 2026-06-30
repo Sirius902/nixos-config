@@ -183,6 +183,17 @@
         description = "Whether to schedule sanoid snapshots for this server (needs zfsDataset).";
       };
 
+      hardening.enable = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = ''
+          Apply the systemd sandboxing block (ProtectSystem, SystemCallFilter,
+          CapabilityBoundingSet, …). Set false when the server runs inside a
+          VM/microvm, where the hypervisor is the isolation boundary and the
+          sandbox is just friction.
+        '';
+      };
+
       serviceConfig = lib.mkOption {
         type = lib.types.attrs;
         default = {};
@@ -314,7 +325,7 @@
         RestartSec = "10s";
         SuccessExitStatus = "0 130";
       }
-      // (hardening s.dataDir)
+      // lib.optionalAttrs s.hardening.enable (hardening s.dataDir)
       // lib.optionalAttrs (s.memoryMax != null) {MemoryMax = s.memoryMax;}
       // lib.optionalAttrs (s.cpuQuota != null) {CPUQuota = s.cpuQuota;}
       // lib.optionalAttrs (s.cpuWeight != null) {CPUWeight = s.cpuWeight;}
