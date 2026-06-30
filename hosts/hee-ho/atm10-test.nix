@@ -122,7 +122,13 @@ in {
         # notify relay (the boot killer) — neutralised in the host dropin below (#474).
         vsock.cid = 42;
         vsock.ssh.enable = true;
+
+        # Boot output on the paravirtual console (hvc0); cloud-hypervisor's emulated
+        # 8250 serial is slow enough to throttle the boot's console writes (microvm.nix#366).
+        cloud-hypervisor.extraArgs = ["--console" "tty" "--serial" "off"];
       };
+
+      boot.kernelParams = ["console=hvc0"]; # paired with --serial off above
 
       services.minecraft-servers = {
         enable = true;
