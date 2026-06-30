@@ -171,10 +171,19 @@ in {
         routes = [{Gateway = "10.0.0.1";}];
         networkConfig.IPv6AcceptRA = false;
       };
-      networking.nameservers = ["1.1.1.1"];
+      networking.nameservers = ["1.1.1.1"]; # static resolv.conf — resolved off below
+      services.resolved.enable = false;
+      services.timesyncd.enable = false; # kvm-clock gives the host's time; no NTP
 
-      # Only the game port — admin is over vsock, not the tap.
-      networking.firewall.allowedTCPPorts = [25566];
+      # The host's tap + DNAT already gate all access (only 25566 in, admin over
+      # vsock), and inbound rules don't touch the real threat (the guest's outbound
+      # or a VM escape), so the guest's own firewall is redundant — drop it.
+      networking.firewall.enable = false;
+
+      # Root is tmpfs, so /var/lib/systemd starts empty every boot and this would
+      # rebuild the journal message catalog every time — wasted work for the
+      # `journalctl -x` explanation text this headless VM never reads.
+      systemd.suppressedSystemUnits = ["systemd-journal-catalog-update.service"];
 
       environment.systemPackages = with pkgs; [
         ghostty.terminfo
