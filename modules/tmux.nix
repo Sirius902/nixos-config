@@ -1,9 +1,9 @@
 {
   programs.tmux = {
     enable = true;
+    terminal = "tmux-256color";
     extraConfig = ''
-      set -g default-terminal "xterm-256color"
-      set-option -ga terminal-overrides ",xterm-256color:Tc"
+      set -as terminal-features ",xterm-ghostty:RGB,xterm-256color:RGB"
     '';
   };
 }
