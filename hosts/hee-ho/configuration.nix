@@ -40,10 +40,10 @@
 
   services.minecraft-servers = {
     enable = true;
-    admins = ["chris"]; # chris joins each mc-<name> group: console (jscreen) + file access
+    admins = ["chris"];
     servers.atm10 = {
-      openFirewall = true; # opens 25565
-      memoryMax = "20G"; # -Xmx8G + 4G headroom for non-heap (metaspace, threads, direct buffers, mmap); observed peak ~8.8G
+      openFirewall = true;
+      memoryMax = "20G";
       zfsDataset = "data/mc/atm10";
     };
   };

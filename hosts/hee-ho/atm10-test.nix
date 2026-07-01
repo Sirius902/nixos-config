@@ -20,7 +20,7 @@ in {
     autoStart = false; # never run two servers against the one shared world
     port = 25566;
     openFirewall = false; # 25566 is opened host-wide already; don't re-touch the firewall
-    memoryMax = "12G"; # 8G heap + non-heap headroom
+    memoryMax = "12G";
     cpuWeight = 50; # yield to prod under contention
     serviceConfig = {
       CPUAffinity = "8-15"; # leave 0-7 to prod
@@ -88,7 +88,7 @@ in {
       microvm = {
         hypervisor = "cloud-hypervisor";
         vcpu = 8;
-        mem = 12288; # 8G heap + non-heap + guest OS
+        mem = 12288; # JVM heap + non-heap + guest OS
         shares = [
           {
             tag = "ro-store";
@@ -105,9 +105,8 @@ in {
             source = dataDir;
             mountPoint = dataDir;
             proto = "virtiofs";
-            # Single-writer → cache and buffer writes, sparing the per-chunk
-            # round-trips that slow live generation. A crash can lose buffered
-            # writes, but MC auto-saves and this is a throwaway test world.
+            # Throwaway eval world, so host↔guest coherence is moot — cache hard
+            # with `always` instead of the coherent default `auto`.
             cache = "always";
           }
         ];

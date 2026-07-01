@@ -430,10 +430,10 @@ in {
           # Disaster-recovery focus: fine-grained recent history + a trimmed tail.
           # (weekly/frequently are sanoid freeform; the rest are typed options.)
           frequently = 0;
-          hourly = 48; # 2 days of hourly — the primary "catch it fast" window
-          daily = 14; # 2 weeks
-          weekly = 4; # ~1 month
-          monthly = 3; # ~3 months tail; pinned (else sanoid's default keeps 6)
+          hourly = 48; # the primary "catch it fast" window
+          daily = 14;
+          weekly = 4;
+          monthly = 3; # pinned; sanoid keeps 6 by default otherwise
           yearly = 0;
           autosnap = true;
           autoprune = true;
