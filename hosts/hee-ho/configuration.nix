@@ -7,6 +7,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/nixos/standard.nix
+    ./atm10-vm.nix
   ];
 
   networking.hostId = "b0e08309";
@@ -36,18 +37,7 @@
     extraCommandLineFile = config.sops.secrets.srcdsExtraCommandLine.path;
   };
 
-  services.minecraft-servers = {
-    enable = true;
-    admins = ["chris"];
-    servers.atm10 = {
-      openFirewall = true;
-      memoryMax = "20G";
-      zfsDataset = "data/mc/atm10";
-    };
-  };
-
-  # Allow ports for a second (not-yet-ported) mc server and hkmp.
-  # atm10's 25565 is opened by services.minecraft-servers.
+  # 32069 is hkmp; atm10's 25565 is DNAT'd to its microVM (atm10-vm-hostnet), not here.
   networking.firewall.allowedTCPPorts = [25566 32069];
   networking.firewall.allowedUDPPorts = [25566 32069];
 
