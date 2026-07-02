@@ -178,6 +178,22 @@
       };
   })
 
+  # glfw3-minecraft backs prismlauncher's "Use system installation of GLFW"
+  # tweak. GLFW 3.4 (release) aborts the whole game with SIGABRT the instant a
+  # file is dragged onto the window on Wayland: its wl_data_offer listener wires
+  # up only the `offer` event, leaving the v3 source_actions/action handlers
+  # NULL, so libwayland-client wl_abort()s on the first drag event.
+  # https://github.com/glfw/glfw/issues/2835
+  (final: prev: {
+    glfw3-minecraft = prev.glfw3-minecraft.overrideAttrs (prevAttrs: {
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          ../patches/glfw3-minecraft/0001-wayland-fix-drag-and-drop-crash.patch
+        ];
+    });
+  })
+
   (final: prev: {
     prismlauncher = prev.prismlauncher.overrideAttrs (prevAttrs: {
       qtWrapperArgs =
