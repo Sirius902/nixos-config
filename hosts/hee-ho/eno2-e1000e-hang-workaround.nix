@@ -26,7 +26,7 @@
   # message and rate-limited, so a genuinely dead NIC can't reboot-loop).
   systemd.services.eno2-hang-watchdog = {
     description = "Recover eno2 from an e1000e Hardware Unit Hang";
-    path = [pkgs.iputils pkgs.iproute2 pkgs.util-linux pkgs.systemd];
+    path = [pkgs.coreutils pkgs.gnugrep pkgs.gawk pkgs.iproute2 pkgs.iputils pkgs.util-linux pkgs.systemd];
     serviceConfig.Type = "oneshot";
     script = ''
       set -u
