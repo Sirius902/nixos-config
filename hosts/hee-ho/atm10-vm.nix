@@ -98,25 +98,13 @@ in {
         hypervisor = "cloud-hypervisor";
         vcpu = 8;
         mem = 21504; # JVM heap + non-heap + guest OS
+        storeDiskType = "erofs";
         shares = [
-          {
-            tag = "ro-store";
-            source = "/nix/store";
-            mountPoint = "/nix/store";
-            proto = "virtiofs";
-            # Immutable and read-only → cache aggressively, sparing the per-file
-            # round-trips when switch-root reads the stage-2 closure.
-            readOnly = true;
-            cache = "always";
-          }
           {
             tag = "atm10-data";
             source = dataDir;
             mountPoint = dataDir;
             proto = "virtiofs";
-            # Left at the default `cache = "auto"` (not `always` like the store): host
-            # and guest both touch this, so it needs close-to-open coherence for
-            # host-side config edits.
           }
         ];
         interfaces = [
