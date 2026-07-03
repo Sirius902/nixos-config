@@ -8,6 +8,7 @@
     ./hardware-configuration.nix
     ../../modules/nixos/standard.nix
     ./atm10-vm.nix
+    ./eno2-e1000e-hang-workaround.nix
   ];
 
   networking.hostId = "b0e08309";
@@ -44,6 +45,10 @@
   # Must be enabled due to https://github.com/tailscale/tailscale/issues/4254.
   services.resolved.enable = true;
   services.tailscale.useRoutingFeatures = "server";
+
+  # Keep the OOM-killer off the remote-access path under memory pressure (sshd is
+  # already -1000; the atm10 microVM is set to be sacrificed first).
+  systemd.services.tailscaled.serviceConfig.OOMScoreAdjust = -900;
 
   environment.systemPackages = with pkgs; [
     ghostty.terminfo

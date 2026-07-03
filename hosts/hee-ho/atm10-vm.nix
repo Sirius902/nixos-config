@@ -200,12 +200,15 @@ in {
 
   # Boot fix (#474): vsock.cid arms microvm.nix's socat notify relay whose 2s timeout
   # stalls boot; Type=simple + NotifyAccess=none leaves NOTIFY_SOCKET unset so it never
-  # starts. (Unlike the retired eval VM, prod is neither OOM-sacrificed nor CPU-pinned.)
+  # starts. OOMScoreAdjust makes the VM the first thing the kernel sacrifices if the host
+  # ever runs out of memory, so an OOM can't take down host services (sshd is already at
+  # -1000, tailscaled is protected in configuration.nix).
   systemd.services."microvm@atm10-vm" = {
     overrideStrategy = "asDropin";
     serviceConfig = {
       Type = lib.mkForce "simple";
       NotifyAccess = lib.mkForce "none";
+      OOMScoreAdjust = 1000;
     };
   };
 
