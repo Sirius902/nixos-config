@@ -234,7 +234,7 @@ in
       --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
 
       substituteInPlace libultraship/src/ship/Context.cpp \
-        --replace-fail "GetInstance()->mShortName" "GetRawInstance()->mShortName" \
+        --replace-fail "GetInstance()->mShortName" "GetRawInstance()->mShortName"
     '';
 
     postBuild = ''
