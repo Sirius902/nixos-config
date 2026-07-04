@@ -229,9 +229,9 @@ in
 
     postPatch = ''
       substituteInPlace soh/src/boot/build.c.in \
-      --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
-      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
-      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
+        --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
+        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
+        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
 
       substituteInPlace libultraship/src/ship/Context.cpp \
         --replace-fail "GetInstance()->mShortName" "GetRawInstance()->mShortName"
@@ -283,7 +283,6 @@ in
         # Move gamecontrollerdb.txt to the proper place for app bundle
         install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
           $out/Applications/soh.app/Contents/Resources/gamecontrollerdb.txt
-
       ''
       + ''
         # TODO(Sirius902) Uncomment when upstream adds a root LICENSE file.

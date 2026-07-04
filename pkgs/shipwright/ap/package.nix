@@ -173,7 +173,6 @@ in
       ../disable-downloading-stb_image.patch
       ./disable-openssl-check.patch
       ./sslcertstore-dir.patch
-      ./app-name.patch
     ];
 
     nativeBuildInputs =
@@ -264,14 +263,16 @@ in
       cp ${stb_impl} ./stb/${stb_impl.name}
       substituteInPlace libultraship/cmake/dependencies/common.cmake \
         --replace-fail "\''${STB_DIR}" "$(readlink -f ./stb)"
-
     '';
 
     postPatch = ''
       substituteInPlace soh/src/boot/build.c.in \
-      --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
-      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
-      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
+        --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
+        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
+        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
+
+      substituteInPlace soh/soh/OTRGlobals.h \
+        --replace-fail 'const std::string appShortName = "soh";' 'const std::string appShortName = "soh-ap";'
     '';
 
     postBuild = ''
@@ -329,7 +330,6 @@ in
         # Move gamecontrollerdb.txt to the proper place for app bundle
         install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
           $out/Applications/soh-ap.app/Contents/Resources/gamecontrollerdb.txt
-
       ''
       + ''
         # TODO(Sirius902) Uncomment when upstream adds a root LICENSE file.

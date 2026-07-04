@@ -99,6 +99,7 @@
             '';
         })) {
         shipwright = "$out/lib/soh.elf";
+        shipwright_stable = "$out/lib/soh.elf";
         shipwright-ap = "$out/lib/soh.elf";
         _2ship2harkinian = "$out/lib/2s2h.elf";
         zelda64recomp = "$out/bin/Zelda64Recompiled";
@@ -106,7 +107,7 @@
     else if prev.stdenv.hostPlatform.isDarwin
     then
       # On Darwin the hidapi driver isn't usable without entitlements so just treat it as a regular controller and init hid via a separate program.
-      prev.lib.genAttrs ["shipwright" "shipwright-ap" "_2ship2harkinian"] (
+      prev.lib.genAttrs ["shipwright" "shipwright_stable" "shipwright-ap" "_2ship2harkinian"] (
         name:
           prev.${name}.override {
             sdl_gamecontrollerdb = final.sdl_gamecontrollerdb.overrideAttrs (prevAttrs: {

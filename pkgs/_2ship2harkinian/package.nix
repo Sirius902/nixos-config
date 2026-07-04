@@ -220,9 +220,9 @@ in
 
     postPatch = ''
       substituteInPlace mm/src/boot/build.c.in \
-      --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
-      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
-      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
+        --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
+        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
+        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
     '';
 
     postBuild = ''
@@ -270,7 +270,6 @@ in
         # Move gamecontrollerdb.txt to the proper place for app bundle
         install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
           $out/Applications/2s2h.app/Contents/Resources/gamecontrollerdb.txt
-
       ''
       + ''
         install -Dm644 -t $out/share/licenses/2ship2harkinian ../LICENSE

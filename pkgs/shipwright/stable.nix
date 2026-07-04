@@ -29,7 +29,7 @@
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
-  shipwright,
+  shipwright_stable,
   libopus,
   opusfile,
   libogg,
@@ -55,7 +55,7 @@
       hash = "sha256-mQOJ6jCN+7VopgZ61yzaCnt4R1QLrW7+47xxMhFRHLQ=";
     };
     patches = [
-      "${shipwright.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
+      "${shipwright_stable.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
     ];
   };
 
@@ -95,7 +95,7 @@
       hash = "sha256-HTi2FKzKCbRaP13XERUmHkJgw8IfKaRJvsK3+YxFFdc=";
     };
     patches = [
-      "${shipwright.src}/libultraship/cmake/dependencies/patches/stormlib-optimizations.patch"
+      "${shipwright_stable.src}/libultraship/cmake/dependencies/patches/stormlib-optimizations.patch"
     ];
   };
 
@@ -121,7 +121,7 @@
   };
 in
   stdenv.mkDerivation (finalAttrs: {
-    pname = "shipwright";
+    pname = "shipwright-stable";
     version = "9.2.3";
 
     src = fetchFromGitHub {
@@ -229,9 +229,12 @@ in
 
     postPatch = ''
       substituteInPlace soh/src/boot/build.c.in \
-      --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
-      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
-      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
+        --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
+        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
+        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
+
+      substituteInPlace soh/soh/OTRGlobals.h \
+        --replace-fail 'const std::string appShortName = "soh";' 'const std::string appShortName = "soh-stable";'
     '';
 
     postBuild = ''
@@ -251,47 +254,55 @@ in
     postInstall =
       lib.optionalString stdenv.hostPlatform.isLinux ''
         mkdir -p $out/bin
-        ln -s $out/lib/soh.elf $out/bin/soh
-        install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/512x512/apps/soh.png
+        ln -s $out/lib/soh.elf $out/bin/soh-stable
+        install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/512x512/apps/soh-stable.png
       ''
       + lib.optionalString stdenv.hostPlatform.isDarwin ''
         # Recreate the macOS bundle (without using cpack)
         # We mirror the structure of the bundle distributed by the project
 
-        mkdir -p $out/Applications/soh.app/Contents
-        cp $src/soh/macosx/Info.plist.in $out/Applications/soh.app/Contents/Info.plist
-        substituteInPlace $out/Applications/soh.app/Contents/Info.plist \
-          --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}"
+        mkdir -p $out/Applications/soh-stable.app/Contents
+        cp $src/soh/macosx/Info.plist.in $out/Applications/soh-stable.app/Contents/Info.plist
+        substituteInPlace $out/Applications/soh-stable.app/Contents/Info.plist \
+          --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}" \
+          --replace-fail \
+            "<string>Ship of Harkinian</string>" \
+            "<string>Ship of Harkinian Stable</string>" \
+          --replace-fail \
+            "<string>com.shipofharkinian.ShipOfHarkinian</string>" \
+            "<string>com.shipofharkinian.ShipOfHarkinian.Stable</string>" \
+          --replace-fail \
+            "<string>~/Library/Application Support/com.shipofharkinian.soh</string>" \
+            "<string>~/Library/Application Support/com.shipofharkinian.soh-stable</string>"
 
-        mv $out/MacOS $out/Applications/soh.app/Contents/MacOS
+        mv $out/MacOS $out/Applications/soh-stable.app/Contents/MacOS
 
         # "lib" contains all resources that are in "Resources" in the official bundle.
         # We move them to the right place and symlink them back to $out/lib,
         # as that's where the game expects them.
-        mv $out/Resources $out/Applications/soh.app/Contents/Resources
-        mv $out/lib/** $out/Applications/soh.app/Contents/Resources
+        mv $out/Resources $out/Applications/soh-stable.app/Contents/Resources
+        mv $out/lib/** $out/Applications/soh-stable.app/Contents/Resources
         rm -rf $out/lib
-        ln -s $out/Applications/soh.app/Contents/Resources $out/lib
+        ln -s $out/Applications/soh-stable.app/Contents/Resources $out/lib
 
         # Copy icons
-        cp -r ../build/macosx/soh.icns $out/Applications/soh.app/Contents/Resources/soh.icns
+        cp -r ../build/macosx/soh.icns $out/Applications/soh-stable.app/Contents/Resources/soh.icns
 
         # TODO(Sirius902) This seems like an issue upstream in ship maybe?
         # Move gamecontrollerdb.txt to the proper place for app bundle
         install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
-          $out/Applications/soh.app/Contents/Resources/gamecontrollerdb.txt
-
+          $out/Applications/soh-stable.app/Contents/Resources/gamecontrollerdb.txt
       ''
       + ''
         # TODO(Sirius902) Uncomment when upstream adds a root LICENSE file.
-        # install -Dm644 -t $out/share/licenses/shipwright ../LICENSE
+        # install -Dm644 -t $out/share/licenses/shipwright_stable ../LICENSE
         test ! -f ../LICENSE || (echo "upstream LICENSE exists now, install it!" && false)
 
-        install -Dm644 -t $out/share/licenses/shipwright/OTRExporter ../OTRExporter/LICENSE
-        install -Dm644 -t $out/share/licenses/shipwright/ZAPDTR ../ZAPDTR/LICENSE
-        install -Dm644 -t $out/share/licenses/shipwright/libgfxd ${libgfxd}/LICENSE
-        install -Dm644 -t $out/share/licenses/shipwright/libultraship ../libultraship/LICENSE
-        install -Dm644 -t $out/share/licenses/shipwright/thread_pool ${thread_pool}/LICENSE.txt
+        install -Dm644 -t $out/share/licenses/shipwright_stable/OTRExporter ../OTRExporter/LICENSE
+        install -Dm644 -t $out/share/licenses/shipwright_stable/ZAPDTR ../ZAPDTR/LICENSE
+        install -Dm644 -t $out/share/licenses/shipwright_stable/libgfxd ${libgfxd}/LICENSE
+        install -Dm644 -t $out/share/licenses/shipwright_stable/libultraship ../libultraship/LICENSE
+        install -Dm644 -t $out/share/licenses/shipwright_stable/thread_pool ${thread_pool}/LICENSE.txt
       '';
 
     postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
@@ -300,12 +311,12 @@ in
 
     desktopItems = [
       (makeDesktopItem {
-        name = "soh";
-        icon = "soh";
-        exec = "soh";
+        name = "soh-stable";
+        icon = "soh-stable";
+        exec = "soh-stable";
         comment = finalAttrs.meta.description;
-        genericName = "Ship of Harkinian";
-        desktopName = "soh";
+        genericName = "Ship of Harkinian (Stable)";
+        desktopName = "soh-stable";
         categories = ["Game"];
       })
     ];
@@ -319,7 +330,7 @@ in
     meta = {
       homepage = "https://github.com/HarbourMasters/Shipwright";
       description = "PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
-      mainProgram = "soh";
+      mainProgram = "soh-stable";
       platforms = lib.platforms.linux ++ lib.platforms.darwin;
       maintainers = with lib.maintainers; [matteopacini];
       license = with lib.licenses; [
