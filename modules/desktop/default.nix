@@ -103,6 +103,7 @@ in {
     home-manager.users.chris.imports = [
       ../home/desktop.nix
       ../home/ghostty/default.nix
+      ../home/mime.nix
     ];
   };
 }
