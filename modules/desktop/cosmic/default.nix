@@ -13,7 +13,7 @@ in {
     environment.sessionVariables.COSMIC_DATA_CONTROL_ENABLED = 1;
 
     environment.systemPackages = [
-      pkgs.gnome-system-monitor
+      pkgs.cosmic-monitor
       pkgs.cosmic-ext-applet-caffeine
       pkgs.cosmic-ext-applet-clipboard-manager
       pkgs.cosmic-ext-applet-sysinfo
