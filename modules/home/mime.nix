@@ -9,7 +9,7 @@
   docViewer = "org.gnome.Papers.desktop";
   mediaPlayer = "vlc.desktop";
   editor = "helix-ghostty.desktop";
-  terminal = "com.mitchellh.ghostty.desktop";
+  terminal = "ghostty-cwd.desktop";
   torrent = "transmission-gtk.desktop";
 
   imageTypes = [
@@ -102,6 +102,17 @@ in {
     mimeType = textTypes;
     noDisplay = true;
     startupNotify = false;
+  };
+
+  xdg.desktopEntries.ghostty-cwd = {
+    name = "Ghostty";
+    genericName = "Terminal";
+    exec = "ghostty +new-window";
+    icon = "com.mitchellh.ghostty";
+    terminal = false;
+    type = "Application";
+    categories = ["System" "TerminalEmulator"];
+    noDisplay = true;
   };
 
   xdg.mimeApps = {
