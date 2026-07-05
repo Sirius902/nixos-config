@@ -29,4 +29,6 @@
     flatpak
     librepods
   ];
+
+  system.extraDependencies = [pkgs.shipwright_stable];
 }
