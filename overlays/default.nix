@@ -292,11 +292,11 @@
     });
   in {
     rpcs3 = (prev.rpcs3.override {inherit glew;}).overrideAttrs (prevAttrs: {
-      version = "0.0.41-unstable-2026-07-03";
+      version = "0.0.41-unstable-2026-07-07";
       src = prevAttrs.src.override {
         tag = null;
-        rev = "d87cf99b655e1a3c85fa5913b2b591dec18a473a";
-        hash = "sha256-PhSLor79VWpCsBfgG8UL+cZ+FT+eVFisq39zbj9sj4Q=";
+        rev = "5c90bf5865b5f820231c0af87955bdfab28f0c14";
+        hash = "sha256-8gnDbqPLitu/GbXIP1am/CWmyJqJTqgma82pdG9+2fA=";
       };
 
       postPatch =
