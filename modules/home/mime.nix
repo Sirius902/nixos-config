@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -143,4 +144,6 @@ in {
       // lib.genAttrs audioTypes (_: mediaPlayer)
       // lib.genAttrs textTypes (_: editor);
   };
+
+  xdg.configFile."niri-mimeapps.list".source = config.xdg.configFile."mimeapps.list".source;
 }
