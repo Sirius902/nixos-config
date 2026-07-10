@@ -682,12 +682,12 @@
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "aaeb6e5dc1e0e7377b1f9cc48203051f09282217";
-        hash = "sha256-Lt26AZEbJxyn0rK3mADSbYgX+Hm7d2td72uX1fXcUe0=";
+        rev = "6de526c684ee6dd8b6fc3447dae858ae480ccbb5";
+        hash = "sha256-6UoGiqOwmMt1isjgUe7omPEbEeGfYWDnHZEW6ar30/0=";
 
         leaveDotGit = false;
         postFetch = ''
-          echo aaeb6e5dc1e0e7377b1f9cc48203051f09282217 > $out/COMMIT
+          echo 6de526c684ee6dd8b6fc3447dae858ae480ccbb5 > $out/COMMIT
         '';
       };
 
