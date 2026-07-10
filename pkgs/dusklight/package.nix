@@ -73,6 +73,12 @@
     hash = "sha256-mQOJ6jCN+7VopgZ61yzaCnt4R1QLrW7+47xxMhFRHLQ=";
   };
 
+  miniz-src = fetchzip {
+    url = "https://github.com/richgel999/miniz/releases/download/3.0.2/miniz-3.0.2.zip";
+    hash = "sha256-DXysXkQEmoDAMMg1F8KexkwpXNyiHNzLJqXR9SMEkxk=";
+    stripRoot = false;
+  };
+
   sqlite-src = fetchzip {
     url = "https://sqlite.org/2026/sqlite-amalgamation-3510300.zip";
     hash = "sha256-pNMR8zxaaqfAzQ0AQBOXMct4usdjey1Q0Gnitg06UhM=";
@@ -99,7 +105,9 @@ in
       sed -i '/add_subdirectory(tests)/d' extern/aurora/CMakeLists.txt
 
       check_version() {
-        local name="$1" expected="$2" var="$3" file="$4"
+        local name="$1" expected="$2" var="$3"
+        local file=extern/aurora/cmake/AuroraDependencyVersions.cmake
+        [[ -f "$file" ]] || file=extern/aurora/CMakeLists.txt
         actual=$(sed -n "s/.*_aurora_dependency_version($var \"\([^\"]*\)\".*/\1/p" "$file")
         if [[ "$actual" != "$expected" ]]; then
           echo "error: $name version mismatch: expected '$expected', got '$actual'"
@@ -107,10 +115,8 @@ in
           exit 1
         fi
       }
-      check_version "dawn" "${dawnVersion}" \
-        AURORA_DAWN_VERSION extern/aurora/CMakeLists.txt
-      check_version "nod" "${nodVersion}" \
-        AURORA_NOD_VERSION extern/aurora/CMakeLists.txt
+      check_version "dawn" "${dawnVersion}" AURORA_DAWN_VERSION
+      check_version "nod" "${nodVersion}" AURORA_NOD_VERSION
     '';
 
     nativeBuildInputs =
@@ -162,6 +168,7 @@ in
       (lib.cmakeBool "FETCHCONTENT_FULLY_DISCONNECTED" true)
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_CXXOPTS" "${cxxopts.src}")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_JSON" "${nlohmann_json.src}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_MINIZ" "${miniz-src}")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DAWN_PREBUILT" "${dawn-src}")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_XXHASH" "${xxhash.src}")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_FMT" "${fmt.src}")
