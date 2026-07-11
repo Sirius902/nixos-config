@@ -89,6 +89,9 @@ in {
 
       [keys.normal]
       Y = "yank_joined"
+      # Stage/view diff hunks via lazygit; Helix has no builtin staging.
+      # https://github.com/helix-editor/helix/wiki/Recipes
+      C-g = [":write-all", ":insert-output lazygit >/dev/tty", ":redraw", ":reload-all"]
 
       [keys.select]
       Y = "yank_joined"
@@ -111,6 +114,7 @@ in {
 
   home.packages =
     [
+      pkgs.lazygit
       # TODO: Add vimdiff alias somehow.
       pkgs.nvim
       pkgs.pure-prompt
