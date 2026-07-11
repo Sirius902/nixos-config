@@ -4,7 +4,6 @@
   ...
 }: {
   imports = [
-    inputs.secrets.darwinModules.default
     ../../users/chris/darwin.nix
     ../tmux.nix
   ];
