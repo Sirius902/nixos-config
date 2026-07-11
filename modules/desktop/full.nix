@@ -32,6 +32,10 @@ in {
         remotePlay.openFirewall = true;
         localNetworkGameTransfers.openFirewall = true;
         protontricks.enable = true;
+        extraPackages = with pkgs; [
+          gamescope
+          mangohud
+        ];
         extraCompatPackages = with pkgs; [
           proton-ge-bin
         ];
