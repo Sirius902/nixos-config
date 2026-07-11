@@ -35,6 +35,7 @@ in {
           ({lib, ...}: {
             networking.hostName = lib.mkIf setHostName host;
             nixpkgs.pkgs = patchedPkgs;
+            nixpkgs.flake.source = lib.mkForce patchedSrc;
           })
         ]
         ++ extraModules;
@@ -61,6 +62,7 @@ in {
 
           {
             nixpkgs.pkgs = patchedPkgs;
+            nixpkgs.flake.source = patchedSrc;
           }
         ]
         ++ extraModules;
