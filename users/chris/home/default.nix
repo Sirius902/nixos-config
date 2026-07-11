@@ -5,6 +5,8 @@
 }: let
   inherit (pkgs) stdenv;
 in {
+  imports = [./git.nix];
+
   home.username = "chris";
   home.homeDirectory =
     if stdenv.hostPlatform.isDarwin
