@@ -105,10 +105,12 @@ in {
     '';
     # FUTURE(Sirius902) Remove once this is fixed from taplo I guess.
     # https://github.com/helix-editor/helix/pull/9915#issuecomment-2214001123
-    languages = {
-      name = "toml";
-      roots = ["."];
-    };
+    languages.language = [
+      {
+        name = "toml";
+        roots = ["."];
+      }
+    ];
   };
 
   programs.zellij = {
