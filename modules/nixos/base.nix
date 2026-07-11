@@ -6,6 +6,7 @@
   imports = [
     inputs.impermanence.nixosModules.default
     inputs.secrets.nixosModules.default
+    ../../users/chris/default.nix
     ../tmux.nix
     ../tailscale.nix
     ../documentation.nix
@@ -14,10 +15,7 @@
     ../memory.nix
   ];
 
-  nix.settings = {
-    experimental-features = ["nix-command" "flakes"];
-    trusted-users = ["chris"];
-  };
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   environment.persistence."/persist" = {
     enable = true;
@@ -31,22 +29,6 @@
 
   security.doas.enable = true;
   security.sudo.enable = false;
-  security.doas.extraRules = [
-    {
-      users = ["chris"];
-      keepEnv = true;
-      persist = true;
-    }
-  ];
-
-  security.pam.loginLimits = [
-    {
-      domain = "chris";
-      type = "-";
-      item = "nice";
-      value = "-20";
-    }
-  ];
 
   networking.networkmanager.enable = true;
 
@@ -66,14 +48,7 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  users.users.chris = {
-    isNormalUser = true;
-    extraGroups = ["networkmanager" "wheel"];
-    shell = pkgs.zsh;
-  };
-
   programs.git.enable = true;
-  programs.zsh.enable = true;
   environment.systemPackages = with pkgs; [
     fastfetch
     file

@@ -1,8 +1,4 @@
-{
-  pkgs,
-  inputs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ./base.nix
     ../jdk.nix
@@ -14,14 +10,6 @@
     ../xrdp.nix
     ../secure-boot.nix
     ../docker.nix
-
-    inputs.home-manager.nixosModules.default
-    {
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-      home-manager.extraSpecialArgs = {inherit inputs;};
-      home-manager.users.chris = import ../home/default.nix;
-    }
   ];
 
   boot.loader.systemd-boot.enable = true;

@@ -5,44 +5,20 @@
 }: {
   imports = [
     inputs.secrets.darwinModules.default
+    ../../users/chris/darwin.nix
     ../tmux.nix
-
-    inputs.home-manager.darwinModules.default
-    {
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-      home-manager.extraSpecialArgs = {inherit inputs;};
-      home-manager.users.chris = {
-        imports = [
-          ../home/default.nix
-          ../home/ghostty/default.nix
-        ];
-      };
-    }
   ];
 
   environment.systemPackages = [pkgs.just];
 
   fonts.packages = [pkgs.nerd-fonts.jetbrains-mono];
 
-  nix.settings = {
-    experimental-features = ["nix-command" "flakes"];
-    trusted-users = ["chris"];
-  };
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
   system.stateVersion = 6;
 
   nixpkgs.hostPlatform = "aarch64-darwin";
 
-  users.users.chris = {
-    name = "chris";
-    home = "/Users/chris";
-  };
-
   security.pam.services.sudo_local.touchIdAuth = true;
-
-  programs.zsh.shellInit = ''
-    export SSH_AUTH_SOCK=/Users/chris/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
-  '';
 }

@@ -1,5 +1,4 @@
 {
-  inputs,
   lib,
   modulesPath,
   pkgs,
@@ -29,7 +28,7 @@
   sdImage.compressImage = false;
 
   users.users.nixos = {
-    openssh.authorizedKeys.keys = inputs.secrets.lib.opensshKeys;
+    openssh.authorizedKeys.keys = import ../../users/chris/ssh-authorized-keys.nix;
   };
 
   system.stateVersion = "26.05";

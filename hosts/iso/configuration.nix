@@ -33,6 +33,6 @@
   ];
 
   users.users.nixos = {
-    openssh.authorizedKeys.keys = inputs.secrets.lib.opensshKeys;
+    openssh.authorizedKeys.keys = import ../../users/chris/ssh-authorized-keys.nix;
   };
 }

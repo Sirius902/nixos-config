@@ -1,18 +1,7 @@
-{
-  inputs,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ../../modules/nixos/base.nix
     ./hardware-configuration.nix
-    inputs.home-manager.nixosModules.default
-    {
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-      home-manager.extraSpecialArgs = {inherit inputs;};
-      home-manager.users.chris = import ../../modules/home/default.nix;
-    }
   ];
 
   boot.kernelPackages = pkgs.linuxPackages;
