@@ -8,10 +8,6 @@
 
   nix.settings.trusted-users = ["chris"];
 
-  programs.zsh.shellInit = ''
-    export SSH_AUTH_SOCK=/Users/chris/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
-  '';
-
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
