@@ -20,7 +20,9 @@ in {
     };
 
     # FUTURE(Sirius902) Remove if rootless docker.
-    users.users.chris.extraGroups = ["docker"];
+    users.users = lib.genAttrs config.my.homeUsers (_: {
+      extraGroups = ["docker"];
+    });
 
     environment.systemPackages = [pkgs.docker-compose];
   };

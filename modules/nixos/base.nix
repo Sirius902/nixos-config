@@ -6,6 +6,8 @@
   imports = [
     inputs.impermanence.nixosModules.default
     inputs.secrets.nixosModules.default
+    inputs.home-manager.nixosModules.default
+    ../home-users.nix
     ../../users/chris/default.nix
     ../tmux.nix
     ../tailscale.nix
@@ -18,6 +20,12 @@
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   nix.optimise.automatic = true;
+
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = {inherit inputs;};
+  };
 
   environment.persistence."/persist" = {
     enable = true;

@@ -1,9 +1,5 @@
-{
-  inputs,
-  pkgs,
-  ...
-}: {
-  imports = [inputs.home-manager.nixosModules.default];
+{pkgs, ...}: {
+  my.homeUsers = ["chris"];
 
   users.users.chris = {
     isNormalUser = true;
@@ -33,10 +29,5 @@
     }
   ];
 
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs = {inherit inputs;};
-    users.chris = import ./home/default.nix;
-  };
+  home-manager.users.chris = import ./home/default.nix;
 }

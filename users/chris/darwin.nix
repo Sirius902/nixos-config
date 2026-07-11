@@ -1,5 +1,5 @@
-{inputs, ...}: {
-  imports = [inputs.home-manager.darwinModules.default];
+{
+  my.homeUsers = ["chris"];
 
   users.users.chris = {
     name = "chris";
@@ -8,13 +8,5 @@
 
   nix.settings.trusted-users = ["chris"];
 
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs = {inherit inputs;};
-    users.chris.imports = [
-      ./home/default.nix
-      ../../modules/home/ghostty/default.nix
-    ];
-  };
+  home-manager.users.chris = import ./home/default.nix;
 }

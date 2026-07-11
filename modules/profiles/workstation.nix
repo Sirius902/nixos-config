@@ -28,7 +28,9 @@
   # Configurable gaming mice (Logitech G600 etc.): ratbagctl CLI + Piper GUI
   services.ratbagd.enable = lib.mkDefault true;
 
-  home-manager.sharedModules = [../home/games.nix];
+  home-manager.users = lib.genAttrs config.my.homeUsers (_: {
+    imports = [../home/games.nix];
+  });
 
   environment.systemPackages = with pkgs;
     [waypipe]

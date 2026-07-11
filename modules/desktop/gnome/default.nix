@@ -27,9 +27,11 @@ in {
       package = pkgs.gnomeExtensions.gsconnect;
     };
 
-    home-manager.users.chris.imports = [
-      ../../home/gnome.nix
-      ../../home/ghostty/gnome.nix
-    ];
+    home-manager.users = lib.genAttrs config.my.homeUsers (_: {
+      imports = [
+        ../../home/gnome.nix
+        ../../home/ghostty/gnome.nix
+      ];
+    });
   };
 }

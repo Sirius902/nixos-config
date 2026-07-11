@@ -26,9 +26,11 @@ in {
       xwayland-satellite
     ];
 
-    home-manager.users.chris.imports = [
-      ../../home/cosmic.nix
-      ../../home/niri.nix
-    ];
+    home-manager.users = lib.genAttrs config.my.homeUsers (_: {
+      imports = [
+        ../../home/cosmic.nix
+        ../../home/niri.nix
+      ];
+    });
   };
 }

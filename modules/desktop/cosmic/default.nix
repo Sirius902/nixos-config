@@ -42,6 +42,8 @@ in {
       };
     };
 
-    home-manager.users.chris.imports = [../../home/cosmic.nix];
+    home-manager.users = lib.genAttrs config.my.homeUsers (_: {
+      imports = [../../home/cosmic.nix];
+    });
   };
 }

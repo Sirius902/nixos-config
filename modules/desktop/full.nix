@@ -24,7 +24,9 @@ in {
 
     environment.persistence."/persist".directories = ["/etc/libvirt"];
 
-    users.users.chris.extraGroups = ["libvirtd"];
+    users.users = lib.genAttrs config.my.homeUsers (_: {
+      extraGroups = ["libvirtd"];
+    });
 
     programs = {
       steam = {
@@ -89,10 +91,12 @@ in {
     # melonds LAN port
     networking.firewall.allowedTCPPorts = [7064];
 
-    home-manager.users.chris.imports = [
-      ../home/gcviewer.nix
-      ../home/gcfeederd.nix
-    ];
+    home-manager.users = lib.genAttrs config.my.homeUsers (_: {
+      imports = [
+        ../home/gcviewer.nix
+        ../home/gcfeederd.nix
+      ];
+    });
 
     # py-dolphin-memory-engine (used by Archipelago) scans /proc/*/comm for
     # "dolphin-emu" but the nix wrapper binary shows ".dolphin-emu-wr".

@@ -1,12 +1,25 @@
 {
+  config,
   inputs,
+  lib,
   pkgs,
   ...
 }: {
   imports = [
+    inputs.home-manager.darwinModules.default
+    ../home-users.nix
     ../../users/chris/darwin.nix
     ../tmux.nix
   ];
+
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = {inherit inputs;};
+    users = lib.genAttrs config.my.homeUsers (_: {
+      imports = [../home/ghostty/default.nix];
+    });
+  };
 
   environment.systemPackages = [pkgs.just];
 
