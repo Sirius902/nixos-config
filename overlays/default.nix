@@ -647,6 +647,30 @@
     });
   })
 
+  # FUTURE(Sirius902) file 5.48 applies its new landlock sandbox even with
+  # --no-sandbox unless built with libseccomp, breaking patool's `file -z`
+  # detection of compressed tarballs (and its tests, failing bottles).
+  # https://github.com/NixOS/nixpkgs/issues/540025
+  (final: prev: {
+    pythonPackagesExtensions =
+      prev.pythonPackagesExtensions
+      ++ [
+        (pyFinal: pyPrev: {
+          patool = pyPrev.patool.override (prevArgs: {
+            file = prevArgs.file.overrideAttrs (prevAttrs: {
+              postPatch =
+                (prevAttrs.postPatch or "")
+                + ''
+                  substituteInPlace src/file.c \
+                    --replace-fail $'case \'S\':\n#ifdef HAVE_LIBSECCOMP' \
+                    $'case \'S\':\n#if defined(HAVE_LIBSECCOMP) || defined(HAVE_LINUX_LANDLOCK_H)'
+                '';
+            });
+          });
+        })
+      ];
+  })
+
   # TODO(Sirius902) Ugh I need to PR this...
   (final: prev: {
     bottles-unwrapped = prev.bottles-unwrapped.overrideAttrs (prevAttrs: {
