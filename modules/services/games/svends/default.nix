@@ -49,6 +49,15 @@ in {
       '';
     };
 
+    extraCommandLineFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = ''
+        File with extra command-line arguments to pass to svends_run,
+        read at service start so the contents stay out of the Nix store.
+      '';
+    };
+
     openFirewall = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -167,6 +176,10 @@ in {
         Group = "svends";
         WorkingDirectory = cfg.dataDir;
 
+        LoadCredential = lib.mkIf (cfg.extraCommandLineFile != null) [
+          "extra-command-line:${cfg.extraCommandLineFile}"
+        ];
+
         StandardInput = "socket";
         StandardOutput = "journal";
         StandardError = "journal";
@@ -177,6 +190,8 @@ in {
         LimitNOFILE = 4096;
 
         ExecStart = pkgs.writeShellScript "svends-start" ''
+          extra_args=${lib.escapeShellArg cfg.extraCommandLine}
+          ${lib.optionalString (cfg.extraCommandLineFile != null) ''extra_args="$extra_args''${extra_args:+ }$(<"$CREDENTIALS_DIRECTORY/extra-command-line")"''}
           ${pkgs.steam-run}/bin/steam-run ./svends_run \
             -console \
             -port ${toString cfg.port} \
@@ -184,7 +199,7 @@ in {
             +maxplayers ${toString cfg.maxplayers} \
             +map ${lib.escapeShellArg cfg.map} \
             +log on \
-            ${lib.optionalString (cfg.extraCommandLine != "") (lib.escapeShellArg cfg.extraCommandLine)}
+            ''${extra_args:+"$extra_args"}
         '';
 
         ExecStop = pkgs.writeShellScript "svends-stop" ''

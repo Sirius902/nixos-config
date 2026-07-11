@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
   ...
@@ -29,11 +28,12 @@
   };
   systemd.services.svends.wantedBy = lib.mkForce [];
 
+  sops.secrets.srcdsExtraCommandLine = {};
   services.synergyds = {
     enable = true;
     openFirewall = true;
     insecure = true;
-    extraCommandLine = inputs.secrets.lib.srcdsExtraCommandLine;
+    extraCommandLineFile = config.sops.secrets.srcdsExtraCommandLine.path;
   };
   systemd.services.synergyds.wantedBy = lib.mkForce [];
 

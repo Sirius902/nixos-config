@@ -49,6 +49,15 @@ in {
       '';
     };
 
+    extraCommandLineFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = ''
+        File with extra command-line arguments to pass to srcds_linux,
+        read at service start so the contents stay out of the Nix store.
+      '';
+    };
+
     openFirewall = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -173,6 +182,10 @@ in {
         Group = "synergyds";
         WorkingDirectory = cfg.dataDir;
 
+        LoadCredential = lib.mkIf (cfg.extraCommandLineFile != null) [
+          "extra-command-line:${cfg.extraCommandLineFile}"
+        ];
+
         # srcds_linux requires an executable stack; glibc >= 2.39 disallows
         # this by default, so we must opt back in via GLIBC_TUNABLES.
         Environment = "GLIBC_TUNABLES=glibc.rtld.execstack=2";
@@ -205,11 +218,13 @@ in {
               +maxplayers ${toString cfg.maxplayers} \
               +map ${lib.escapeShellArg cfg.map} \
               +log on \
-              ${lib.optionalString (cfg.extraCommandLine != "") (lib.escapeShellArg cfg.extraCommandLine)}
+              ''${SRCDS_EXTRA_ARGS:+"$SRCDS_EXTRA_ARGS"}
           '';
         in
           pkgs.writeShellScript "synergyds-start" ''
             cd ${cfg.dataDir}/.steam/root/Steamapps/common/Synergy
+            export SRCDS_EXTRA_ARGS=${lib.escapeShellArg cfg.extraCommandLine}
+            ${lib.optionalString (cfg.extraCommandLineFile != null) ''export SRCDS_EXTRA_ARGS="$SRCDS_EXTRA_ARGS''${SRCDS_EXTRA_ARGS:+ }$(<"$CREDENTIALS_DIRECTORY/extra-command-line")"''}
             ${pkgs.steam-run}/bin/steam-run env SHELL=/bin/bash ${pkgs.util-linux}/bin/script -qfc ${srcdsScript} /dev/null
           '';
 
