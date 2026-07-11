@@ -76,6 +76,7 @@ in {
       pkgs.nixd
       pkgs.rust-analyzer
       pkgs.taplo
+      pkgs.luaPackages.teal-language-server
       pkgs.zls
     ];
     extraConfig = ''
