@@ -5,7 +5,10 @@
 }: let
   inherit (pkgs) stdenv;
 in {
-  imports = [./git.nix];
+  imports = [
+    ./git.nix
+    ./jujutsu.nix
+  ];
 
   home.username = "chris";
   home.homeDirectory =
