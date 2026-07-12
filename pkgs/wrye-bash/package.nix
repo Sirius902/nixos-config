@@ -78,26 +78,26 @@ in
     installPhase = ''
       runHook preInstall
 
-      mkdir -p $out/{bin,lib/wrye-bash}
+      mkdir -p $out/{bin,share/wrye-bash}
 
-      cp -r Mopy $out/lib/wrye-bash/
-      rm -r $out/lib/wrye-bash/Mopy/bash/compiled
-      rm -r $out/lib/wrye-bash/Mopy/bash/tests
+      cp -r Mopy $out/share/wrye-bash/
+      rm -r $out/share/wrye-bash/Mopy/bash/compiled
+      rm -r $out/share/wrye-bash/Mopy/bash/tests
 
       # Only the .mo files matter for an end-user build
-      rm $out/lib/wrye-bash/Mopy/bash/l10n/*.po
-      rm $out/lib/wrye-bash/Mopy/bash/l10n/template.pot
+      rm $out/share/wrye-bash/Mopy/bash/l10n/*.po
+      rm $out/share/wrye-bash/Mopy/bash/l10n/template.pot
 
       makeWrapper ${python.interpreter} $out/bin/wrye-bash \
         --prefix PATH : ${lib.makeBinPath [p7zip]} \
-        --add-flags "'$out/lib/wrye-bash/Mopy/Wrye Bash Launcher.pyw'"
+        --add-flags "'$out/share/wrye-bash/Mopy/Wrye Bash Launcher.pyw'"
 
       ${lib.concatStringsSep "\n" (lib.mapAttrsToList (
-          game: taglist: "install -Dm644 ${taglist} $out/lib/wrye-bash/Mopy/taglists/${game}/taglist.yaml"
+          game: taglist: "install -Dm644 ${taglist} $out/share/wrye-bash/Mopy/taglists/${game}/taglist.yaml"
         )
         taglists)}
 
-      ${python.interpreter} -O -m compileall $out/lib/wrye-bash/Mopy/bash
+      ${python.interpreter} -O -m compileall $out/share/wrye-bash/Mopy/bash
 
       install -Dm644 Mopy/bash/images/bash.svg $out/share/icons/hicolor/scalable/apps/wrye-bash.svg
 
