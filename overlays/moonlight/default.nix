@@ -1,10 +1,10 @@
 final: prev: {
   moonlight = prev.moonlight.overrideAttrs (prevAttrs: {
-    version = "2026.7.0-unstable-2026-07-11";
+    version = "2026.7.0-unstable-2026-07-12";
     src = prevAttrs.src.override {
-      rev = "6feacc376ac66664d8b986af8ceb6acff002f21a";
+      rev = "b609b754e566462e860e8ba5e8ce9919d793724f";
       tag = null;
-      hash = "sha256-cyikGfmKHP0fCMgzqnm5NlU8uat3Os6KEJKNHB7L6Sk=";
+      hash = "sha256-PqiRM0YBYeXt7YdSgoPC01GCWEV0sH9Lo8TPZNhekME=";
     };
     patches = [
       (final.fetchurl {
@@ -15,7 +15,7 @@ final: prev: {
     ];
     pnpmDeps = prevAttrs.pnpmDeps.override {
       fetcherVersion = 3;
-      hash = "sha256-+jxp3dD/SyGdskMyw0jhDzDRj7wXD4Egkx3ok3cMiyc=";
+      hash = "sha256-g1wlpbUlGwE3Chrry89gJX2+3+jY/jyXYwiAWAfoHlA=";
     };
 
     passthru =
