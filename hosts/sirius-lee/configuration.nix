@@ -28,6 +28,4 @@
   environment.systemPackages = [pkgs.flatpak];
 
   home-manager.users.chris.home.packages = [pkgs.librepods];
-
-  system.extraDependencies = [pkgs.shipwright_stable];
 }
