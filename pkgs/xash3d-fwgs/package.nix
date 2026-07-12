@@ -95,7 +95,7 @@ in
           else "LD_LIBRARY_PATH"
         } : "$out/lib"
       ''
-      + lib.concatLines (lib.map (sdk: "cp -TR ${sdk}/${sdk.modDir} $out/lib/${sdk.modDir}") sdks);
+      + lib.concatLines (lib.map (sdk: "cp -TR ${sdk}/lib/${sdk.pname}/${sdk.modDir} $out/lib/${sdk.modDir}") sdks);
 
     passthru.updateScript = nix-update-script {
       extraArgs = [

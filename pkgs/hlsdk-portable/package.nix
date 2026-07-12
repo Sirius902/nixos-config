@@ -6,7 +6,7 @@
   python3,
   nix-update-script,
 }:
-stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   pname = "hlsdk-portable";
   version = "0-unstable-2026-06-14";
 
@@ -27,7 +27,7 @@ stdenv.mkDerivation {
 
   wafConfigureFlags = ["-T release"] ++ lib.optionals stdenv.buildPlatform.is64bit ["-8"];
 
-  wafInstallFlags = ["--destdir=${placeholder "out"}"];
+  wafInstallFlags = ["--destdir=${placeholder "out"}/lib/${finalAttrs.pname}"];
 
   passthru = {
     modDir = "valve";
@@ -47,4 +47,4 @@ stdenv.mkDerivation {
     platforms = lib.platforms.all;
     maintainers = with lib.maintainers; [r4v3n6101];
   };
-}
+})
