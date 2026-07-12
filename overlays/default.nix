@@ -80,26 +80,6 @@
     });
   })
 
-  # FUTURE(Sirius902) Rando fork for macOS?
-  # Add extra libs for MMRecompRando.
-  (final: prev: {
-    zelda64recomp = let
-      libs = [
-        final.openssl_3
-        final.zlib
-        final.stdenv.cc.cc.lib
-      ];
-    in
-      prev.zelda64recomp.overrideAttrs (prevAttrs: {
-        postFixup =
-          (prevAttrs.postFixup or "")
-          + ''
-            wrapProgram $out/bin/Zelda64Recompiled \
-              --prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath libs}
-          '';
-      });
-  })
-
   # Make NSO GameCube triggers digital for ship-like derivations.
   (final: prev:
     if prev.stdenv.hostPlatform.isLinux
