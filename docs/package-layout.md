@@ -62,6 +62,11 @@ package family (`sm64coopdx`, `starship-sf64`) use a whole app dir under
   --run`) just point into the namespaced dir (wwrando, wrye-bash).
 - CWD-relative apps get `makeWrapper --chdir $out/share/${pname}` (nixpkgs
   `sm64coopdx`).
+- Apps that *write* to their working directory instead get a wrapper that
+  `cd`s into `''${XDG_DATA_HOME:-$HOME/.local/share}/<name>` and refreshes
+  symlinks to the shipped store content on every launch — never copy the
+  store content in, or it goes stale on updates. User-created files stay
+  real files (wwrando, zelda64recomp; nixpkgs `starship-sf64`).
 - Engine/plugin search paths go through env vars in the wrapper
   (`XASH3D_RODIR`, `LD_LIBRARY_PATH` for by-soname dlopen).
 

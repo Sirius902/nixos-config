@@ -69,11 +69,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     wrapProgram "${outBin}" \
       --run 'datadir="''${XDG_DATA_HOME:-$HOME/.local/share}/${finalAttrs.pname}"' \
-      --run 'if [ ! -d "$datadir" ]; then
-               mkdir -p "$datadir"
-               cp -r "${placeholder "out"}/share/${finalAttrs.pname}/"* "$datadir/"
-               chmod -R u+w "$datadir"
-             fi' \
+      --run 'mkdir -p "$datadir/models"' \
+      --run 'ln -sf "${placeholder "out"}/share/${finalAttrs.pname}/README.txt" "$datadir/README.txt"' \
+      --run 'ln -sf "${placeholder "out"}/share/${finalAttrs.pname}/models/"* "$datadir/models/"' \
       --run 'cd "$datadir"' \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath finalAttrs.libraryPathDeps}"
 
