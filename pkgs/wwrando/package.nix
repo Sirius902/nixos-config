@@ -63,15 +63,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     cp "${finalAttrs.inBin}" "${outBin}"
     chmod +x "${outBin}"
 
-    mkdir -p $out/lib
-    cp -r models $out/lib
-    cp README.txt $out/lib
+    mkdir -p $out/share/${finalAttrs.pname}
+    cp -r models $out/share/${finalAttrs.pname}
+    cp README.txt $out/share/${finalAttrs.pname}
 
     wrapProgram "${outBin}" \
       --run 'datadir="''${XDG_DATA_HOME:-$HOME/.local/share}/${finalAttrs.pname}"' \
       --run 'if [ ! -d "$datadir" ]; then
                mkdir -p "$datadir"
-               cp -r "${placeholder "out"}/lib/"* "$datadir/"
+               cp -r "${placeholder "out"}/share/${finalAttrs.pname}/"* "$datadir/"
                chmod -R u+w "$datadir"
              fi' \
       --run 'cd "$datadir"' \
