@@ -11,6 +11,8 @@
 
   kh-melon-mix = pkgs.callPackage ./kh-melon-mix/package.nix {};
 
+  apcpp-glue = pkgs.callPackage ./mm-recomp-rando/glue.nix {};
+
   shipwright = pkgs.callPackage ./shipwright/package.nix {};
   shipwright_stable = pkgs.callPackage ./shipwright/stable.nix {};
   shipwright-ap = pkgs.callPackage ./shipwright/ap/package.nix {};
