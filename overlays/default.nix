@@ -118,7 +118,7 @@
         shipwright = "$out/share/shipwright/soh.elf";
         shipwright_stable = "$out/share/shipwright-stable/soh.elf";
         shipwright-ap = "$out/share/shipwright-ap/soh.elf";
-        _2ship2harkinian = "$out/lib/2s2h.elf";
+        _2ship2harkinian = "$out/share/2ship2harkinian/2s2h.elf";
         zelda64recomp = "$out/bin/Zelda64Recompiled";
       }
     else if prev.stdenv.hostPlatform.isDarwin

@@ -184,7 +184,7 @@ in
     cmakeFlags =
       [
         (lib.cmakeBool "NON_PORTABLE" true)
-        (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/lib")
+        (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/share/2ship2harkinian")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
@@ -241,7 +241,8 @@ in
     postInstall =
       lib.optionalString stdenv.hostPlatform.isLinux ''
         mkdir -p $out/bin
-        ln -s $out/lib/2s2h.elf $out/bin/2s2h
+        ln -s $out/share/2ship2harkinian/2s2h.elf $out/bin/2s2h
+        rm -r $out/share/2ship2harkinian/{include,lib}
         install -Dm644 ../mm/linux/2s2hIcon.png $out/share/icons/hicolor/512x512/apps/2s2h.png
       ''
       + lib.optionalString stdenv.hostPlatform.isDarwin ''
@@ -255,13 +256,13 @@ in
 
         mv $out/MacOS $out/Applications/2s2h.app/Contents/MacOS
 
-        # "lib" contains all resources that are in "Resources" in the official bundle.
-        # We move them to the right place and symlink them back to $out/lib,
-        # as that's where the game expects them.
+        # The install prefix contains all resources that are in "Resources" in
+        # the official bundle. We move them to the right place and symlink them
+        # back, as that's where the game expects them.
         mv $out/Resources $out/Applications/2s2h.app/Contents/Resources
-        mv $out/lib/** $out/Applications/2s2h.app/Contents/Resources
-        rm -rf $out/lib
-        ln -s $out/Applications/2s2h.app/Contents/Resources $out/lib
+        mv $out/share/2ship2harkinian/** $out/Applications/2s2h.app/Contents/Resources
+        rm -rf $out/share/2ship2harkinian
+        ln -s $out/Applications/2s2h.app/Contents/Resources $out/share/2ship2harkinian
 
         # Copy icons
         cp -r ../build/macosx/2s2h.icns $out/Applications/2s2h.app/Contents/Resources/2s2h.icns
@@ -281,7 +282,7 @@ in
       '';
 
     postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
-      wrapProgram $out/lib/2s2h.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
+      wrapProgram $out/share/2ship2harkinian/2s2h.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
     '';
 
     desktopItems = [
