@@ -80,22 +80,22 @@ in
       ]
       ++ lib.optionals stdenv.buildPlatform.is64bit ["-8"];
 
-    wafInstallFlags = ["--destdir=${placeholder "out"}/lib"];
+    wafInstallFlags = ["--destdir=${placeholder "out"}/lib/xash3d-fwgs"];
 
     postInstall =
       ''
         mkdir -p $out/bin
-        mv $out/lib/${exe} $out/bin/${exe}-unwrapped
+        mv $out/lib/xash3d-fwgs/${exe} $out/bin/${exe}-unwrapped
         makeWrapper $out/bin/${exe}-unwrapped $out/bin/${exe} \
-          --set XASH3D_RODIR $out/lib \
+          --set XASH3D_RODIR $out/lib/xash3d-fwgs \
           --run "export XASH3D_BASEDIR=\$HOME/.xash3d/" \
           --prefix ${
           if stdenv.hostPlatform.isDarwin
           then "DYLD_LIBRARY_PATH"
           else "LD_LIBRARY_PATH"
-        } : "$out/lib"
+        } : "$out/lib/xash3d-fwgs"
       ''
-      + lib.concatLines (lib.map (sdk: "cp -TR ${sdk}/lib/${sdk.pname}/${sdk.modDir} $out/lib/${sdk.modDir}") sdks);
+      + lib.concatLines (lib.map (sdk: "cp -TR ${sdk}/lib/${sdk.pname}/${sdk.modDir} $out/lib/xash3d-fwgs/${sdk.modDir}") sdks);
 
     passthru.updateScript = nix-update-script {
       extraArgs = [
