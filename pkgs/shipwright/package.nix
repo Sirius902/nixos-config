@@ -194,7 +194,7 @@ in
       [
         (lib.cmakeBool "BUILD_REMOTE_CONTROL" true)
         (lib.cmakeBool "NON_PORTABLE" true)
-        (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/lib")
+        (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/share/shipwright")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
@@ -254,7 +254,8 @@ in
     postInstall =
       lib.optionalString stdenv.hostPlatform.isLinux ''
         mkdir -p $out/bin
-        ln -s $out/lib/soh.elf $out/bin/soh
+        ln -s $out/share/shipwright/soh.elf $out/bin/soh
+        rm -r $out/share/shipwright/{include,lib}
         install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/512x512/apps/soh.png
       ''
       + lib.optionalString stdenv.hostPlatform.isDarwin ''
@@ -268,13 +269,13 @@ in
 
         mv $out/MacOS $out/Applications/soh.app/Contents/MacOS
 
-        # "lib" contains all resources that are in "Resources" in the official bundle.
-        # We move them to the right place and symlink them back to $out/lib,
-        # as that's where the game expects them.
+        # The install prefix contains all resources that are in "Resources" in
+        # the official bundle. We move them to the right place and symlink them
+        # back, as that's where the game expects them.
         mv $out/Resources $out/Applications/soh.app/Contents/Resources
-        mv $out/lib/** $out/Applications/soh.app/Contents/Resources
-        rm -rf $out/lib
-        ln -s $out/Applications/soh.app/Contents/Resources $out/lib
+        mv $out/share/shipwright/** $out/Applications/soh.app/Contents/Resources
+        rm -rf $out/share/shipwright
+        ln -s $out/Applications/soh.app/Contents/Resources $out/share/shipwright
 
         # Copy icons
         cp -r ../build/macosx/soh.icns $out/Applications/soh.app/Contents/Resources/soh.icns
@@ -297,7 +298,7 @@ in
       '';
 
     postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
-      wrapProgram $out/lib/soh.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
+      wrapProgram $out/share/shipwright/soh.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
     '';
 
     desktopItems = [
