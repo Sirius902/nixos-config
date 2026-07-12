@@ -194,9 +194,10 @@ in
         runHook preInstall
       ''
       + lib.optionalString stdenv.hostPlatform.isLinux ''
-        mkdir -p $out/bin
-        cp dusklight $out/bin/dusklight
-        cp -r ./res $out/bin/res
+        mkdir -p $out/share/${finalAttrs.pname} $out/bin
+        cp dusklight $out/share/${finalAttrs.pname}/dusklight
+        cp -r ./res $out/share/${finalAttrs.pname}/res
+        ln -s $out/share/${finalAttrs.pname}/dusklight $out/bin/dusklight
 
         install -Dm644 $src/platforms/freedesktop/dev.twilitrealm.dusk.desktop \
           $out/share/applications/dev.twilitrealm.dusk.desktop
@@ -218,7 +219,7 @@ in
     # runtime; nothing links them, so Nix's RPATH shrink drops them and the GPU
     # backends fall back to Null (no window). Re-add the loaders to the RUNPATH.
     postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
-      for bin in $out/bin/dusklight*; do
+      for bin in $out/share/${finalAttrs.pname}/dusklight*; do
         patchelf --add-rpath "${lib.makeLibraryPath [vulkan-loader libglvnd]}" "$bin"
       done
     '';

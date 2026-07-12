@@ -60,7 +60,9 @@ in
     postInstall =
       (prevAttrs.postInstall or "")
       + lib.optionalString stdenv.hostPlatform.isLinux ''
-        mv $out/bin/dusklight $out/bin/dusklight-rando
+        mv $out/share/${finalAttrs.pname}/dusklight $out/share/${finalAttrs.pname}/dusklight-rando
+        rm $out/bin/dusklight
+        ln -s $out/share/${finalAttrs.pname}/dusklight-rando $out/bin/dusklight-rando
 
         mv $out/share/applications/dev.twilitrealm.dusk.desktop \
          $out/share/applications/dev.twilitrealm.dusk-rando.desktop
