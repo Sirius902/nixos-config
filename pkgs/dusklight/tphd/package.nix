@@ -6,10 +6,10 @@
 }:
 dusklight.overrideAttrs (finalAttrs: prevAttrs: {
   pname = "dusklight-tphd";
-  version = "0-unstable-2026-06-12";
+  version = "0-unstable-2026-07-12";
   src = prevAttrs.src.override {
-    rev = "2b266048c61995e33882eacf26e4ad0810f3fd8f";
-    hash = "sha256-W5xcqXBF7zlp2llJrFELCHRNY2UTFhvsBeD7laExrmQ=";
+    rev = "6bab72092bc0f341067e761a0fe4bc582c00ee59";
+    hash = "sha256-38+3MPFAuTTxCuPMwq7oDBm+8hcXAQyCwcuAA8+w9qc=";
   };
 
   postPatch =
