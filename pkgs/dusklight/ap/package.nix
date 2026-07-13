@@ -29,10 +29,10 @@
   };
 
   apcpp-src = fetchFromGitHub {
-    owner = "N00byKing";
+    owner = "CraftyBoss";
     repo = "APCpp";
-    rev = "9194179d52fa4cb1ded0655c099cbc388f58833c";
-    hash = "sha256-7KuW7Ajbwsl889I3ugKxY89ztcNdklMbqPiCFx4edSs=";
+    rev = "2d92f758269bbedaa2ec01c81b18224d2dfd2520";
+    hash = "sha256-FRRxoxFQoFOpuFpUVjJybByrFjuIP+9A3QQkfEB09QE=";
     fetchSubmodules = true;
   };
 in
@@ -73,6 +73,8 @@ in
         cp -r --no-preserve=mode ${apcpp-src} APCpp-src
         substituteInPlace APCpp-src/CMakeLists.txt \
           --replace-fail "add_library(APCpp SHARED" "add_library(APCpp STATIC"
+        # Uses va_start/va_copy/va_end without including <cstdarg>.
+        sed -i '1i #include <cstdarg>' APCpp-src/Archipelago.cpp
         cmakeFlagsArray+=("-DFETCHCONTENT_SOURCE_DIR_APCPP=$PWD/APCpp-src")
       '';
 
