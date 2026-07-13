@@ -81,10 +81,43 @@ in {
       };
     };
 
-    fonts.packages = with pkgs; [
-      nerd-fonts.jetbrains-mono
-      noto-fonts-cjk-sans
-    ];
+    fonts = {
+      packages = with pkgs; [
+        nerd-fonts.jetbrains-mono
+        noto-fonts-cjk-sans
+      ];
+
+      fontconfig = {
+        defaultFonts = {
+          monospace = ["JetBrainsMono Nerd Font" "Noto Sans Mono CJK JP"];
+          sansSerif = ["Noto Sans" "Noto Sans CJK JP"];
+          serif = ["Noto Serif" "Noto Serif CJK JP"];
+          emoji = ["Noto Color Emoji"];
+        };
+
+        # Qt's gnome platform theme requests the uninstalled GNOME default UI
+        # fonts by name; without a substitution the nonlatin alias rules hand
+        # them to Noto Sans CJK KR.
+        localConf = ''
+          <?xml version="1.0"?>
+          <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+          <fontconfig>
+            <match target="pattern">
+              <test qual="any" name="family"><string>Adwaita Sans</string></test>
+              <edit name="family" mode="assign" binding="same"><string>Noto Sans</string></edit>
+            </match>
+            <match target="pattern">
+              <test qual="any" name="family"><string>Cantarell</string></test>
+              <edit name="family" mode="assign" binding="same"><string>Noto Sans</string></edit>
+            </match>
+            <match target="pattern">
+              <test qual="any" name="family"><string>Adwaita Mono</string></test>
+              <edit name="family" mode="assign" binding="same"><string>JetBrainsMono Nerd Font</string></edit>
+            </match>
+          </fontconfig>
+        '';
+      };
+    };
 
     environment.systemPackages = with pkgs; [
       chromium
