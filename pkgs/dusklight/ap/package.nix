@@ -38,10 +38,10 @@
 in
   dusklight.overrideAttrs (finalAttrs: prevAttrs: {
     pname = "dusklight-ap";
-    version = "0-unstable-2026-06-09";
+    version = "0-unstable-2026-07-02";
     src = prevAttrs.src.override {
-      rev = "f6b86d3f383c557401dc536abdf7ad702794d140";
-      hash = "sha256-XC8T+/yrT24WIOtMD1kjEPJ8vPewfaRq+pTi3PoRaMA=";
+      rev = "589c6675fe419901782b43527bfcb11fb5808352";
+      hash = "sha256-Bu6AQjIR3o79kRQERucUt5OVv33GV4N1d8hb67TaN1M=";
     };
 
     # APCpp's IXWebSocket needs TLS (OpenSSL) and zlib; jsoncpp is built from
