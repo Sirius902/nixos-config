@@ -1,4 +1,5 @@
 {pkgs}: {
+  enemizer-cli = pkgs.callPackage ./enemizer-cli/package.nix {};
   sni = pkgs.callPackage ./sni/package.nix {};
 
   ghostty-nautilus = pkgs.callPackage ./ghostty-nautilus/package.nix {};
