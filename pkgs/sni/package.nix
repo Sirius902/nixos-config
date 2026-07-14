@@ -9,16 +9,16 @@
 }:
 buildGoModule (finalAttrs: {
   pname = "sni";
-  version = "0.0.100";
+  version = "0.0.103";
 
   src = fetchFromGitHub {
     owner = "alttpo";
     repo = "sni";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-1Wzsoffw/sQ0CWM9EhxPH4pSvbxfQ5GjHfQJc2cwr6M=";
+    hash = "sha256-3W1ykRQFp+t3sWbAhS9Mm1412OYtFU6mU1qXCaxE6lE=";
   };
 
-  vendorHash = "sha256-5qdNOUUlHILjJnRkcw58ZvDx1RMi1luWsBGcxyDCW3U=";
+  vendorHash = "sha256-o4CShxZ8HUL2zcIEcdhr7xTjuVUIPj86zyRTYgsC6dc=";
 
   nativeBuildInputs = [pkg-config];
 
