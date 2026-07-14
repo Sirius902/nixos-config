@@ -1,64 +1,85 @@
 {
   wwrando,
-  fetchzip,
-  fetchurl,
+  fetchFromGitHub,
+  python313,
   imagemagick,
-  libxcb,
-  xkeyboard_config,
   nix-update-script,
-}:
-wwrando.overrideAttrs (finalAttrs: prevAttrs: {
-  pname = "wwrando-ap";
-  version = "2.5.1";
-  src = fetchzip {
-    url = "https://github.com/tanjo3/wwrando/releases/download/ap_${finalAttrs.version}/wwrando_ap-${finalAttrs.version}-linux.zip";
-    hash = "sha256-UZW/SPyKLiUnIgU07aAq42mtVx0OMFgz0kpRdY799S8=";
-    stripRoot = false;
-  };
-
-  nativeBuildInputs =
-    (prevAttrs.nativeBuildInputs or [])
-    ++ [imagemagick];
-
-  libraryPathDeps =
-    (prevAttrs.libraryPathDeps or [])
-    ++ [libxcb];
-
-  inBin = "The Wind Waker Archipelago Randomizer";
-
-  installIcon = let
-    icon = fetchurl {
-      url = "https://github.com/tanjo3/wwrando/raw/ap_${finalAttrs.version}/assets/icon.ico";
-      hash = "sha256-2ShJMfyvqX7if43xbzgOMVJ7T/xaY6qbFZZNWABIr54=";
+}: let
+  gclib = python313.pkgs.callPackage ./python-modules/gclib {};
+in
+  wwrando.overrideAttrs (finalAttrs: prevAttrs: {
+    pname = "wwrando-ap";
+    version = "2.5.1";
+    src = fetchFromGitHub {
+      owner = "tanjo3";
+      repo = "wwrando";
+      tag = "ap_${finalAttrs.version}";
+      hash = "sha256-cWNkk1cqce7LhSoo8z3SQSqVUmVoiLqJna7MVO1AX2c=";
     };
-  in ''
-    mkdir -p $out/share/icons/hicolor
-    frames=$(magick identify -format "%[scene] %[width] %[height]\n" ${icon})
-    while read -r scene width height; do
-      mkdir -p $out/share/icons/hicolor/''${width}x''${height}/apps
-      magick "${icon}[$scene]" \
-             $out/share/icons/hicolor/''${width}x''${height}/apps/${finalAttrs.pname}.png
-    done <<< "$frames"
-  '';
 
-  postFixup =
-    (prevAttrs.postFixup or "")
-    + ''
-      wrapProgram $out/bin/${finalAttrs.pname} \
-        --set XKB_CONFIG_ROOT "${xkeyboard_config}/share/X11/xkb"
+    patches = [];
+
+    pythonEnv = python313.withPackages (ps:
+      (with ps; [
+        appdirs
+        certifi
+        pillow
+        pyside6
+        qtpy
+        ruamel-yaml
+        tqdm
+      ])
+      ++ [gclib]);
+
+    requirementsHash = "6e128755c71748172a98298f3d7be056fdd38c03d2c85be27c341e9eca95bb73";
+
+    postPatch =
+      prevAttrs.postPatch
+      + ''
+        substituteInPlace options/base_options.py \
+          --replace-fail \
+          "from dataclasses import fields, MISSING, Field, _recursive_repr, _FIELDS, _FIELD, asdict" \
+          "from dataclasses import fields, MISSING, Field, _FIELDS, _FIELD, asdict; from reprlib import recursive_repr; _recursive_repr = recursive_repr()"
+      '';
+
+    prunePaths =
+      prevAttrs.prunePaths
+      + " "
+      + toString [
+        "docs"
+        "gclib"
+        "mkdocs-gh-pages.yml"
+        "mkdocs.yml"
+        "pyrightconfig.json"
+        "pytest.ini"
+        "requirements_qt5.txt"
+        "requirements_qt5_full.txt"
+        "test"
+      ];
+
+    nativeBuildInputs = prevAttrs.nativeBuildInputs ++ [imagemagick];
+
+    installIcon = ''
+      mkdir -p $out/share/icons/hicolor
+      frames=$(magick identify -format "%[scene] %[width] %[height]\n" assets/icon.ico)
+      while read -r scene width height; do
+        mkdir -p $out/share/icons/hicolor/''${width}x''${height}/apps
+        magick "assets/icon.ico[$scene]" \
+               $out/share/icons/hicolor/''${width}x''${height}/apps/${finalAttrs.pname}.png
+      done <<< "$frames"
     '';
 
-  desktopItem = prevAttrs.desktopItem.override {
-    desktopName = "Wind Waker Archipelago Randomizer";
-  };
-
-  passthru =
-    (prevAttrs.passthru or {})
-    // {
-      updateScript = nix-update-script {
-        extraArgs = ["--version-regex=ap_(.*)"];
-      };
+    desktopItem = prevAttrs.desktopItem.override {
+      desktopName = "Wind Waker Archipelago Randomizer";
     };
 
-  meta = prevAttrs.meta // {changelog = "https://github.com/tanjo3/wwrando/releases/tag/${finalAttrs.version}";};
-})
+    passthru =
+      (prevAttrs.passthru or {})
+      // {
+        updateScript = nix-update-script {
+          extraArgs = ["--version-regex=ap_(.*)"];
+        };
+      };
+
+    meta = prevAttrs.meta // {changelog = "https://github.com/tanjo3/wwrando/releases/tag/${finalAttrs.version}";};
+  })

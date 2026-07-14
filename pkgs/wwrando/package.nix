@@ -1,99 +1,112 @@
 {
   lib,
   stdenv,
-  stdenvNoCC,
-  autoPatchelfHook,
-  makeWrapper,
+  fetchFromGitHub,
+  python313,
   copyDesktopItems,
   makeDesktopItem,
-  fetchzip,
-  fetchurl,
-  glib,
-  libGL,
-  libx11,
-  libz,
-  fontconfig,
-  libxkbcommon,
-  freetype,
-  dbus,
-  zlib,
-  wayland,
+  makeWrapper,
+  qt6,
   nix-update-script,
 }:
-stdenvNoCC.mkDerivation (finalAttrs: {
+stdenv.mkDerivation (finalAttrs: {
   pname = "wwrando";
   version = "1.10.0";
-  src = fetchzip {
-    url = "https://github.com/LagoLunatic/wwrando/releases/download/${finalAttrs.version}/wwrando-${finalAttrs.version}-linux-x64.zip";
-    hash = "sha256-WuTyukQVY3t3ZfwNZScLXfzPcOW6y5kNt7Z0XCJ8kZQ=";
-    stripRoot = false;
+
+  src = fetchFromGitHub {
+    owner = "LagoLunatic";
+    repo = "wwrando";
+    tag = finalAttrs.version;
+    hash = "sha256-GbjvTGUJcyJBIvBs71fIUe/VY2K2cC97n9iRT/Z0TzU=";
   };
 
+  patches = [./loose-version.patch];
+
+  pythonEnv = python313.withPackages (ps:
+    with ps; [
+      appdirs
+      certifi
+      pillow
+      pyside6
+      pyyaml
+    ]);
+
+  requirementsHash = "5b05925483662c66d6bb034a69783dcd515aa90c1e042a1d688cdd276ec70673";
+
+  prunePaths = toString [
+    ".github"
+    ".gitattributes"
+    ".gitignore"
+    ".gitmodules"
+    "build.bat"
+    "build.py"
+    "profile.bat"
+    "profile_ui.bat"
+    "requirements_full.txt"
+    "wwrando.spec"
+  ];
+
   nativeBuildInputs = [
-    autoPatchelfHook
-    makeWrapper
     copyDesktopItems
+    makeWrapper
+    qt6.wrapQtAppsHook
   ];
 
-  buildInputs = finalAttrs.runtimeDependencies;
-
-  runtimeDependencies = [libz];
-
-  libraryPathDeps = [
-    (lib.getLib stdenv.cc.cc)
-    glib
-    libGL
-    fontconfig
-    libx11
-    libxkbcommon
-    freetype
-    dbus
-    zlib
-    wayland
+  buildInputs = [
+    qt6.qtbase
+    qt6.qtwayland
   ];
 
-  inBin = "Wind Waker Randomizer";
+  dontWrapQtApps = true;
 
-  installPhase = let
-    outBin = "$out/bin/${finalAttrs.pname}";
-  in ''
+  postPatch = ''
+    actualHash=$(sha256sum requirements.txt | cut -d" " -f1)
+    if [[ "$actualHash" != "$requirementsHash" ]]; then
+      echo "error: Python requirements changed upstream"
+      echo "review requirements.txt, then update pythonEnv and requirementsHash in package.nix"
+      exit 1
+    fi
+
+    substituteInPlace wwrando_paths.py \
+      --replace-fail "IS_RUNNING_FROM_SOURCE = True" "IS_RUNNING_FROM_SOURCE = False" \
+      --replace-fail 'SETTINGS_PATH = os.path.join(RANDO_ROOT_PATH, "settings.txt")' 'SETTINGS_PATH = os.path.join(".", "settings.txt")' \
+      --replace-fail 'CUSTOM_MODELS_PATH = os.path.join(RANDO_ROOT_PATH, "models")' 'CUSTOM_MODELS_PATH = os.path.join(".", "models")'
+  '';
+
+  installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/bin
-    cp "${finalAttrs.inBin}" "${outBin}"
-    chmod +x "${outBin}"
+    mkdir -p $out/bin $out/share/${finalAttrs.pname}
+    cp -r . $out/share/${finalAttrs.pname}
+    for p in $prunePaths; do
+      rm -rf "$out/share/${finalAttrs.pname}/$p"
+    done
 
-    mkdir -p $out/share/${finalAttrs.pname}
-    cp -r models $out/share/${finalAttrs.pname}
-    cp README.txt $out/share/${finalAttrs.pname}
+    $pythonEnv/bin/python -m compileall -q -j $NIX_BUILD_CORES $out/share/${finalAttrs.pname}
 
-    wrapProgram "${outBin}" \
+    makeShellWrapper $pythonEnv/bin/python $out/bin/${finalAttrs.pname} \
+      --add-flags "$out/share/${finalAttrs.pname}/wwrando.py" \
       --run 'datadir="''${XDG_DATA_HOME:-$HOME/.local/share}/${finalAttrs.pname}"' \
       --run 'mkdir -p "$datadir/models"' \
-      --run 'ln -sf "${placeholder "out"}/share/${finalAttrs.pname}/README.txt" "$datadir/README.txt"' \
+      --run 'ln -sf "${placeholder "out"}/share/${finalAttrs.pname}/README.md" "$datadir/README.md"' \
       --run 'ln -sf "${placeholder "out"}/share/${finalAttrs.pname}/models/"* "$datadir/models/"' \
       --run 'cd "$datadir"' \
-      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath finalAttrs.libraryPathDeps}"
+      "''${qtWrapperArgs[@]}"
 
     runHook installIcon
 
     runHook postInstall
   '';
 
-  installIcon = let
-    icon = fetchurl {
-      url = "https://github.com/LagoLunatic/wwrando/raw/${finalAttrs.version}/assets/swift%20sail%20icon.png";
-      hash = "sha256-xcxULqDN+uPnJj3utxHr2XPrr+6JVeMRZ4ifkWAPVKI=";
-    };
-  in ''
-    install -Dm644 ${icon} \
+  installIcon = ''
+    install -Dm644 "assets/swift sail icon.png" \
       $out/share/icons/hicolor/48x48/apps/${finalAttrs.pname}.png
   '';
 
   desktopItem = makeDesktopItem {
     name = finalAttrs.pname;
     icon = finalAttrs.pname;
-    desktopName = finalAttrs.inBin;
+    desktopName = "Wind Waker Randomizer";
     categories = ["Game"];
     type = "Application";
     exec = finalAttrs.pname;
@@ -112,7 +125,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     maintainers = with lib.maintainers; [
       # sirius902
     ];
-    # TODO(Sirius902) darwin support?
     platforms = lib.platforms.linux;
   };
 })
