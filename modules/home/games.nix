@@ -6,6 +6,7 @@
     poptracker
     dusklight
     dusklight-rando
+    dusklight-ap
     shipwright
     shipwright_stable
     _2ship2harkinian
