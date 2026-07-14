@@ -41,6 +41,13 @@ in
         substituteInPlace include/dusk/app_info.hpp \
           --replace-fail 'AppName = "Dusklight"' 'AppName = "DusklightRandomizer"' \
           --replace-fail 'LegacyAppName = "Dusk"' 'LegacyAppName = "DusklightRandomizer"'
+
+        if grep -q '#include <list>' src/dusk/cosmetics/texture_utils.cpp; then
+          echo "dusklight-rando: texture_utils.cpp now includes <list>; drop this workaround" >&2
+          exit 1
+        fi
+        substituteInPlace src/dusk/cosmetics/texture_utils.cpp \
+          --replace-fail '#include "texture_utils.hpp"' '#include "texture_utils.hpp"''\n#include <list>'
       '';
 
     preConfigure =
