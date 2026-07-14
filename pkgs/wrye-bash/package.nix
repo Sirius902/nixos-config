@@ -97,7 +97,7 @@ in
         )
         taglists)}
 
-      ${python.interpreter} -O -m compileall $out/share/wrye-bash/Mopy/bash
+      ${python.interpreter} -m compileall -q $out/share/wrye-bash/Mopy/bash
 
       install -Dm644 Mopy/bash/images/bash.svg $out/share/icons/hicolor/scalable/apps/wrye-bash.svg
 
