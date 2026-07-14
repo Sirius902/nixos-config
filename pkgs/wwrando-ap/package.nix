@@ -9,12 +9,12 @@
 in
   wwrando.overrideAttrs (finalAttrs: prevAttrs: {
     pname = "wwrando-ap";
-    version = "2.5.1";
+    version = "2.5.2";
     src = fetchFromGitHub {
       owner = "tanjo3";
       repo = "wwrando";
       tag = "ap_${finalAttrs.version}";
-      hash = "sha256-cWNkk1cqce7LhSoo8z3SQSqVUmVoiLqJna7MVO1AX2c=";
+      hash = "sha256-yCH7u6V0ERD/5yroS0x4xGa54Ms0m/jtgwh8bYoGzAI=";
     };
 
     patches = [];
