@@ -546,51 +546,6 @@
   })
 
   (final: prev: {
-    archipelago = prev.archipelago.overrideAttrs (finalAttrs: prevAttrs: let
-      utils-py = final.fetchurl {
-        url = "https://raw.githubusercontent.com/ArchipelagoMW/Archipelago/${finalAttrs.version}/Utils.py";
-        hash = "sha256-XqcCNFPMLvS92sVmdsboywZ6/uoV0at1qm74QYGPioU=";
-      };
-    in {
-      version = "0.6.7";
-      src = final.fetchurl {
-        url = "https://github.com/ArchipelagoMW/Archipelago/releases/download/${finalAttrs.version}/Archipelago_${finalAttrs.version}_linux-x86_64.AppImage";
-        hash = "sha256-a5UazzqGu7q4Zg1AYHnbQjCTQNdcNaL/gZUjYV3Rk5Q=";
-      };
-
-      nativeBuildInputs =
-        (prevAttrs.nativeBuildInputs or [])
-        ++ [
-          final.python312
-          final.zip
-        ];
-
-      # On first launch Archipelago mirrors Players/ and data/ into its user
-      # data dir with shutil.copytree/copy2, which preserve the store's
-      # read-only modes and epoch mtimes. Patch the frozen Utils module in
-      # cx_Freeze's library.zip to create the copies through the umask,
-      # keeping only manifest.json's mtime (it gates the mirror-once check).
-      postInstall =
-        (prevAttrs.postInstall or "")
-        + ''
-          cp ${utils-py} Utils.py
-          chmod u+w Utils.py
-          patch Utils.py ${../patches/archipelago/user-data-umask.patch}
-          python3.12 -c 'import py_compile; py_compile.compile("Utils.py", "Utils.pyc", dfile="Utils.py", doraise=True)'
-          touch -t 198001010000 Utils.pyc
-          chmod u+w $out/lib/opt/Archipelago/lib $out/lib/opt/Archipelago/lib/library.zip
-          zip -q $out/lib/opt/Archipelago/lib/library.zip Utils.pyc
-        '';
-
-      passthru =
-        (prevAttrs.passthru or {})
-        // {
-          updateScript = final.nix-update-script {};
-        };
-    });
-  })
-
-  (final: prev: {
     n64recomp = prev.n64recomp.overrideAttrs (prevAttrs: {
       version = "0-unstable-2026-05-27";
       src = prevAttrs.src.override {

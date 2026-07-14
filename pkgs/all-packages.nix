@@ -1,4 +1,5 @@
 {pkgs}: {
+  archipelago = pkgs.callPackage ./archipelago/package.nix {};
   enemizer-cli = pkgs.callPackage ./enemizer-cli/package.nix {};
   sni = pkgs.callPackage ./sni/package.nix {};
 
