@@ -1,4 +1,6 @@
 {pkgs}: {
+  sni = pkgs.callPackage ./sni/package.nix {};
+
   ghostty-nautilus = pkgs.callPackage ./ghostty-nautilus/package.nix {};
 
   gcfeederd = pkgs.callPackage ./gcfeederd/package.nix {};
