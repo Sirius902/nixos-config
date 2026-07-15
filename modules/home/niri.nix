@@ -218,8 +218,8 @@ in {
 
         // Screenshots
         Print           { screenshot; }
-        Mod+Print       { screenshot-screen; }
-        Mod+Shift+Print { screenshot-window; }
+        Mod+Print       { screenshot-window; }
+        Mod+Shift+Print { screenshot-screen; }
         Mod+S           { screenshot; }
         Mod+Shift+S     { screenshot-window; }
         Mod+Ctrl+S      { screenshot-screen; }
