@@ -38,7 +38,7 @@ in
       (prevAttrs.postPatch or "")
       + ''
         # Store data under TwilitRealm/DusklightRandomizer.
-        substituteInPlace include/dusk/app_info.hpp \
+        substituteInPlace src/dusk/app_info.hpp \
           --replace-fail 'AppName = "Dusklight"' 'AppName = "DusklightRandomizer"' \
           --replace-fail 'LegacyAppName = "Dusk"' 'LegacyAppName = "DusklightRandomizer"'
       '';
