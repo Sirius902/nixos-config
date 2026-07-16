@@ -9,6 +9,7 @@
   enemizer-cli,
   sni,
   nix-update-script,
+  extraPythonPackages ? (ps: []),
 }: let
   python = python312.override {
     self = python;
@@ -68,7 +69,7 @@
       zilliandomizer
     ];
 
-  pythonEnv = python.withPackages requirements;
+  pythonEnv = python.withPackages (ps: requirements ps ++ extraPythonPackages ps);
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "archipelago";
