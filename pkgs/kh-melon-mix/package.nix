@@ -13,8 +13,8 @@ melonds.overrideAttrs (prevAttrs: {
   src = fetchFromGitHub {
     owner = "vitor251093";
     repo = "KHMelonMix";
-    rev = "2d8018d8a6465066cfe56c1b3b20930d9bc78039";
-    hash = "sha256-AtqD9lpQY564FprQ13MkVJ0lEOymawEBoTH3Ts5YvX0=";
+    rev = "3d649f3c94f405a8d0c9045b4490f9eef1d44a4f";
+    hash = "sha256-HX93rab/0TE46OTfvHBPM8Z5XSVXChSvfK4heFkgQLQ=";
   };
 
   nativeBuildInputs = (prevAttrs.nativeBuildInputs or []) ++ [makeWrapper];
