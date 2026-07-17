@@ -8,13 +8,13 @@
 }:
 melonds.overrideAttrs (prevAttrs: {
   pname = "kh-melon-mix";
-  version = "0.9.0-unstable-2026-07-16";
+  version = "0.9.1-unstable-2026-07-17";
 
   src = fetchFromGitHub {
     owner = "vitor251093";
     repo = "KHMelonMix";
-    rev = "3a3adb5c9f322d08a2a84df0af1f5ba3ca45f2ad";
-    hash = "sha256-hXMjlYwm66etDCAMXvYpMhl4WQRu2WiEys9gtDxV2lI=";
+    rev = "2d8018d8a6465066cfe56c1b3b20930d9bc78039";
+    hash = "sha256-AtqD9lpQY564FprQ13MkVJ0lEOymawEBoTH3Ts5YvX0=";
   };
 
   nativeBuildInputs = (prevAttrs.nativeBuildInputs or []) ++ [makeWrapper];
