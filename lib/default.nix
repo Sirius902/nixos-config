@@ -92,6 +92,12 @@ in {
             url = "https://github.com/kritdass/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.patch?full_index=1";
             hash = "sha256-TvrGKoaPnrkIZyntbv/C6m55e2p2kLECtxH7/fViXM4=";
           })
+          # TODO(Sirius902) Fix patool build https://github.com/NixOS/nixpkgs/pull/540742
+          (pkgs.fetchpatch2 {
+            name = "file-relax-landlock-sandbox.patch";
+            url = "https://github.com/NixOS/nixpkgs/commit/b01149720fb7a0a4c78ec20ab1317e688fb5f585.patch?full_index=1";
+            hash = "sha256-l+h53flrwZaKzv19Om6UwZp16bWrkZtdJwCd01enCtw=";
+          })
         ]
         ++ (extraPatches pkgs);
     };
