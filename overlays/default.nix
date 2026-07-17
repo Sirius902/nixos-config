@@ -635,42 +635,6 @@
       ];
   })
 
-  # TODO(Sirius902) Ugh I need to PR this...
-  (final: prev: {
-    bottles-unwrapped = prev.bottles-unwrapped.overrideAttrs (prevAttrs: {
-      postPatch =
-        (prevAttrs.postPatch or "")
-        + ''
-          substituteInPlace bottles/backend/utils/vulkan.py \
-            --replace-fail '"vulkaninfo"' '"${final.vulkan-tools}/bin/vulkaninfo"'
-
-          substituteInPlace bottles/fvs/repo.py \
-            --replace-fail '"fvs2"' '"${final.fvs2}/bin/fvs2"'
-        '';
-    });
-  })
-
-  # FUTURE(Sirius902) openldap has evil tests
-  # https://github.com/NixOS/nixpkgs/issues/440594
-  # I guess hydra doesn't have openldap cached for i686-linux so it has to
-  # build from source for bottles...
-  (final: prev: {
-    bottles = prev.bottles.override {
-      buildFHSEnv = fhsArgs: let
-        patchPkgs = pkgs:
-          pkgs
-          // {
-            openldap = pkgs.openldap.overrideAttrs {doCheck = false;};
-          };
-      in
-        prev.buildFHSEnv (fhsArgs
-          // {
-            targetPkgs = pkgs: (fhsArgs.targetPkgs or (_: [])) (patchPkgs pkgs);
-            multiPkgs = pkgs: (fhsArgs.multiPkgs or (_: [])) (patchPkgs pkgs);
-          });
-    };
-  })
-
   (final: prev: {
     zellij-unwrapped = prev.zellij-unwrapped.overrideAttrs (prevAttrs: {
       patches =
