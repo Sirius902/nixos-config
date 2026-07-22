@@ -65,6 +65,13 @@
     hash = "sha256-AmHAa3/cQdh7KAMFOtz5TQpcM6FqO9SppmDpKPTjTt8=";
   };
 
+  monocypher = fetchFromGitHub {
+    owner = "LoupVaillant";
+    repo = "Monocypher";
+    rev = "0d85f98c9d9b0227e42cf795cb527dff372b40a4";
+    hash = "sha256-RrM8Ep/CM7U5Q4+4FAHfBknb6b0upohoiqy4f7eMye0=";
+  };
+
   prism = fetchFromGitHub {
     owner = "KiritoDv";
     repo = "prism-processor";
@@ -188,6 +195,7 @@ in
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_MONOCYPHER" "${monocypher}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
@@ -223,6 +231,9 @@ in
         --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
         --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
         --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
+
+      substituteInPlace libultraship/src/ship/Context.cpp \
+        --replace-fail "GetInstance()->mShortName" "GetRawInstance()->mShortName"
     '';
 
     postBuild = ''
