@@ -122,13 +122,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright";
-    version = "9.2.3-unstable-2026-07-21";
+    version = "9.2.3-unstable-2026-07-22";
 
     src = fetchFromGitHub {
       owner = "HarbourMasters";
       repo = "Shipwright";
-      rev = "848106039d02d813f59a6a76b87d3ced233e0eb9";
-      hash = "sha256-27DNBvdqLP9rODOolCWPFkKtCrGeDJ2Z/+aBYe64I6c=";
+      rev = "cf7e8022b07c4d57336173aebdce11b021756add";
+      hash = "sha256-CkaLQ8zdB9s7PRzsVuQji2SeNgDNKh7TvSKC52R2NQw=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
