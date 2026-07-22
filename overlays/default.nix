@@ -647,16 +647,16 @@
 
   (final: prev: {
     dolphin-emu = prev.dolphin-emu.overrideAttrs (prevAttrs: {
-      version = "2603a-unstable-2026-07-21";
+      version = "2603a-unstable-2026-07-22";
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "b008142f72a099a9bcb971776209504f085ae0be";
-        hash = "sha256-Az2vZEuNhd94cv+6ehpyGJd1j4XU2gSz8XKRChivmi8=";
+        rev = "03e409a3e10d67287b81c7c937657b6d2a0c39a0";
+        hash = "sha256-75uDUhYcQUMehS8MpOM7c21MAg7TGtaTTt4f+pfylok=";
 
         leaveDotGit = false;
         postFetch = ''
-          echo b008142f72a099a9bcb971776209504f085ae0be > $out/COMMIT
+          echo 03e409a3e10d67287b81c7c937657b6d2a0c39a0 > $out/COMMIT
         '';
       };
 
