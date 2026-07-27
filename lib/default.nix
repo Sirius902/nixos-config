@@ -92,6 +92,12 @@ in {
             url = "https://github.com/kritdass/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.patch?full_index=1";
             hash = "sha256-TvrGKoaPnrkIZyntbv/C6m55e2p2kLECtxH7/fViXM4=";
           })
+          # niri: pin libdisplay-info_0_3 https://github.com/NixOS/nixpkgs/pull/546004
+          (pkgs.fetchpatch2 {
+            name = "niri-pin-libdisplay-info_0_3.diff";
+            url = "https://github.com/NixOS/nixpkgs/compare/39f2a26bc4ab26aacfa3779a4e9655ad08b3f52a...c088236389bd2631050f833a7c33267b48a904a6.diff?full_index=1";
+            hash = "sha256-iK1/cbZLY2Spmm2untA4Du/K/3Gj6VAzCwpAGHAFTYY=";
+          })
         ]
         ++ (extraPatches pkgs);
     };
