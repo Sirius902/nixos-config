@@ -342,7 +342,7 @@
       src = prevAttrs.src.override {
         tag = null;
         rev = "9894036b3f5be4c95588d9abdc49352a5bf112eb";
-        hash = "sha256-97/9tfEwnoT14IQkpALaAx3zNFElnoK+AswrIhW8i70=";
+        hash = "sha256-2TYQ+7n6UnqMrwKnRirawTvQw89Ea++T8ITaXNSZq6g=";
 
         postCheckout = ''
           cd "$out"
@@ -368,6 +368,8 @@
             sirit \
             spdlog \
             tracy \
+            zarchive \
+            zstd \
             zydis
           git -C externals/sirit submodule update --init --depth 1 externals/SPIRV-Headers
           git -C externals/zydis submodule update --init --depth 1 dependencies/zycore
