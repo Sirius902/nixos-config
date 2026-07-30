@@ -1,8 +1,8 @@
 diff --git a/src/backend/render/element.rs b/src/backend/render/element.rs
-index 496702d..d7cc4b0 100644
+index e1259dc..92030e7 100644
 --- a/src/backend/render/element.rs
 +++ b/src/backend/render/element.rs
-@@ -172,18 +172,7 @@ where
+@@ -189,19 +189,7 @@ where
          }
      }
  
@@ -14,6 +14,7 @@ index 496702d..d7cc4b0 100644
 -            CosmicElement::MoveGrab(elem) => elem.kind(),
 -            CosmicElement::Postprocess(elem) => elem.kind(),
 -            CosmicElement::Zoom(elem) => elem.kind(),
+-            CosmicElement::Damage(elem) => elem.kind(),
 -            #[cfg(feature = "debug")]
 -            CosmicElement::Egui(elem) => elem.kind(),
 -        }
