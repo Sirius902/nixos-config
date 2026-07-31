@@ -1,0 +1,534 @@
+diff --git a/.github/.gitignore b/.github/.gitignore
+new file mode 100644
+index 0000000..804a85e
+--- /dev/null
++++ b/.github/.gitignore
+@@ -0,0 +1,2 @@
++# Ignore the prompts directory
++prompts/
+\ No newline at end of file
+diff --git a/Cargo.toml b/Cargo.toml
+index 22aea83..3ee10b1 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -10,7 +10,7 @@ rust-version = "1.88"
+ 
+ [dependencies]
+ serde = { version = "1", features = ["derive"] }
+-tokio = { version = "1", features = [] }
++tokio = { version = "1", features = ["time", "net", "io-util"] }
+ 
+ i18n-embed = { version = "0.16", features = [
+     "fluent-system",
+diff --git a/src/app.rs b/src/app.rs
+index befa3af..33f2195 100644
+--- a/src/app.rs
++++ b/src/app.rs
+@@ -374,17 +374,23 @@ impl<Db: DbTrait + 'static> cosmic::Application for AppState<Db> {
+                         error!("can't insert data: {e}");
+                     }
+                 }
+-                clipboard::ClipboardMessage::Error(e) => {
+-                    error!("clipboard: {e}");
+-
+-                    self.clipboard_state = if let ClipboardError::Watch(ref e) = e
+-                        && let clipboard_watcher::Error::MissingProtocol { name, .. } = **e
+-                        && name == "zwlr_data_control_manager_v1"
+-                    {
+-                        ClipboardState::Error(ErrorState::MissingDataControlProtocol)
+-                    } else {
+-                        ClipboardState::Error(ErrorState::Other(e.to_string()))
+-                    };
++                clipboard::ClipboardMessage::ErrorRecoverable(e) => {
++                    warn!("clipboard recoverable error: {e}");
++                    // For recoverable errors, we keep the subscription running
++                    // and just log the error. The clipboard state remains unchanged.
++                }
++                clipboard::ClipboardMessage::ErrorFatal(e) => {
++                    error!("clipboard fatal error: {e}");
++
++                    let ClipboardError::Watch(ref inner) = e;
++                    self.clipboard_state =
++                        if let clipboard_watcher::Error::MissingProtocol { name, .. } = **inner
++                            && name == "zwlr_data_control_manager_v1"
++                        {
++                            ClipboardState::Error(ErrorState::MissingDataControlProtocol)
++                        } else {
++                            ClipboardState::Error(ErrorState::Other(e.to_string()))
++                        };
+                 }
+                 clipboard::ClipboardMessage::EmptyKeyboard => {
+                     if let Some(data) = self.db.get(0) {
+diff --git a/src/clipboard.rs b/src/clipboard.rs
+index 102bf05..775e9c9 100644
+--- a/src/clipboard.rs
++++ b/src/clipboard.rs
+@@ -1,5 +1,5 @@
+ use std::{
+-    io::Read,
++    os::fd::{FromRawFd, IntoRawFd, OwnedFd},
+     sync::{
+         Arc,
+         atomic::{self},
+@@ -8,8 +8,11 @@ use std::{
+ 
+ use cosmic::iced::{futures::SinkExt, stream::channel};
+ use futures::Stream;
++use futures::future::join_all;
+ use itertools::Itertools;
++use tokio::io::AsyncReadExt;
+ use tokio::sync::mpsc;
++use tokio::time::{Duration, timeout};
+ 
+ use crate::{clipboard_watcher, config::PRIVATE_MODE, db::MimeDataMap};
+ 
+@@ -20,7 +23,10 @@ pub enum ClipboardMessage {
+     /// Means that the source was closed, or the compurer just started
+     /// This means the clipboard manager must become the source, by providing the last entry
+     EmptyKeyboard,
+-    Error(ClipboardError),
++    /// Recoverable error - can potentially retry
++    ErrorRecoverable(ClipboardError),
++    /// Fatal error - requires intervention or configuration change
++    ErrorFatal(ClipboardError),
+ }
+ 
+ #[derive(Debug, Clone, thiserror::Error)]
+@@ -29,6 +35,22 @@ pub enum ClipboardError {
+     Watch(Arc<clipboard_watcher::Error>),
+ }
+ 
++impl ClipboardError {
++    /// Returns true if this error is potentially recoverable (transient)
++    pub fn is_recoverable(&self) -> bool {
++        match self {
++            ClipboardError::Watch(e) => matches!(
++                **e,
++                clipboard_watcher::Error::ClipboardEmpty
++                    | clipboard_watcher::Error::WaylandCommunication(_)
++                    | clipboard_watcher::Error::WaylandFlush(_)
++                    | clipboard_watcher::Error::OfferNotFound
++                    | clipboard_watcher::Error::RegistryInvalidId
++            ),
++        }
++    }
++}
++
+ enum WatchRes<I> {
+     Some(I),
+     None,
+@@ -48,24 +70,39 @@ pub fn sub() -> impl Stream<Item = ClipboardMessage> {
+                         {
+                             Ok(res) => {
+                                 if !PRIVATE_MODE.load(atomic::Ordering::Relaxed) {
+-                                    tx.blocking_send(WatchRes::Some(res)).unwrap();
++                                    if tx.blocking_send(WatchRes::Some(res)).is_err() {
++                                        debug!(
++                                            "clipboard channel receiver dropped, exiting watcher loop"
++                                        );
++                                        break;
++                                    }
+                                 } else {
+                                     info!("private mode")
+                                 }
+                             }
+                             Err(e) => match e {
+                                 clipboard_watcher::Error::ClipboardEmpty => {
+-                                    tx.blocking_send(WatchRes::None).unwrap();
++                                    if tx.blocking_send(WatchRes::None).is_err() {
++                                        debug!(
++                                            "clipboard channel receiver dropped, exiting watcher loop"
++                                        );
++                                        break;
++                                    }
+                                 }
+                                 _ => {
+-                                    tx.blocking_send(WatchRes::Err(e)).unwrap();
++                                    // Try to send error, but don't panic if channel is closed
++                                    let _ = tx.blocking_send(WatchRes::Err(e));
+                                     break;
+                                 }
+                             },
+                         }
+                     }
+                 });
+-                output.send(ClipboardMessage::Connected).await.unwrap();
++
++                if output.send(ClipboardMessage::Connected).await.is_err() {
++                    warn!("clipboard output channel closed during connect");
++                    return;
++                }
+ 
+                 let mut i = 0;
+                 loop {
+@@ -77,23 +114,51 @@ pub fn sub() -> impl Stream<Item = ClipboardMessage> {
+                         Some(WatchRes::Some(res)) => {
+                             let mut data = MimeDataMap::new();
+ 
+-                            for (mime_type, mut pipe) in res {
+-                                let mut contents = Vec::new();
++                            let read_futures = res.into_iter().map(|(mime_type, pipe)| async move {
++                                let raw_fd = pipe.into_raw_fd();
++                                let owned_fd = unsafe { OwnedFd::from_raw_fd(raw_fd) };
++
++                                let mut async_pipe =
++                                    match tokio::net::unix::pipe::Receiver::from_owned_fd(owned_fd)
++                                    {
++                                        Ok(receiver) => receiver,
++                                        Err(e) => {
++                                            warn!(
++                                                "failed to create async pipe receiver: {mime_type} {e}"
++                                            );
++                                            return None;
++                                        }
++                                    };
+ 
+-                                match pipe.read_to_end(&mut contents) {
+-                                    Ok(len) => {
++                                let mut contents = Vec::new();
++                                match timeout(
++                                    Duration::from_millis(500),
++                                    async_pipe.read_to_end(&mut contents),
++                                )
++                                .await
++                                {
++                                    Ok(Ok(len)) => {
+                                         if len == 0 {
+                                             debug!("data is empty: {mime_type}");
++                                            None
+                                         } else {
+-                                            data.insert(mime_type, contents);
++                                            Some((mime_type, contents))
+                                         }
+                                     }
+-                                    Err(e) => {
+-                                        warn!(
+-                                            "read error on external pipe clipboard: {mime_type} {e}"
+-                                        );
++                                    Ok(Err(e)) => {
++                                        warn!("read error on external pipe clipboard: {mime_type} {e}");
++                                        None
++                                    }
++                                    Err(_) => {
++                                        warn!("read timeout (500ms): {mime_type}");
++                                        None
+                                     }
+                                 }
++                            });
++
++                            let read_results = join_all(read_futures).await;
++                            for (mime_type, contents) in read_results.into_iter().flatten() {
++                                data.insert(mime_type, contents);
+                             }
+ 
+                             if !data.is_empty() {
+@@ -103,37 +168,50 @@ pub fn sub() -> impl Stream<Item = ClipboardMessage> {
+                                     .collect_vec();
+ 
+                                 debug!("send mime types to db: {mimes:?}");
+-                                output.send(ClipboardMessage::Data(data)).await.unwrap();
++                                if output.send(ClipboardMessage::Data(data)).await.is_err() {
++                                    warn!("clipboard output channel closed");
++                                    return;
++                                }
+                             }
+                         }
+ 
+                         Some(WatchRes::None) => {
+                             debug!("empty keyboard");
+-                            output.send(ClipboardMessage::EmptyKeyboard).await.unwrap();
++                            if output.send(ClipboardMessage::EmptyKeyboard).await.is_err() {
++                                warn!("clipboard output channel closed");
++                                return;
++                            }
+                         }
+                         Some(WatchRes::Err(e)) => {
+-                            output
+-                                .send(ClipboardMessage::Error(ClipboardError::Watch(e.into())))
+-                                .await
+-                                .unwrap();
+-                            std::future::pending::<()>().await;
++                            let error = ClipboardError::Watch(e.into());
++                            let message = if error.is_recoverable() {
++                                ClipboardMessage::ErrorRecoverable(error)
++                            } else {
++                                ClipboardMessage::ErrorFatal(error)
++                            };
++                            if output.send(message).await.is_err() {
++                                warn!("clipboard output channel closed during error report");
++                            }
++                            return;
+                         }
+                         None => {
+-                            std::future::pending::<()>().await;
++                            debug!("clipboard watcher channel closed");
++                            return;
+                         }
+                     }
+                 }
+             }
+ 
+             Err(e) => {
+-                // todo: how to cancel properly?
+-                // https://github.com/pop-os/cosmic-files/blob/d96d48995d49e17f01903ca4d89839eb4a1b1104/src/app.rs#L1704
+-                output
+-                    .send(ClipboardMessage::Error(ClipboardError::Watch(e.into())))
+-                    .await
+-                    .unwrap();
+-
+-                std::future::pending::<()>().await;
++                let error = ClipboardError::Watch(e.into());
++                let message = if error.is_recoverable() {
++                    ClipboardMessage::ErrorRecoverable(error)
++                } else {
++                    ClipboardMessage::ErrorFatal(error)
++                };
++                if output.send(message).await.is_err() {
++                    warn!("clipboard output channel closed during init error report");
++                }
+             }
+         };
+     })
+diff --git a/src/clipboard_watcher.rs b/src/clipboard_watcher.rs
+index 46aff7f..a9f8db3 100644
+--- a/src/clipboard_watcher.rs
++++ b/src/clipboard_watcher.rs
+@@ -22,6 +22,14 @@ use cosmic::cctk::{
+     },
+ };
+ 
++const BLOCKED_ATOMS: &[&str] = &[
++    "SAVE_TARGETS",
++    "TARGETS",
++    "MULTIPLE",
++    "TIMESTAMP",
++    "COMPOUND_TEXT",
++];
++
+ /// Seat to operate on.
+ #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, PartialOrd, Ord, Default)]
+ pub enum Seat<'a> {
+@@ -69,26 +77,36 @@ impl SeatData {
+ 
+     /// Sets this seat's data offer.
+     ///
+-    /// Destroys the old one, if any.
+-    pub fn set_offer(&mut self, new_offer: Option<ZwlrDataControlOfferV1>) {
++    /// Returns and destroys the old one, if any. The caller is responsible for
++    /// removing the old offer from any state maps (e.g., offers HashMap).
++    pub fn set_offer(
++        &mut self,
++        new_offer: Option<ZwlrDataControlOfferV1>,
++    ) -> Option<ZwlrDataControlOfferV1> {
+         let old_offer = self.offer.take();
+         self.offer = new_offer;
+ 
+-        if let Some(offer) = old_offer {
++        if let Some(ref offer) = old_offer {
+             offer.destroy();
+         }
++        old_offer
+     }
+ 
+     /// Sets this seat's primary-selection data offer.
+     ///
+-    /// Destroys the old one, if any.
+-    pub fn set_primary_offer(&mut self, new_offer: Option<ZwlrDataControlOfferV1>) {
++    /// Returns and destroys the old one, if any. The caller is responsible for
++    /// removing the old offer from any state maps (e.g., offers HashMap).
++    pub fn set_primary_offer(
++        &mut self,
++        new_offer: Option<ZwlrDataControlOfferV1>,
++    ) -> Option<ZwlrDataControlOfferV1> {
+         let old_offer = self.primary_offer.take();
+         self.primary_offer = new_offer;
+ 
+-        if let Some(offer) = old_offer {
++        if let Some(ref offer) = old_offer {
+             offer.destroy();
+         }
++        old_offer
+     }
+ }
+ 
+@@ -126,7 +144,11 @@ where
+         let state = parent.as_mut();
+ 
+         if let wl_seat::Event::Name { name } = event {
+-            state.get_mut_seat(seat).unwrap().set_name(name);
++            if let Some(seat_data) = state.get_mut_seat(seat) {
++                seat_data.set_name(name);
++            } else {
++                warn!("received name event for unknown seat");
++            }
+         }
+     }
+ }
+@@ -134,7 +156,7 @@ where
+ struct State {
+     common: CommonState,
+     // The value is the set of MIME types in the offer.
+-    // TODO: We never remove offers from here, even if we don't use them or after destroying them.
++    // Offers are cleaned up when replaced (in Selection/PrimarySelection events) or consumed (in start_watching).
+     offers: HashMap<ZwlrDataControlOfferV1, HashSet<String>>,
+     got_primary_selection: bool,
+     // waker: Waker,
+@@ -191,19 +213,33 @@ impl Dispatch<ZwlrDataControlDeviceV1, WlSeat> for State {
+                 })
+             }
+             zwlr_data_control_device_v1::Event::Selection { id } => {
+-                state.common.get_mut_seat(seat).unwrap().set_offer(id);
++                if let Some(seat_data) = state.common.get_mut_seat(seat) {
++                    // Remove the old offer from the offers map before replacing
++                    if let Some(old_offer) = seat_data.set_offer(id) {
++                        state.offers.remove(&old_offer);
++                    }
++                } else {
++                    warn!("received selection event for unknown seat");
++                }
+             }
+             zwlr_data_control_device_v1::Event::Finished => {
+                 // Destroy the device stored in the seat as it's no longer valid.
+-                state.common.get_mut_seat(seat).unwrap().set_device(None);
++                if let Some(seat_data) = state.common.get_mut_seat(seat) {
++                    seat_data.set_device(None);
++                } else {
++                    warn!("received finished event for unknown seat");
++                }
+             }
+             zwlr_data_control_device_v1::Event::PrimarySelection { id } => {
+                 state.got_primary_selection = true;
+-                state
+-                    .common
+-                    .get_mut_seat(seat)
+-                    .unwrap()
+-                    .set_primary_offer(id);
++                if let Some(seat_data) = state.common.get_mut_seat(seat) {
++                    // Remove the old offer from the offers map before replacing
++                    if let Some(old_offer) = seat_data.set_primary_offer(id) {
++                        state.offers.remove(&old_offer);
++                    }
++                } else {
++                    warn!("received primary selection event for unknown seat");
++                }
+             }
+             _ => (),
+         }
+@@ -224,7 +260,11 @@ impl Dispatch<ZwlrDataControlOfferV1, ()> for State {
+         _qhandle: &wayland_client::QueueHandle<Self>,
+     ) {
+         if let zwlr_data_control_offer_v1::Event::Offer { mime_type } = event {
+-            state.offers.get_mut(offer).unwrap().insert(mime_type);
++            if let Some(offer_mimes) = state.offers.get_mut(offer) {
++                offer_mimes.insert(mime_type);
++            } else {
++                warn!("received offer event for unknown offer id");
++            }
+         }
+     }
+ }
+@@ -237,6 +277,12 @@ pub enum Error {
+     #[error("Wayland compositor communication error")]
+     WaylandCommunication(#[source] DispatchError),
+ 
++    #[error("Wayland connection flush error")]
++    WaylandFlush(#[source] wayland_client::backend::WaylandError),
++
++    #[error("Wayland registry error: invalid object id")]
++    RegistryInvalidId,
++
+     #[error(
+         "A required Wayland protocol ({} version {}) is not supported by the compositor",
+         name,
+@@ -258,6 +304,9 @@ pub enum Error {
+ 
+     #[error("Couldn't create a pipe for content transfer")]
+     PipeCreation(#[source] io::Error),
++
++    #[error("Offer not found in state")]
++    OfferNotFound,
+ }
+ 
+ pub struct Watcher {
+@@ -277,14 +326,13 @@ where
+     let conn = Connection::connect_to_env().map_err(Error::WaylandConnection)?;
+ 
+     // Retrieve the global interfaces.
+-    let (globals, queue) =
+-        registry_queue_init::<S>(&conn).map_err(|err| match err {
+-                                           GlobalError::Backend(err) => Error::WaylandCommunication(err.into()),
+-                                           GlobalError::InvalidId(err) => panic!("How's this possible? \
+-                                                                                  Is there no wl_registry? \
+-                                                                                  {:?}",
+-                                                                                 err),
+-                                       })?;
++    let (globals, queue) = registry_queue_init::<S>(&conn).map_err(|err| match err {
++        GlobalError::Backend(err) => Error::WaylandCommunication(err.into()),
++        GlobalError::InvalidId(_) => {
++            warn!("Wayland registry returned invalid id");
++            Error::RegistryInvalidId
++        }
++    })?;
+     let qh = &queue.handle();
+ 
+     // Verify that we got the clipboard manager.
+@@ -386,11 +434,27 @@ impl Watcher {
+         // Check if we found anything.
+         match offer.clone() {
+             Some(offer) => {
+-                let mime_types = self.state.offers.remove(&offer).unwrap();
++                // Note: In rare cases the offer may not be in the map if Selection events
++                // arrived in an unexpected order. Use empty set as fallback to avoid breaking
++                // the watcher loop entirely.
++                let mime_types = self.state.offers.remove(&offer).unwrap_or_else(|| {
++                    warn!("offer not found in state map, using empty set");
++                    HashSet::new()
++                });
++
++                // If no mime types, treat as empty clipboard
++                if mime_types.is_empty() {
++                    return Err(Error::ClipboardEmpty);
++                }
+ 
+                 let mut res = Vec::with_capacity(mime_types.len());
+ 
+                 for mime_type in mime_types {
++                    if BLOCKED_ATOMS.contains(&mime_type.as_str()) {
++                        debug!("skipping X11 atom: {mime_type}");
++                        continue;
++                    }
++
+                     // Create a pipe for content transfer.
+                     let (read, write) = std::io::pipe().map_err(Error::PipeCreation)?;
+ 
+@@ -401,6 +465,9 @@ impl Watcher {
+                     res.push((mime_type, read));
+                 }
+ 
++                // Flush receive requests so the compositor can prompt source apps to write data.
++                self.queue.flush().map_err(Error::WaylandFlush)?;
++
+                 Ok(res)
+             }
+             None => {
+diff --git a/src/main.rs b/src/main.rs
+index 4d53750..e3b2f3f 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -74,7 +74,7 @@ fn main() {
+         }
+         Err(err) => {
+             error!("failed to create config handler: {}", err);
+-            panic!();
++            std::process::exit(1);
+         }
+     };
+ 
+@@ -85,6 +85,6 @@ fn main() {
+ 
+     if let Err(e) = cosmic::applet::run::<AppState<db::DbSqlite>>(flags) {
+         error!("{e}");
+-        panic!();
++        std::process::exit(1);
+     }
+ }

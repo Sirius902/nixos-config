@@ -60,11 +60,7 @@
       patches =
         (prevAttrs.patches or [])
         ++ [
-          (final.fetchpatch2 {
-            name = "fix-clipboard-freeze.patch";
-            url = "https://github.com/cosmic-utils/clipboard-manager/compare/fdee7d9c9e01371c3d4c126c37da05d6653d0051...5cf8419b5043055acfef201f5f52669cd293846d.diff?full_index=1";
-            hash = "sha256-y7ZBV7KNX6zdHsA6AW8/4NlUbaYGfAP7QOaINP5FSQo=";
-          })
+          ../patches/clipboard-manager/fix-clipboard-freeze.patch
         ];
 
       passthru =
