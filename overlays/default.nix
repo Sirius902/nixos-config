@@ -414,7 +414,7 @@
       src = prevAttrs.src.override {
         tag = null;
         rev = "ed013e9e3eba9ce245a50d8309aea6cd718f23e8";
-        hash = "sha256-dAWFh1zk0f75ActA6bDNh/nKj+x+dU/bqrpbtNfYQGg=";
+        hash = "sha256-xMaycIRbPeJPRoXd7CO5EbInX92cCYstqEdheRPdR4o=";
 
         postCheckout = ''
           cd "$out"
@@ -425,7 +425,9 @@
           git -C externals submodule update --init --depth 1 \
             json \
             spdlog \
-            volk
+            volk \
+            zarchive \
+            zstd
         '';
       };
 
