@@ -47,14 +47,14 @@
   # FUTURE(Sirius902) https://github.com/cosmic-utils/clipboard-manager/pull/207
   (final: prev: {
     cosmic-ext-applet-clipboard-manager = prev.cosmic-ext-applet-clipboard-manager.overrideAttrs (finalAttrs: prevAttrs: {
-      version = "0-unstable-2026-03-24";
+      version = "0-unstable-2026-07-31";
       src = prevAttrs.src.override {
-        rev = "d473e8f09e8bc2289a76707898063a13714c79dc";
-        hash = "sha256-RNRSShrT7wS4GmQNd3tXtT8G/4qLM9zxntXgBQ6C7ps=";
+        rev = "fdee7d9c9e01371c3d4c126c37da05d6653d0051";
+        hash = "sha256-LX41Ur9829A9OWUlVLZFYXTcXbNcCuth25rQv6wFTs0=";
       };
       cargoDeps = final.rustPlatform.fetchCargoVendor {
         inherit (finalAttrs) pname version src;
-        hash = "sha256-+yqFV8HdPjkVny+6FKkZFEQAq1rwe7JXmoTJ7zge8bg=";
+        hash = "sha256-ABo4fAtFCaIyNukOUZqHpBhR0fANkb/h7lz755LyRpA=";
       };
 
       patches =
@@ -62,7 +62,7 @@
         ++ [
           (final.fetchpatch2 {
             name = "fix-clipboard-freeze.patch";
-            url = "https://github.com/cosmic-utils/clipboard-manager/compare/d473e8f09e8bc2289a76707898063a13714c79dc...5cf8419b5043055acfef201f5f52669cd293846d.diff?full_index=1";
+            url = "https://github.com/cosmic-utils/clipboard-manager/compare/fdee7d9c9e01371c3d4c126c37da05d6653d0051...5cf8419b5043055acfef201f5f52669cd293846d.diff?full_index=1";
             hash = "sha256-y7ZBV7KNX6zdHsA6AW8/4NlUbaYGfAP7QOaINP5FSQo=";
           })
         ];
