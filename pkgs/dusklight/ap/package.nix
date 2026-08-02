@@ -44,6 +44,8 @@ in
       hash = "sha256-Bu6AQjIR3o79kRQERucUt5OVv33GV4N1d8hb67TaN1M=";
     };
 
+    patches = (prevAttrs.patches or []) ++ [./fix-ap-seed-name-race.patch];
+
     # APCpp's IXWebSocket needs TLS (OpenSSL) and zlib; jsoncpp is built from
     # APCpp's bundled submodule (see BUNDLED_JSONCPP below).
     buildInputs =

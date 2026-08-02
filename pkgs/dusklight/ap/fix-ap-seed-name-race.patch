@@ -1,0 +1,83 @@
+From 32096b87e8e34f131326b7c13aa6201891a210dc Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Sun, 2 Aug 2026 15:46:48 -0700
+Subject: [PATCH] fix seed name race on archipelago connect, clear stale
+ session state on reconnect
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ src/dusk/archipelago/archipelago_context.cpp | 31 +++++++++++++++++---
+ 1 file changed, 27 insertions(+), 4 deletions(-)
+
+diff --git a/src/dusk/archipelago/archipelago_context.cpp b/src/dusk/archipelago/archipelago_context.cpp
+index e5c3a164ed..be42d96937 100644
+--- a/src/dusk/archipelago/archipelago_context.cpp
++++ b/src/dusk/archipelago/archipelago_context.cpp
+@@ -1,5 +1,6 @@
+ #include <dusk/archipelago/archipelago_context.hpp>
+ 
++#include <chrono>
+ #include <thread>
+ 
+ #include "Archipelago.h"
+@@ -346,7 +347,8 @@ std::string ArchipelagoContext::GetArchipelagoSeedName() {
+     if (IsConnected()) {
+         auto& roomInfo = instance().m_roomInfo;
+         if (roomInfo.seed_name.empty()) {
+-            DuskLog.warn("Got an invalid Seed Name!");
++            // returning "AP_" here would corrupt the seed directory and any file that saves with this hash
++            DuskLog.fatal("Got an invalid Seed Name!");
+         }
+         return fmt::format("AP_{}", roomInfo.seed_name);
+     }else {
+@@ -372,6 +374,13 @@ bool ArchipelagoContext::IsCurrentSeedHash(const std::string& seedStr) {
+ bool ArchipelagoContext::ConnectToServer(int file, bool isBlocking) {
+     config::Save();
+ 
++    // drop state from any previous session so a reconnect can never reuse the
++    // old room's seed name, slot data settings, or scouted locations
++    instance().m_roomInfo = {};
++    instance().m_SettingsFile.clear();
++    instance().m_locationItemInfo.clear();
++    instance().m_initLocationCollectState.clear();
++
+     instance().LoadTempItemInfo();
+ 
+     instance().LoadTempLocationInfo();
+@@ -430,10 +439,19 @@ bool ArchipelagoContext::ConnectToServer(int file, bool isBlocking) {
+         // wait for ws thread to run a frame before checking for status
+         std::this_thread::sleep_for(std::chrono::seconds(1));
+ 
+-        while (AP_GetConnectionStatus() == AP_ConnectionStatus::Connecting)
++        // Connected only means the websocket is open; the room info (seed name)
++        // and slot data don't exist client-side until the server finishes the
++        // login handshake, so wait for Authenticated before generating any
++        // seed-specific state
++        auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(30);
++        auto status = AP_GetConnectionStatus();
++        while ((status == AP_ConnectionStatus::Connecting || status == AP_ConnectionStatus::Connected) &&
++               std::chrono::steady_clock::now() < deadline) {
+             std::this_thread::yield();
++            status = AP_GetConnectionStatus();
++        }
+ 
+-        if (!IsConnected()) {
++        if (status != AP_ConnectionStatus::Authenticated) {
+             DuskLog.error("Failed to connect to Archipelago Server!");
+             return false;
+         }
+@@ -457,8 +475,13 @@ bool ArchipelagoContext::IsConnected() {
+ void ArchipelagoContext::MessageThreadFunc() {
+     DuskLog.info("AP Thread started.");
+ 
++    // AP_GetRoomInfo fails without copying anything until the server has
++    // authenticated the slot, and location scouts sent before that point are
++    // rejected by the server, so keep retrying until authentication completes
++    while (IsConnected() && AP_GetRoomInfo(&instance().m_roomInfo) != 0)
++        std::this_thread::yield();
++
+     if (IsConnected()) {
+-        AP_GetRoomInfo(&instance().m_roomInfo);
+         instance().m_isEnableDeathLink = AP_IsDeathLinkEnabled();
+         RequestAllLocationScout();
+     }
