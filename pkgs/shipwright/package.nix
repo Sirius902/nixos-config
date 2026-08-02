@@ -113,6 +113,27 @@
     hash = "sha256-RrM8Ep/CM7U5Q4+4FAHfBknb6b0upohoiqy4f7eMye0=";
   };
 
+  tinyxml2 = fetchFromGitHub {
+    owner = "leethomason";
+    repo = "tinyxml2";
+    tag = "10.0.0";
+    hash = "sha256-9xrpPFMxkAecg3hMHzzThuy0iDt970Iqhxs57Od+g2g=";
+  };
+
+  yaml-cpp = fetchFromGitHub {
+    owner = "jbeder";
+    repo = "yaml-cpp";
+    tag = "yaml-cpp-0.9.0";
+    hash = "sha256-+FOsPQY44h1g9tEw3O281LkiYKXdW2jnFKw+oTRkhGw=";
+  };
+
+  zlib' = fetchFromGitHub {
+    owner = "madler";
+    repo = "zlib";
+    tag = "v1.3.1";
+    hash = "sha256-TkPLWSN5QcPlL9D0kc/yhH0/puE9bFND24aj5NVDKYs=";
+  };
+
   metalcpp = fetchFromGitHub {
     owner = "briaguya-ai";
     repo = "single-header-metal-cpp";
@@ -202,6 +223,8 @@ in
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_MONOCYPHER" "${monocypher}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_TINYXML2" "${tinyxml2}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_YAML-CPP" "${yaml-cpp}")
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
@@ -225,6 +248,11 @@ in
       cp ${stb_impl} ./stb/${stb_impl.name}
       substituteInPlace libultraship/cmake/dependencies/common.cmake \
         --replace-fail "\''${STB_DIR}" "$(readlink -f ./stb)"
+
+      # zlib's CMakeLists renames zconf.h inside its source dir at configure
+      # time, so it cannot be used directly from the read-only store.
+      cp -r --no-preserve=mode ${zlib'} zlib-src
+      cmakeFlagsArray+=("-DFETCHCONTENT_SOURCE_DIR_ZLIB=$PWD/zlib-src")
     '';
 
     postPatch = ''
@@ -235,24 +263,15 @@ in
     '';
 
     postBuild = ''
-      port_ver=$(grep CMAKE_PROJECT_VERSION: "$PWD/CMakeCache.txt" | cut -d= -f2)
       cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
-      mv ../libultraship/src/fast/shaders ../soh/assets/custom
-      pushd ../OTRExporter
-      python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../soh/assets/xml --custom-assets-path ../soh/assets/custom --custom-otr-file soh.o2r --port-ver $port_ver
-      popd
-    '';
-
-    preInstall = ''
-      # Cmake likes it here for its install paths
-      cp ../OTRExporter/soh.o2r soh/soh.o2r
+      cmake --build . --target GenerateSohOtr
     '';
 
     postInstall =
       lib.optionalString stdenv.hostPlatform.isLinux ''
         mkdir -p $out/bin
         ln -s $out/share/shipwright/soh.elf $out/bin/soh
-        rm -r $out/share/shipwright/{include,lib}
+        rm -r $out/share/shipwright/{include,lib} $out/lib $out/include
         install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/512x512/apps/soh.png
       ''
       + lib.optionalString stdenv.hostPlatform.isDarwin ''
@@ -287,8 +306,7 @@ in
         # install -Dm644 -t $out/share/licenses/shipwright ../LICENSE
         test ! -f ../LICENSE || (echo "upstream LICENSE exists now, install it!" && false)
 
-        install -Dm644 -t $out/share/licenses/shipwright/OTRExporter ../OTRExporter/LICENSE
-        install -Dm644 -t $out/share/licenses/shipwright/ZAPDTR ../ZAPDTR/LICENSE
+        install -Dm644 -t $out/share/licenses/shipwright/torch ../torch/LICENSE
         install -Dm644 -t $out/share/licenses/shipwright/libgfxd ${libgfxd}/LICENSE
         install -Dm644 -t $out/share/licenses/shipwright/libultraship ../libultraship/LICENSE
         install -Dm644 -t $out/share/licenses/shipwright/thread_pool ${thread_pool}/LICENSE.txt
