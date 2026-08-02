@@ -234,16 +234,8 @@ in
     '';
 
     postBuild = ''
-      port_ver=$(grep CMAKE_PROJECT_VERSION: "$PWD/CMakeCache.txt" | cut -d= -f2)
       cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
-      pushd ../OTRExporter
-      python3 ./extract_assets.py -z ../build/ZAPD/ZAPD.out --norom --xml-root ../mm/assets/xml --custom-assets-path ../mm/assets/custom --custom-otr-file 2ship.o2r --port-ver $port_ver
-      popd
-    '';
-
-    preInstall = ''
-      # Cmake likes it here for its install paths
-      cp ../OTRExporter/2ship.o2r mm/2ship.o2r
+      cmake --build . --target Generate2ShipOtr
     '';
 
     postInstall =
