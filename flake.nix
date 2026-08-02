@@ -208,6 +208,7 @@
                 _2ship2harkinian
                 dusklight
                 dusklight-rando
+                dusklight-ap
                 shipwright
                 shipwright-ap
                 xash3d-fwgs
