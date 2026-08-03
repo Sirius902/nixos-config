@@ -61,7 +61,7 @@ in {
 
     envExtra = lib.mkIf stdenv.hostPlatform.isDarwin ''
       export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
-      . "$HOME/.cargo/env"
+      [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
     '';
   };
 
