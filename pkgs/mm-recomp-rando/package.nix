@@ -8,13 +8,13 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "mm-recomp-rando";
-  version = "0-unstable-2026-02-28";
+  version = "0-unstable-2026-08-04";
 
   src = fetchFromGitHub {
     owner = "RecompRando";
     repo = "MMRecompRando";
-    rev = "25ae8d785b17e1297c3bc9b6c3cd2c262bc23411";
-    hash = "sha256-p0gE2W+wG88uDuQTM7AxvVAs0CjdMCHJQ8YwuFrdsFY=";
+    rev = "27ed1ad0b7113e5e97564aac636852a5aff622f8";
+    hash = "sha256-pm7TD44qYoWFk8yKrg9ma9UYxa2uSpNzbLi4zpQWAoE=";
     fetchSubmodules = true;
   };
 
