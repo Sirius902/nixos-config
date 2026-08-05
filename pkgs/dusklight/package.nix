@@ -139,6 +139,7 @@ in
         abseil-cpp
         sdl3
         fmt
+        nlohmann_json
         tracy
         freetype
         zstd
@@ -164,7 +165,9 @@ in
       ];
 
     cmakeFlags = [
+      (lib.cmakeFeature "BOREALIS_APP_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.src.rev}")
       (lib.cmakeFeature "DUSK_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.src.rev}")
+      (lib.cmakeBool "CMAKE_FIND_PACKAGE_TARGETS_GLOBAL" true)
       (lib.cmakeBool "FETCHCONTENT_FULLY_DISCONNECTED" true)
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_CXXOPTS" "${cxxopts.src}")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_JSON" "${nlohmann_json.src}")
@@ -185,6 +188,11 @@ in
       (lib.cmakeBool "CMAKE_CROSSCOMPILING" true)
       (lib.cmakeBool "CMAKE_BUILD_WITH_INSTALL_RPATH" true)
     ];
+
+    # cxxopts' CXXOPTS_USE_UNICODE mode injects std::begin/end overloads for
+    # icu::UnicodeString whose implicit char16_t constructor makes bool look
+    # iterable to nlohmann::json's traits, breaking to_json resolution.
+    env.NIX_CFLAGS_COMPILE = "-DUNISTR_FROM_CHAR_EXPLICIT=explicit";
 
     strictDeps = true;
     __structuredAttrs = true;
