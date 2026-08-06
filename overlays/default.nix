@@ -333,12 +333,12 @@
     };
   in {
     shadps4 = prev.shadps4.overrideAttrs (finalAttrs: prevAttrs: {
-      version = "0.17.0-unstable-2026-08-05";
+      version = "0.17.0-unstable-2026-08-06";
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "dfda280c837cf77769cabe6b16d5db297a7adda6";
-        hash = "sha256-TBnU32XyuKIXaDBil4h1AIt2G9c16suK8lbTtJxh7Vg=";
+        rev = "dff1aad042dfd66e6e2527b6c3d47e804b6d7173";
+        hash = "sha256-WaNomIwVDZ0McYjddiA+5XHY5jNNdKRy9A3IZ+v3IFA=";
 
         postCheckout = ''
           cd "$out"
