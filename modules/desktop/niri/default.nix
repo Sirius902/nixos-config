@@ -18,6 +18,7 @@ in {
       fuzzel
       mako
       playerctl
+      pwvucontrol
       swaybg
       sunsetr
       swayidle
