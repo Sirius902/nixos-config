@@ -8,7 +8,7 @@
 }:
 melonds.overrideAttrs (prevAttrs: {
   pname = "kh-melon-mix";
-  version = "0.9.1-unstable-2026-08-07";
+  version = "0.9.2-unstable-2026-08-07";
 
   src = fetchFromGitHub {
     owner = "vitor251093";
