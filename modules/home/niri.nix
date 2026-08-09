@@ -1,4 +1,4 @@
-{
+{pkgs, ...}: {
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
 
   xdg.configFile."systemd/user/xdg-desktop-portal-gtk.service.d/dark-theme.conf".text = ''
@@ -14,6 +14,11 @@
     [Desktop Entry]
     Hidden=true
   '';
+
+  # FUTURE(Sirius902) noctalia's config watcher misses home-manager's atomic
+  # symlink swaps; drop this nudge once it watches the directory instead of
+  # the file inode.
+  xdg.configFile."noctalia/config.toml".onChange = "${pkgs.noctalia}/bin/noctalia msg config-reload || true";
 
   xdg.configFile."noctalia/config.toml".text = ''
     [shell]
