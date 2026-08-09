@@ -15,8 +15,8 @@
           # https://github.com/niri-wm/niri/pull/1791 (fixes #455)
           (final.fetchpatch2 {
             name = "niri-pr-1791-shm-sharing.patch";
-            url = "https://github.com/niri-wm/niri/compare/dd1c3bcb9f1ef416df33ffa22d1d9bcee1398e7d...6c1613cee488515f3021ae9d8ef9233d6719c13f.patch?full_index=1";
-            hash = "sha256-Ipw5BbDfNPQOGOzCH979axJosC01bfTgz/Hi1iBgC84=";
+            url = "https://github.com/niri-wm/niri/compare/8ed0da44d974c32c6877d2f4630c314da0717ecb...2ab59b90d55afbbe362a63e2a061afe4b524d8c4.patch?full_index=1";
+            hash = "sha256-YVnWZvdIeeWnWFAHY4/jI/+neNChRTkTou2S0ybI6rw=";
           })
         ];
     });
