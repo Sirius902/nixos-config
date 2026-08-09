@@ -1,16 +1,4 @@
-{pkgs, ...}: let
-  powerMenu = pkgs.writeShellScript "power-menu" ''
-    choice=$(printf "Lock\nLock & Display Off\nSuspend\nReboot\nShutdown\nLogout" | fuzzel --dmenu --prompt "> " --placeholder "Power...")
-    case "$choice" in
-      Lock) noctalia msg session lock ;;
-      "Lock & Display Off") noctalia msg session lock && niri msg action power-off-monitors ;;
-      Suspend) noctalia msg session lock-and-suspend ;;
-      Reboot) systemctl reboot ;;
-      Shutdown) systemctl poweroff ;;
-      Logout) niri msg action quit ;;
-    esac
-  '';
-in {
+{
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
 
   xdg.configFile."systemd/user/xdg-desktop-portal-gtk.service.d/dark-theme.conf".text = ''
@@ -30,6 +18,33 @@ in {
   xdg.configFile."noctalia/config.toml".text = ''
     [shell]
     polkit_agent = true
+
+    [[shell.session.actions]]
+    action = "lock"
+    shortcut = "1"
+
+    [[shell.session.actions]]
+    action = "command"
+    command = "noctalia msg session lock && niri msg action power-off-monitors"
+    label = "Lock & Display Off"
+    shortcut = "2"
+
+    [[shell.session.actions]]
+    action = "lock_and_suspend"
+    shortcut = "3"
+
+    [[shell.session.actions]]
+    action = "logout"
+    shortcut = "4"
+
+    [[shell.session.actions]]
+    action = "reboot"
+    shortcut = "5"
+
+    [[shell.session.actions]]
+    action = "shutdown"
+    shortcut = "6"
+    variant = "destructive"
 
     [idle.behavior.lock]
     enabled = true
@@ -226,7 +241,7 @@ in {
         Mod+Shift+X { spawn "noctalia" "msg" "notification-dnd-toggle"; }
 
         // Session
-        Mod+Shift+Escape { spawn "${powerMenu}"; }
+        Mod+Shift+Escape { spawn "noctalia" "msg" "panel-toggle" "session"; }
         Mod+Shift+P { power-off-monitors; }
     }
   '';
