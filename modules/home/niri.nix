@@ -18,6 +18,7 @@
   xdg.configFile."noctalia/config.toml".text = ''
     [shell]
     polkit_agent = true
+    time_format = "{:%I:%M %p}"
 
     [[shell.session.actions]]
     action = "lock"
@@ -46,6 +47,9 @@
     shortcut = "6"
     variant = "destructive"
 
+    [widget.clock]
+    format = "{:%-I:%M %p}"
+
     [idle.behavior.lock]
     enabled = true
     timeout = 300.0
@@ -68,8 +72,15 @@
     sunset = "20:00"
     sunrise = "07:00"
 
+    [calendar]
+    event_time_format = "%I:%M %p"
+
+    [theme]
+    source = "builtin"
+    builtin = "Kanagawa"
+
     [wallpaper]
-    directory = "~/Pictures"
+    directory = "~/Pictures/Backgrounds"
   '';
 
   xdg.configFile."niri/config.kdl".text = ''
