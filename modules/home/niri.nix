@@ -55,6 +55,32 @@
     [widget.clock]
     format = "{:%-I:%M %p}"
 
+    [widget.cpu]
+    type = "sysmon"
+    stat = "cpu_usage"
+
+    [widget.ram]
+    type = "sysmon"
+    stat = "ram_pct"
+
+    [bar.default]
+    end = [
+        "caffeine",
+        "cpu",
+        "ram",
+        "media",
+        "tray",
+        "notifications",
+        "clipboard",
+        "network",
+        "bluetooth",
+        "volume",
+        "brightness",
+        "battery",
+        "control-center",
+        "session"
+    ]
+
     [idle.behavior.lock]
     enabled = true
     timeout = 300.0
