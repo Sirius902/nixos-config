@@ -286,6 +286,14 @@
         Mod+Shift+Escape { spawn "noctalia" "msg" "panel-toggle" "session"; }
         Mod+Shift+P { power-off-monitors; }
     }
+
+    // FUTURE(Sirius902) RDNA4 workaround: the DCN cursor hardware gets
+    // programmed with pitch=0 during minimal transition states, smearing
+    // pixels on screen. Composite the cursor instead of using the plane.
+    // https://gitlab.freedesktop.org/drm/amd/-/issues/4970
+    debug {
+        disable-cursor-plane
+    }
   '';
 
   xdg.configFile."fuzzel/fuzzel.ini".text = ''
