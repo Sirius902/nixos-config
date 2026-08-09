@@ -43,7 +43,7 @@ in {
     };
 
     home-manager.users = lib.genAttrs config.my.homeUsers (_: {
-      imports = [../../home/cosmic.nix];
+      imports = [../../home/cursor.nix];
     });
   };
 }

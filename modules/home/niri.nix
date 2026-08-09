@@ -1,66 +1,17 @@
 {pkgs, ...}: let
-  # Caffeine = inhibit idle by stopping the idle manager. ON when swayidle is
-  # stopped (no auto lock/blank/suspend); OFF when swayidle is running.
-  caffeineToggle = pkgs.writeShellScript "caffeine-toggle" ''
-    if systemctl --user is-active --quiet swayidle; then
-      systemctl --user stop swayidle
-    else
-      systemctl --user start swayidle
-    fi
-    pkill -RTMIN+8 waybar
-  '';
-
-  caffeineStatus = pkgs.writeShellScript "caffeine-status" ''
-    if systemctl --user is-active --quiet swayidle; then
-      echo '{"text": "💤", "tooltip": "Caffeine off — auto lock/suspend active", "class": "deactivated"}'
-    else
-      echo '{"text": "☕", "tooltip": "Caffeine on — staying awake", "class": "activated"}'
-    fi
-  '';
-
   powerMenu = pkgs.writeShellScript "power-menu" ''
     choice=$(printf "Lock\nLock & Display Off\nSuspend\nReboot\nShutdown\nLogout" | fuzzel --dmenu --prompt "> " --placeholder "Power...")
     case "$choice" in
-      Lock) swaylock -f ;;
-      "Lock & Display Off") swaylock -f && niri msg action power-off-monitors ;;
-      Suspend) swaylock -f && systemctl suspend ;;
+      Lock) noctalia msg session lock ;;
+      "Lock & Display Off") noctalia msg session lock && niri msg action power-off-monitors ;;
+      Suspend) noctalia msg session lock-and-suspend ;;
       Reboot) systemctl reboot ;;
       Shutdown) systemctl poweroff ;;
       Logout) niri msg action quit ;;
     esac
   '';
-
-  # swayidle invocation for the niri idle ladder (see swayidle.service below).
-  idleManager = pkgs.writeShellScript "niri-idle" ''
-    exec ${pkgs.swayidle}/bin/swayidle -w \
-      timeout 300 'swaylock -f' \
-      timeout 300 'niri msg action power-off-monitors' resume 'niri msg action power-on-monitors' \
-      timeout 900 'systemctl suspend' \
-      before-sleep 'swaylock -f' \
-      after-resume 'niri msg action power-on-monitors'
-  '';
 in {
-  # Idle ladder: lock + blank monitors at 5 min, suspend at 15 min. Bound to
-  # niri.service so it runs only under niri; the caffeine toggle stops it to
-  # inhibit the entire ladder at once.
-  systemd.user.services.swayidle = {
-    Unit = {
-      Description = "Idle manager (lock, DPMS, suspend)";
-      PartOf = ["niri.service"];
-      After = ["niri.service"];
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "${idleManager}";
-      Restart = "on-failure";
-    };
-    Install.WantedBy = ["niri.service"];
-  };
-
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
-
-  # GTK3 default (500ms) makes waybar tooltips feel sluggish.
-  gtk.gtk3.extraConfig."gtk-tooltip-timeout" = 100;
 
   xdg.configFile."systemd/user/xdg-desktop-portal-gtk.service.d/dark-theme.conf".text = ''
     [Service]
@@ -74,6 +25,36 @@ in {
   xdg.configFile."autostart/nm-applet.desktop".text = ''
     [Desktop Entry]
     Hidden=true
+  '';
+
+  xdg.configFile."noctalia/config.toml".text = ''
+    [shell]
+    polkit_agent = true
+
+    [idle.behavior.lock]
+    enabled = true
+    timeout = 300.0
+
+    [idle.behavior.screen-off]
+    enabled = true
+    timeout = 300.0
+
+    [idle.behavior.lock-and-suspend]
+    enabled = true
+    timeout = 900.0
+
+    [nightlight]
+    enabled = true
+    temperature_day = 6500
+    temperature_night = 3400
+
+    [location]
+    custom_schedule = true
+    sunset = "20:00"
+    sunrise = "07:00"
+
+    [wallpaper]
+    directory = "~/Pictures"
   '';
 
   xdg.configFile."niri/config.kdl".text = ''
@@ -119,10 +100,14 @@ in {
         }
     }
 
-    // Match COSMIC window corner rounding
     window-rule {
         geometry-corner-radius 8 8 8 8
         clip-to-geometry true
+    }
+
+    window-rule {
+        match app-id="dev.noctalia.Noctalia"
+        open-floating true
     }
 
     prefer-no-csd
@@ -131,11 +116,7 @@ in {
 
     // Startup
     spawn-at-startup "xwayland-satellite"
-    spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/chris/Pictures/Screenshot_2025-05-08_23-50-08.png"
-    spawn-at-startup "env" "GTK_THEME=Adwaita:dark" "waybar"
-    spawn-at-startup "mako"
-    spawn-at-startup "sunsetr"
-    spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
+    spawn-at-startup "noctalia"
 
     hotkey-overlay {
         skip-at-startup
@@ -149,7 +130,12 @@ in {
         Mod+Q { close-window; }
         Mod+Shift+Slash { show-hotkey-overlay; }
         Mod+O { toggle-overview; }
-        Mod+Escape { spawn "swaylock" "-f"; }
+        Mod+Escape { spawn "noctalia" "msg" "session" "lock"; }
+
+        // Noctalia
+        Mod+Space { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+        Mod+A { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
+        Mod+Shift+A { spawn "noctalia" "msg" "settings-toggle"; }
 
         // Focus
         Mod+H     { focus-column-left; }
@@ -225,170 +211,23 @@ in {
         Mod+Ctrl+S      { screenshot-screen; }
 
         // Audio / Media
-        XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
-        XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05-"; }
-        XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-        XF86AudioPlay        allow-when-locked=true { spawn "playerctl" "play-pause"; }
-        XF86AudioNext        allow-when-locked=true { spawn "playerctl" "next"; }
-        XF86AudioPrev        allow-when-locked=true { spawn "playerctl" "previous"; }
+        XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-up"; }
+        XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-down"; }
+        XF86AudioMute        allow-when-locked=true { spawn "noctalia" "msg" "volume-mute"; }
+        XF86AudioPlay        allow-when-locked=true { spawn "noctalia" "msg" "media" "toggle"; }
+        XF86AudioNext        allow-when-locked=true { spawn "noctalia" "msg" "media" "next"; }
+        XF86AudioPrev        allow-when-locked=true { spawn "noctalia" "msg" "media" "previous"; }
 
         // Night shift toggle
-        Mod+N { spawn "sh" "-c" "if sunsetr status | grep -q 'State: static'; then sunsetr set transition_mode=finish_by; else sunsetr set transition_mode=static; fi"; }
+        Mod+N { spawn "noctalia" "msg" "nightlight-toggle"; }
 
         // Notifications
-        Mod+X       { spawn "makoctl" "dismiss"; }
-        Mod+Shift+X { spawn "makoctl" "dismiss" "--all"; }
+        Mod+X       { spawn "noctalia" "msg" "notification-clear-active"; }
+        Mod+Shift+X { spawn "noctalia" "msg" "notification-dnd-toggle"; }
 
         // Session
         Mod+Shift+Escape { spawn "${powerMenu}"; }
         Mod+Shift+P { power-off-monitors; }
-    }
-  '';
-
-  xdg.configFile."swaylock/config".text = ''
-    image=/home/chris/Pictures/Screenshot_2025-05-08_23-50-08.png
-    scaling=fill
-    effect-blur=20x6
-    effect-vignette=0.3:0.8
-
-    clock
-    timestr=%I:%M %p
-    datestr=%A, %B %e
-
-    font=JetBrainsMono Nerd Font
-    font-size=28
-    text-color=e0e0e0
-
-    indicator
-    indicator-radius=150
-    indicator-thickness=6
-
-    color=1b1b1b
-    inside-color=1b1b1b00
-    ring-color=7263df40
-    key-hl-color=7263df
-    line-color=00000000
-    separator-color=00000000
-
-    inside-ver-color=1b1b1b00
-    ring-ver-color=7263df
-    line-ver-color=00000000
-    text-ver-color=e0e0e0
-    inside-wrong-color=1b1b1b00
-    ring-wrong-color=cc6666
-    line-wrong-color=00000000
-    text-wrong-color=cc6666
-    bs-hl-color=cc6666
-
-    inside-clear-color=1b1b1b00
-    ring-clear-color=e6c84d
-    line-clear-color=00000000
-    text-clear-color=e0e0e0
-  '';
-
-  xdg.configFile."waybar/config".text = builtins.toJSON {
-    layer = "top";
-    position = "top";
-    height = 30;
-    modules-left = ["niri/workspaces" "niri/window"];
-    modules-center = ["clock"];
-    modules-right = ["custom/caffeine" "cpu" "memory" "tray" "wireplumber" "network"];
-    "niri/workspaces" = {
-      format = "{icon}";
-      format-icons = {
-        active = "";
-        default = "";
-      };
-    };
-    "niri/window" = {
-      max-length = 50;
-    };
-    clock = {
-      format = "{:%a %b %d  %I:%M %p}";
-      tooltip-format = "<tt>{calendar}</tt>";
-    };
-    "custom/caffeine" = {
-      exec = "${caffeineStatus}";
-      return-type = "json";
-      interval = "once";
-      signal = 8;
-      on-click = "${caffeineToggle}";
-    };
-    cpu = {
-      format = "CPU {usage}%";
-      interval = 5;
-      states = {
-        warning = 50;
-        critical = 80;
-      };
-    };
-    memory = {
-      format = "RAM {percentage}%";
-      interval = 5;
-      states = {
-        warning = 50;
-        critical = 80;
-      };
-    };
-    wireplumber = {
-      format = "{icon} {volume}%";
-      format-muted = " muted";
-      format-icons = ["" "" ""];
-      on-click = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-      on-click-right = "cosmic-settings sound";
-    };
-    network = {
-      format-wifi = " {essid}";
-      format-ethernet = " {ifname}";
-      format-disconnected = " disconnected";
-      tooltip-format = "{ipaddr}";
-    };
-    tray = {
-      spacing = 8;
-    };
-  };
-
-  xdg.configFile."waybar/style.css".text = ''
-    * {
-        font-family: "JetBrainsMono Nerd Font", monospace;
-        font-size: 13px;
-    }
-
-    window#waybar {
-        background-color: rgba(27, 27, 27, 0.9);
-        color: #e0e0e0;
-    }
-
-    #workspaces button {
-        padding: 0 6px;
-        color: #888;
-        border: none;
-        border-radius: 0;
-    }
-
-    #workspaces button.active {
-        color: #7263df;
-    }
-
-    #clock, #wireplumber, #network, #tray, #cpu, #memory, #idle-inhibitor {
-        padding: 0 10px;
-    }
-
-    #custom-caffeine.activated {
-        color: #7263df;
-    }
-
-    #cpu.warning, #memory.warning {
-        color: #e6c84d;
-    }
-
-    #cpu.critical, #memory.critical {
-        color: #cc6666;
-    }
-
-    #window {
-        padding: 0 10px;
-        color: #aaa;
     }
   '';
 
@@ -416,36 +255,5 @@ in {
     [border]
     radius=8
     width=2
-  '';
-
-  xdg.configFile."mako/config".text = ''
-    font=JetBrainsMono Nerd Font 11
-    background-color=#1b1b1bee
-    text-color=#e0e0e0
-    border-color=#7263df
-    border-radius=8
-    border-size=2
-    padding=12
-    max-visible=5
-    height=175
-    default-timeout=5000
-    group-by=app-name
-
-    [urgency=critical]
-    border-color=#cc6666
-    default-timeout=0
-  '';
-
-  xdg.configFile."sunsetr/sunsetr.toml".text = ''
-    transition_mode = "finish_by"
-    sunset = "20:00:00"
-    sunrise = "07:00:00"
-    transition_duration = 45
-    night_temp = 3400
-    day_temp = 6500
-    night_gamma = 100
-    day_gamma = 100
-    static_temp = 3400
-    static_gamma = 100
   '';
 }

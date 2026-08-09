@@ -12,24 +12,26 @@ in {
       useNautilus = false;
     };
 
-    security.pam.services.swaylock = {};
+    programs.noctalia = {
+      enable = true;
+      recommendedServices.enable = true;
+    };
+
+    services.gvfs.enable = true;
+    services.avahi.enable = lib.mkDefault true;
 
     environment.systemPackages = with pkgs; [
+      cosmic-files
+      cosmic-icons
+      cosmic-monitor
       fuzzel
-      mako
-      playerctl
       pwvucontrol
-      swaybg
-      sunsetr
-      swayidle
-      swaylock-effects
-      waybar
       xwayland-satellite
     ];
 
     home-manager.users = lib.genAttrs config.my.homeUsers (_: {
       imports = [
-        ../../home/cosmic.nix
+        ../../home/cursor.nix
         ../../home/niri.nix
       ];
     });

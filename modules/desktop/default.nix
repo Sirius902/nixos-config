@@ -28,7 +28,7 @@ in {
       description = "Enable full desktop with gaming/dev tools.";
     };
     environment = lib.mkOption {
-      type = lib.types.nullOr (lib.types.enum ["cosmic" "gnome" "kde" "i3"]);
+      type = lib.types.nullOr (lib.types.enum ["cosmic" "gnome" "kde" "i3" "niri"]);
       default = null;
       description = "Desktop environment to use.";
     };

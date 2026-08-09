@@ -12,12 +12,12 @@
   my.desktop = {
     enable = true;
     full = true;
-    environment = lib.mkDefault "cosmic";
+    environment = lib.mkDefault "niri";
     inputMethod = lib.mkDefault "fcitx";
   };
 
   my.gpu = lib.mkDefault "amd";
-  my.xrdp.enable = lib.mkDefault true;
+  my.xrdp.enable = lib.mkDefault false;
   my.secureBoot.enable = lib.mkDefault true;
   my.docker.enable = lib.mkDefault true;
   my.tailscale.enable = lib.mkDefault true;
