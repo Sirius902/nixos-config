@@ -148,8 +148,8 @@ in
     src = fetchFromGitHub {
       owner = "HarbourMasters";
       repo = "Shipwright";
-      rev = "490e13616ed1205c34ac2ac3a8f1342495206f39";
-      hash = "sha256-WpfxBN471ImtzL8CPMhF0spTIaYPymZ0cjAd/TeunXY=";
+      rev = "4e39d06accfa65fbed9e034c3cd7face91a6d80c";
+      hash = "sha256-pqwkR09uta3atcXzCRXcIdqKW7jyzV6cnmYBZ7sg6Cs=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
