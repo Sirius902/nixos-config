@@ -1,12 +1,12 @@
 final: prev: let
   baseUrl = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases";
-  version = "2.1.228";
+  version = "2.1.229";
   platformKey = "${prev.stdenv.hostPlatform.node.platform}-${prev.stdenv.hostPlatform.node.arch}";
   checksums = {
-    "darwin-arm64" = "43484b1352cef03a08346f36ef0437755b1aad646ab9313ce187857b794b7247";
-    "darwin-x64" = "7852f1ae0efb64d46d77a57d8852daddc4a6ffb58aeda6267bd3f3428adc09b3";
-    "linux-arm64" = "2664006219497bf7021ac43156519cd42eda64ceb2a66f434ecab83e7831f942";
-    "linux-x64" = "d535985e6941a3eb00179ccd7f52ceb0c6623a0305a518ebc4e6514f84a94c99";
+    "darwin-arm64" = "d732f0ba0a539c58c2ffcaef06ed03b4e523726f0cb6cc27b3a5b7e7ae0a7a21";
+    "darwin-x64" = "1cb62183e9f89ea21eb4950b84896fa7101182c7dfcbbe92e7a293f0b20ba541";
+    "linux-arm64" = "ba53130acbda3ddb00b3dd5641f11733867f5d837a258b7e6ccef4927cc1a509";
+    "linux-x64" = "200338139a3df04a9ad22233837d1fb53fb6dffa21cd82e47559bfaa115acc1b";
   };
 in {
   claude-code = prev.claude-code.overrideAttrs (prevAttrs: {
