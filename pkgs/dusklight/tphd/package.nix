@@ -5,10 +5,7 @@
   nix-update-script,
   stdenv,
 }: let
-  # The tphd branch is still on the aurora from before the dependency-version
-  # rework: dawn prebuilts come from encounter/dawn-build and versions are
-  # declared as plain cache variables in aurora's CMakeLists.txt.
-  dawnVersion = "v20260603.191052";
+  dawnVersion = "v20260807.225922";
   nodVersion = "v2.0.0-alpha.10";
 
   dawn-src = fetchzip {
@@ -17,11 +14,11 @@
         if stdenv.hostPlatform.isDarwin
         then "darwin-arm64"
         else "linux-x86_64";
-    in "https://github.com/encounter/dawn-build/releases/download/${dawnVersion}/dawn-${platform}.tar.gz";
+    in "https://github.com/encounter/dawn/releases/download/${dawnVersion}/dawn-${platform}.tar.gz";
     hash =
       if stdenv.hostPlatform.isDarwin
-      then "sha256-Uh31kwVzhabZfjqszoYDryihc29S/wideE/FuWyA9qk="
-      else "sha256-yTanM4TUIv6akgpt2tai/2W6q4RAt48CxKobRgxK8WU=";
+      then "sha256-pM15OoUdHZ84Y9iORsvgahE6FzvQFOtjry0nNWvIqHo="
+      else "sha256-deRtiZ221q6PO9zejJBwa56fCM63KEh6y2p7nM+MOYU=";
     stripRoot = false;
   };
 in
@@ -37,23 +34,25 @@ in
       sed -i '/add_subdirectory(tests)/d' extern/aurora/CMakeLists.txt
 
       check_version() {
-        local name="$1" expected="$2" var="$3" file="$4"
-        actual=$(sed -n "s/.*set($var \"\([^\"]*\)\".*/\1/p" "$file")
+        local name="$1" expected="$2" var="$3"
+        local file=extern/aurora/cmake/AuroraDependencyVersions.cmake
+        [[ -f "$file" ]] || file=extern/aurora/CMakeLists.txt
+        actual=$(sed -n "s/.*_aurora_dependency_version($var \"\([^\"]*\)\".*/\1/p" "$file")
         if [[ "$actual" != "$expected" ]]; then
           echo "error: $name version mismatch: expected '$expected', got '$actual'"
           echo "update $name in package.nix"
           exit 1
         fi
       }
-      check_version "dawn" "${dawnVersion}" \
-        AURORA_DAWN_VERSION extern/aurora/CMakeLists.txt
-      check_version "nod" "${nodVersion}" \
-        AURORA_NOD_VERSION extern/aurora/CMakeLists.txt
+      check_version "dawn" "${dawnVersion}" AURORA_DAWN_VERSION
+      check_version "nod" "${nodVersion}" AURORA_NOD_VERSION
 
       # Store data under TwilitRealm/DusklightTPHD.
-      substituteInPlace include/dusk/app_info.hpp \
-        --replace-fail 'AppName = "Dusklight"' 'AppName = "DusklightTPHD"' \
-        --replace-fail 'LegacyAppName = "Dusk"' 'LegacyAppName = "DusklightTPHD"'
+      substituteInPlace src/dusk/app_info.hpp \
+        --replace-fail '.appName = "Dusklight"' '.appName = "DusklightTPHD"' \
+        --replace-fail 'AppName = "Dusklight"' 'AppName = "DusklightTPHD"'
+      substituteInPlace src/dusk/data.cpp \
+        --replace-fail '.appName = "Dusk"}' '.appName = "DusklightTPHD"}'
     '';
 
     cmakeFlags =
