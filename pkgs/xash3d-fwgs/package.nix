@@ -62,7 +62,7 @@ in
         bzip2
         SDL2
       ]
-      ++ lib.optionals (!buildServer && stdenv.isLinux) [
+      ++ lib.optionals (!buildServer && stdenv.hostPlatform.isLinux) [
         libx11
       ];
 
