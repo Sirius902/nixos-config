@@ -80,8 +80,8 @@ in {
           # TODO(Sirius902) shadps4 needs zenity for errors. Make PR?
           (pkgs.fetchpatch2 {
             name = "shadps4-add-zenity.patch";
-            url = "https://github.com/Sirius902/nixpkgs/commit/65d5989484ecc179b8dc1a864629a954da097be2.patch?full_index=1";
-            hash = "sha256-wOEEgyNjViyvmAK71D0shNsQsiOWhKi07l9T/BpZ/MY=";
+            url = "https://github.com/Sirius902/nixpkgs/commit/e7a9edbc8788feb0d0c6b4a52772f2641a46c53d.patch?full_index=1";
+            hash = "sha256-RPYVekB6ZWPumTYG/RR4DSXmMW9fsFW9uN1IRSMNF0A=";
           })
           # Add cosmic-ext-applet-clipboard-manager https://github.com/NixOS/nixpkgs/pull/496706
           (pkgs.fetchpatch2 {
