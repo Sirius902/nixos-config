@@ -350,6 +350,8 @@
         '';
       };
 
+      patches = [];
+
       postPatch = ''
         substituteInPlace src/common/scm_rev.cpp.in \
           --replace-fail @APP_VERSION@ ${finalAttrs.version} \
