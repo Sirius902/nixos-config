@@ -47,6 +47,10 @@ in
       check_version "dawn" "${dawnVersion}" AURORA_DAWN_VERSION
       check_version "nod" "${nodVersion}" AURORA_NOD_VERSION
 
+      # aurora's internal.hpp uses std::memcpy without including <cstring>.
+      substituteInPlace extern/aurora/lib/internal.hpp \
+        --replace-fail "#include <cstdint>" "#include <cstdint>''\n#include <cstring>"
+
       # Store data under TwilitRealm/DusklightTPHD.
       substituteInPlace src/dusk/app_info.hpp \
         --replace-fail '.appName = "Dusklight"' '.appName = "DusklightTPHD"' \
