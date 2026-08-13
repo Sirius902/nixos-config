@@ -76,6 +76,14 @@
     });
   })
 
+  # FUTURE(Sirius902) waypipe 0.11.0 fails to build against ffmpeg 9, which
+  # removed the deprecated AVVulkanDeviceContext queue fields (nb_encode_queues
+  # and friends) that video.rs still sets. Drop once upstream supports the
+  # AVVulkanDeviceQueueFamily API.
+  (final: prev: {
+    waypipe = prev.waypipe.override {ffmpeg = final.ffmpeg_8;};
+  })
+
   # Make NSO GameCube triggers digital for ship-like derivations.
   (final: prev:
     if prev.stdenv.hostPlatform.isLinux
