@@ -34,8 +34,13 @@
   xxhash,
   nlohmann_json,
   nix-update-script,
+  # Options
+  dawnVersion ? "v20260807.225922",
+  dawnHashes ? {
+    darwin = "sha256-pM15OoUdHZ84Y9iORsvgahE6FzvQFOtjry0nNWvIqHo=";
+    linux = "sha256-deRtiZ221q6PO9zejJBwa56fCM63KEh6y2p7nM+MOYU=";
+  },
 }: let
-  dawnVersion = "v20260807.225922";
   nodVersion = "v2.0.0-alpha.10";
 
   dawn-src = fetchzip {
@@ -47,8 +52,8 @@
     in "https://github.com/encounter/dawn/releases/download/${dawnVersion}/dawn-${platform}.tar.gz";
     hash =
       if stdenv.hostPlatform.isDarwin
-      then "sha256-pM15OoUdHZ84Y9iORsvgahE6FzvQFOtjry0nNWvIqHo="
-      else "sha256-deRtiZ221q6PO9zejJBwa56fCM63KEh6y2p7nM+MOYU=";
+      then dawnHashes.darwin
+      else dawnHashes.linux;
     stripRoot = false;
   };
 

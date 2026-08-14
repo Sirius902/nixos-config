@@ -36,7 +36,14 @@
     fetchSubmodules = true;
   };
 in
-  dusklight.overrideAttrs (finalAttrs: prevAttrs: {
+  (dusklight.override {
+    dawnVersion = "v20260618.032059";
+    dawnHashes = {
+      darwin = "sha256-HT+qtlLaSHyoXPrUcXgcTGa877X5YfzbxRD4bJb7i1Y=";
+      linux = "sha256-GFSd573b+VQx/VmFdNQgWDd0V9ayQlcw0Zuopke12ak=";
+    };
+  })
+  .overrideAttrs (finalAttrs: prevAttrs: {
     pname = "dusklight-ap";
     version = "0-unstable-2026-07-02";
     src = prevAttrs.src.override {
