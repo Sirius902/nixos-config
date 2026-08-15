@@ -190,7 +190,7 @@
         Mod+Escape { spawn "noctalia" "msg" "session" "lock"; }
 
         // Noctalia
-        Mod+Space { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+        Mod+Shift+Space { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
         Mod+A { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
         Mod+Shift+A { spawn "noctalia" "msg" "settings-toggle"; }
 
