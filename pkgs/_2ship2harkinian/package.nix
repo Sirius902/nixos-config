@@ -28,7 +28,6 @@
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
-  _2ship2harkinian,
   libopus,
   opusfile,
   libogg,
@@ -37,7 +36,8 @@
   libx11,
   sdl_gamecontrollerdb,
   nix-update-script,
-}: let
+}:
+stdenv.mkDerivation (finalAttrs: let
   # The following would normally get fetched at build time, or a specific version is required
   dr_libs = fetchFromGitHub {
     owner = "mackron";
@@ -54,7 +54,7 @@
       hash = "sha256-mQOJ6jCN+7VopgZ61yzaCnt4R1QLrW7+47xxMhFRHLQ=";
     };
     patches = [
-      "${_2ship2harkinian.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
+      "${finalAttrs.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
     ];
   };
 
@@ -101,7 +101,7 @@
       hash = "sha256-HTi2FKzKCbRaP13XERUmHkJgw8IfKaRJvsK3+YxFFdc=";
     };
     patches = [
-      "${_2ship2harkinian.src}/libultraship/cmake/dependencies/patches/stormlib-optimizations.patch"
+      "${finalAttrs.src}/libultraship/cmake/dependencies/patches/stormlib-optimizations.patch"
     ];
   };
 
@@ -118,204 +118,203 @@
     tag = "macOS13_iOS16";
     hash = "sha256-CSYIpmq478bla2xoPL/cGYKIWAeiORxyFFZr0+ixd7I";
   };
-in
-  stdenv.mkDerivation (finalAttrs: {
-    pname = "2ship2harkinian";
-    version = "5.0.0-unstable-2026-08-11";
+in {
+  pname = "2ship2harkinian";
+  version = "5.0.0-unstable-2026-08-11";
 
-    src = fetchFromGitHub {
-      owner = "HarbourMasters";
-      repo = "2ship2harkinian";
-      rev = "4c128e4cdfcbecc622b8834d6c3bb02d02ff5b4e";
-      hash = "sha256-EssCaH94Pm04b4yOowobVDIftH60R6vL+tzkFwXFbNw=";
-      fetchSubmodules = true;
-      deepClone = true;
-      postFetch = ''
-        cd $out
-        git branch --show-current > GIT_BRANCH
-        git rev-parse --short=7 HEAD > GIT_COMMIT_HASH
-        (git describe --tags --abbrev=0 --exact-match HEAD 2>/dev/null || echo "") > GIT_COMMIT_TAG
-        rm -rf .git
-      '';
-    };
+  src = fetchFromGitHub {
+    owner = "HarbourMasters";
+    repo = "2ship2harkinian";
+    rev = "4c128e4cdfcbecc622b8834d6c3bb02d02ff5b4e";
+    hash = "sha256-EssCaH94Pm04b4yOowobVDIftH60R6vL+tzkFwXFbNw=";
+    fetchSubmodules = true;
+    deepClone = true;
+    postFetch = ''
+      cd $out
+      git branch --show-current > GIT_BRANCH
+      git rev-parse --short=7 HEAD > GIT_COMMIT_HASH
+      (git describe --tags --abbrev=0 --exact-match HEAD 2>/dev/null || echo "") > GIT_COMMIT_TAG
+      rm -rf .git
+    '';
+  };
 
-    patches = [
-      ./darwin-fixes.patch
-      ./disable-downloading-stb_image.patch
+  patches = [
+    ./darwin-fixes.patch
+    ./disable-downloading-stb_image.patch
+  ];
+
+  nativeBuildInputs =
+    [
+      cmake
+      ninja
+      pkg-config
+      python3
+      imagemagick
+      makeWrapper
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux [
+      lsb-release
+      copyDesktopItems
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
+      libicns
+      darwin.autoSignDarwinBinariesHook
+      fixDarwinDylibNames
     ];
 
-    nativeBuildInputs =
-      [
-        cmake
-        ninja
-        pkg-config
-        python3
-        imagemagick
-        makeWrapper
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isLinux [
-        lsb-release
-        copyDesktopItems
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        libicns
-        darwin.autoSignDarwinBinariesHook
-        fixDarwinDylibNames
-      ];
-
-    buildInputs =
-      [
-        boost
-        SDL2
-        libpng
-        libzip
-        nlohmann_json
-        tinyxml-2
-        spdlog
-        (lib.getDev libopus)
-        (lib.getDev opusfile)
-        libogg
-        libvorbis
-        bzip2
-        libx11
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isLinux [
-        libGL
-        libpulseaudio
-        zenity
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        glew
-      ];
-
-    cmakeFlags =
-      [
-        (lib.cmakeBool "NON_PORTABLE" true)
-        (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/share/2ship2harkinian")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_MONOCYPHER" "${monocypher}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
-        (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${lib.getDev libopus}/include/opus")
-        (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${lib.getDev opusfile}/include/opus")
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SPDLOG" "${spdlog}")
-      ];
-
-    env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
-
-    strictDeps = true;
-    __structuredAttrs = true;
-    enableParallelBuilding = true;
-
-    dontAddPrefix = true;
-
-    # Linking fails without this
-    hardeningDisable = ["format"];
-
-    preConfigure = ''
-      mkdir stb
-      cp ${stb'} ./stb/${stb'.name}
-      cp ${stb_impl} ./stb/${stb_impl.name}
-      substituteInPlace libultraship/cmake/dependencies/common.cmake \
-        --replace-fail "\''${STB_DIR}" "$(readlink -f ./stb)"
-    '';
-
-    postPatch = ''
-      substituteInPlace mm/src/boot/build.c.in \
-        --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
-        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
-        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
-    '';
-
-    postBuild = ''
-      cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
-      cmake --build . --target Generate2ShipOtr
-    '';
-
-    postInstall =
-      lib.optionalString stdenv.hostPlatform.isLinux ''
-        mkdir -p $out/bin
-        ln -s $out/share/2ship2harkinian/2s2h.elf $out/bin/2s2h
-        rm -r $out/share/2ship2harkinian/{include,lib}
-        install -Dm644 ../mm/linux/2s2hIcon.png $out/share/icons/hicolor/512x512/apps/2s2h.png
-      ''
-      + lib.optionalString stdenv.hostPlatform.isDarwin ''
-        # Recreate the macOS bundle (without using cpack)
-        # We mirror the structure of the bundle distributed by the project
-
-        mkdir -p $out/Applications/2s2h.app/Contents
-        cp $src/mm/macosx/Info.plist.in $out/Applications/2s2h.app/Contents/Info.plist
-        substituteInPlace $out/Applications/2s2h.app/Contents/Info.plist \
-          --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}"
-
-        mv $out/MacOS $out/Applications/2s2h.app/Contents/MacOS
-
-        # The install prefix contains all resources that are in "Resources" in
-        # the official bundle. We move them to the right place and symlink them
-        # back, as that's where the game expects them.
-        mv $out/Resources $out/Applications/2s2h.app/Contents/Resources
-        mv $out/share/2ship2harkinian/** $out/Applications/2s2h.app/Contents/Resources
-        rm -rf $out/share/2ship2harkinian
-        ln -s $out/Applications/2s2h.app/Contents/Resources $out/share/2ship2harkinian
-
-        # Copy icons
-        cp -r ../build/macosx/2s2h.icns $out/Applications/2s2h.app/Contents/Resources/2s2h.icns
-
-        # TODO(Sirius902) This seems like an issue upstream in ship maybe?
-        # Move gamecontrollerdb.txt to the proper place for app bundle
-        install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
-          $out/Applications/2s2h.app/Contents/Resources/gamecontrollerdb.txt
-      ''
-      + ''
-        install -Dm644 -t $out/share/licenses/2ship2harkinian ../LICENSE
-        install -Dm644 -t $out/share/licenses/2ship2harkinian/OTRExporter ../OTRExporter/LICENSE
-        install -Dm644 -t $out/share/licenses/2ship2harkinian/ZAPDTR ../ZAPDTR/LICENSE
-        install -Dm644 -t $out/share/licenses/2ship2harkinian/libgfxd ${libgfxd}/LICENSE
-        install -Dm644 -t $out/share/licenses/2ship2harkinian/libultraship ../libultraship/LICENSE
-        install -Dm644 -t $out/share/licenses/2ship2harkinian/thread_pool ${thread_pool}/LICENSE.txt
-      '';
-
-    postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
-      wrapProgram $out/share/2ship2harkinian/2s2h.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
-    '';
-
-    desktopItems = [
-      (makeDesktopItem {
-        name = "2s2h";
-        icon = "2s2h";
-        exec = "2s2h";
-        comment = finalAttrs.meta.description;
-        desktopName = "2 Ship 2 Harkinian";
-        categories = ["Game"];
-      })
+  buildInputs =
+    [
+      boost
+      SDL2
+      libpng
+      libzip
+      nlohmann_json
+      tinyxml-2
+      spdlog
+      (lib.getDev libopus)
+      (lib.getDev opusfile)
+      libogg
+      libvorbis
+      bzip2
+      libx11
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux [
+      libGL
+      libpulseaudio
+      zenity
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
+      glew
     ];
 
-    passthru.updateScript = nix-update-script {
-      extraArgs = [
-        "--version=branch"
-        "--version-regex=([0-9].*)"
-      ];
-    };
+  cmakeFlags =
+    [
+      (lib.cmakeBool "NON_PORTABLE" true)
+      (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/share/2ship2harkinian")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_MONOCYPHER" "${monocypher}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
+      (lib.cmakeFeature "OPUS_INCLUDE_DIR" "${lib.getDev libopus}/include/opus")
+      (lib.cmakeFeature "OPUSFILE_INCLUDE_DIR" "${lib.getDev opusfile}/include/opus")
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SPDLOG" "${spdlog}")
+    ];
 
-    meta = {
-      homepage = "https://github.com/HarbourMasters/2ship2harkinian";
-      description = "PC port of Majora's Mask with modern controls, widescreen, high-resolution, and more";
-      mainProgram = "2s2h";
-      platforms = lib.platforms.linux ++ lib.platforms.darwin;
-      maintainers = with lib.maintainers; [qubitnano];
-      license = with lib.licenses; [
-        # OTRExporter, OTRGui, ZAPDTR, libultraship
-        mit
-        # 2 Ship 2 Harkinian
-        cc0
-        # Reverse engineering
-        unfree
-      ];
-    };
-  })
+  env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
+
+  strictDeps = true;
+  __structuredAttrs = true;
+  enableParallelBuilding = true;
+
+  dontAddPrefix = true;
+
+  # Linking fails without this
+  hardeningDisable = ["format"];
+
+  preConfigure = ''
+    mkdir stb
+    cp ${stb'} ./stb/${stb'.name}
+    cp ${stb_impl} ./stb/${stb_impl.name}
+    substituteInPlace libultraship/cmake/dependencies/common.cmake \
+      --replace-fail "\''${STB_DIR}" "$(readlink -f ./stb)"
+  '';
+
+  postPatch = ''
+    substituteInPlace mm/src/boot/build.c.in \
+      --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
+      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
+      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
+  '';
+
+  postBuild = ''
+    cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
+    cmake --build . --target Generate2ShipOtr
+  '';
+
+  postInstall =
+    lib.optionalString stdenv.hostPlatform.isLinux ''
+      mkdir -p $out/bin
+      ln -s $out/share/2ship2harkinian/2s2h.elf $out/bin/2s2h
+      rm -r $out/share/2ship2harkinian/{include,lib}
+      install -Dm644 ../mm/linux/2s2hIcon.png $out/share/icons/hicolor/512x512/apps/2s2h.png
+    ''
+    + lib.optionalString stdenv.hostPlatform.isDarwin ''
+      # Recreate the macOS bundle (without using cpack)
+      # We mirror the structure of the bundle distributed by the project
+
+      mkdir -p $out/Applications/2s2h.app/Contents
+      cp $src/mm/macosx/Info.plist.in $out/Applications/2s2h.app/Contents/Info.plist
+      substituteInPlace $out/Applications/2s2h.app/Contents/Info.plist \
+        --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}"
+
+      mv $out/MacOS $out/Applications/2s2h.app/Contents/MacOS
+
+      # The install prefix contains all resources that are in "Resources" in
+      # the official bundle. We move them to the right place and symlink them
+      # back, as that's where the game expects them.
+      mv $out/Resources $out/Applications/2s2h.app/Contents/Resources
+      mv $out/share/2ship2harkinian/** $out/Applications/2s2h.app/Contents/Resources
+      rm -rf $out/share/2ship2harkinian
+      ln -s $out/Applications/2s2h.app/Contents/Resources $out/share/2ship2harkinian
+
+      # Copy icons
+      cp -r ../build/macosx/2s2h.icns $out/Applications/2s2h.app/Contents/Resources/2s2h.icns
+
+      # TODO(Sirius902) This seems like an issue upstream in ship maybe?
+      # Move gamecontrollerdb.txt to the proper place for app bundle
+      install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
+        $out/Applications/2s2h.app/Contents/Resources/gamecontrollerdb.txt
+    ''
+    + ''
+      install -Dm644 -t $out/share/licenses/2ship2harkinian ../LICENSE
+      install -Dm644 -t $out/share/licenses/2ship2harkinian/OTRExporter ../OTRExporter/LICENSE
+      install -Dm644 -t $out/share/licenses/2ship2harkinian/ZAPDTR ../ZAPDTR/LICENSE
+      install -Dm644 -t $out/share/licenses/2ship2harkinian/libgfxd ${libgfxd}/LICENSE
+      install -Dm644 -t $out/share/licenses/2ship2harkinian/libultraship ../libultraship/LICENSE
+      install -Dm644 -t $out/share/licenses/2ship2harkinian/thread_pool ${thread_pool}/LICENSE.txt
+    '';
+
+  postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
+    wrapProgram $out/share/2ship2harkinian/2s2h.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
+  '';
+
+  desktopItems = [
+    (makeDesktopItem {
+      name = "2s2h";
+      icon = "2s2h";
+      exec = "2s2h";
+      comment = finalAttrs.meta.description;
+      desktopName = "2 Ship 2 Harkinian";
+      categories = ["Game"];
+    })
+  ];
+
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--version=branch"
+      "--version-regex=([0-9].*)"
+    ];
+  };
+
+  meta = {
+    homepage = "https://github.com/HarbourMasters/2ship2harkinian";
+    description = "PC port of Majora's Mask with modern controls, widescreen, high-resolution, and more";
+    mainProgram = "2s2h";
+    platforms = lib.platforms.linux ++ lib.platforms.darwin;
+    maintainers = with lib.maintainers; [qubitnano];
+    license = with lib.licenses; [
+      # OTRExporter, OTRGui, ZAPDTR, libultraship
+      mit
+      # 2 Ship 2 Harkinian
+      cc0
+      # Reverse engineering
+      unfree
+    ];
+  };
+})

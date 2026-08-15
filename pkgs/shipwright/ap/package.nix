@@ -29,7 +29,6 @@
   writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
-  shipwright-ap,
   libopus,
   opusfile,
   libogg,
@@ -45,7 +44,8 @@
   websocketpp,
   fetchpatch2,
   nix-update-script,
-}: let
+}:
+stdenv.mkDerivation (finalAttrs: let
   # The following would normally get fetched at build time, or a specific version is required
   dr_libs = fetchFromGitHub {
     owner = "mackron";
@@ -62,7 +62,7 @@
       hash = "sha256-mQOJ6jCN+7VopgZ61yzaCnt4R1QLrW7+47xxMhFRHLQ=";
     };
     patches = [
-      "${shipwright-ap.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
+      "${finalAttrs.src}/libultraship/cmake/dependencies/patches/imgui-fixes-and-config.patch"
     ];
   };
 
@@ -102,7 +102,7 @@
       hash = "sha256-HTi2FKzKCbRaP13XERUmHkJgw8IfKaRJvsK3+YxFFdc=";
     };
     patches = [
-      "${shipwright-ap.src}/libultraship/cmake/dependencies/patches/stormlib-optimizations.patch"
+      "${finalAttrs.src}/libultraship/cmake/dependencies/patches/stormlib-optimizations.patch"
     ];
   };
 
@@ -147,227 +147,226 @@
     mkdir -p $out
     cp ${cacert}/etc/ssl/certs/ca-bundle.crt $out/cacert.pem
   '';
-in
-  stdenv.mkDerivation (finalAttrs: {
-    pname = "shipwright-ap";
-    version = "1.4.2-unstable-2026-07-04";
+in {
+  pname = "shipwright-ap";
+  version = "1.4.2-unstable-2026-07-04";
 
-    src = fetchFromGitHub {
-      owner = "jeromkiller";
-      repo = "Shipwright_archipellago";
-      rev = "96b35fd5824b706456df7ea3f34e0353865e91cd";
-      hash = "sha256-qgQCQpiqEHawV/SKpWO3kZ45J91yslaWkTHypZjy3Yk=";
-      fetchSubmodules = true;
-      deepClone = true;
-      postFetch = ''
-        cd $out
-        git branch --show-current > GIT_BRANCH
-        git rev-parse --short=7 HEAD > GIT_COMMIT_HASH
-        (git describe --tags --abbrev=0 --exact-match HEAD 2>/dev/null || echo "") > GIT_COMMIT_TAG
-        rm -rf .git
-      '';
-    };
+  src = fetchFromGitHub {
+    owner = "jeromkiller";
+    repo = "Shipwright_archipellago";
+    rev = "96b35fd5824b706456df7ea3f34e0353865e91cd";
+    hash = "sha256-qgQCQpiqEHawV/SKpWO3kZ45J91yslaWkTHypZjy3Yk=";
+    fetchSubmodules = true;
+    deepClone = true;
+    postFetch = ''
+      cd $out
+      git branch --show-current > GIT_BRANCH
+      git rev-parse --short=7 HEAD > GIT_COMMIT_HASH
+      (git describe --tags --abbrev=0 --exact-match HEAD 2>/dev/null || echo "") > GIT_COMMIT_TAG
+      rm -rf .git
+    '';
+  };
 
-    patches = [
-      ../darwin-fixes.patch
-      ../disable-downloading-stb_image.patch
-      ./disable-openssl-check.patch
-      ./sslcertstore-dir.patch
+  patches = [
+    ../darwin-fixes.patch
+    ../disable-downloading-stb_image.patch
+    ./disable-openssl-check.patch
+    ./sslcertstore-dir.patch
+  ];
+
+  nativeBuildInputs =
+    [
+      cmake
+      ninja
+      pkg-config
+      python3
+      imagemagick
+      makeWrapper
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux [
+      lsb-release
+      copyDesktopItems
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
+      libicns
+      darwin.autoSignDarwinBinariesHook
+      fixDarwinDylibNames
     ];
 
-    nativeBuildInputs =
-      [
-        cmake
-        ninja
-        pkg-config
-        python3
-        imagemagick
-        makeWrapper
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isLinux [
-        lsb-release
-        copyDesktopItems
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        libicns
-        darwin.autoSignDarwinBinariesHook
-        fixDarwinDylibNames
-      ];
-
-    buildInputs =
-      [
-        boost
-        SDL2
-        SDL2_net
-        libpng
-        libzip
-        nlohmann_json
-        tinyxml-2
-        spdlog
-        (lib.getDev libopus)
-        (lib.getDev opusfile)
-        libogg
-        libvorbis
-        bzip2
-        libx11
-        asio
-        openssl
-        valijson
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isLinux [
-        libGL
-        libpulseaudio
-        zenity
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        glew
-      ];
-
-    cmakeFlags =
-      [
-        (lib.cmakeBool "BUILD_REMOTE_CONTROL" true)
-        (lib.cmakeBool "NON_PORTABLE" true)
-        (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/share/shipwright-ap")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SSLCERTSTORE" "${sslCertStore}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_ASIO" "${asio}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_WEBSOCKETPP" "${websocketpp}/include")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_WSWRAP" "${wswrap}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_APCLIENTPP" "${apclientpp}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_VALIJSON" "${valijson}")
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SPDLOG" "${spdlog}")
-      ];
-
-    env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
-
-    strictDeps = true;
-    __structuredAttrs = true;
-    enableParallelBuilding = true;
-
-    dontAddPrefix = true;
-
-    # Linking fails without this
-    hardeningDisable = ["format"];
-
-    preConfigure = ''
-      mkdir stb
-      cp ${stb'} ./stb/${stb'.name}
-      cp ${stb_impl} ./stb/${stb_impl.name}
-      substituteInPlace libultraship/cmake/dependencies/common.cmake \
-        --replace-fail "\''${STB_DIR}" "$(readlink -f ./stb)"
-    '';
-
-    postPatch = ''
-      substituteInPlace soh/src/boot/build.c.in \
-        --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
-        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
-        --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
-
-      substituteInPlace soh/soh/OTRGlobals.h \
-        --replace-fail 'const std::string appShortName = "soh";' 'const std::string appShortName = "soh-ap";'
-    '';
-
-    postBuild = ''
-      cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
-      cmake --build . --target GenerateSohOtr
-    '';
-
-    postInstall =
-      lib.optionalString stdenv.hostPlatform.isLinux ''
-        mkdir -p $out/bin
-        ln -s $out/share/shipwright-ap/soh.elf $out/bin/soh-ap
-        rm -r $out/share/shipwright-ap/{include,lib}
-        install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/512x512/apps/soh-ap.png
-      ''
-      + lib.optionalString stdenv.hostPlatform.isDarwin ''
-        # Recreate the macOS bundle (without using cpack)
-        # We mirror the structure of the bundle distributed by the project
-
-        mkdir -p $out/Applications/soh-ap.app/Contents
-        cp $src/soh/macosx/Info.plist.in $out/Applications/soh-ap.app/Contents/Info.plist
-        substituteInPlace $out/Applications/soh-ap.app/Contents/Info.plist \
-          --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}" \
-          --replace-fail \
-            "<string>Ship of Harkinian</string>" \
-            "<string>Ship of Harkinian (Archipelago)</string>" \
-          --replace-fail \
-            "<string>com.shipofharkinian.ShipOfHarkinian</string>" \
-            "<string>com.shipofharkinian.ShipOfHarkinian.Archipelago</string>" \
-          --replace-fail \
-            "<string>~/Library/Application Support/com.shipofharkinian.soh</string>" \
-            "<string>~/Library/Application Support/com.shipofharkinian.soh-ap</string>"
-
-        mv $out/MacOS $out/Applications/soh-ap.app/Contents/MacOS
-
-        # The install prefix contains all resources that are in "Resources" in
-        # the official bundle. We move them to the right place and symlink them
-        # back, as that's where the game expects them.
-        mv $out/Resources $out/Applications/soh-ap.app/Contents/Resources
-        mv $out/share/shipwright-ap/** $out/Applications/soh-ap.app/Contents/Resources
-        rm -rf $out/share/shipwright-ap
-        ln -s $out/Applications/soh-ap.app/Contents/Resources $out/share/shipwright-ap
-
-        # Copy icons
-        cp -r ../build/macosx/soh.icns $out/Applications/soh-ap.app/Contents/Resources/soh.icns
-
-        # TODO(Sirius902) This seems like an issue upstream in ship maybe?
-        # Move gamecontrollerdb.txt to the proper place for app bundle
-        install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
-          $out/Applications/soh-ap.app/Contents/Resources/gamecontrollerdb.txt
-      ''
-      + ''
-        # TODO(Sirius902) Uncomment when upstream adds a root LICENSE file.
-        # install -Dm644 -t $out/share/licenses/shipwright-ap ../LICENSE
-        test ! -f ../LICENSE || (echo "upstream LICENSE exists now, install it!" && false)
-
-        install -Dm644 -t $out/share/licenses/shipwright-ap/OTRExporter ../OTRExporter/LICENSE
-        install -Dm644 -t $out/share/licenses/shipwright-ap/ZAPDTR ../ZAPDTR/LICENSE
-        install -Dm644 -t $out/share/licenses/shipwright-ap/libgfxd ${libgfxd}/LICENSE
-        install -Dm644 -t $out/share/licenses/shipwright-ap/libultraship ../libultraship/LICENSE
-        install -Dm644 -t $out/share/licenses/shipwright-ap/thread_pool ${thread_pool}/LICENSE.txt
-      '';
-
-    postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
-      wrapProgram $out/share/shipwright-ap/soh.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
-    '';
-
-    desktopItems = [
-      (makeDesktopItem {
-        name = "soh-ap";
-        icon = "soh-ap";
-        exec = "soh-ap";
-        comment = finalAttrs.meta.description;
-        desktopName = "Ship of Harkinian (Archipelago)";
-        categories = ["Game"];
-      })
+  buildInputs =
+    [
+      boost
+      SDL2
+      SDL2_net
+      libpng
+      libzip
+      nlohmann_json
+      tinyxml-2
+      spdlog
+      (lib.getDev libopus)
+      (lib.getDev opusfile)
+      libogg
+      libvorbis
+      bzip2
+      libx11
+      asio
+      openssl
+      valijson
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux [
+      libGL
+      libpulseaudio
+      zenity
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
+      glew
     ];
 
-    passthru.updateScript = nix-update-script {
-      extraArgs = [
-        "--version=branch=Harkipellago"
-        "--version-regex=Client_([0-9]+\\.[0-9]+\\.[0-9]+)"
-      ];
-    };
+  cmakeFlags =
+    [
+      (lib.cmakeBool "BUILD_REMOTE_CONTROL" true)
+      (lib.cmakeBool "NON_PORTABLE" true)
+      (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/share/shipwright-ap")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui'}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LIBGFXD" "${libgfxd}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SSLCERTSTORE" "${sslCertStore}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_ASIO" "${asio}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_WEBSOCKETPP" "${websocketpp}/include")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_WSWRAP" "${wswrap}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_APCLIENTPP" "${apclientpp}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_VALIJSON" "${valijson}")
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SPDLOG" "${spdlog}")
+    ];
 
-    meta = {
-      homepage = "https://github.com/jeromkiller/Shipwright_archipellago";
-      description = "PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
-      mainProgram = "soh-ap";
-      platforms = lib.platforms.linux ++ lib.platforms.darwin;
-      maintainers = with lib.maintainers; [matteopacini];
-      license = with lib.licenses; [
-        # OTRExporter, OTRGui, ZAPDTR, libultraship
-        mit
-        # Ship of Harkinian itself
-        unfree
-      ];
-    };
-  })
+  env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
+
+  strictDeps = true;
+  __structuredAttrs = true;
+  enableParallelBuilding = true;
+
+  dontAddPrefix = true;
+
+  # Linking fails without this
+  hardeningDisable = ["format"];
+
+  preConfigure = ''
+    mkdir stb
+    cp ${stb'} ./stb/${stb'.name}
+    cp ${stb_impl} ./stb/${stb_impl.name}
+    substituteInPlace libultraship/cmake/dependencies/common.cmake \
+      --replace-fail "\''${STB_DIR}" "$(readlink -f ./stb)"
+  '';
+
+  postPatch = ''
+    substituteInPlace soh/src/boot/build.c.in \
+      --replace-fail "@CMAKE_PROJECT_GIT_BRANCH@" "$(cat GIT_BRANCH)" \
+      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_HASH@" "$(cat GIT_COMMIT_HASH)" \
+      --replace-fail "@CMAKE_PROJECT_GIT_COMMIT_TAG@" "$(cat GIT_COMMIT_TAG)"
+
+    substituteInPlace soh/soh/OTRGlobals.h \
+      --replace-fail 'const std::string appShortName = "soh";' 'const std::string appShortName = "soh-ap";'
+  '';
+
+  postBuild = ''
+    cp ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt gamecontrollerdb.txt
+    cmake --build . --target GenerateSohOtr
+  '';
+
+  postInstall =
+    lib.optionalString stdenv.hostPlatform.isLinux ''
+      mkdir -p $out/bin
+      ln -s $out/share/shipwright-ap/soh.elf $out/bin/soh-ap
+      rm -r $out/share/shipwright-ap/{include,lib}
+      install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/512x512/apps/soh-ap.png
+    ''
+    + lib.optionalString stdenv.hostPlatform.isDarwin ''
+      # Recreate the macOS bundle (without using cpack)
+      # We mirror the structure of the bundle distributed by the project
+
+      mkdir -p $out/Applications/soh-ap.app/Contents
+      cp $src/soh/macosx/Info.plist.in $out/Applications/soh-ap.app/Contents/Info.plist
+      substituteInPlace $out/Applications/soh-ap.app/Contents/Info.plist \
+        --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}" \
+        --replace-fail \
+          "<string>Ship of Harkinian</string>" \
+          "<string>Ship of Harkinian (Archipelago)</string>" \
+        --replace-fail \
+          "<string>com.shipofharkinian.ShipOfHarkinian</string>" \
+          "<string>com.shipofharkinian.ShipOfHarkinian.Archipelago</string>" \
+        --replace-fail \
+          "<string>~/Library/Application Support/com.shipofharkinian.soh</string>" \
+          "<string>~/Library/Application Support/com.shipofharkinian.soh-ap</string>"
+
+      mv $out/MacOS $out/Applications/soh-ap.app/Contents/MacOS
+
+      # The install prefix contains all resources that are in "Resources" in
+      # the official bundle. We move them to the right place and symlink them
+      # back, as that's where the game expects them.
+      mv $out/Resources $out/Applications/soh-ap.app/Contents/Resources
+      mv $out/share/shipwright-ap/** $out/Applications/soh-ap.app/Contents/Resources
+      rm -rf $out/share/shipwright-ap
+      ln -s $out/Applications/soh-ap.app/Contents/Resources $out/share/shipwright-ap
+
+      # Copy icons
+      cp -r ../build/macosx/soh.icns $out/Applications/soh-ap.app/Contents/Resources/soh.icns
+
+      # TODO(Sirius902) This seems like an issue upstream in ship maybe?
+      # Move gamecontrollerdb.txt to the proper place for app bundle
+      install -Dm644 ${sdl_gamecontrollerdb}/share/gamecontrollerdb.txt \
+        $out/Applications/soh-ap.app/Contents/Resources/gamecontrollerdb.txt
+    ''
+    + ''
+      # TODO(Sirius902) Uncomment when upstream adds a root LICENSE file.
+      # install -Dm644 -t $out/share/licenses/shipwright-ap ../LICENSE
+      test ! -f ../LICENSE || (echo "upstream LICENSE exists now, install it!" && false)
+
+      install -Dm644 -t $out/share/licenses/shipwright-ap/OTRExporter ../OTRExporter/LICENSE
+      install -Dm644 -t $out/share/licenses/shipwright-ap/ZAPDTR ../ZAPDTR/LICENSE
+      install -Dm644 -t $out/share/licenses/shipwright-ap/libgfxd ${libgfxd}/LICENSE
+      install -Dm644 -t $out/share/licenses/shipwright-ap/libultraship ../libultraship/LICENSE
+      install -Dm644 -t $out/share/licenses/shipwright-ap/thread_pool ${thread_pool}/LICENSE.txt
+    '';
+
+  postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
+    wrapProgram $out/share/shipwright-ap/soh.elf --prefix PATH ":" ${lib.makeBinPath [zenity]}
+  '';
+
+  desktopItems = [
+    (makeDesktopItem {
+      name = "soh-ap";
+      icon = "soh-ap";
+      exec = "soh-ap";
+      comment = finalAttrs.meta.description;
+      desktopName = "Ship of Harkinian (Archipelago)";
+      categories = ["Game"];
+    })
+  ];
+
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--version=branch=Harkipellago"
+      "--version-regex=Client_([0-9]+\\.[0-9]+\\.[0-9]+)"
+    ];
+  };
+
+  meta = {
+    homepage = "https://github.com/jeromkiller/Shipwright_archipellago";
+    description = "PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
+    mainProgram = "soh-ap";
+    platforms = lib.platforms.linux ++ lib.platforms.darwin;
+    maintainers = with lib.maintainers; [matteopacini];
+    license = with lib.licenses; [
+      # OTRExporter, OTRGui, ZAPDTR, libultraship
+      mit
+      # Ship of Harkinian itself
+      unfree
+    ];
+  };
+})
