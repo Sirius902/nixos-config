@@ -80,7 +80,7 @@ in
 
         substituteInPlace $out/share/applications/dev.twilitrealm.dusk-rando.desktop \
           --replace-fail "Exec=dusklight" "Exec=dusklight-rando" \
-          --replace-fail "''\nName=Dusklight''\n" "''\nName=Dusklight Randomizer''\n" \
+          --replace-fail "''\nName=Dusklight''\n" "''\nName=Dusklight (Randomizer)''\n" \
           --replace-fail "GenericName=Dusklight" "GenericName=Dusklight Randomizer" \
           --replace-fail "Icon=dev.twilitrealm.dusk" "Icon=dev.twilitrealm.dusk-rando"
       ''

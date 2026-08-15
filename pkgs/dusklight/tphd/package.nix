@@ -39,7 +39,7 @@ dusklight.overrideAttrs (finalAttrs: prevAttrs: {
 
       substituteInPlace $out/share/applications/dev.twilitrealm.dusk-tphd.desktop \
         --replace-fail "Exec=dusklight" "Exec=dusklight-tphd" \
-        --replace-fail "''\nName=Dusklight''\n" "''\nName=Dusklight TPHD''\n" \
+        --replace-fail "''\nName=Dusklight''\n" "''\nName=Dusklight (TPHD)''\n" \
         --replace-fail "GenericName=Dusklight" "GenericName=Dusklight TPHD" \
         --replace-fail "Icon=dev.twilitrealm.dusk" "Icon=dev.twilitrealm.dusk-tphd"
     ''

@@ -112,7 +112,7 @@ in
 
         substituteInPlace $out/share/applications/dev.twilitrealm.dusk-ap.desktop \
           --replace-fail "Exec=dusklight" "Exec=dusklight-ap" \
-          --replace-fail "''\nName=Dusklight''\n" "''\nName=Dusklight Archipelago''\n" \
+          --replace-fail "''\nName=Dusklight''\n" "''\nName=Dusklight (Archipelago)''\n" \
           --replace-fail "GenericName=Dusklight" "GenericName=Dusklight Archipelago" \
           --replace-fail "Icon=dev.twilitrealm.dusk" "Icon=dev.twilitrealm.dusk-ap"
       ''
