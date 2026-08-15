@@ -124,8 +124,8 @@
     src = fetchFromGitHub {
       owner = "black-sliver";
       repo = "wswrap";
-      rev = "47438193ec50427ee28aadf294ba57baefd9f3f1";
-      hash = "sha256-WWXi/OWfaC40V+tV4JNmVM8kImozuwaiRLeSdhIf0X8=";
+      rev = "d0505e0ec53a26743f11051949a0dc66bcf44951";
+      hash = "sha256-BmRgWnIeTyH8B2kDF/7KsEy0dcoq+ckKyxzbrHdK/no=";
     };
     patches = [
       (fetchpatch2 {
@@ -139,8 +139,8 @@
   apclientpp = fetchFromGitHub {
     owner = "black-sliver";
     repo = "apclientpp";
-    rev = "65638b7479f6894eda172e603cffa79762c0ddc1";
-    hash = "sha256-/pUa51tZmFL15moMO1KlX5iBmMcx/vYMhqO6PZckIPo=";
+    rev = "7f33a3849887983378258c2fe8fc3887f687c430";
+    hash = "sha256-y3XVvXMlK7nwKMZsgsPtdfqOBgRruU5nknZxHZZUlvY=";
   };
 
   sslCertStore = runCommand "sslCertStore-dir" {} ''
@@ -150,13 +150,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "shipwright-ap";
-    version = "0-unstable-2026-01-22";
+    version = "1.4.2-unstable-2026-07-04";
 
     src = fetchFromGitHub {
-      owner = "aMannus";
-      repo = "Shipwright";
-      rev = "fd7ad41eec8e3b146193c9e75dbf53752749cc56";
-      hash = "sha256-DH36gHW3SOlCNwwtys/Mj7m1hGU9LbJwkbkOTZ3NLKk=";
+      owner = "jeromkiller";
+      repo = "Shipwright_archipellago";
+      rev = "96b35fd5824b706456df7ea3f34e0353865e91cd";
+      hash = "sha256-qgQCQpiqEHawV/SKpWO3kZ45J91yslaWkTHypZjy3Yk=";
       fetchSubmodules = true;
       deepClone = true;
       postFetch = ''
@@ -213,7 +213,6 @@ in
         asio
         openssl
         valijson
-        websocketpp
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         libGL
@@ -237,13 +236,14 @@ in
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SSLCERTSTORE" "${sslCertStore}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_ASIO" "${asio}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_WEBSOCKETPP" "${websocketpp}/include")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_WSWRAP" "${wswrap}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_APCLIENTPP" "${apclientpp}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_VALIJSON" "${valijson}")
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SPDLOG" "${spdlog}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_VALIJSON" "${valijson}")
       ];
 
     env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
@@ -351,10 +351,15 @@ in
       })
     ];
 
-    passthru.updateScript = nix-update-script {extraArgs = ["--version=branch=aManchipelago"];};
+    passthru.updateScript = nix-update-script {
+      extraArgs = [
+        "--version=branch=Harkipellago"
+        "--version-regex=Client_([0-9]+\\.[0-9]+\\.[0-9]+)"
+      ];
+    };
 
     meta = {
-      homepage = "https://github.com/HarbourMasters/Shipwright";
+      homepage = "https://github.com/jeromkiller/Shipwright_archipellago";
       description = "PC port of Ocarina of Time with modern controls, widescreen, high-resolution, and more";
       mainProgram = "soh-ap";
       platforms = lib.platforms.linux ++ lib.platforms.darwin;
