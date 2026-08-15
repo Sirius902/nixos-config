@@ -101,8 +101,8 @@ in
     src = fetchFromGitHub {
       owner = "TwilitRealm";
       repo = "dusklight";
-      rev = "c722cb1be01eb534656919d580bbe647bf7e0a95";
-      hash = "sha256-NJvYVnXKwLjkYImbOV0ble3kVWvvfAGS3MfpLxxVlBg=";
+      rev = "ac45cac56e6a33a2fc24549b6b359bf0448ccf2e";
+      hash = "sha256-maO5NZ/1sCOaWYvldao9hf/idCqepJaquzv1Rpghl9k=";
       fetchSubmodules = true;
     };
 
