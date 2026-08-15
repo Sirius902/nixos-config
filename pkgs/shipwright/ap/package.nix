@@ -352,7 +352,7 @@ in {
   passthru.updateScript = nix-update-script {
     extraArgs = [
       "--version=branch=Harkipellago"
-      "--version-regex=Client_([0-9]+\\.[0-9]+\\.[0-9]+)"
+      "--version-regex=Client_([0-9]+\\.[0-9]+\\.[0-9]+.*)"
     ];
   };
 
