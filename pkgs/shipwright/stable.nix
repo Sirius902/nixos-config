@@ -259,7 +259,7 @@ in
           --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}" \
           --replace-fail \
             "<string>Ship of Harkinian</string>" \
-            "<string>Ship of Harkinian Stable</string>" \
+            "<string>Ship of Harkinian (Stable)</string>" \
           --replace-fail \
             "<string>com.shipofharkinian.ShipOfHarkinian</string>" \
             "<string>com.shipofharkinian.ShipOfHarkinian.Stable</string>" \
@@ -307,8 +307,7 @@ in
         icon = "soh-stable";
         exec = "soh-stable";
         comment = finalAttrs.meta.description;
-        genericName = "Ship of Harkinian (Stable)";
-        desktopName = "soh-stable";
+        desktopName = "Ship of Harkinian (Stable)";
         categories = ["Game"];
       })
     ];

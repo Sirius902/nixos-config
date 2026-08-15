@@ -291,8 +291,7 @@ in
         icon = "2s2h";
         exec = "2s2h";
         comment = finalAttrs.meta.description;
-        genericName = "2 Ship 2 Harkinian";
-        desktopName = "2s2h";
+        desktopName = "2 Ship 2 Harkinian";
         categories = ["Game"];
       })
     ];

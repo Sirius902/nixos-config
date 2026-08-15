@@ -297,7 +297,7 @@ in
           --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}" \
           --replace-fail \
             "<string>Ship of Harkinian</string>" \
-            "<string>Ship of Harkinian Archipelago</string>" \
+            "<string>Ship of Harkinian (Archipelago)</string>" \
           --replace-fail \
             "<string>com.shipofharkinian.ShipOfHarkinian</string>" \
             "<string>com.shipofharkinian.ShipOfHarkinian.Archipelago</string>" \
@@ -345,8 +345,7 @@ in
         icon = "soh-ap";
         exec = "soh-ap";
         comment = finalAttrs.meta.description;
-        genericName = "Ship of Harkinian (Archipelago)";
-        desktopName = "soh-ap";
+        desktopName = "Ship of Harkinian (Archipelago)";
         categories = ["Game"];
       })
     ];

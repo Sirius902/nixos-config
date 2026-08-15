@@ -322,8 +322,7 @@ in
         icon = "soh";
         exec = "soh";
         comment = finalAttrs.meta.description;
-        genericName = "Ship of Harkinian";
-        desktopName = "soh";
+        desktopName = "Ship of Harkinian";
         categories = ["Game"];
       })
     ];
