@@ -315,8 +315,8 @@
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "4c4eb586f5bf11dbfd05fe443cd6164e340e467b";
-        hash = "sha256-DpL93mjM4sBxU1YNGZwyasEalZVnevczq/nqMQUM+Gc=";
+        rev = "4cc54cdadd3947bd88b379ac8e96a619ecec25bc";
+        hash = "sha256-mwhV8p2qdeN3C3+GQ8DcGdMr1yfOE5tOxraDUneofEE=";
 
         postCheckout = ''
           cd "$out"
