@@ -262,24 +262,10 @@
         hash = "sha256-pU0npSQc5MAN2QCu2qBNAunoNFKHr5cBSE+nlbCDLZQ=";
       };
 
-      postPatch =
-        (prevAttrs.postPatch or "")
-        + ''
-          PROTOBUF_DIR="$PWD/rpcs3/Emu/NP/generated"
-          protoc --cpp_out="$PROTOBUF_DIR" --proto_path="$PROTOBUF_DIR" "$PROTOBUF_DIR/np2_structs.proto"
-
-          sed -i '/COMMAND protoc/d' 3rdparty/protobuf/CMakeLists.txt
-        '';
-
-      cmakeFlags =
-        (prevAttrs.cmakeFlags or [])
-        ++ [
-          (final.lib.cmakeBool "USE_SYSTEM_PROTOBUF" true)
-        ];
-
-      nativeBuildInputs = (prevAttrs.nativeBuildInputs or []) ++ [final.protobuf_33];
-
-      buildInputs = (prevAttrs.buildInputs or []) ++ [final.protobuf_33];
+      patches =
+        builtins.filter
+        (p: !final.lib.hasSuffix "ffmpeg-9-pix-fmts.patch" (baseNameOf (toString p)))
+        prevAttrs.patches;
 
       passthru =
         (prevAttrs.passthru or {})
