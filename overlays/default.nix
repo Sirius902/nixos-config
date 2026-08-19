@@ -280,21 +280,14 @@
     });
   })
 
-  (final: prev: let
-    absl = final.fetchFromGitHub {
-      owner = "abseil";
-      repo = "abseil-cpp";
-      rev = "20250512.1";
-      hash = "sha256-eB7OqTO9Vwts9nYQ/Mdq0Ds4T1KgmmpYdzU09VPWOhk=";
-    };
-  in {
+  (final: prev: {
     shadps4 = prev.shadps4.overrideAttrs (finalAttrs: prevAttrs: {
       version = "0.18.0-unstable-2026-08-18";
 
       src = prevAttrs.src.override {
         tag = null;
         rev = "46ae0800384179d9686e78e4e2f7a31f21430210";
-        hash = "sha256-HXeH2Xh80bjUVYzkxBp5aQmplc9Y/xVntCdA8zD34eY=";
+        hash = "sha256-KMeQPYydREV7nPn4F3glTDAC0BpygXvFkarZgRt1j7k=";
 
         postCheckout = ''
           cd "$out"
@@ -306,6 +299,7 @@
             ImGuiFileDialog \
             LibAtrac9 \
             aacdec/fdk-aac \
+            abseil-cpp \
             cpp-httplib \
             dear_imgui \
             discord-rpc \
@@ -344,7 +338,6 @@
         ++ [
           (final.lib.cmakeBool "ENABLE_SYSTEM_LIBRARIES" true)
           (final.lib.cmakeBool "SPDLOG_FMT_EXTERNAL" true)
-          (final.lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_ABSL" "${absl}")
         ];
 
       buildInputs =
