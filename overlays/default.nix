@@ -1,5 +1,6 @@
 {inputs}: [
   (import ../pkgs/overlay.nix)
+  (import ./codex)
   (import ./moonlight)
 
   inputs.nvim-conf.overlays.default
