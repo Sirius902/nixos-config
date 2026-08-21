@@ -96,13 +96,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "dusklight";
-    version = "1.4.1-unstable-2026-08-20";
+    version = "1.4.1-unstable-2026-08-21";
 
     src = fetchFromGitHub {
       owner = "TwilitRealm";
       repo = "dusklight";
-      rev = "172d06f38d51eabce040501f030f64fe504b23e1";
-      hash = "sha256-rBLGru4CKQQakBduChMEVFpYK2edfs1jcBRcf5XarFM=";
+      rev = "5f0f3d4ebe6a866b09ff4b304dd90ca9642b5a50";
+      hash = "sha256-CsIGzoKbVBhyQXV6qLMpjbi+2wJEna+/CKjreyR0fII=";
       fetchSubmodules = true;
     };
 
