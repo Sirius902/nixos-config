@@ -126,7 +126,10 @@ in {
       pkgs.nvim
       pkgs.pure-prompt
     ]
-    ++ (lib.optionals (!stdenv.hostPlatform.isDarwin) [pkgs.claude-code]);
+    ++ (lib.optionals (!stdenv.hostPlatform.isDarwin) [
+      pkgs.claude-code
+      pkgs.codex
+    ]);
 
   programs.home-manager.enable = true;
 }
