@@ -17,7 +17,6 @@ in {
     ./niri/default.nix
     ./fcitx.nix
     ./ibus.nix
-    ../disable-hsp.nix
   ];
 
   options.my.desktop = {
