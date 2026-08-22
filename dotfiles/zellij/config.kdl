@@ -1,4 +1,5 @@
 default_mode "locked"
+dangerously_enable_paste_buffer_read true
 session_serialization false
 show_startup_tips false
 

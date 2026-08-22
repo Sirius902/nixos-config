@@ -564,16 +564,6 @@
   })
 
   (final: prev: {
-    zellij-unwrapped = prev.zellij-unwrapped.overrideAttrs (prevAttrs: {
-      patches =
-        (prevAttrs.patches or [])
-        ++ [
-          ../patches/zellij/0001-feat-pass-OSC-52-clipboard-read-through-to-host-term.patch
-        ];
-    });
-  })
-
-  (final: prev: {
     dolphin-emu = prev.dolphin-emu.overrideAttrs (prevAttrs: {
       version = "2606a-unstable-2026-08-21";
 
