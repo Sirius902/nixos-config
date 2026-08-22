@@ -1,9 +1,9 @@
 final: prev: let
-  fetchers = final.callPackage ../../pkgs/codex/fetchers.nix {};
-  librusty_v8 = final.callPackage ../../pkgs/codex/librusty_v8.nix {
+  fetchers = final.callPackage ./fetchers.nix {};
+  librusty_v8 = final.callPackage ./librusty_v8.nix {
     inherit (fetchers) fetchLibrustyV8;
   };
-  librusty_v8_src_binding = final.callPackage ../../pkgs/codex/librusty_v8_src_binding.nix {
+  librusty_v8_src_binding = final.callPackage ./librusty_v8_src_binding.nix {
     inherit (fetchers) fetchLibrustyV8SrcBinding;
   };
 in {
@@ -36,7 +36,7 @@ in {
                 "^rust-v(\\d+\\.\\d+\\.\\d+)$"
               ];
             })
-            ../../pkgs/codex/update-librusty.sh
+            ./update.sh
           ];
         };
 

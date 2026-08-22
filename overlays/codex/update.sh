@@ -6,7 +6,7 @@ set -euo pipefail
 
 base_url="https://github.com/denoland/rusty_v8/releases/download"
 repo_root="$(git rev-parse --show-toplevel)"
-package_dir="$repo_root/pkgs/codex"
+package_dir="$repo_root/overlays/codex"
 archive_file="$package_dir/librusty_v8.nix"
 binding_file="$package_dir/librusty_v8_src_binding.nix"
 archive_temp="$(mktemp "$package_dir/.librusty_v8.nix.XXXXXX")"

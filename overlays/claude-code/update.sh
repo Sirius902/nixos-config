@@ -6,7 +6,7 @@ set -euo pipefail
 
 base_url="https://downloads.claude.ai/claude-code-releases"
 repo_root="$(git rev-parse --show-toplevel)"
-package_dir="$repo_root/pkgs/claude-code"
+package_dir="$repo_root/overlays/claude-code"
 manifest_file="$package_dir/manifest.json"
 manifest_temp="$(mktemp "$package_dir/.manifest.json.XXXXXX")"
 trap 'rm -f "$manifest_temp"' EXIT
