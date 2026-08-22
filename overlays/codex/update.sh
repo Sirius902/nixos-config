@@ -9,9 +9,10 @@ repo_root="$(git rev-parse --show-toplevel)"
 package_dir="$repo_root/overlays/codex"
 archive_file="$package_dir/librusty_v8.nix"
 binding_file="$package_dir/librusty_v8_src_binding.nix"
-archive_temp="$(mktemp "$package_dir/.librusty_v8.nix.XXXXXX")"
-binding_temp="$(mktemp "$package_dir/.librusty_v8_src_binding.nix.XXXXXX")"
-trap 'rm -f "$archive_temp" "$binding_temp"' EXIT
+temp_dir="$(mktemp -d)"
+archive_temp="$temp_dir/librusty_v8.nix"
+binding_temp="$temp_dir/librusty_v8_src_binding.nix"
+trap 'rm -f "$archive_temp" "$binding_temp"; rmdir "$temp_dir"' EXIT
 
 github_auth=()
 if [[ -n "${GITHUB_TOKEN:-}" ]]; then

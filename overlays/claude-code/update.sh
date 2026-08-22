@@ -8,8 +8,9 @@ base_url="https://downloads.claude.ai/claude-code-releases"
 repo_root="$(git rev-parse --show-toplevel)"
 package_dir="$repo_root/overlays/claude-code"
 manifest_file="$package_dir/manifest.json"
-manifest_temp="$(mktemp "$package_dir/.manifest.json.XXXXXX")"
-trap 'rm -f "$manifest_temp"' EXIT
+temp_dir="$(mktemp -d)"
+manifest_temp="$temp_dir/manifest.json"
+trap 'rm -f "$manifest_temp"; rmdir "$temp_dir"' EXIT
 
 version="$(curl --silent --show-error --fail --location "$base_url/latest")"
 if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
