@@ -256,11 +256,11 @@
 
   (final: prev: {
     rpcs3 = prev.rpcs3.overrideAttrs (prevAttrs: {
-      version = "0.0.42-unstable-2026-08-22";
+      version = "0.0.42-unstable-2026-08-23";
       src = prevAttrs.src.override {
         tag = null;
-        rev = "3aac7d776dfe91596dccd7b3c6fa2419b5044611";
-        hash = "sha256-Lt2mRm2FW59DIyF/j/dKIkSemvtj1GW740++dmgGEug=";
+        rev = "68f260a698b5dd23ee271a6e54cf2bb913335fcf";
+        hash = "sha256-8AxmaT1w5diP4QbMSt9CVo6hgLhTMNIPhX9aEV0Nn28=";
       };
 
       patches =
