@@ -45,3 +45,15 @@ Never include:
   force-pushes re-trigger cross-references.
 - Narration of the diff, conversation context ("post-review", "as
   discussed"), or references to the author in the third person.
+
+## Trailers
+
+A commit an agent wrote ends with that agent's `Co-authored-by:` trailer,
+blank line before it. It is attribution, not a body — it needs no
+justification and doesn't make the commit one with a body. It creates no
+cross-reference, so unlike an issue link a rebase re-triggers nothing.
+Nothing else carries one: not tooling output like `nix-update` bumps, not
+commits written by hand.
+
+The Never include rules apply to trailers too. `Fixes: owner/repo#N` is out
+for the same reason its prose form is.
