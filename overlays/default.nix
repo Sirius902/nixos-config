@@ -582,7 +582,7 @@
       # via process_vm_readv despite ptrace_scope=1.
       qtWrapperArgs =
         (prevAttrs.qtWrapperArgs or [])
-        ++ (let
+        ++ final.lib.optionals final.stdenv.hostPlatform.isLinux (let
           allowPtrace = final.stdenv.mkDerivation {
             name = "allow-ptrace";
             dontUnpack = true;
