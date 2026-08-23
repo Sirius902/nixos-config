@@ -23,6 +23,7 @@
     apcpp-glue = pkgs.callPackage ./mm-recomp-rando/glue.nix {};
 
     sequence-otrizer = pkgs.callPackage ./sequence-otrizer/package.nix {};
+    darunias-joy = pkgs.callPackage ./darunias-joy/package.nix {};
 
     shipwright = pkgs.callPackage ./shipwright/package.nix {};
     shipwright_stable = pkgs.callPackage ./shipwright/stable.nix {};
