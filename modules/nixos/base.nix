@@ -18,7 +18,7 @@
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
-  nix.settings.auto-optimise-store = true;
+  nix.optimise.automatic = true;
 
   home-manager = {
     useGlobalPkgs = true;

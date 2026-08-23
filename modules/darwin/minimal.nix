@@ -27,7 +27,7 @@
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
-  nix.settings.auto-optimise-store = true;
+  nix.optimise.automatic = true;
 
   system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
   system.stateVersion = 6;
