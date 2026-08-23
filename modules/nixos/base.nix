@@ -66,6 +66,7 @@
     htop
     jq
     just
+    nh
     nvd
     parted
     ripgrep
