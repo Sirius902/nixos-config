@@ -106,13 +106,6 @@ stdenv.mkDerivation (finalAttrs: let
     hash = "sha256-zhRFEmPYNFLqQCfvdAaG5VBNle9Qm8FepIIIrT9sh88=";
   };
 
-  monocypher = fetchFromGitHub {
-    owner = "LoupVaillant";
-    repo = "Monocypher";
-    rev = "0d85f98c9d9b0227e42cf795cb527dff372b40a4";
-    hash = "sha256-RrM8Ep/CM7U5Q4+4FAHfBknb6b0upohoiqy4f7eMye0=";
-  };
-
   metalcpp = fetchFromGitHub {
     owner = "briaguya-ai";
     repo = "single-header-metal-cpp";
@@ -200,11 +193,9 @@ in {
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_MONOCYPHER" "${monocypher}")
     ]
     ++ lib.optionals stdenv.hostPlatform.isDarwin [
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SPDLOG" "${spdlog}")
     ];
 
   env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
