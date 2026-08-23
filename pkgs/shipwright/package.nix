@@ -227,6 +227,11 @@ in {
     ]
     ++ lib.optionals stdenv.hostPlatform.isDarwin [
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
+      # Toolchain workaround: clang-scan-deps interprets argv instead of exec'ing
+      # the clang wrapper, so the wrapper's libc++ -isystem never applies and
+      # scanning fails on <cstdlib>. Upstream is C++20 but ships no module units,
+      # so scanning buys nothing. Drop this if a nixpkgs bump fixes the scanner.
+      (lib.cmakeBool "CMAKE_CXX_SCAN_FOR_MODULES" false)
     ];
 
   env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
