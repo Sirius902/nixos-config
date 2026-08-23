@@ -45,6 +45,6 @@ stdenv.mkDerivation (finalAttrs: {
     description = "Portable crossplatform Half-Life SDK for GoldSource and Xash3D engines";
     license = lib.licenses.unfree;
     platforms = lib.platforms.all;
-    maintainers = with lib.maintainers; [r4v3n6101];
+    maintainers = with lib.maintainers; [sirius902];
   };
 })

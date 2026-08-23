@@ -80,5 +80,6 @@ melonds.overrideAttrs (prevAttrs: {
     // {
       homepage = "https://github.com/vitor251093/KHMelonMix";
       mainProgram = "MelonMix";
+      maintainers = with lib.maintainers; [sirius902];
     };
 })

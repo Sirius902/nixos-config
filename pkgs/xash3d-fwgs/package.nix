@@ -109,7 +109,7 @@ in
       description = "Xash3D FWGS engine";
       license = lib.licenses.gpl3Plus;
       platforms = lib.platforms.all;
-      maintainers = with lib.maintainers; [r4v3n6101];
+      maintainers = with lib.maintainers; [sirius902];
       mainProgram = exe;
     };
   }

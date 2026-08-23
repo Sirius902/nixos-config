@@ -311,7 +311,7 @@ in {
     description = "PC port of Majora's Mask with modern controls, widescreen, high-resolution, and more";
     mainProgram = "2s2h";
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
-    maintainers = with lib.maintainers; [qubitnano];
+    maintainers = with lib.maintainers; [sirius902];
     license = with lib.licenses; [
       # OTRExporter, OTRGui, ZAPDTR, libultraship
       mit
