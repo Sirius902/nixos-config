@@ -8,10 +8,10 @@
 
 - Scope is the thing touched: a package attr (`shipwright:`), a hostname
   (`hee-ho:`), a module area (`minecraft-servers:`, `home:`, `users:`),
-  `flake`, `docs`, or a comma list with no space for multi-scope changes
-  (`svends,synergyds:`). A package scope is the attr as spelled in
-  `pkgs/all-packages.nix`, not `meta.pname` — `shipwright_stable:`, not
-  `shipwright-stable:`.
+  `flake`, `docs`, `treewide` for a sweep across unrelated packages, or a
+  comma list with no space for multi-scope changes (`svends,synergyds:`). A
+  package scope is the attr as spelled in `pkgs/all-packages.nix`, not
+  `meta.pname` — `shipwright_stable:`, not `shipwright-stable:`.
 - Multi-scope subjects are a comma-separated list of terms, with brace
   expansion inside a term, so `shipwright{,_stable,-ap},_2ship2harkinian:`
   names four attrs. That is how nixpkgs' build queuer reads the prefix — it
@@ -25,7 +25,8 @@
 - No conventional-commit type prefixes (`feat(…)`, `fix(…)`, `chore:`).
   Nothing in this repo consumes them, the type taxonomy invites judgment
   calls that decay into `chore(`, and the verb already carries that
-  information (`hee-ho: work around the I219-V NIC hang`).
+  information (`hee-ho: work around the I219-V NIC hang`). A sweep across
+  unrelated packages is `treewide:`, not `chore:`.
 - Lock updates are `flake: update inputs`; `nix-update` commits keep their
   generated `pkg: old -> new` form.
 
