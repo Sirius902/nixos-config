@@ -22,6 +22,8 @@
     mm-recomp-rando = pkgs.callPackage ./mm-recomp-rando/package.nix {};
     apcpp-glue = pkgs.callPackage ./mm-recomp-rando/glue.nix {};
 
+    sequence-otrizer = pkgs.callPackage ./sequence-otrizer/package.nix {};
+
     shipwright = pkgs.callPackage ./shipwright/package.nix {};
     shipwright_stable = pkgs.callPackage ./shipwright/stable.nix {};
     shipwright-ap = pkgs.callPackage ./shipwright/ap/package.nix {};
