@@ -1,5 +1,5 @@
 #!/usr/bin/env nix-shell
-#!nix-shell -i bash -p curl gawk gitMinimal gnugrep gnused nix jq coreutils
+#!nix-shell -i bash -p curl gawk gitMinimal gnugrep gnused nix nix-update jq coreutils
 # shellcheck shell=bash
 
 set -euo pipefail
@@ -24,6 +24,7 @@ latest_tag="$(
     https://api.github.com/repos/openai/codex/releases/latest \
     | jq --exit-status --raw-output '.tag_name | select(test("^rust-v[0-9]+\\.[0-9]+\\.[0-9]+$"))'
 )"
+latest_version="${latest_tag#rust-v}"
 cargo_lock="$(curl "${github_auth[@]}" --silent --show-error --fail --location \
   "https://raw.githubusercontent.com/openai/codex/$latest_tag/codex-rs/Cargo.lock")"
 v8_version="$(awk '
@@ -89,5 +90,7 @@ fi
 if ! cmp --silent "$binding_temp" "$binding_file"; then
   mv "$binding_temp" "$binding_file"
 fi
+
+nix-update --flake --commit --version "$latest_version" codex
 
 echo "Rusty V8 is pinned to $v8_version for Codex $latest_tag."
