@@ -135,13 +135,41 @@
               updatableAttrs = lib.attrNames (lib.filterAttrs isOurUpdate defaultPkgs);
             in
               lib.getExe (pkgs.writeShellScriptBin "update" ''
+                set -euo pipefail
+
                 ${lib.concatStringsSep "\n" (lib.mapAttrsToList mkUpdate self.packages.${system})}
 
                 updatable_attrs=(${lib.concatMapStringsSep " " lib.escapeShellArg updatableAttrs})
 
+                git_bin=${lib.escapeShellArg (lib.getExe pkgs.gitMinimal)}
+                repo_root="$("$git_bin" rev-parse --show-toplevel)"
+                cd "$repo_root"
+
+                worktree_status() {
+                  "$git_bin" -C "$repo_root" status --porcelain=v1 --untracked-files=all
+                }
+
+                status="$(worktree_status)"
+                if [[ -n "$status" ]]; then
+                  echo "error: package updates require a clean worktree" >&2
+                  exit 1
+                fi
+
+                run_update() {
+                  local attr="$1"
+                  local status
+                  "update_$attr"
+
+                  status="$(worktree_status)"
+                  if [[ -n "$status" ]]; then
+                    echo "error: updater '$attr' left the worktree dirty" >&2
+                    exit 1
+                  fi
+                }
+
                 if [ "$#" -eq 0 ]; then
                   for attr in "''${updatable_attrs[@]}"; do
-                    "update_$attr"
+                    run_update "$attr"
                   done
                 else
                   for pattern in "$@"; do
@@ -149,7 +177,7 @@
                       matched=0
                       for attr in "''${updatable_attrs[@]}"; do
                         if [[ "$attr" == $pattern ]]; then
-                          "update_$attr"
+                          run_update "$attr"
                           matched=1
                         fi
                       done
@@ -159,7 +187,7 @@
                       fi
                     else
                       if declare -F "update_$pattern" >/dev/null; then
-                        "update_$pattern"
+                        run_update "$pattern"
                       else
                         echo "error: unknown or non-updatable attr '$pattern'" >&2
                         exit 1
