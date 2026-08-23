@@ -5,7 +5,9 @@
   pkg-config,
   makeWrapper,
   fetchFromGitHub,
+  fetchurl,
   fetchzip,
+  runCommand,
   apple-sdk_15,
   darwinMinVersionHook,
   darwin,
@@ -93,6 +95,24 @@
     url = "https://github.com/mikke89/RmlUi/archive/f9b8c9e2935d5df2c7dff2c190d3968e99b0c3dc.tar.gz";
     hash = "sha256-g4O/JZUrrcseOz8o2QJRt+2CeuiLnVeuDJc906xvuIg=";
   };
+
+  symgenVersion = "1.3.2";
+
+  # Not `fetchurl { executable = true; }`: that flips outputHashMode to recursive,
+  # which rejects a flat SHA-256. Keeping the flat hash makes this byte-identical
+  # to upstream's EXPECTED_HASH in cmake/SymbolManifest.cmake.
+  symgen-bin = fetchurl {
+    url = "https://github.com/encounter/symgen/releases/download/v${symgenVersion}/symgen-macos-arm64";
+    hash = "sha256-A0SDjRZ03wnBfD7t3PJuuJwzP9uF39ePaK3ENgcOzL4=";
+  };
+
+  # setup_apple_exports() is unconditional on APPLE and file(DOWNLOAD)s symgen at
+  # configure time, which the sandbox has no network for. Hand it the pinned release
+  # instead; SYMGEN_PATH only checks EXISTS and never chmods, so the store copy has
+  # to already carry the executable bit.
+  symgen = runCommand "symgen-${symgenVersion}" {} ''
+    install -Dm755 ${symgen-bin} $out/bin/symgen
+  '';
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "dusklight";
@@ -173,30 +193,34 @@ in
         libjpeg
       ];
 
-    cmakeFlags = [
-      (lib.cmakeFeature "BOREALIS_APP_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.src.rev}")
-      (lib.cmakeFeature "DUSK_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.src.rev}")
-      (lib.cmakeBool "CMAKE_FIND_PACKAGE_TARGETS_GLOBAL" true)
-      (lib.cmakeBool "FETCHCONTENT_FULLY_DISCONNECTED" true)
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_CXXOPTS" "${cxxopts.src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_JSON" "${nlohmann_json.src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_MINIZ" "${miniz-src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DAWN_PREBUILT" "${dawn-src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_XXHASH" "${xxhash.src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_FMT" "${fmt.src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_TRACY" "${tracy.src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_NOD_PREBUILT" "${nod-src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_FREETYPE" "${freetype.src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_ZSTD" "${zstd.src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SQLITE3" "${sqlite-src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui-src}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_RMLUI" "${rmlui-src}")
-      (lib.cmakeFeature "AURORA_SDL3_PROVIDER" "system")
-      (lib.cmakeFeature "AURORA_NOD_PROVIDER" "package")
-      (lib.cmakeBool "BUILD_SHARED_LIBS" false)
-      (lib.cmakeBool "CMAKE_CROSSCOMPILING" true)
-      (lib.cmakeBool "CMAKE_BUILD_WITH_INSTALL_RPATH" true)
-    ];
+    cmakeFlags =
+      [
+        (lib.cmakeFeature "BOREALIS_APP_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.src.rev}")
+        (lib.cmakeFeature "DUSK_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.src.rev}")
+        (lib.cmakeBool "CMAKE_FIND_PACKAGE_TARGETS_GLOBAL" true)
+        (lib.cmakeBool "FETCHCONTENT_FULLY_DISCONNECTED" true)
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_CXXOPTS" "${cxxopts.src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_JSON" "${nlohmann_json.src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_MINIZ" "${miniz-src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DAWN_PREBUILT" "${dawn-src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_XXHASH" "${xxhash.src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_FMT" "${fmt.src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_TRACY" "${tracy.src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_NOD_PREBUILT" "${nod-src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_FREETYPE" "${freetype.src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_ZSTD" "${zstd.src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_SQLITE3" "${sqlite-src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_IMGUI" "${imgui-src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_RMLUI" "${rmlui-src}")
+        (lib.cmakeFeature "AURORA_SDL3_PROVIDER" "system")
+        (lib.cmakeFeature "AURORA_NOD_PROVIDER" "package")
+        (lib.cmakeBool "BUILD_SHARED_LIBS" false)
+        (lib.cmakeBool "CMAKE_CROSSCOMPILING" true)
+        (lib.cmakeBool "CMAKE_BUILD_WITH_INSTALL_RPATH" true)
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isDarwin [
+        (lib.cmakeFeature "SYMGEN_PATH" "${symgen}/bin/symgen")
+      ];
 
     # cxxopts' CXXOPTS_USE_UNICODE mode injects std::begin/end overloads for
     # icu::UnicodeString whose implicit char16_t constructor makes bool look
