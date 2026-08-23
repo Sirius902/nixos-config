@@ -66,4 +66,5 @@ fi
 mv "$manifest_temp" "$manifest_file"
 git -C "$repo_root" commit --only \
   --message "claude-code: $old_version -> $version" \
+  --message "Changelog: https://github.com/anthropics/claude-code/blob/v$version/CHANGELOG.md" \
   -- overlays/claude-code/manifest.json
