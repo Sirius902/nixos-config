@@ -122,9 +122,7 @@ stdenv.mkDerivation (finalAttrs: {
     changelog = "https://github.com/LagoLunatic/wwrando/releases/tag/${finalAttrs.version}";
     license = lib.licenses.mit;
     mainProgram = finalAttrs.pname;
-    maintainers = with lib.maintainers; [
-      # sirius902
-    ];
+    maintainers = with lib.maintainers; [sirius902];
     platforms = lib.platforms.linux;
   };
 })

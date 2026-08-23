@@ -273,6 +273,7 @@ in
       homepage = "https://github.com/TwilitRealm/dusklight";
       description = "PC port of a classic adventure game";
       mainProgram = "dusklight";
+      maintainers = with lib.maintainers; [sirius902];
       platforms = ["x86_64-linux" "aarch64-darwin"];
       license = with lib.licenses; [unfree];
     };

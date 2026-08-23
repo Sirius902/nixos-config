@@ -49,6 +49,7 @@ buildGoModule (finalAttrs: {
     homepage = "https://github.com/alttpo/sni";
     license = lib.licenses.mit;
     mainProgram = "sni";
+    maintainers = with lib.maintainers; [sirius902];
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
   };
 })

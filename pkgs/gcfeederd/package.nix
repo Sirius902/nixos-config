@@ -92,6 +92,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     '';
     homepage = "https://github.com/Sirius902/gcfeeder";
     license = lib.licenses.mit;
+    maintainers = with lib.maintainers; [sirius902];
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
     mainProgram = "gcfeederd";
   };

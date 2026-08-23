@@ -143,8 +143,6 @@ in
       mainProgram = "wrye-bash";
       license = lib.licenses.gpl3Only;
       platforms = lib.platforms.linux;
-      maintainers = with lib.maintainers; [
-        # sirius902
-      ];
+      maintainers = with lib.maintainers; [sirius902];
     };
   })

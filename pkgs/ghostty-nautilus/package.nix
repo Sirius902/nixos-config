@@ -25,6 +25,7 @@ stdenvNoCC.mkDerivation {
     description = "Nautilus integration with Ghostty terminal";
     homepage = "https://ghostty.org";
     license = lib.licenses.mit;
+    maintainers = with lib.maintainers; [sirius902];
     platforms = lib.platforms.linux;
   };
 }

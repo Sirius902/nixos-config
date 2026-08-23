@@ -72,8 +72,7 @@
       description = "Nintendo GameCube Binary Loader for Ghidra";
       homepage = "https://github.com/Cuyler36/Ghidra-GameCube-Loader";
       license = lib.licenses.asl20;
-      # FUTURE(Sirius902) Put me here?
-      maintainers = [];
+      maintainers = with lib.maintainers; [sirius902];
       platforms = lib.platforms.unix;
     };
   };

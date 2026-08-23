@@ -66,6 +66,7 @@ stdenv.mkDerivation (finalAttrs: {
     sourceProvenance = [lib.sourceTypes.binaryNativeCode];
     license = lib.licenses.wtfpl;
     mainProgram = "enemizer-cli";
+    maintainers = with lib.maintainers; [sirius902];
     platforms = ["x86_64-linux"];
   };
 })

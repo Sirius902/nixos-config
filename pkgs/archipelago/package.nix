@@ -225,6 +225,7 @@ in
         lib.sourceTypes.fromSource
         lib.sourceTypes.binaryNativeCode
       ];
+      maintainers = with lib.maintainers; [sirius902];
       platforms = ["x86_64-linux"];
     };
   })

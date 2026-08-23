@@ -87,6 +87,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   meta = {
     description = "Customizable input viewer";
     homepage = "https://github.com/Sirius902/gcviewer";
+    maintainers = with lib.maintainers; [sirius902];
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
     mainProgram = "gcviewer";
   };
