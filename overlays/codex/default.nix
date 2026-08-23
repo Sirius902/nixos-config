@@ -29,6 +29,7 @@ in {
         (prevAttrs.passthru or {})
         // {
           updateScript = final._experimental-update-script-combinators.sequence [
+            ./update.sh
             (final.nix-update-script {
               extraArgs = [
                 "--use-github-releases"
@@ -36,7 +37,6 @@ in {
                 "^rust-v(\\d+\\.\\d+\\.\\d+)$"
               ];
             })
-            ./update.sh
           ];
         };
 
