@@ -242,10 +242,13 @@ in {
   '';
 
   postInstall =
-    lib.optionalString stdenv.hostPlatform.isLinux ''
+    ''
+      # Vendored dependency headers and static libs; not part of the package.
+      rm -r $out/share/shipwright-stable/{include,lib}
+    ''
+    + lib.optionalString stdenv.hostPlatform.isLinux ''
       mkdir -p $out/bin
       ln -s $out/share/shipwright-stable/soh.elf $out/bin/soh-stable
-      rm -r $out/share/shipwright-stable/{include,lib}
       install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/512x512/apps/soh-stable.png
     ''
     + lib.optionalString stdenv.hostPlatform.isDarwin ''
@@ -266,12 +269,14 @@ in {
           "<string>~/Library/Application Support/com.shipofharkinian.soh</string>" \
           "<string>~/Library/Application Support/com.shipofharkinian.soh-stable</string>"
 
-      mv $out/MacOS $out/Applications/soh-stable.app/Contents/MacOS
+      # The install prefix is $out/share/shipwright-stable and upstream installs
+      # to DESTINATION ../MacOS and ../Resources, landing them in $out/share.
+      mv $out/share/MacOS $out/Applications/soh-stable.app/Contents/MacOS
 
       # The install prefix contains all resources that are in "Resources" in
       # the official bundle. We move them to the right place and symlink them
       # back, as that's where the game expects them.
-      mv $out/Resources $out/Applications/soh-stable.app/Contents/Resources
+      mv $out/share/Resources $out/Applications/soh-stable.app/Contents/Resources
       mv $out/share/shipwright-stable/** $out/Applications/soh-stable.app/Contents/Resources
       rm -rf $out/share/shipwright-stable
       ln -s $out/Applications/soh-stable.app/Contents/Resources $out/share/shipwright-stable

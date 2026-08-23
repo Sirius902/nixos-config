@@ -238,10 +238,13 @@ in {
   '';
 
   postInstall =
-    lib.optionalString stdenv.hostPlatform.isLinux ''
+    ''
+      # Vendored dependency headers and static libs; not part of the package.
+      rm -r $out/share/2ship2harkinian/{include,lib}
+    ''
+    + lib.optionalString stdenv.hostPlatform.isLinux ''
       mkdir -p $out/bin
       ln -s $out/share/2ship2harkinian/2s2h.elf $out/bin/2s2h
-      rm -r $out/share/2ship2harkinian/{include,lib}
       install -Dm644 ../mm/linux/2s2hIcon.png $out/share/icons/hicolor/512x512/apps/2s2h.png
     ''
     + lib.optionalString stdenv.hostPlatform.isDarwin ''
@@ -253,12 +256,14 @@ in {
       substituteInPlace $out/Applications/2s2h.app/Contents/Info.plist \
         --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}"
 
-      mv $out/MacOS $out/Applications/2s2h.app/Contents/MacOS
+      # The install prefix is $out/share/2ship2harkinian and upstream installs
+      # to DESTINATION ../MacOS and ../Resources, landing them in $out/share.
+      mv $out/share/MacOS $out/Applications/2s2h.app/Contents/MacOS
 
       # The install prefix contains all resources that are in "Resources" in
       # the official bundle. We move them to the right place and symlink them
       # back, as that's where the game expects them.
-      mv $out/Resources $out/Applications/2s2h.app/Contents/Resources
+      mv $out/share/Resources $out/Applications/2s2h.app/Contents/Resources
       mv $out/share/2ship2harkinian/** $out/Applications/2s2h.app/Contents/Resources
       rm -rf $out/share/2ship2harkinian
       ln -s $out/Applications/2s2h.app/Contents/Resources $out/share/2ship2harkinian
