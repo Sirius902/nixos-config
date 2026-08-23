@@ -1,4 +1,13 @@
 {inputs}: [
+  # Merge repo-local maintainers into `lib.maintainers`. `lib` is an attribute
+  # of the package set, so `callPackage` hands the extended one to every
+  # `pkgs/*/package.nix` and entries read exactly as they would in nixpkgs.
+  (_: prev: {
+    lib = prev.lib.extend (_: libPrev: {
+      maintainers = libPrev.maintainers // import ../maintainers/maintainer-list.nix;
+    });
+  })
+
   (import ../pkgs/overlay.nix)
   (import ./codex)
   (import ./claude-code)
