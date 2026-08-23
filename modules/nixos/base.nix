@@ -13,7 +13,6 @@
     ../tailscale.nix
     ../documentation.nix
     ../openssh.nix
-    ../mitigations.nix
     ../memory.nix
   ];
 
