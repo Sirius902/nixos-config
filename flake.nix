@@ -245,6 +245,42 @@
             };
           };
 
+        # Enforce the fetched patch conventions in docs/patches.md. Every
+        # pattern is anchored to https://github.com so the raw.githubusercontent.com
+        # fetchurl and the aur.archlinux.org provenance comment don't trip it,
+        # and the scan is limited to *.nix so the doc may quote counter-examples.
+        checks.patch-urls = pkgs.runCommandLocal "patch-urls-check" {} ''
+          status=0
+
+          check() {
+            local reason="$1" pattern="$2"
+            local hits
+            if hits="$(grep -rnE --include='*.nix' -e "$pattern" -- ${self})"; then
+              echo "error: $reason" >&2
+              echo "$hits" | sed 's|^${self}/|  |' >&2
+              status=1
+            fi
+          }
+
+          # The scan covers this file too, so no reason below may itself spell
+          # out a form the adjacent pattern rejects.
+          check "use fetchpatch (v1), which strips the unstable index lines v2 keeps" \
+            '\bfetchpatch2\b'
+          check "GitHub patch URLs take no query parameters" \
+            'https://github\.com/[^"]*\?'
+          check "pin a commit SHA instead of a pull request URL, which follows the branch" \
+            'https://github\.com/[^"]*/pull/[0-9]+\.(diff|patch)'
+          check "fetch GitHub patches as .diff, not .patch" \
+            'https://github\.com/[^"]*\.patch'
+
+          if [ "$status" -ne 0 ]; then
+            echo "see docs/patches.md" >&2
+            exit 1
+          fi
+
+          touch $out
+        '';
+
         checks.statix = pkgs.runCommandLocal "statix-check" {} ''
           ${lib.getExe pkgs.statix} check ${self} --config ${self}/statix.toml
           touch $out
