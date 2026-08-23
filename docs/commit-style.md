@@ -8,8 +8,20 @@
 
 - Scope is the thing touched: a package attr (`shipwright:`), a hostname
   (`hee-ho:`), a module area (`minecraft-servers:`, `home:`, `users:`),
-  `flake`, `docs`, or a comma list for multi-scope changes
-  (`svends,synergyds:`).
+  `flake`, `docs`, or a comma list with no space for multi-scope changes
+  (`svends,synergyds:`). A package scope is the attr as spelled in
+  `pkgs/all-packages.nix`, not `meta.pname` — `shipwright_stable:`, not
+  `shipwright-stable:`.
+- Multi-scope subjects are a comma-separated list of terms, with brace
+  expansion inside a term, so `shipwright{,_stable,-ap},_2ship2harkinian:`
+  names four attrs. That is how nixpkgs' build queuer reads the prefix — it
+  wraps the whole thing in braces and expands once, so a top-level comma and
+  a brace group mean the same thing to it. Collapse a term only where it is
+  real expansion, two or more alternatives: `shadps4{,-qtlauncher}:`, not
+  `shadps4{-qtlauncher}:`, which is a lone alternative and stays literal.
+  Expand each term in bash or zsh before committing; every name it prints
+  must be an attr in `pkgs/all-packages.nix`. A brace scope won't match
+  `git log --grep=<attr>`; trace a package with `git log -- <path>` instead.
 - No conventional-commit type prefixes (`feat(…)`, `fix(…)`, `chore:`).
   Nothing in this repo consumes them, the type taxonomy invites judgment
   calls that decay into `chore(`, and the verb already carries that
