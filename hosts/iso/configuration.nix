@@ -10,6 +10,7 @@
     (modulesPath + "/installer/cd-dvd/channel.nix")
     ../../modules/openssh.nix
     ../../modules/tmux.nix
+    ../../modules/zfs.nix
   ];
 
   nixpkgs = {

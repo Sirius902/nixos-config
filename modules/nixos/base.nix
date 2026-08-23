@@ -13,6 +13,7 @@
     ../tailscale.nix
     ../documentation.nix
     ../openssh.nix
+    ../zfs.nix
     ../memory.nix
   ];
 

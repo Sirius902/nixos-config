@@ -23,6 +23,11 @@
   my.tailscale.enable = lib.mkDefault true;
   my.jdk = lib.mkDefault pkgs.graalvmPackages.graalvm-oracle;
 
+  # Machines I sit at keep unprivileged `zfs list`/`zfs get`; see modules/zfs.nix.
+  users.groups = lib.mkIf config.boot.zfs.enabled {
+    zfs-admin.members = ["chris"];
+  };
+
   services.flatpak.enable = lib.mkDefault true;
 
   # Configurable gaming mice (Logitech G600 etc.): ratbagctl CLI + Piper GUI

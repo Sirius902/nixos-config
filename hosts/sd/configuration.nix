@@ -8,6 +8,7 @@
     (modulesPath + "/installer/sd-card/sd-image-aarch64-installer.nix")
     ../../modules/openssh.nix
     ../../modules/tmux.nix
+    ../../modules/zfs.nix
   ];
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
