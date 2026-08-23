@@ -12,6 +12,11 @@ temp_dir="$(mktemp -d)"
 manifest_temp="$temp_dir/manifest.json"
 trap 'rm -f "$manifest_temp"; rmdir "$temp_dir"' EXIT
 
+old_version="$(jq --exit-status --raw-output '
+  .version
+  | select(type == "string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))
+' "$manifest_file")"
+
 version="$(curl --silent --show-error --fail --location "$base_url/latest")"
 if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   echo "error: latest endpoint returned an invalid version: $version" >&2
@@ -53,5 +58,12 @@ if ! jq --exit-status \
   exit 1
 fi
 
+if cmp --silent "$manifest_temp" "$manifest_file"; then
+  echo "Claude Code manifest is already pinned to $old_version."
+  exit 0
+fi
+
 mv "$manifest_temp" "$manifest_file"
-echo "Claude Code manifest is pinned to $version."
+git -C "$repo_root" commit --only \
+  --message "claude-code: $old_version -> $version" \
+  -- overlays/claude-code/manifest.json
