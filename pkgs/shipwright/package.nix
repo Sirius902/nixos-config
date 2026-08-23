@@ -212,7 +212,6 @@ in {
 
   cmakeFlags =
     [
-      (lib.cmakeBool "BUILD_REMOTE_CONTROL" true)
       (lib.cmakeBool "NON_PORTABLE" true)
       (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" "${placeholder "out"}/share/shipwright")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DR_LIBS" "${dr_libs}")
