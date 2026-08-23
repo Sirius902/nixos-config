@@ -42,7 +42,7 @@
   openssl,
   valijson,
   websocketpp,
-  fetchpatch2,
+  fetchpatch,
   nix-update-script,
 }:
 stdenv.mkDerivation (finalAttrs: let
@@ -128,10 +128,10 @@ stdenv.mkDerivation (finalAttrs: let
       hash = "sha256-BmRgWnIeTyH8B2kDF/7KsEy0dcoq+ckKyxzbrHdK/no=";
     };
     patches = [
-      (fetchpatch2 {
+      (fetchpatch {
         name = "boost-1_87-fix.patch";
-        url = "https://github.com/Sirius902/wswrap/commit/455e50470f4b4213d654251ad5ca223370f99287.patch?full_index=1";
-        hash = "sha256-pTZdM2aqSJkTm+EYpX0qAA6afmbHZDzb08rbgp39lmA=";
+        url = "https://github.com/black-sliver/wswrap/commit/455e50470f4b4213d654251ad5ca223370f99287.diff";
+        hash = "sha256-aaLP2fw4s5H8X1b/N+ZiTocCZhu+U0J7hosZ1N36E9k=";
       })
     ];
   };

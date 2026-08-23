@@ -76,15 +76,15 @@ in {
       patches =
         [
           # TODO(Sirius902) shadps4 needs zenity for errors. Make PR?
-          (pkgs.fetchpatch2 {
+          (pkgs.fetchpatch {
             name = "shadps4-add-zenity.patch";
-            url = "https://github.com/Sirius902/nixpkgs/commit/e7a9edbc8788feb0d0c6b4a52772f2641a46c53d.patch?full_index=1";
-            hash = "sha256-RPYVekB6ZWPumTYG/RR4DSXmMW9fsFW9uN1IRSMNF0A=";
+            url = "https://github.com/NixOS/nixpkgs/commit/e7a9edbc8788feb0d0c6b4a52772f2641a46c53d.diff";
+            hash = "sha256-/Ma6rOMuBZc5dL6V+Y9Y7N7begg7iONua3zJcfUlrOE=";
           })
           # Add cosmic-ext-applet-clipboard-manager https://github.com/NixOS/nixpkgs/pull/496706
-          (pkgs.fetchpatch2 {
+          (pkgs.fetchpatch {
             name = "add-cosmic-ext-applet-clipboard-manager.patch";
-            url = "https://github.com/kritdass/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.patch?full_index=1";
+            url = "https://github.com/NixOS/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.diff";
             hash = "sha256-TvrGKoaPnrkIZyntbv/C6m55e2p2kLECtxH7/fViXM4=";
           })
         ]

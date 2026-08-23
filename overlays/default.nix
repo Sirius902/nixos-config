@@ -14,10 +14,10 @@
           # FUTURE(Sirius902) Add SHM screencast fallback so Discord/Electron
           # consumers that don't accept dmabuf modifiers can negotiate a format.
           # https://github.com/niri-wm/niri/pull/1791 (fixes #455)
-          (final.fetchpatch2 {
+          (final.fetchpatch {
             name = "niri-pr-1791-shm-sharing.patch";
-            url = "https://github.com/niri-wm/niri/compare/8ed0da44d974c32c6877d2f4630c314da0717ecb...2ab59b90d55afbbe362a63e2a061afe4b524d8c4.patch?full_index=1";
-            hash = "sha256-YVnWZvdIeeWnWFAHY4/jI/+neNChRTkTou2S0ybI6rw=";
+            url = "https://github.com/niri-wm/niri/compare/8ed0da44d974c32c6877d2f4630c314da0717ecb...2ab59b90d55afbbe362a63e2a061afe4b524d8c4.diff";
+            hash = "sha256-q7rRmWgplPWAy/LDAbuSiuL+xTdCaPDx3DryZ3f+fqg=";
           })
         ];
     });
@@ -36,10 +36,10 @@
           ../patches/cosmic-comp/default-kind.patch
           # FUTURE(Sirius902) Workaround for Wayland popups.
           # https://github.com/pop-os/cosmic-comp/pull/2243
-          (final.fetchpatch2 {
+          (final.fetchpatch {
             name = "remove-popup-serial-check.patch";
-            url = "https://github.com/pop-os/cosmic-comp/commit/e334a29cc2a3bae0b13cd4668a22a72ea20a9229.patch?full_index=1";
-            hash = "sha256-6hI12eWay6L4DZcJxcmJK/nMi71qTqaWtLrxOuhaYtA=";
+            url = "https://github.com/pop-os/cosmic-comp/commit/e334a29cc2a3bae0b13cd4668a22a72ea20a9229.diff";
+            hash = "sha256-kEKoS4eG1KsEAjCdyrPixkS3NjS+XPjmfEuhJ/ukrsQ=";
           })
         ];
     });
@@ -224,16 +224,16 @@
       patches =
         (prevAttrs.patches or [])
         ++ [
-          (final.fetchpatch2 {
+          (final.fetchpatch {
             name = "add-window-cycle.patch";
-            url = "https://github.com/Sirius902/gamescope/commit/9d6513068846f1b9fea5afc326fc9d2758079fdb.patch?full_index=1";
-            hash = "sha256-yNu7axkkgilokv5qjmZdr5HcTOkQ9AE5tUkb7QcRHbk=";
+            url = "https://github.com/ValveSoftware/gamescope/commit/9d6513068846f1b9fea5afc326fc9d2758079fdb.diff";
+            hash = "sha256-hy1ZDR/k9TIAGmN2yD5PUI0/4JjlYKmaRUwuvhhMN8w=";
           })
           ../patches/gamescope/0001-main-Strip-gameoverlayrenderer.so-from-gamescope-s-o.patch
-          (final.fetchpatch2 {
+          (final.fetchpatch {
             name = "clamp-cursor-adaptive-sync.patch";
-            url = "https://github.com/ValveSoftware/gamescope/commit/2b18c4eee02bc8600ce11705cada906e6bbe8232.patch?full_index=1";
-            hash = "sha256-5ssDVIlQYBZlk5xcFSMbt9gAjsmM7Jv/IEM7R+4pF/M=";
+            url = "https://github.com/ValveSoftware/gamescope/commit/2b18c4eee02bc8600ce11705cada906e6bbe8232.diff";
+            hash = "sha256-w3ucV7GUi/oyIRd1MBeJqeJhhmwDSFsGzdSU0N0+M7A=";
           })
         ];
 
@@ -436,15 +436,15 @@
       patches =
         (prevAttrs.patches or [])
         ++ [
-          (final.fetchpatch2 {
+          (final.fetchpatch {
             name = "npc-door-panic.patch";
-            url = "https://github.com/Sirius902/hlsdk-portable/compare/6ba528f2a36622a45c453f832934ab3adaca7c1c...7284904a3fc93173e0d5a5d8e16a0bb2e7e32d49.patch?full_index=1";
-            hash = "sha256-6ccvLCFXvDvUMynEGvQYGooLM2OgLuDWFwkldQj+1T4=";
+            url = "https://github.com/FWGS/hlsdk-portable/compare/6ba528f2a36622a45c453f832934ab3adaca7c1c...7284904a3fc93173e0d5a5d8e16a0bb2e7e32d49.diff";
+            hash = "sha256-gMjqvBEMK7gItyE5wmCq/RjOMLdzItZSKQqQS9o1a6w=";
           })
-          (final.fetchpatch2 {
+          (final.fetchpatch {
             name = "add-speed-hud.patch";
-            url = "https://github.com/Sirius902/hlsdk-portable/compare/6ba528f2a36622a45c453f832934ab3adaca7c1c...9f354d92d0b5123246449ac95a1c751f3cb43f93.diff?full_index=1";
-            hash = "sha256-p+0pt1DJFRHAOdgg16cxe2bXfykezCBDYtHgzYQWptM=";
+            url = "https://github.com/FWGS/hlsdk-portable/compare/6ba528f2a36622a45c453f832934ab3adaca7c1c...9f354d92d0b5123246449ac95a1c751f3cb43f93.diff";
+            hash = "sha256-7Hsg9NtBejtj1BJPwuMYPryhj+lyXVgO+syTzn5SvGM=";
           })
         ];
 
