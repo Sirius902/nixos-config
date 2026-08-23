@@ -24,6 +24,7 @@
 
     sequence-otrizer = pkgs.callPackage ./sequence-otrizer/package.nix {};
     darunias-joy = pkgs.callPackage ./darunias-joy/package.nix {};
+    ganondorfs-organ = pkgs.callPackage ./ganondorfs-organ/package.nix {};
 
     shipwright = pkgs.callPackage ./shipwright/package.nix {};
     shipwright_stable = pkgs.callPackage ./shipwright/stable.nix {};
