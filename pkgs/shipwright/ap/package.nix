@@ -244,7 +244,10 @@ in {
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
     ];
 
-  env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base";
+  # libc++ gates floating-point std::from_chars on macOS 26, so valijson's
+  # auto-detection picks an unavailable overload. 0 selects its istringstream
+  # fallback; only works on valijson >= 1.1.3, which added the macro gate.
+  env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-Wno-int-conversion -Wno-implicit-int -Wno-elaborated-enum-base -DVALIJSON_HAS_STD_FROM_CHARS=0";
 
   strictDeps = true;
   __structuredAttrs = true;
