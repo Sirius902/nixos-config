@@ -280,10 +280,13 @@ in {
   '';
 
   postInstall =
-    lib.optionalString stdenv.hostPlatform.isLinux ''
+    ''
+      # Vendored dependency headers and static libs; not part of the package.
+      rm -r $out/share/shipwright-ap/{include,lib}
+    ''
+    + lib.optionalString stdenv.hostPlatform.isLinux ''
       mkdir -p $out/bin
       ln -s $out/share/shipwright-ap/soh.elf $out/bin/soh-ap
-      rm -r $out/share/shipwright-ap/{include,lib}
       install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/512x512/apps/soh-ap.png
     ''
     + lib.optionalString stdenv.hostPlatform.isDarwin ''
@@ -304,12 +307,14 @@ in {
           "<string>~/Library/Application Support/com.shipofharkinian.soh</string>" \
           "<string>~/Library/Application Support/com.shipofharkinian.soh-ap</string>"
 
-      mv $out/MacOS $out/Applications/soh-ap.app/Contents/MacOS
+      # The install prefix is $out/share/shipwright-ap and upstream installs to
+      # DESTINATION ../MacOS and ../Resources, which lands them in $out/share.
+      mv $out/share/MacOS $out/Applications/soh-ap.app/Contents/MacOS
 
       # The install prefix contains all resources that are in "Resources" in
       # the official bundle. We move them to the right place and symlink them
       # back, as that's where the game expects them.
-      mv $out/Resources $out/Applications/soh-ap.app/Contents/Resources
+      mv $out/share/Resources $out/Applications/soh-ap.app/Contents/Resources
       mv $out/share/shipwright-ap/** $out/Applications/soh-ap.app/Contents/Resources
       rm -rf $out/share/shipwright-ap
       ln -s $out/Applications/soh-ap.app/Contents/Resources $out/share/shipwright-ap

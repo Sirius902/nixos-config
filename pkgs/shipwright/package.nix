@@ -267,10 +267,13 @@ in {
   '';
 
   postInstall =
-    lib.optionalString stdenv.hostPlatform.isLinux ''
+    ''
+      # Vendored dependency headers and static libs; not part of the package.
+      rm -r $out/share/shipwright/{include,lib} $out/lib $out/include
+    ''
+    + lib.optionalString stdenv.hostPlatform.isLinux ''
       mkdir -p $out/bin
       ln -s $out/share/shipwright/soh.elf $out/bin/soh
-      rm -r $out/share/shipwright/{include,lib} $out/lib $out/include
       install -Dm644 ../soh/macosx/sohIcon.png $out/share/icons/hicolor/512x512/apps/soh.png
     ''
     + lib.optionalString stdenv.hostPlatform.isDarwin ''
@@ -282,12 +285,14 @@ in {
       substituteInPlace $out/Applications/soh.app/Contents/Info.plist \
         --replace-fail "@CMAKE_PROJECT_VERSION@" "${finalAttrs.version}"
 
-      mv $out/MacOS $out/Applications/soh.app/Contents/MacOS
+      # The install prefix is $out/share/shipwright and upstream installs to
+      # DESTINATION ../MacOS and ../Resources, which lands them in $out/share.
+      mv $out/share/MacOS $out/Applications/soh.app/Contents/MacOS
 
       # The install prefix contains all resources that are in "Resources" in
       # the official bundle. We move them to the right place and symlink them
       # back, as that's where the game expects them.
-      mv $out/Resources $out/Applications/soh.app/Contents/Resources
+      mv $out/share/Resources $out/Applications/soh.app/Contents/Resources
       mv $out/share/shipwright/** $out/Applications/soh.app/Contents/Resources
       rm -rf $out/share/shipwright
       ln -s $out/Applications/soh.app/Contents/Resources $out/share/shipwright
