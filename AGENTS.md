@@ -9,3 +9,5 @@ changing anything it covers.
   packages coexist in a profile without colliding.
 - `docs/desktop-entries.md` — `makeDesktopItem` field usage per the
   freedesktop `.desktop` spec.
+- `docs/patches.md` — how patches are fetched and carried, and which of those
+  rules `checks.patch-urls` enforces.
