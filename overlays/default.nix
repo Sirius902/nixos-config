@@ -8,6 +8,100 @@
     });
   })
 
+  # `checkOutputLayout pkg` builds the docs/package-layout.md check for a
+  # package, wired up as `passthru.tests.layout` on everything in
+  # `pkgs/all-packages.nix`. It walks the built `$out` instead of the
+  # expression, so a directory named by a `--destdir` flag, by a path in
+  # another file, or by a shell variable is covered the same as a literal.
+  (final: _: {
+    checkOutputLayout = pkg: let
+      inherit (final.lib) concatStringsSep optionals;
+      inherit (final.stdenv.hostPlatform) isDarwin;
+
+      # The standard prefixes. A darwin app bundle adds one tree of its own.
+      prefixes =
+        ["bin" "etc" "include" "lib" "libexec" "nix-support" "sbin" "share"]
+        ++ optionals isDarwin ["Applications"];
+
+      # Trees whose whole point is to merge across packages: freedesktop
+      # metadata, and the plugin directories a host application owns. Darwin
+      # adds the two bundle directories cmake installs beside the prefix.
+      sharedInShare =
+        [
+          "applications"
+          "doc"
+          "icons"
+          "licenses"
+          "man"
+          "metainfo"
+          "nautilus-python"
+          "pixmaps"
+        ]
+        ++ optionals isDarwin ["MacOS" "Resources"];
+      sharedInLib = ["ghidra" "udev"];
+    in
+      final.runCommandLocal "${pkg.pname}-layout-check" {} ''
+        shopt -s nullglob
+
+        root=${pkg}
+        pname=${pkg.pname}
+        status=0
+
+        fail() {
+          echo "error: $1" >&2
+          status=1
+        }
+
+        # Every entry of the directory named in $1 is either the package's own
+        # $pname directory or one of the shared trees passed after the hint.
+        check_entries() {
+          local dir="$1" hint="$2" entry name
+          shift 2
+          for entry in "$root/$dir"/*; do
+            name=$(basename "$entry")
+            case " $pname $* " in
+            *" $name "*) continue ;;
+            esac
+            fail "$dir/$name: $hint"
+          done
+        }
+
+        for entry in "$root"/*; do
+          name=$(basename "$entry")
+          case " ${concatStringsSep " " prefixes} " in
+          *" $name "*) continue ;;
+          esac
+          fail "$name: the top level takes only the standard prefixes"
+        done
+
+        check_entries share "app-private data goes in share/$pname" \
+          ${concatStringsSep " " sharedInShare}
+        check_entries lib "app-private files go in lib/$pname" \
+          ${concatStringsSep " " sharedInLib}
+
+        for entry in "$root"/share/licenses/*; do
+          name=$(basename "$entry")
+          if [ "$name" != "$pname" ]; then
+            fail "share/licenses/$name: licenses go in share/licenses/$pname"
+          fi
+        done
+
+        for entry in "$root"/bin/*; do
+          if [ -d "$entry" ]; then
+            fail "bin/$(basename "$entry"): bin holds executables, not directories"
+          fi
+        done
+
+        if [ "$status" -ne 0 ]; then
+          echo "in $root" >&2
+          echo "see docs/package-layout.md" >&2
+          exit 1
+        fi
+
+        touch $out
+      '';
+  })
+
   (import ../pkgs/overlay.nix)
   (import ./codex)
   (import ./claude-code)
