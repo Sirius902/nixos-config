@@ -245,6 +245,11 @@
             };
           };
 
+        checks.deadnix = pkgs.runCommandLocal "deadnix-check" {} ''
+          ${lib.getExe pkgs.deadnix} --fail ${self}
+          touch $out
+        '';
+
         # Enforce the fetched patch conventions in docs/patches.md. Every
         # pattern is anchored to https://github.com so the raw.githubusercontent.com
         # fetchurl and the aur.archlinux.org provenance comment don't trip it,
