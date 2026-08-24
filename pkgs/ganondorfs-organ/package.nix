@@ -6,7 +6,7 @@
   unzip,
   stdenvNoCC,
 }:
-stdenvNoCC.mkDerivation {
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "ganondorfs-organ";
   version = "0-unstable-2026-06-13";
 
@@ -40,11 +40,19 @@ stdenvNoCC.mkDerivation {
     runHook postInstall
   '';
 
-  passthru.updateScript = nix-update-script {
-    extraArgs = [
-      "--version=branch=main"
-      "--version-regex=(0-unstable-.*)"
-    ];
+  passthru = {
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--version=branch=main"
+        "--version-regex=(0-unstable-.*)"
+      ];
+    };
+
+    tests.otr = sequence-otrizer.mkOtrTest {
+      pack = finalAttrs.finalPackage;
+      inherit (finalAttrs) src;
+      otr = "share/ganondorfs-organ/ganondorfsorgan.otr";
+    };
   };
 
   __structuredAttrs = true;
@@ -58,4 +66,4 @@ stdenvNoCC.mkDerivation {
     platforms = lib.platforms.all;
     maintainers = with lib.maintainers; [sirius902];
   };
-}
+})

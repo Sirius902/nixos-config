@@ -6,7 +6,7 @@
   unzip,
   stdenvNoCC,
 }:
-stdenvNoCC.mkDerivation {
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "darunias-joy";
   version = "0-unstable-2026-07-15";
 
@@ -93,11 +93,19 @@ stdenvNoCC.mkDerivation {
     runHook postInstall
   '';
 
-  passthru.updateScript = nix-update-script {
-    extraArgs = [
-      "--version=branch=Custom-Music-2.0"
-      "--version-regex=(0-unstable-.*)"
-    ];
+  passthru = {
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--version=branch=Custom-Music-2.0"
+        "--version-regex=(0-unstable-.*)"
+      ];
+    };
+
+    tests.otr = sequence-otrizer.mkOtrTest {
+      pack = finalAttrs.finalPackage;
+      inherit (finalAttrs) src;
+      otr = "share/darunias-joy/daruniasjoy.otr";
+    };
   };
 
   __structuredAttrs = true;
@@ -111,4 +119,4 @@ stdenvNoCC.mkDerivation {
     platforms = lib.platforms.all;
     maintainers = with lib.maintainers; [sirius902];
   };
-}
+})

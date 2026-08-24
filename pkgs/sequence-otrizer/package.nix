@@ -1,6 +1,7 @@
 {
   applyPatches,
   bzip2,
+  callPackage,
   cmake,
   fetchFromGitHub,
   glew,
@@ -116,11 +117,17 @@ in {
     runHook postInstall
   '';
 
-  passthru.updateScript = nix-update-script {
-    extraArgs = [
-      # Upstream also carries `test-tag` and `test-tag-pack`.
-      "--version-regex=v(.*)"
-    ];
+  passthru = {
+    updateScript = nix-update-script {
+      extraArgs = [
+        # Upstream also carries `test-tag` and `test-tag-pack`.
+        "--version-regex=v(.*)"
+      ];
+    };
+
+    # Checks a pack this built against the sequences it was built from. Lives
+    # here because every pack needs it and none of them own it.
+    mkOtrTest = callPackage ./otr-test.nix {};
   };
 
   meta = {
