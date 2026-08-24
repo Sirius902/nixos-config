@@ -282,14 +282,14 @@ in {
     ''
     + ''
       # TODO(Sirius902) Uncomment when upstream adds a root LICENSE file.
-      # install -Dm644 -t $out/share/licenses/shipwright_stable ../LICENSE
+      # install -Dm644 -t $out/share/licenses/shipwright-stable ../LICENSE
       test ! -f ../LICENSE || (echo "upstream LICENSE exists now, install it!" && false)
 
-      install -Dm644 -t $out/share/licenses/shipwright_stable/OTRExporter ../OTRExporter/LICENSE
-      install -Dm644 -t $out/share/licenses/shipwright_stable/ZAPDTR ../ZAPDTR/LICENSE
-      install -Dm644 -t $out/share/licenses/shipwright_stable/libgfxd ${libgfxd}/LICENSE
-      install -Dm644 -t $out/share/licenses/shipwright_stable/libultraship ../libultraship/LICENSE
-      install -Dm644 -t $out/share/licenses/shipwright_stable/thread_pool ${thread_pool}/LICENSE.txt
+      install -Dm644 -t $out/share/licenses/shipwright-stable/OTRExporter ../OTRExporter/LICENSE
+      install -Dm644 -t $out/share/licenses/shipwright-stable/ZAPDTR ../ZAPDTR/LICENSE
+      install -Dm644 -t $out/share/licenses/shipwright-stable/libgfxd ${libgfxd}/LICENSE
+      install -Dm644 -t $out/share/licenses/shipwright-stable/libultraship ../libultraship/LICENSE
+      install -Dm644 -t $out/share/licenses/shipwright-stable/thread_pool ${thread_pool}/LICENSE.txt
     '';
 
   postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
