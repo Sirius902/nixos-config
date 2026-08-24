@@ -1,4 +1,5 @@
 {
+  applyPatches,
   bzip2,
   cmake,
   fetchFromGitHub,
@@ -33,11 +34,14 @@ stdenv.mkDerivation (finalAttrs: let
     hash = "sha256-MU0cAeV7sZfxUo/1N8Om/h22DD9SORZvqAzRGZO8a+I=";
   };
 
-  libultraship = fetchFromGitHub {
-    owner = "Kenix3";
-    repo = "libultraship";
-    rev = "823d98f3dd5f7f82fb70a31c9ac1fc01ea584f5f";
-    hash = "sha256-AF+2pRe+wWC1KzLRoevbS7Cshap5emx9Hektdbjp3TY=";
+  libultraship = applyPatches {
+    src = fetchFromGitHub {
+      owner = "Kenix3";
+      repo = "libultraship";
+      rev = "823d98f3dd5f7f82fb70a31c9ac1fc01ea584f5f";
+      hash = "sha256-AF+2pRe+wWC1KzLRoevbS7Cshap5emx9Hektdbjp3TY=";
+    };
+    patches = [./libultraship-source-date-epoch.patch];
   };
 in {
   pname = "sequence-otrizer";
@@ -49,6 +53,8 @@ in {
     tag = "v${finalAttrs.version}";
     hash = "sha256-GBm5PODUGwWf8BFu72omtIAPOY/HUeSkZmSXu6ZDxQ0=";
   };
+
+  patches = [./sort-sequence-traversal.patch];
 
   # GitHub tarballs ship submodule paths as empty directories, so -T is needed
   # to fill them in rather than nest a copy inside them.

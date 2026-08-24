@@ -1,0 +1,59 @@
+From 28f6847db5e902e1911bcc45f26374d783cab55b Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Sun, 23 Aug 2026 19:30:00 -0700
+Subject: [PATCH] Honour SOURCE_DATE_EPOCH when stamping archive entries
+
+CreateArchive asks StormLib for an (attributes) stream, which records the
+timestamp AddFile passes for every file it writes. Stamping the wall clock
+therefore makes two archives built from identical inputs differ, which
+breaks reproducible builds. Read SOURCE_DATE_EPOCH when it is set and fall
+back to the current time when it is not.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+---
+ src/resource/Archive.cpp | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/src/resource/Archive.cpp b/src/resource/Archive.cpp
+index 636c80c..218eada 100644
+--- a/src/resource/Archive.cpp
++++ b/src/resource/Archive.cpp
+@@ -6,6 +6,8 @@
+ #include <spdlog/spdlog.h>
+ #include "Utils/StringHelper.h"
+ #include <StrHash64.h>
++#include <cstdlib>
++#include <ctime>
+ #include <filesystem>
+ #include "binarytools/BinaryReader.h"
+ #include "binarytools/MemoryStream.h"
+@@ -124,15 +126,23 @@ std::shared_ptr<OtrFile> Archive::LoadFile(const std::string& filePath, bool inc
+ 
+ bool Archive::AddFile(const std::string& path, uintptr_t fileData, DWORD fileSize) {
+     HANDLE hFile;
++    ULONGLONG theTime;
+ #ifdef _WIN32
+     SYSTEMTIME sysTime;
+     GetSystemTime(&sysTime);
+     FILETIME t;
+     SystemTimeToFileTime(&sysTime, &t);
+-    ULONGLONG theTime = static_cast<uint64_t>(t.dwHighDateTime) << (sizeof(t.dwHighDateTime) * 8) | t.dwLowDateTime;
++    theTime = static_cast<uint64_t>(t.dwHighDateTime) << (sizeof(t.dwHighDateTime) * 8) | t.dwLowDateTime;
+ #else
+-    time_t theTime;
+-    time(&theTime);
++    // The (attributes) stream records this timestamp for every file, so
++    // stamping the wall clock makes an otherwise identical archive differ on
++    // every run. Honour SOURCE_DATE_EPOCH when a build sets it.
++    const char* sourceDateEpoch = std::getenv("SOURCE_DATE_EPOCH");
++    if (sourceDateEpoch != nullptr) {
++        theTime = std::strtoull(sourceDateEpoch, nullptr, 10);
++    } else {
++        theTime = static_cast<ULONGLONG>(time(nullptr));
++    }
+ #endif
+ 
+     std::string updatedPath = path;
+-- 
+2.55.0
+

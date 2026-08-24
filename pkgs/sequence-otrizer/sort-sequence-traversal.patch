@@ -1,0 +1,67 @@
+From 6727d5039cb35fa1f41ad4cea4b83d2089c7d0f4 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Sun, 23 Aug 2026 19:30:00 -0700
+Subject: [PATCH] Sort sequence traversal so the packed OTR is reproducible
+
+std::filesystem iteration order is unspecified, and on filesystems that
+salt their directory hashes it genuinely varies between runs of the same
+program over the same tree. That order picks the order sequences are laid
+out in the archive, and where two sequence folders carry the same name it
+picks which of the two is kept, since the archive rejects the second add
+of a name. Sort both levels so the same sequence folder always packs to
+the same OTR.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+---
+ main.cpp | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/main.cpp b/main.cpp
+index c92a5e0..9b5e16f 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -1,6 +1,7 @@
+ #include "Sequence.h"
+ #include "Utils.h"
+ #include "config.h"
++#include <algorithm>
+ #include <iostream>
+ 
+ void PrintVersion() {
+@@ -116,17 +117,28 @@ int main(int argc, char* argv[]) {
+                 folders.push_back(item.path());
+             }
+         }
++        // Directory iteration order is unspecified, and on some filesystems it
++        // varies from run to run. It decides the order entries are laid out in the
++        // archive, and where two sequences share a name it decides which one is
++        // kept, since the second add of a name is rejected. Sort so the same
++        // sequence folder always produces the same OTR.
++        std::sort(folders.begin(), folders.end());
+         for (auto folder : folders) {
+             std::filesystem::path seqPath;
+             bool valid = false;
+-            for (auto file : std::filesystem::directory_iterator(folder)) {
+-                if (file.path().extension() == ".zbank") {
+-                    std::cerr << file.path().generic_string() << " is an unsupported soundbank mod! Skipping." << std::endl;
++            std::vector<std::filesystem::path> files;
++            for (auto item : std::filesystem::directory_iterator(folder)) {
++                files.push_back(item.path());
++            }
++            std::sort(files.begin(), files.end());
++            for (auto file : files) {
++                if (file.extension() == ".zbank") {
++                    std::cerr << file.generic_string() << " is an unsupported soundbank mod! Skipping." << std::endl;
+                     valid = false;
+                     break;
+                 }
+-                if (file.path().extension() == ".seq" && std::filesystem::exists(file.path().parent_path() / file.path().stem() += ".meta")) {
+-                    seqPath = file.path();
++                if (file.extension() == ".seq" && std::filesystem::exists(file.parent_path() / file.stem() += ".meta")) {
++                    seqPath = file;
+                     valid = true;
+                 }
+             }
+-- 
+2.55.0
+
