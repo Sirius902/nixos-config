@@ -31,11 +31,38 @@ standard prefixes, and nothing loose goes inside them:
   (see below). The merge-designed freedesktop trees keep their usual layout:
   `share/applications`, `share/icons/hicolor`, `share/man`,
   `share/licenses/${pname}`, `share/pixmaps`.
+- A tree a host application owns keeps that application's layout, not ours:
+  `lib/udev/rules.d`, `lib/ghidra/Extensions`,
+  `share/nautilus-python/extensions`.
 - Never invent top-level directories (`$out/valve`, `$out/2s2h`).
 
 Vendored build detritus (dependency headers, static libs — e.g. StormLib's
 `include/` + `lib/` leaking from a cmake install) is deleted in `postInstall`,
 not relocated.
+
+## Attr names and pname
+
+The attr in `pkgs/all-packages.nix` and the derivation's `pname` may differ,
+and the attr's suffix says which kind of variant it is: `_suffix` selects a
+version channel of the same product (`shipwright_stable`, `ffmpeg_8`,
+`linux_testing`), while `-suffix` names a different edition or fork
+(`shipwright-ap`, `nodejs-slim`).
+
+nixpkgs never carries a *variant* `_` suffix into pname — `ffmpeg_8` is pname
+`ffmpeg`, `qemu_full` is pname `qemu` — because those pins are never
+co-installed. (An underscore the upstream name itself has stays, which is why
+plenty of nixpkgs pnames contain one.) Ours are co-installed: `shipwright` and
+`shipwright_stable` share a profile, so `shipwright_stable` keeps
+`pname = "shipwright-stable"` to hold the `${pname}` uniqueness invariant
+above. nixpkgs does the same wherever a channel variant *is* co-installable,
+just indirected — `firefox-esr` keeps a bare pname but reintroduces a
+per-variant name for every user-visible path through `nameSuffix`.
+`linkerd_stable` → pname `linkerd-stable` and `qemu_kvm` → pname
+`qemu-host-cpu-only` are the direct precedents for renaming the pname instead.
+
+An attr diverging from its pname is therefore the convention, not a defect.
+Do not "fix" `shipwright_stable` toward `pname = "shipwright"`; that
+reintroduces the collisions this document exists to prevent.
 
 ## Deciding where a file goes
 
@@ -71,6 +98,17 @@ package family (`sm64coopdx`, `starship-sf64`) use a whole app dir under
   (`XASH3D_RODIR`, `LD_LIBRARY_PATH` for by-soname dlopen).
 
 ## Checking a package
+
+```console
+$ nix build .#foo.tests.layout
+```
+
+Every attr in `pkgs/all-packages.nix` carries that check — it is attached
+centrally, so a new package gets it without doing anything. It reads the built
+`$out` rather than the expression, which is what makes it indifferent to how a
+path was spelled, and it fails naming the offending path.
+
+To look around by hand:
 
 ```console
 $ find $(nix build --no-link --print-out-paths .#foo) -mindepth 1 -maxdepth 2
