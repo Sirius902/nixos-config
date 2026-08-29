@@ -11,14 +11,14 @@ in {
     (prev.codex.override {
       inherit librusty_v8 librusty_v8_src_binding;
     }).overrideAttrs (finalAttrs: prevAttrs: {
-      version = "0.150.1";
+      version = "0.151.0";
 
       src = prevAttrs.src.override {
         tag = "rust-v${finalAttrs.version}";
-        hash = "sha256-l8H2//SpzzUvtA3IZ9BXhWBqlaatbFk6rBYeLThozb4=";
+        hash = "sha256-snrzA4W+vLqpPk3MS4xw9SszK1byCKo6ERz3JDgRZdA=";
       };
 
-      cargoHash = "sha256-85Po+Pe2xKltxznAv1MhC7BULJ+6AfXwM4jkZQ6+utk=";
+      cargoHash = "sha256-r6ox0dUH1OBkD8sQApfANrGbWxKXLv2UNLJZzciJc3I=";
       cargoDeps = prevAttrs.cargoDeps.overrideAttrs {
         vendorStaging = prevAttrs.cargoDeps.vendorStaging.overrideAttrs {
           outputHash = finalAttrs.cargoHash;
