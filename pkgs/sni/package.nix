@@ -6,6 +6,7 @@
   gtk3,
   libayatana-appindicator,
   nix-update-script,
+  stdenv,
 }:
 buildGoModule (finalAttrs: {
   pname = "sni";
@@ -20,9 +21,9 @@ buildGoModule (finalAttrs: {
 
   vendorHash = "sha256-o4CShxZ8HUL2zcIEcdhr7xTjuVUIPj86zyRTYgsC6dc=";
 
-  nativeBuildInputs = [pkg-config];
+  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [pkg-config];
 
-  buildInputs = [
+  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [
     gtk3
     libayatana-appindicator
   ];
