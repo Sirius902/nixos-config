@@ -18,6 +18,7 @@
       asynckivy = pfinal.callPackage ./python-modules/asynckivy {};
       dolphin-memory-engine = pfinal.callPackage ./python-modules/dolphin-memory-engine {};
       factorio-rcon-py = pfinal.callPackage ./python-modules/factorio-rcon-py {};
+      kivy = pfinal.callPackage ./python-modules/kivy {};
       kivymd = pfinal.callPackage ./python-modules/kivymd {};
       maseya-z3pr = pfinal.callPackage ./python-modules/maseya-z3pr {};
       pkg-resources = pfinal.callPackage ./python-modules/pkg-resources {};
