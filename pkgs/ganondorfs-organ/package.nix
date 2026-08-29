@@ -1,9 +1,9 @@
 {
+  _7zz,
   fetchFromGitHub,
   lib,
   nix-update-script,
   sequence-otrizer,
-  unzip,
   stdenvNoCC,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -18,15 +18,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   };
 
   nativeBuildInputs = [
+    _7zz
     sequence-otrizer
-    unzip
   ];
 
   buildPhase = ''
     runHook preBuild
 
     find data/Music -name '*.ootrs' -print0 | while IFS= read -r -d "" archive; do
-      unzip -qo "$archive" -d "''${archive%.ootrs}"
+      7zz x -tzip -y -bso0 -bsp0 -o"''${archive%.ootrs}" "$archive"
     done
 
     SequenceOTRizer --seq-path data/Music --otr-name ganondorfsorgan

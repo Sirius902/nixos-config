@@ -1,9 +1,9 @@
 {
+  _7zz,
   fetchFromGitHub,
   lib,
   nix-update-script,
   sequence-otrizer,
-  unzip,
   stdenvNoCC,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -18,8 +18,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   };
 
   nativeBuildInputs = [
+    _7zz
     sequence-otrizer
-    unzip
   ];
 
   # Seven entries under data/Music are packed wrong as shipped: SequenceOTRizer
@@ -32,7 +32,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook preBuild
 
     find data/Music -name '*.ootrs' -print0 | while IFS= read -r -d "" archive; do
-      unzip -qo "$archive" -d "''${archive%.ootrs}"
+      7zz x -tzip -y -bso0 -bsp0 -o"''${archive%.ootrs}" "$archive"
     done
 
     retitle() { # <meta> <line> <expected> <replacement>
@@ -48,8 +48,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     # TODO(Sirius902) Drop once the .seq entry in Blue Water Blue Sky -May's
     # Theme-.ootrs spells the apostrophe the way its .meta does: the zip holds
     # a CP932 quote in the one and an ASCII quote in the other, so the stems
-    # never match. Glob for the .seq so the undecodable byte unzip writes out
-    # for that quote stays out of this file.
+    # never match.
     seqDir="data/Music/Guilty Gear Series/Guilty Gear X/Blue Water Blue Sky -May's Theme-"
     mv "$seqDir"/*.seq "$seqDir/Guilty Gear - Blue Water Blue Sky -May's Theme-.seq"
 
