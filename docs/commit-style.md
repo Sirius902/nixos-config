@@ -34,7 +34,9 @@
 
 No body by default. Most commits, including nontrivial ones, are fully
 served by the subject line; writing a body is a conscious exception, not
-a habit, and stays to a sentence or two when it happens.
+a habit, and stays to a sentence or two when it happens. When one is
+warranted it carries the reason, never the diff; `docs/comments.md` holds
+the same bar for comments.
 
 Never include:
 

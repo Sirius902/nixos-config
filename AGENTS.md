@@ -5,6 +5,8 @@ changing anything it covers.
 
 - `docs/commit-style.md` — commit subject scope and summary; when a body is
   warranted, what never belongs in one, and the agent trailer.
+- `docs/comments.md` — when a comment earns its place in an expression, and
+  where a change's reasoning belongs when it doesn't.
 - `docs/package-layout.md` — how to lay out `$out` in `pkgs/` derivations so
   packages coexist in a profile without colliding.
 - `docs/desktop-entries.md` — `makeDesktopItem` field usage per the
