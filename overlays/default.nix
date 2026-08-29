@@ -282,7 +282,7 @@
   # up only the `offer` event, leaving the v3 source_actions/action handlers
   # NULL, so libwayland-client wl_abort()s on the first drag event.
   # https://github.com/glfw/glfw/issues/2835
-  (final: prev: {
+  (_: prev: {
     glfw3-minecraft = prev.glfw3-minecraft.overrideAttrs (prevAttrs: {
       patches =
         (prevAttrs.patches or [])
@@ -347,7 +347,7 @@
   })
 
   # FUTURE(Sirius902) mangoapp: stop unmap/remap on HUD toggle to prevent focus loss.
-  (final: prev: {
+  (_: prev: {
     mangohud = prev.mangohud.overrideAttrs (prevAttrs: {
       patches =
         (prevAttrs.patches or [])

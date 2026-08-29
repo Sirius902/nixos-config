@@ -6,7 +6,7 @@
   n64recomp,
   nix-update-script,
 }:
-stdenv.mkDerivation (finalAttrs: {
+stdenv.mkDerivation {
   pname = "mm-recomp-rando";
   version = "0-unstable-2026-08-04";
 
@@ -56,4 +56,4 @@ stdenv.mkDerivation (finalAttrs: {
     maintainers = with lib.maintainers; [sirius902];
     platforms = ["x86_64-linux"];
   };
-})
+}

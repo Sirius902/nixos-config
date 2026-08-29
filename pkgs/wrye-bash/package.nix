@@ -12,7 +12,7 @@
   nix-update-script,
   taglistsFn ? lib.id,
 }: let
-  taglists = taglistsFn (lib.mapAttrs (game: fetchurl) (
+  taglists = taglistsFn (lib.mapAttrs (_: fetchurl) (
     builtins.fromJSON (builtins.readFile ./taglists.json)
   ));
 
