@@ -42,7 +42,10 @@ stdenv.mkDerivation (finalAttrs: let
       rev = "823d98f3dd5f7f82fb70a31c9ac1fc01ea584f5f";
       hash = "sha256-AF+2pRe+wWC1KzLRoevbS7Cshap5emx9Hektdbjp3TY=";
     };
-    patches = [./libultraship-source-date-epoch.patch];
+    patches = [
+      ./libultraship-source-date-epoch.patch
+      ./libultraship-fmt-compile-time-check.patch
+    ];
   };
 in {
   pname = "sequence-otrizer";

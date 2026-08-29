@@ -1,0 +1,32 @@
+From 8daeb1eceb64997bd01ab4cc5ac388b6af35a7f9 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Sat, 29 Aug 2026 12:00:00 -0700
+Subject: [PATCH] Check a compile-time format string against the view that is
+ parsed
+
+basic_format_string materialises `s` into str_ and then converts `s` a
+second time for the checker. Clang gives each evaluation of the string
+literal behind a FMT_STRING an object of its own, so on_format_specs ends
+up subtracting a pointer into str_'s object from one into the checker's,
+which is not a constant expression, and every FMT_STRING in the bundled
+fmt fails to compile. Build the checker from str_ so both pointers name
+the same object.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+---
+ extern/spdlog/include/spdlog/fmt/bundled/core.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/extern/spdlog/include/spdlog/fmt/bundled/core.h b/extern/spdlog/include/spdlog/fmt/bundled/core.h
+index 92a7aa1..583a1b2 100644
+--- a/extern/spdlog/include/spdlog/fmt/bundled/core.h
++++ b/extern/spdlog/include/spdlog/fmt/bundled/core.h
+@@ -3065,7 +3065,7 @@ template <typename Char, typename... Args> class basic_format_string {
+                   detail::count_statically_named_args<Args...>()) {
+       using checker = detail::format_string_checker<Char, detail::error_handler,
+                                                     remove_cvref_t<Args>...>;
+-      detail::parse_format_string<true>(str_, checker(s, {}));
++      detail::parse_format_string<true>(str_, checker(str_, {}));
+     }
+ #else
+     detail::check_format_string<Args...>(s);
