@@ -1,0 +1,41 @@
+From 8cd1f2f0c87595ce3a19045ad3089b93fdbdde19 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Sat, 29 Aug 2026 12:00:00 -0700
+Subject: [PATCH] poptracker: only reach for a dialog helper on Linux
+
+Ui::Dlg drives tinyfiledialogs, which talks to Cocoa on Darwin and shells
+out to zenity, kdialog or one of their kin on Linux. Wrapping those into
+PATH unconditionally puts kdialog, a Linux-only package, in the closure of
+a build the platforms field says Darwin supports, so poptracker refuses to
+evaluate there. Wrap only where the helper is read.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+---
+ pkgs/by-name/po/poptracker/package.nix | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/pkgs/by-name/po/poptracker/package.nix b/pkgs/by-name/po/poptracker/package.nix
+index 6f1cd25..9ea70bb 100644
+--- a/pkgs/by-name/po/poptracker/package.nix
++++ b/pkgs/by-name/po/poptracker/package.nix
+@@ -64,12 +64,14 @@ stdenv.mkDerivation (finalAttrs: {
+     runHook preInstall
+     install -m555 -Dt $out/bin build/*/poptracker
+     install -m444 -Dt $out/share/poptracker assets/*
+-    wrapProgram $out/bin/poptracker --prefix PATH : ${
+-      lib.makeBinPath [
+-        which
+-        kdePackages.kdialog
+-      ]
+-    }
++    ${lib.optionalString stdenv.hostPlatform.isLinux ''
++      wrapProgram $out/bin/poptracker --prefix PATH : ${
++        lib.makeBinPath [
++          which
++          kdePackages.kdialog
++        ]
++      }
++    ''}
+     mkdir -p $out/share/icons/hicolor/{64x64,512x512}/apps
+     ln -s $out/share/poptracker/icon.png  $out/share/icons/hicolor/64x64/apps/poptracker.png
+     ln -s $out/share/poptracker/icon512.png  $out/share/icons/hicolor/512x512/apps/poptracker.png

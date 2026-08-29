@@ -87,6 +87,8 @@ in {
             url = "https://github.com/NixOS/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.diff";
             hash = "sha256-TvrGKoaPnrkIZyntbv/C6m55e2p2kLECtxH7/fViXM4=";
           })
+          # TODO(Sirius902) poptracker wraps kdialog into PATH on darwin. Make PR?
+          ../patches/nixpkgs/poptracker-linux-dialog-helper.patch
         ]
         ++ (extraPatches pkgs);
     };
