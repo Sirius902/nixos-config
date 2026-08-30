@@ -6,7 +6,14 @@
 
   boot.kernelPackages = pkgs.linuxPackages;
   boot.loader.grub.enable = false;
-  boot.loader.generic-extlinux-compatible.enable = true;
+  boot.loader.generic-extlinux-compatible = {
+    enable = true;
+    configurationLimit = 3;
+  };
+
+  # /boot is a small fixed partition and most of the kernel's aarch64 device
+  # tree set is other vendors' SoCs; unfiltered, a few generations overrun it.
+  hardware.deviceTree.filter = "*rpi*.dtb";
 
   system.build.updateFirmware = let
     fw = "${pkgs.raspberrypifw}/share/raspberrypi/boot";
