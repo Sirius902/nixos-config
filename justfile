@@ -11,6 +11,9 @@ default:
 fmt:
     nix {{ NIX_FLAGS }} fmt .
 
+check *FLAGS:
+    nix {{ NIX_FLAGS }} flake check {{ FLAGS }}
+
 update:
     ./patches/nixpkgs/update.py
     nix {{ NIX_FLAGS }} flake update --refresh

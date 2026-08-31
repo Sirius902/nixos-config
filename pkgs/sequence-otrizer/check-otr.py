@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Check that a sequence pack's OTR holds one well-formed entry per packable
 sequence in its source tree.
@@ -15,7 +14,7 @@ import sys
 import zipfile
 from pathlib import Path
 
-import mpyq
+import mpyq  # type: ignore[import-untyped]
 
 # custom/music/<meta line 1>_<lowercased meta line 3>, per
 # ZeldaOTRizer::Sequence::FromSeqFile.

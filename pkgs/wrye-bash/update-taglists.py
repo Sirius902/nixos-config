@@ -5,14 +5,15 @@ Fetches and updates taglists based on https://github.com/Mic92/nix-update and ni
 """
 import asyncio
 import hashlib
-from typing import Any, Final
-import httpx
 import json
+import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from subprocess import check_output
-import sys
+from typing import Any, Final
 from urllib.parse import urlparse
-import xml.etree.ElementTree as ET
+
+import httpx
 
 ROOT: Final[str] = (
     check_output(
@@ -76,7 +77,9 @@ async def hash_to_sri(hex: str) -> str:
     return hash
 
 
-async def fetch_game_data(client: httpx.AsyncClient, game: str, repo: str):
+async def fetch_game_data(
+    client: httpx.AsyncClient, game: str, repo: str
+) -> tuple[str, dict[str, str]]:
     atom_response = await client.get(
         f"https://github.com/loot/{repo}/commits/v0.26.atom"
     )
@@ -103,10 +106,10 @@ async def fetch_game_data(client: httpx.AsyncClient, game: str, repo: str):
         raise RuntimeError(msg)
 
     url = urlparse(link.attrib["href"])
-    commit = url.path.rsplit("/", maxsplit=1)[-1]
+    rev = url.path.rsplit("/", maxsplit=1)[-1]
 
     taglist_url = (
-        f"https://raw.githubusercontent.com/loot/{repo}/{commit}/masterlist.yaml"
+        f"https://raw.githubusercontent.com/loot/{repo}/{rev}/masterlist.yaml"
     )
     taglist_response = await client.get(taglist_url)
     taglist_response.raise_for_status()
@@ -131,11 +134,10 @@ async def main() -> None:
 
     taglists = dict(sorted(results))
 
-    with open(
-        Path(ROOT).joinpath("pkgs/wrye-bash/taglists.json"), "w", encoding="utf-8"
-    ) as f:
-        json.dump(taglists, f, indent=2, ensure_ascii=False)
-        f.write("\n")
+    Path(ROOT).joinpath("pkgs/wrye-bash/taglists.json").write_text(
+        json.dumps(taglists, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
 
     changed_files_output = await check_subprocess_output(
         "git",
