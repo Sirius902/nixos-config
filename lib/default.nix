@@ -14,14 +14,7 @@ in {
     host,
     setHostName ? true,
     extraModules ? [],
-    extraPatches ? _pkgs: [],
-  }: let
-    patchedSrc = inputs.self.lib.patchNixpkgs {
-      inherit system extraPatches;
-      inherit (inputs) nixpkgs;
-    };
-    patchedPkgs = import patchedSrc (self.lib.nixpkgsConfig system);
-  in
+  }:
     inputs.nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {inherit inputs;};
@@ -31,7 +24,7 @@ in {
 
           ({lib, ...}: {
             networking.hostName = lib.mkIf setHostName host;
-            nixpkgs.pkgs = patchedPkgs;
+            nixpkgs.pkgs = import inputs.nixpkgs (self.lib.nixpkgsConfig system);
           })
         ]
         ++ extraModules;
@@ -41,14 +34,7 @@ in {
     system,
     host,
     extraModules ? [],
-    extraPatches ? _pkgs: [],
-  }: let
-    patchedSrc = inputs.self.lib.patchNixpkgs {
-      inherit system extraPatches;
-      inherit (inputs) nixpkgs;
-    };
-    patchedPkgs = import patchedSrc (self.lib.nixpkgsConfig system);
-  in
+  }:
     inputs.nix-darwin.lib.darwinSystem {
       inherit system;
       specialArgs = {inherit inputs;};
@@ -57,39 +43,9 @@ in {
           (../. + "/hosts/${host}/configuration.nix")
 
           {
-            nixpkgs.pkgs = patchedPkgs;
+            nixpkgs.pkgs = import inputs.nixpkgs (self.lib.nixpkgsConfig system);
           }
         ]
         ++ extraModules;
-    };
-
-  patchNixpkgs = {
-    system,
-    nixpkgs,
-    extraPatches ? _pkgs: [],
-  }: let
-    pkgs = nixpkgs.legacyPackages.${builtins.currentSystem or system};
-  in
-    pkgs.applyPatches {
-      name = "nixpkgs-patched";
-      src = nixpkgs;
-      patches =
-        [
-          # TODO(Sirius902) shadps4 needs zenity for errors. Make PR?
-          (pkgs.fetchpatch {
-            name = "shadps4-add-zenity.patch";
-            url = "https://github.com/NixOS/nixpkgs/commit/e7a9edbc8788feb0d0c6b4a52772f2641a46c53d.diff";
-            hash = "sha256-/Ma6rOMuBZc5dL6V+Y9Y7N7begg7iONua3zJcfUlrOE=";
-          })
-          # Add cosmic-ext-applet-clipboard-manager https://github.com/NixOS/nixpkgs/pull/496706
-          (pkgs.fetchpatch {
-            name = "add-cosmic-ext-applet-clipboard-manager.patch";
-            url = "https://github.com/NixOS/nixpkgs/commit/71f8f21a50192425577f92f97eb5212a85dd0588.diff";
-            hash = "sha256-TvrGKoaPnrkIZyntbv/C6m55e2p2kLECtxH7/fViXM4=";
-          })
-          # TODO(Sirius902) poptracker wraps kdialog into PATH on darwin. Make PR?
-          ../patches/nixpkgs/poptracker-linux-dialog-helper.patch
-        ]
-        ++ (extraPatches pkgs);
     };
 }

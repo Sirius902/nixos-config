@@ -3,6 +3,11 @@
 How this repo fetches and carries patches. `checks.patch-urls` in `flake.nix`
 enforces rules 1, 2, 3, and 5; the rest are conventions to follow by hand.
 
+The rules below govern `fetchpatch` entries and the vendored patches beside
+them. nixpkgs itself is patched by a different mechanism — see
+[The nixpkgs patch set](#the-nixpkgs-patch-set), which says which of these
+rules carry over.
+
 ## Template
 
 ```nix
@@ -84,3 +89,79 @@ enforces rules 1, 2, 3, and 5; the rest are conventions to follow by hand.
 
 10. **Remove a patch once it lands in `nixos-unstable`**, in a
     `<scope>: drop nixpkgs patch` commit.
+
+## The nixpkgs patch set
+
+nixpkgs itself is not patched with `fetchpatch`. `patches/nixpkgs/default.nix`
+declares a patch set, `patches/nixpkgs/update.py` replays it onto the tip of
+`nixos-unstable` and pushes the result to the `nixos-config` branch of
+`Sirius902/nixpkgs`, and `flake.nix` locks that branch as the `nixpkgs` input.
+
+It is an input so patches to modules, `lib`, and nixpkgs' flake are visible
+during evaluation. Fixed entries follow rule 4, every entry follows rule 8,
+and the updater enforces rule 10. Fork sources are allowed, and cherry-picked
+commits may contain changes that `fetchpatch` cannot carry. Hand-edited patches
+still belong in a `file` entry.
+
+`default.nix` is the hand-written specification. `pins.json` records the
+channel commit and the immutable base and head resolved for each tracked entry.
+It is written only after a successful push.
+
+### Entry kinds
+
+Every entry takes an optional `from = "<owner>/<repo>"`, defaulting to the
+channel's repository, and they are replayed in list order.
+
+| Entry                                            | Replayed as                                      |
+| ------------------------------------------------ | ------------------------------------------------ |
+| `commit = "<sha40>";`                            | that commit                                      |
+| `range = {base = "<sha40>"; head = "<sha40>";};` | non-merge commits in `base..head`                |
+| `pr = <N>;`                                      | commits in the PR's current base-to-head span    |
+| `branch = "<name>"; against = "<ref>";`          | commits since its merge base with `<ref>`        |
+| `file = ./<name>.patch;`                         | `git am --3way <file>`                           |
+
+PR bases come from GitHub's simulated merge ref. Its second parent must match
+the PR head; its first parent is the base. A recorded base is reused only when
+the recorded head is unchanged. Branches require an explicit comparison ref
+because a branch alone does not identify its intended base.
+
+Tracked spans follow rebases and force-pushes. `commit` and `range` are fixed
+pins. All ranges are replayed in reverse topological order without merge
+commits.
+
+### When a source vanishes
+
+If a tracked ref disappears, its recorded span is reused. Commits are fetched
+from the named source, then the upstream repository as a fallback. A commit
+neither serves must be vendored as a `file` entry.
+
+### Running it
+
+`just update-nixpkgs`, or `just update`, which runs it before
+`nix flake update --refresh`. `--refresh` is required there: the branch moved a
+line earlier, and Nix caches github ref-to-rev resolution for `tarball-ttl`.
+
+Objects are kept in `~/.cache/nixos-config/nixpkgs`, overridable with
+`NIXOS_CONFIG_NIXPKGS_CACHE`. The cache repository itself is not reset or
+cleaned. Each replay uses a detached temporary worktree, removes it on success,
+and preserves it with a cleanup command on failure.
+
+`SKIP_NIXPKGS=1` makes the script a no-op, for a `just update` that should
+leave the branch alone.
+
+The updater compares tree object IDs before pushing because replay timestamps
+can change commit IDs without changing content.
+
+### Retention
+
+Every push also creates `refs/tags/<branch>/pin-<sha40>` so older `flake.lock`
+revisions remain fetchable after the branch is force-pushed.
+
+`just prune-nixpkgs-pins` deletes all but the newest `NIXOS_CONFIG_PIN_KEEP`
+(default 30) of them; `just prune-nixpkgs-pins --dry-run` only lists. It works
+in a throwaway repository containing nothing but those tags, so it cannot reach
+the branch or any other tag.
+
+The retention tag is the guarantee that the exact commit remains available.
+The recorded base and head can reconstruct its tree only while the source
+commits remain fetchable.
