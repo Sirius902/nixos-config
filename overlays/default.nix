@@ -109,6 +109,17 @@
 
   inputs.nvim-conf.overlays.default
 
+  (_: prev: {
+    nix-update = prev.nix-update.overrideAttrs (prevAttrs: {
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          # https://github.com/Mic92/nix-update/issues/327
+          ../patches/nix-update/0001-resolve-flake-attributes-through-legacyPackages.patch
+        ];
+    });
+  })
+
   (final: prev: {
     niri = prev.niri.overrideAttrs (prevAttrs: {
       patches =

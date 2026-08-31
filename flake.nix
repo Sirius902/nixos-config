@@ -103,9 +103,37 @@
         };
       };
 
-      perSystem = {system, ...}: let
+      perSystem = {
+        config,
+        system,
+        ...
+      }: let
         pkgs = import inputs.nixpkgs (self.lib.nixpkgsConfig system);
         inherit (pkgs) lib;
+
+        allPackages = import ./pkgs/all-packages.nix {inherit pkgs;};
+        overlayNames = let
+          overlays = import ./overlays/default.nix {inherit inputs;};
+          tryGetNames = o: let
+            result = builtins.tryEval (builtins.attrNames (o {} pkgs));
+          in
+            if result.success
+            then result.value
+            else [];
+        in
+          lib.unique (builtins.concatMap tryGetNames overlays);
+        overlayPackages = let
+          isDerivation = name: let
+            result = builtins.tryEval (lib.isDerivation pkgs.${name});
+          in
+            result.success && result.value;
+        in
+          lib.genAttrs (builtins.filter isDerivation overlayNames) (name: pkgs.${name});
+
+        packageSet =
+          (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
+          // overlayPackages
+          // {inherit (pkgs.graalvmPackages) graalvm-ce_8;};
       in {
         formatter = pkgs.alejandra;
 
@@ -128,18 +156,17 @@
                 ''
                 else "";
 
-              defaultPkgs = self.packages.${system};
               isOurUpdate = _: drv: let
                 passthru = drv.passthru or {};
                 updatePos = builtins.unsafeGetAttrPos "updateScript" passthru;
               in
                 updatePos != null && lib.hasPrefix (toString ./.) updatePos.file;
-              updatableAttrs = lib.attrNames (lib.filterAttrs isOurUpdate defaultPkgs);
+              updatableAttrs = lib.attrNames (lib.filterAttrs isOurUpdate config.legacyPackages);
             in
               lib.getExe (pkgs.writeShellScriptBin "update" ''
                 set -euo pipefail
 
-                ${lib.concatStringsSep "\n" (lib.mapAttrsToList mkUpdate self.packages.${system})}
+                ${lib.concatStringsSep "\n" (lib.mapAttrsToList mkUpdate config.legacyPackages)}
 
                 updatable_attrs=(${lib.concatMapStringsSep " " lib.escapeShellArg updatableAttrs})
 
@@ -202,31 +229,9 @@
           };
         };
 
-        packages = let
-          allPackages = import ./pkgs/all-packages.nix {inherit pkgs;};
-          overlayNames = let
-            overlays = import ./overlays/default.nix {inherit inputs;};
-            tryGetNames = o: let
-              result = builtins.tryEval (builtins.attrNames (o {} pkgs));
-            in
-              if result.success
-              then result.value
-              else [];
-          in
-            lib.unique (builtins.concatMap tryGetNames overlays);
-          overlayPackages = let
-            isDerivation = name: let
-              result = builtins.tryEval (lib.isDerivation pkgs.${name});
-            in
-              result.success && result.value;
-          in
-            lib.genAttrs (builtins.filter isDerivation overlayNames) (name: pkgs.${name});
-        in
-          (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
-          // overlayPackages
+        legacyPackages =
+          packageSet
           // {
-            inherit (pkgs.graalvmPackages) graalvm-ce_8;
-
             deck-games = pkgs.linkFarm "deck-games" {
               inherit
                 (pkgs)
@@ -241,6 +246,11 @@
                 ;
             };
           };
+
+        # `nix flake check` instantiates every attribute of this output, so it
+        # may name only what the system can build. `legacyPackages` above is
+        # the complete set, and what everything else here reads.
+        packages = lib.filterAttrs (_: p: p.meta.available or true) packageSet;
 
         checks.deadnix = pkgs.runCommandLocal "deadnix-check" {} ''
           ${lib.getExe pkgs.deadnix} --fail ${self}

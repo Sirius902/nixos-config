@@ -1,0 +1,80 @@
+From 07343370e14f521832129908b7b2609668c61d1e Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Mon, 31 Aug 2026 13:20:37 -0700
+Subject: [PATCH] resolve flake attributes through legacyPackages
+
+An attribute is looked up under packages.${system} and then at the flake
+root, so a flake that publishes its package set as legacyPackages can only
+be updated by naming the full path, legacyPackages.${system}.${attribute}.
+That path then lands verbatim in the generated commit subject, and nixpkgs'
+maintainers/scripts/update.nix cannot spell it at all, since it passes the
+bare attribute name in UPDATE_NIX_ATTR_PATH.
+
+Try legacyPackages.${system} between the two, which is the order the Nix
+CLI already resolves an installable in.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+---
+ README.md             |  7 +++----
+ nix_update/eval.nix   | 12 ++++++++----
+ nix_update/options.py |  2 +-
+ 3 files changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/README.md b/README.md
+index 1712e7e..2fff9e6 100644
+--- a/README.md
++++ b/README.md
+@@ -74,10 +74,9 @@ If your package is defined in a flake use the `--flake` flag instead:
+ $ nix-update attribute --flake [--version version]
+ ```
+ 
+-`nix-update` will then try to update either the
+-`packages.{currentSystem}.{attribute}` or `{attribute}` output attribute of the
+-given flake. To update a package in `legacyPackages`, pass the full path to that
+-package including the platform: `legacyPackages.{platform}.{attribute}`.
++`nix-update` will then try to update the `packages.{currentSystem}.{attribute}`,
++`legacyPackages.{currentSystem}.{attribute}` or `{attribute}` output attribute
++of the given flake, in that order.
+ 
+ This example will fetch the latest github release:
+ 
+diff --git a/nix_update/eval.nix b/nix_update/eval.nix
+index 433ae03..344a51a 100644
+--- a/nix_update/eval.nix
++++ b/nix_update/eval.nix
+@@ -50,11 +50,15 @@ let
+     if isFlake then
+       let
+         flake = getFlake flakeOrImportPath;
+-        packages = flake.packages.${system} or { };
+-        # Try packages.${system} first, fall back to flake root if attribute not found
+-        packagesResult = tryGetAttrPath attributePath packages;
++        packagesResult = tryGetAttrPath attributePath (flake.packages.${system} or { });
++        legacyResult = tryGetAttrPath attributePath (flake.legacyPackages.${system} or { });
+       in
+-      if packagesResult.success then packagesResult.value else (tryGetAttrPath attributePath flake).value
++      if packagesResult.success then
++        packagesResult.value
++      else if legacyResult.success then
++        legacyResult.value
++      else
++        (tryGetAttrPath attributePath flake).value
+     else
+       let
+         pkgs = import importPath;
+diff --git a/nix_update/options.py b/nix_update/options.py
+index e9704ad..476f9a3 100644
+--- a/nix_update/options.py
++++ b/nix_update/options.py
+@@ -185,7 +185,7 @@ class Options:
+             import_path_to_use = json.dumps(flake_store_path)
+ 
+         if self.flake:
+-            return f"(let flake = builtins.getFlake {import_path_to_use}; in flake.packages.${{builtins.currentSystem}}.{self.escaped_attribute} or flake.{self.escaped_attribute})"
++            return f"(let flake = builtins.getFlake {import_path_to_use}; in flake.packages.${{builtins.currentSystem}}.{self.escaped_attribute} or flake.legacyPackages.${{builtins.currentSystem}}.{self.escaped_attribute} or flake.{self.escaped_attribute})"
+         # Need to disable check meta for non-flake packages
+         disable_check_meta = f'(if (builtins.hasAttr "config" (builtins.functionArgs (import {self.escaped_import_path}))) then {{ config.checkMeta = false; overlays = []; }} else {{ }})'
+         return f"(import {self.escaped_import_path} {disable_check_meta}).{self.escaped_attribute}"
+-- 
+2.55.0
+
