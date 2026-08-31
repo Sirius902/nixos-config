@@ -21,7 +21,7 @@
     });
   };
 
-  environment.systemPackages = [pkgs.just];
+  environment.systemPackages = [pkgs.just pkgs.nh];
 
   fonts.packages = [pkgs.nerd-fonts.jetbrains-mono];
 

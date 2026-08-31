@@ -1,8 +1,3 @@
-SUDO := env_var_or_default(
-  "SUDO",
-  `if [ "$(uname -s)" = Darwin ]; then echo sudo; else echo doas; fi`
-)
-
 HOST := env_var_or_default(
   "HOST",
   `if [ "$(uname -s)" = Darwin ]; then scutil --get LocalHostName; else uname -n; fi`
@@ -21,17 +16,14 @@ update:
     git diff --quiet flake.lock || git commit -m "flake: update inputs" flake.lock
     nix {{ NIX_FLAGS }} run ".#update"
 
-prefetch-inputs:
-    nix {{ NIX_FLAGS }} flake prefetch-inputs
+switch *FLAGS:
+    nh os switch -H "{{ HOST }}" ".#" {{ FLAGS }}
 
-switch *FLAGS: prefetch-inputs
-    {{ SUDO }} nixos-rebuild switch --flake ".#{{ HOST }}" {{ FLAGS }}
+boot *FLAGS:
+    nh os boot -H "{{ HOST }}" ".#" {{ FLAGS }}
 
-boot *FLAGS: prefetch-inputs
-    {{ SUDO }} nixos-rebuild boot --flake ".#{{ HOST }}" {{ FLAGS }}
-
-switch-darwin *FLAGS: prefetch-inputs
-    {{ SUDO }} darwin-rebuild switch --flake ".#{{ HOST }}" {{ FLAGS }}
+switch-darwin *FLAGS:
+    nh darwin switch -H "{{ HOST }}" ".#" {{ FLAGS }}
 
 switch-to-configuration drv:
     nix-env -p /nix/var/nix/profiles/system --set "{{ drv }}"
