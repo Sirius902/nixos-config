@@ -5,7 +5,7 @@ SUDO := env_var_or_default(
 
 HOST := env_var_or_default(
   "HOST",
-  `if [ "$(uname -s)" = Darwin ]; then scutil --get LocalHostName; else hostname; fi`
+  `if [ "$(uname -s)" = Darwin ]; then scutil --get LocalHostName; else uname -n; fi`
 )
 
 NIX_FLAGS := '--extra-experimental-features "nix-command flakes"'
