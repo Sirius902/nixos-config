@@ -49,8 +49,9 @@ stays true for as long as the code around it does.
 
 A vendored `patches = [./foo.patch]` entry therefore takes no comment: the file
 it names opens with a commit message saying everything a comment there would.
-The `fetchpatch` lists in `lib/default.nix` and `overlays/` are the exception,
-because a URL has no message to read.
+The `fetchpatch` lists in `overlays/` and every entry in
+`patches/nixpkgs/default.nix` are the exception, because a URL or a bare rev
+has no message to read.
 
 ## The shape to avoid
 

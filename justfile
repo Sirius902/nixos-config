@@ -12,9 +12,16 @@ fmt:
     nix {{ NIX_FLAGS }} fmt .
 
 update:
-    nix {{ NIX_FLAGS }} flake update
-    git diff --quiet flake.lock || git commit -m "flake: update inputs" flake.lock
+    ./patches/nixpkgs/update.py
+    nix {{ NIX_FLAGS }} flake update --refresh
+    git diff --quiet flake.lock patches/nixpkgs/pins.json || git commit -m "flake: update inputs" flake.lock patches/nixpkgs/pins.json
     nix {{ NIX_FLAGS }} run ".#update"
+
+update-nixpkgs:
+    ./patches/nixpkgs/update.py
+
+prune-nixpkgs-pins *FLAGS:
+    ./patches/nixpkgs/prune-pins.py {{ FLAGS }}
 
 switch *FLAGS:
     nh os switch -H "{{ HOST }}" ".#" {{ FLAGS }}

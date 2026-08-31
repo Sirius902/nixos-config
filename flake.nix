@@ -2,7 +2,9 @@
   description = "My NixOS and nix-darwin configurations";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # patches/nixpkgs replayed onto nixos-unstable; an input, so lib and the
+    # module system get the patches too.
+    nixpkgs.url = "github:Sirius902/nixpkgs/nixos-config";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -50,39 +52,32 @@
 
         nixosConfigurations = {
           sirius-lee = self.lib.nixosSystem {
-            system = "x86_64-linux";
             host = "sirius-lee";
           };
 
           nixtower = self.lib.nixosSystem {
-            system = "x86_64-linux";
             host = "nixtower";
           };
 
           hee-ho = self.lib.nixosSystem {
-            system = "x86_64-linux";
             host = "hee-ho";
           };
 
           iso = self.lib.nixosSystem {
-            system = "x86_64-linux";
             host = "iso";
             setHostName = false;
           };
 
           netboot = self.lib.nixosSystem {
-            system = "x86_64-linux";
             host = "netboot";
             setHostName = false;
           };
 
           raspberrypi = self.lib.nixosSystem {
-            system = "aarch64-linux";
             host = "raspberrypi";
           };
 
           sd = self.lib.nixosSystem {
-            system = "aarch64-linux";
             host = "sd";
             setHostName = false;
           };
@@ -90,19 +85,17 @@
 
         darwinConfigurations = {
           Tralsebook-V2 = self.lib.darwinSystem {
-            system = "aarch64-darwin";
             host = "Tralsebook-V2";
           };
 
           The-Rekening = self.lib.darwinSystem {
-            system = "aarch64-darwin";
             host = "The-Rekening";
           };
         };
       };
 
       perSystem = {system, ...}: let
-        pkgs = import inputs.nixpkgs (self.lib.nixpkgsConfig system);
+        pkgs = self.lib.pkgsFor system;
         inherit (pkgs) lib;
       in {
         formatter = pkgs.alejandra;
@@ -201,16 +194,11 @@
         };
 
         packages = let
-          nixpkgs' = self.lib.patchNixpkgs {
-            inherit system;
-            inherit (inputs) nixpkgs;
-          };
-          patchedPkgs = import nixpkgs' (self.lib.nixpkgsConfig system);
-          allPackages = import ./pkgs/all-packages.nix {pkgs = patchedPkgs;};
+          allPackages = import ./pkgs/all-packages.nix {inherit pkgs;};
           overlayNames = let
             overlays = import ./overlays/default.nix {inherit inputs;};
             tryGetNames = o: let
-              result = builtins.tryEval (builtins.attrNames (o {} patchedPkgs));
+              result = builtins.tryEval (builtins.attrNames (o {} pkgs));
             in
               if result.success
               then result.value
@@ -219,20 +207,20 @@
             lib.unique (builtins.concatMap tryGetNames overlays);
           overlayPackages = let
             isDerivation = name: let
-              result = builtins.tryEval (lib.isDerivation patchedPkgs.${name});
+              result = builtins.tryEval (lib.isDerivation pkgs.${name});
             in
               result.success && result.value;
           in
-            lib.genAttrs (builtins.filter isDerivation overlayNames) (name: patchedPkgs.${name});
+            lib.genAttrs (builtins.filter isDerivation overlayNames) (name: pkgs.${name});
         in
-          (lib.mapAttrs (name: _: patchedPkgs.${name}) allPackages)
+          (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
           // overlayPackages
           // {
-            inherit (patchedPkgs.graalvmPackages) graalvm-ce_8;
+            inherit (pkgs.graalvmPackages) graalvm-ce_8;
 
-            deck-games = patchedPkgs.linkFarm "deck-games" {
+            deck-games = pkgs.linkFarm "deck-games" {
               inherit
-                (patchedPkgs)
+                (pkgs)
                 _2ship2harkinian
                 dusklight
                 dusklight-rando
