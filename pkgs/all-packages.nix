@@ -9,8 +9,6 @@
     enemizer-cli = pkgs.callPackage ./enemizer-cli/package.nix {};
     sni = pkgs.callPackage ./sni/package.nix {};
 
-    ghostty-nautilus = pkgs.callPackage ./ghostty-nautilus/package.nix {};
-
     gcfeederd = pkgs.callPackage ./gcfeederd/package.nix {};
     gcviewer = pkgs.callPackage ./gcviewer/package.nix {};
 

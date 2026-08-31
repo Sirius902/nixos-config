@@ -30,7 +30,6 @@ in {
     home-manager.users = lib.genAttrs config.my.homeUsers (_: {
       imports = [
         ../../home/gnome.nix
-        ../../home/ghostty/gnome.nix
       ];
     });
   };
