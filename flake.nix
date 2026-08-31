@@ -2,8 +2,7 @@
   description = "My NixOS and nix-darwin configurations";
 
   inputs = {
-    # patches/nixpkgs replayed onto nixos-unstable; an input, so lib and the
-    # module system get the patches too.
+    # nixos-unstable with patches/nixpkgs applied.
     nixpkgs.url = "github:Sirius902/nixpkgs/nixos-config";
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -247,9 +246,7 @@
             };
           };
 
-        # `nix flake check` instantiates every attribute of this output, so it
-        # may name only what the system can build. `legacyPackages` above is
-        # the complete set, and what everything else here reads.
+        # Keep unavailable packages out of `nix flake check`.
         packages = lib.filterAttrs (_: p: p.meta.available or true) packageSet;
 
         checks.deadnix = pkgs.runCommandLocal "deadnix-check" {} ''
@@ -257,10 +254,16 @@
           touch $out
         '';
 
-        # Enforce the fetched patch conventions in docs/patches.md. Every
-        # pattern is anchored to https://github.com so the raw.githubusercontent.com
-        # fetchurl and the aur.archlinux.org provenance comment don't trip it,
-        # and the scan is limited to *.nix so the doc may quote counter-examples.
+        checks.mypy = let
+          python = pkgs.python3.withPackages (ps: [ps.mypy ps.httpx ps.mpyq]);
+        in
+          pkgs.runCommandLocal "mypy-check" {} ''
+            export MYPY_CACHE_DIR="$(mktemp -d)"
+            ${python}/bin/mypy --config-file ${self}/mypy.ini ${self}
+            touch $out
+          '';
+
+        # Enforce the fetched patch conventions in docs/patches.md.
         checks.patch-urls = pkgs.runCommandLocal "patch-urls-check" {} ''
           status=0
 
@@ -274,8 +277,6 @@
             fi
           }
 
-          # The scan covers this file too, so no reason below may itself spell
-          # out a form the adjacent pattern rejects.
           check "use fetchpatch (v1), which strips the unstable index lines v2 keeps" \
             '\bfetchpatch2\b'
           check "GitHub patch URLs take no query parameters" \
@@ -290,6 +291,16 @@
             exit 1
           fi
 
+          touch $out
+        '';
+
+        checks.ruff = pkgs.runCommandLocal "ruff-check" {} ''
+          ${lib.getExe pkgs.ruff} check --config ${self}/ruff.toml ${self}
+          touch $out
+        '';
+
+        checks.shellcheck = pkgs.runCommandLocal "shellcheck-check" {} ''
+          find ${self} -name '*.sh' -exec ${lib.getExe pkgs.shellcheck} {} +
           touch $out
         '';
 

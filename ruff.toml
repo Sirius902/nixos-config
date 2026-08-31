@@ -1,0 +1,3 @@
+# Accept nix-shell's second shebang line.
+[lint]
+ignore = ["EXE005"]
