@@ -42,6 +42,15 @@
     darwin = "sha256-pM15OoUdHZ84Y9iORsvgahE6FzvQFOtjry0nNWvIqHo=";
     linux = "sha256-deRtiZ221q6PO9zejJBwa56fCM63KEh6y2p7nM+MOYU=";
   },
+  symgenVersion ? "1.3.4",
+  symgenHashes ? {
+    darwin = "sha256-mD72J40wvuOPJA9FHKc2/SlNoOVwXuFQKazKxcejOCk=";
+    linux = "sha256-i4GgCi749d1LWa26G636ylfkcr8nJRa8EsRiXO+zdxg=";
+  },
+  funchookVersion ? "v1.1.3",
+  funchookHash ? "sha256-u/RXMNyKL6L7p5gEFnAQTErPXXGKXv74jbYlBbG0Wy4=",
+  capstoneVersion ? "4.0.2",
+  capstoneHash ? "sha256-XMwQ7UaPC8YYu4yxsE4bbR3leYPfBHu5iixSLz05r3g=",
 }: let
   nodVersion = "v2.0.0-alpha.10";
 
@@ -96,23 +105,51 @@
     hash = "sha256-g4O/JZUrrcseOz8o2QJRt+2CeuiLnVeuDJc906xvuIg=";
   };
 
-  symgenVersion = "1.3.2";
+  funchook-src =
+    if funchookVersion == null
+    then null
+    else
+      fetchFromGitHub {
+        owner = "kubo";
+        repo = "funchook";
+        rev = funchookVersion;
+        hash = funchookHash;
+        fetchSubmodules = true;
+      };
 
-  # Not `fetchurl { executable = true; }`: that flips outputHashMode to recursive,
-  # which rejects a flat SHA-256. Keeping the flat hash makes this byte-identical
-  # to upstream's EXPECTED_HASH in cmake/SymbolManifest.cmake.
-  symgen-bin = fetchurl {
-    url = "https://github.com/encounter/symgen/releases/download/v${symgenVersion}/symgen-macos-arm64";
-    hash = "sha256-A0SDjRZ03wnBfD7t3PJuuJwzP9uF39ePaK3ENgcOzL4=";
+  capstone-src = fetchFromGitHub {
+    owner = "capstone-engine";
+    repo = "capstone";
+    rev = capstoneVersion;
+    hash = capstoneHash;
   };
 
-  # setup_apple_exports() is unconditional on APPLE and file(DOWNLOAD)s symgen at
-  # configure time, which the sandbox has no network for. Hand it the pinned release
-  # instead; SYMGEN_PATH only checks EXISTS and never chmods, so the store copy has
-  # to already carry the executable bit.
-  symgen = runCommand "symgen-${symgenVersion}" {} ''
-    install -Dm755 ${symgen-bin} $out/bin/symgen
-  '';
+  # `executable = true` changes a flat fetch hash to recursive mode.
+  symgen-bin =
+    if symgenVersion == null
+    then null
+    else
+      fetchurl {
+        url = let
+          platform =
+            if stdenv.hostPlatform.isDarwin
+            then "macos-arm64"
+            else "linux-x86_64";
+        in "https://github.com/encounter/symgen/releases/download/v${symgenVersion}/symgen-${platform}";
+        hash =
+          if stdenv.hostPlatform.isDarwin
+          then symgenHashes.darwin
+          else symgenHashes.linux;
+      };
+
+  # SYMGEN_PATH does not make the downloaded release executable itself.
+  symgen =
+    if symgenVersion == null
+    then null
+    else
+      runCommand "symgen-${symgenVersion}" {} ''
+        install -Dm755 ${symgen-bin} $out/bin/symgen
+      '';
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "dusklight";
@@ -142,6 +179,34 @@ in
       }
       check_version "dawn" "${dawnVersion}" AURORA_DAWN_VERSION
       check_version "nod" "${nodVersion}" AURORA_NOD_VERSION
+
+      check_pin() {
+        local name="$1" expected="$2" actual="$3"
+        if [[ "$actual" != "$expected" ]]; then
+          echo "error: $name version mismatch: expected '$expected', got '$actual'"
+          echo "update ''${name}Version in package.nix"
+          exit 1
+        fi
+      }
+      ${lib.optionalString (symgenVersion != null) ''
+        check_pin symgen "${symgenVersion}" \
+          "$(sed -n 's/^set(_SYMGEN_VERSION "\([^"]*\)").*/\1/p' cmake/SymbolManifest.cmake 2>/dev/null)"
+      ''}
+
+      ${lib.optionalString (funchookVersion != null) ''
+        check_pin funchook "${funchookVersion}" \
+          "$(sed -n '/FetchContent_Declare(funchook/,/^ *)/s/^ *GIT_TAG *\([^ ]*\).*/\1/p' CMakeLists.txt)"
+
+        cp -r ${funchook-src} funchook-src
+        cp -r ${capstone-src} capstone-src
+        chmod -R +w funchook-src capstone-src
+        cmake -DSOURCE_DIR="$PWD/funchook-src" -P cmake/PatchFunchook.cmake
+        substituteInPlace funchook-src/cmake/capstone.cmake.in \
+          --replace-fail "GIT_REPOSITORY    https://github.com/aquynh/capstone.git" 'DOWNLOAD_COMMAND ""' \
+          --replace-fail "GIT_TAG           ${capstoneVersion}" "" \
+          --replace-fail 'SOURCE_DIR        "''${CMAKE_CURRENT_BINARY_DIR}/capstone-src"' "SOURCE_DIR        \"$PWD/capstone-src\""
+        cmakeFlags+=("-DFETCHCONTENT_SOURCE_DIR_FUNCHOOK=$PWD/funchook-src")
+      ''}
 
       # aurora's internal.hpp uses std::memcpy without including <cstring>.
       substituteInPlace extern/aurora/lib/internal.hpp \
@@ -218,7 +283,7 @@ in
         (lib.cmakeBool "CMAKE_CROSSCOMPILING" true)
         (lib.cmakeBool "CMAKE_BUILD_WITH_INSTALL_RPATH" true)
       ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
+      ++ lib.optionals (symgenVersion != null) [
         (lib.cmakeFeature "SYMGEN_PATH" "${symgen}/bin/symgen")
       ];
 

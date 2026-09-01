@@ -42,6 +42,8 @@ in
       darwin = "sha256-HT+qtlLaSHyoXPrUcXgcTGa877X5YfzbxRD4bJb7i1Y=";
       linux = "sha256-GFSd573b+VQx/VmFdNQgWDd0V9ayQlcw0Zuopke12ak=";
     };
+    symgenVersion = null;
+    funchookVersion = null;
   })
   .overrideAttrs (finalAttrs: prevAttrs: {
     pname = "dusklight-ap";
