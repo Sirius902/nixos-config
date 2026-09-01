@@ -1,4 +1,4 @@
-From debcb335c1161396c7267656a21a08aa6372d05a Mon Sep 17 00:00:00 2001
+From c693f17046fe18d20f8ce22eea13343266ccbb6c Mon Sep 17 00:00:00 2001
 From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
 Date: Wed, 1 Apr 2026 23:53:04 -0700
 Subject: [PATCH] steamcompmgr: Add window cycling support
@@ -15,7 +15,7 @@ Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
  3 files changed, 169 insertions(+), 3 deletions(-)
 
 diff --git a/src/steamcompmgr.cpp b/src/steamcompmgr.cpp
-index dff50b6..97ab2f6 100644
+index dff50b6..d1b5a21 100644
 --- a/src/steamcompmgr.cpp
 +++ b/src/steamcompmgr.cpp
 @@ -914,6 +914,39 @@ bool			hasRepaintNonBasePlane = false;
@@ -116,7 +116,7 @@ index dff50b6..97ab2f6 100644
 +			{
 +				auto vecAllWindows = GetGlobalPossibleFocusWindows();
 +
-+				// Match the windows reported through GAMESCOPE_FOCUSABLE_WINDOWS.
++				// Apply the GAMESCOPE_FOCUSABLE_WINDOWS filters to XWayland windows.
 +				std::vector<steamcompmgr_win_t *> vecCycleable;
 +				for ( steamcompmgr_win_t *w : vecAllWindows )
 +				{
@@ -265,4 +265,3 @@ index 1512b71..a572b8c 100644
  
 -- 
 2.55.0
-
