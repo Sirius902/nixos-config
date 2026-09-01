@@ -338,12 +338,7 @@
       patches =
         (prevAttrs.patches or [])
         ++ [
-          (final.fetchpatch {
-            name = "add-window-cycle.patch";
-            url = "https://github.com/ValveSoftware/gamescope/commit/9d6513068846f1b9fea5afc326fc9d2758079fdb.diff";
-            hash = "sha256-hy1ZDR/k9TIAGmN2yD5PUI0/4JjlYKmaRUwuvhhMN8w=";
-          })
-          ../patches/gamescope/0001-main-Strip-gameoverlayrenderer.so-from-gamescope-s-o.patch
+          ../patches/gamescope/add-window-cycle.patch
           (final.fetchpatch {
             name = "clamp-cursor-adaptive-sync.patch";
             url = "https://github.com/ValveSoftware/gamescope/commit/2b18c4eee02bc8600ce11705cada906e6bbe8232.diff";

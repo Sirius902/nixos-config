@@ -1,0 +1,268 @@
+From debcb335c1161396c7267656a21a08aa6372d05a Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Wed, 1 Apr 2026 23:53:04 -0700
+Subject: [PATCH] steamcompmgr: Add window cycling support
+
+Adds gamescopectl window_cycle [next|prev|reset] and keybindings
+Super+] (next), Super+[ (prev), Super+Z (reset) to cycle focus
+between windows inside gamescope.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+---
+ src/steamcompmgr.cpp | 115 ++++++++++++++++++++++++++++++++++++++++++-
+ src/steamcompmgr.hpp |  10 ++++
+ src/wlserver.cpp     |  47 +++++++++++++++++-
+ 3 files changed, 169 insertions(+), 3 deletions(-)
+
+diff --git a/src/steamcompmgr.cpp b/src/steamcompmgr.cpp
+index dff50b6..97ab2f6 100644
+--- a/src/steamcompmgr.cpp
++++ b/src/steamcompmgr.cpp
+@@ -914,6 +914,39 @@ bool			hasRepaintNonBasePlane = false;
+ 
+ bool			g_bUpdateForwardedVROverlays = false;
+ 
++static std::mutex g_CycleMutex;
++static std::vector<CycleDirection> g_CycleRequests;
++static steamcompmgr_win_t *g_pCycleOverrideWindow = nullptr;
++
++void queue_window_cycle( CycleDirection dir )
++{
++	std::lock_guard lock{ g_CycleMutex };
++	g_CycleRequests.push_back( dir );
++	nudge_steamcompmgr();
++}
++
++static gamescope::ConCommand cc_window_cycle( "window_cycle", "Cycle focus to the next or previous window. Usage: window_cycle [next|prev|reset]",
++[]( std::span<std::string_view> args )
++{
++	CycleDirection dir = CycleDirection::Next;
++	if ( args.size() > 1 )
++	{
++		std::string_view arg = args[1];
++		if ( arg == "next" )
++			dir = CycleDirection::Next;
++		else if ( arg == "prev" )
++			dir = CycleDirection::Prev;
++		else if ( arg == "reset" )
++			dir = CycleDirection::Reset;
++		else
++		{
++			console_log.errorf( "window_cycle: unknown argument '%.*s'. Expected next, prev, or reset.", (int)arg.size(), arg.data() );
++			return;
++		}
++	}
++	queue_window_cycle( dir );
++}, false /* bRegisterScript -- first in TU, triggers scripting lazy init which throws */ );
++
+ static gamescope::ConCommand cc_debug_force_repaint( "debug_force_repaint", "Force a repaint",
+ []( std::span<std::string_view> args )
+ {
+@@ -3743,8 +3776,26 @@ pick_primary_focus_and_override(
+ 	bool localGameFocused = false;
+ 	steamcompmgr_win_t *focus = NULL, *override_focus = NULL;
+ 
++	// Window cycle override takes priority over all other focus selection.
++	bool bCycleOverride = false;
++	if ( g_pCycleOverrideWindow )
++	{
++		for ( steamcompmgr_win_t *w : vecPossibleFocusWindows )
++		{
++			if ( w == g_pCycleOverrideWindow )
++			{
++				focus = w;
++				localGameFocused = true;
++				bCycleOverride = true;
++				break;
++			}
++		}
++		if ( !bCycleOverride && globalFocus )
++			g_pCycleOverrideWindow = nullptr;
++	}
++
+ 	bool controlledFocus = eStrategy != gamescope::VirtualConnectorStrategies::SingleApplication || focusControlWindow != None || !ctxFocusControlAppIDs.empty();
+-	if ( controlledFocus )
++	if ( controlledFocus && !bCycleOverride )
+ 	{
+ 		if ( eStrategy == gamescope::VirtualConnectorStrategies::SteamControlled )
+ 		{
+@@ -5602,6 +5653,8 @@ destroy_win(xwayland_ctx_t *ctx, Window id, bool gone, bool fade)
+ 		ctx->focus.overrideWindow = nullptr;
+ 	if (x11_win(ctx->focus.overrideWindowMouse) == id && gone)
+ 		ctx->focus.overrideWindowMouse = nullptr;
++	if (g_pCycleOverrideWindow && x11_win(g_pCycleOverrideWindow) == id && gone)
++		g_pCycleOverrideWindow = nullptr;
+ 	if (ctx->currentKeyboardFocusWindow == id && gone)
+ 		ctx->currentKeyboardFocusWindow = None;
+ 
+@@ -8963,6 +9016,66 @@ steamcompmgr_main(int argc, char **argv)
+ 			}
+ 		}
+ 
++		std::vector<CycleDirection> cycleRequests;
++		{
++			std::lock_guard lock{ g_CycleMutex };
++			cycleRequests.swap( g_CycleRequests );
++		}
++		for ( CycleDirection cycleDir : cycleRequests )
++		{
++			if ( cycleDir == CycleDirection::Reset )
++			{
++				g_pCycleOverrideWindow = nullptr;
++				MakeFocusDirty();
++				hasRepaint = true;
++			}
++			else if ( cycleDir != CycleDirection::Idle )
++			{
++				auto vecAllWindows = GetGlobalPossibleFocusWindows();
++
++				// Match the windows reported through GAMESCOPE_FOCUSABLE_WINDOWS.
++				std::vector<steamcompmgr_win_t *> vecCycleable;
++				for ( steamcompmgr_win_t *w : vecAllWindows )
++				{
++					if ( w->type == steamcompmgr_win_type_t::XWAYLAND )
++					{
++						if ( win_is_useless( w ) || win_skip_and_not_fullscreen( w ) ||
++						     w->xwayland().a.override_redirect )
++							continue;
++					}
++					vecCycleable.push_back( w );
++				}
++
++				if ( vecCycleable.size() > 1 )
++				{
++					steamcompmgr_win_t *pCurrentWindow = g_pCycleOverrideWindow;
++					if ( !pCurrentWindow )
++					{
++						global_focus_t *pCurrentFocus = GetCurrentFocus();
++						pCurrentWindow = pCurrentFocus ? pCurrentFocus->focusWindow : nullptr;
++					}
++
++					int nCurrentIdx = -1;
++					for ( int i = 0; i < (int)vecCycleable.size(); i++ )
++					{
++						if ( vecCycleable[i] == pCurrentWindow )
++						{
++							nCurrentIdx = i;
++							break;
++						}
++					}
++
++					if ( nCurrentIdx < 0 )
++						nCurrentIdx = 0;
++
++					int nNewIdx = ( nCurrentIdx + static_cast<int>( cycleDir ) + (int)vecCycleable.size() ) % (int)vecCycleable.size();
++					g_pCycleOverrideWindow = vecCycleable[nNewIdx];
++					MakeFocusDirty();
++					hasRepaint = true;
++				}
++			}
++		}
++
+ 		// If our DRM state is out-of-date, refresh it. This might update
+ 		// the output size.
+ 		if ( GetBackend()->PollState() )
+diff --git a/src/steamcompmgr.hpp b/src/steamcompmgr.hpp
+index 6734c15..9b2cd11 100644
+--- a/src/steamcompmgr.hpp
++++ b/src/steamcompmgr.hpp
+@@ -136,6 +136,16 @@ extern uint64_t g_lastWinSeq;
+ void nudge_steamcompmgr( void );
+ void force_repaint( void );
+ 
++enum class CycleDirection : int
++{
++	Idle  =  0,
++	Next  =  1,
++	Prev  = -1,
++	Reset =  2,
++};
++
++void queue_window_cycle( CycleDirection dir );
++
+ extern void mangoapp_update( uint64_t visible_frametime, uint64_t app_frametime_ns, uint64_t latency_ns );
+ struct wlr_surface *steamcompmgr_get_server_input_surface( size_t idx );
+ wlserver_vk_swapchain_feedback* steamcompmgr_get_base_layer_swapchain_feedback();
+diff --git a/src/wlserver.cpp b/src/wlserver.cpp
+index 1512b71..a572b8c 100644
+--- a/src/wlserver.cpp
++++ b/src/wlserver.cpp
+@@ -2404,12 +2404,27 @@ void wlserver_keyboardfocus( struct wlr_surface *surface, bool bConstrain )
+ bool wlserver_process_hotkeys( wlr_keyboard *keyboard, uint32_t key, bool press )
+ {
+ 	xkb_keycode_t keycode = key + 8;
++	xkb_keysym_t uPressedKeySym = XKB_KEY_NoSymbol;
++	static std::vector<std::pair<wlr_keyboard *, xkb_keycode_t>> s_CycleHotkeyKeys;
++	auto deviceKey = std::pair{ keyboard, keycode };
++	bool bCycleHotkeyRelease = false;
++
++	if ( !press )
++	{
++		auto cycleKey = std::find( s_CycleHotkeyKeys.begin(), s_CycleHotkeyKeys.end(), deviceKey );
++		if ( cycleKey != s_CycleHotkeyKeys.end() )
++		{
++			s_CycleHotkeyKeys.erase( cycleKey );
++			bCycleHotkeyRelease = true;
++		}
++	}
+ 
+ 	// Remember the sym at press time so a release erases exactly what the press inserted.
+ 	if ( press )
+ 	{
+ 		xkb_keysym_t keysym = xkb_state_key_get_one_sym( keyboard->xkb_state, keycode );
+-		wlserver.mapPressedHotkeyKeys[ { keyboard, keycode } ] = NormalizeKeysymForHotkey( keysym );
++		uPressedKeySym = NormalizeKeysymForHotkey( keysym );
++		wlserver.mapPressedHotkeyKeys[ { keyboard, keycode } ] = uPressedKeySym;
+ 	}
+ 	else
+ 	{
+@@ -2417,10 +2432,12 @@ bool wlserver_process_hotkeys( wlr_keyboard *keyboard, uint32_t key, bool press )
+ 
+ 		// A release we never saw the press for cannot end a binding.
+ 		if ( it == wlserver.mapPressedHotkeyKeys.end() )
+-			return false;
++			return bCycleHotkeyRelease;
+ 
+ 		xkb_keysym_t released = it->second;
+ 		wlserver.mapPressedHotkeyKeys.erase( it );
++		if ( bCycleHotkeyRelease )
++			return true;
+ 
+ 		// Two keycodes can resolve to the same sym, so only a release that actually drops the sym can end a binding.
+ 		for ( const auto &[ deviceKey, uKeySym ] : wlserver.mapPressedHotkeyKeys )
+@@ -2463,6 +2480,32 @@ bool wlserver_process_hotkeys( wlr_keyboard *keyboard, uint32_t key, bool press )
+ 		}
+ 	}
+ 
++	if ( press )
++	{
++		bool hasSuper = setPressedKeySyms.count( XKB_KEY_Super_L ) > 0 ||
++		                setPressedKeySyms.count( XKB_KEY_Super_R ) > 0;
++
++		if ( hasSuper )
++		{
++			CycleDirection dir = CycleDirection::Idle;
++
++			if ( uPressedKeySym == XKB_KEY_bracketright )
++				dir = CycleDirection::Next;
++			else if ( uPressedKeySym == XKB_KEY_bracketleft )
++				dir = CycleDirection::Prev;
++			else if ( uPressedKeySym == XKB_KEY_Z )
++				dir = CycleDirection::Reset;
++
++			if ( dir != CycleDirection::Idle )
++			{
++				if ( std::find( s_CycleHotkeyKeys.begin(), s_CycleHotkeyKeys.end(), deviceKey ) == s_CycleHotkeyKeys.end() )
++					s_CycleHotkeyKeys.push_back( deviceKey );
++				queue_window_cycle( dir );
++				return true;
++			}
++		}
++	}
++
+ 	return false;
+ }
+ 
+-- 
+2.55.0
+
