@@ -32,6 +32,12 @@ in
       darwin = "sha256-HT+qtlLaSHyoXPrUcXgcTGa877X5YfzbxRD4bJb7i1Y=";
       linux = "sha256-GFSd573b+VQx/VmFdNQgWDd0V9ayQlcw0Zuopke12ak=";
     };
+    symgenVersion = "1.3.2";
+    symgenHashes = {
+      darwin = "sha256-A0SDjRZ03wnBfD7t3PJuuJwzP9uF39ePaK3ENgcOzL4=";
+      linux = "sha256-69YvuWI6zJQrYpVgniMG+FpzBDsKihF/IHK3Yd0I5o8=";
+    };
+    funchookVersion = null;
   })
   .overrideAttrs (finalAttrs: prevAttrs: {
     pname = "dusklight-rando";

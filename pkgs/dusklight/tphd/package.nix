@@ -4,7 +4,15 @@
   nix-update-script,
   stdenv,
 }:
-dusklight.overrideAttrs (finalAttrs: prevAttrs: {
+(dusklight.override {
+  symgenVersion = "1.3.2";
+  symgenHashes = {
+    darwin = "sha256-A0SDjRZ03wnBfD7t3PJuuJwzP9uF39ePaK3ENgcOzL4=";
+    linux = "sha256-69YvuWI6zJQrYpVgniMG+FpzBDsKihF/IHK3Yd0I5o8=";
+  };
+  funchookVersion = null;
+})
+.overrideAttrs (finalAttrs: prevAttrs: {
   pname = "dusklight-tphd";
   version = "0-unstable-2026-08-11";
   src = prevAttrs.src.override {
