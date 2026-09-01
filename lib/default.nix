@@ -1,22 +1,22 @@
 {inputs}: let
-  inherit (inputs) self;
-in {
-  nixpkgsConfig = system: {
-    inherit system;
+  nixpkgsConfig = {
     overlays = import ../overlays/default.nix {inherit inputs;};
     config = {
       allowUnfree = true;
     };
   };
+in {
+  inherit nixpkgsConfig;
+
+  pkgsFor = system:
+    import inputs.nixpkgs ({inherit system;} // nixpkgsConfig);
 
   nixosSystem = {
-    system,
     host,
     setHostName ? true,
     extraModules ? [],
   }:
     inputs.nixpkgs.lib.nixosSystem {
-      inherit system;
       specialArgs = {inherit inputs;};
       modules =
         [
@@ -24,26 +24,24 @@ in {
 
           ({lib, ...}: {
             networking.hostName = lib.mkIf setHostName host;
-            nixpkgs.pkgs = import inputs.nixpkgs (self.lib.nixpkgsConfig system);
+            nixpkgs = nixpkgsConfig;
           })
         ]
         ++ extraModules;
     };
 
   darwinSystem = {
-    system,
     host,
     extraModules ? [],
   }:
     inputs.nix-darwin.lib.darwinSystem {
-      inherit system;
       specialArgs = {inherit inputs;};
       modules =
         [
           (../. + "/hosts/${host}/configuration.nix")
 
           {
-            nixpkgs.pkgs = import inputs.nixpkgs (self.lib.nixpkgsConfig system);
+            nixpkgs = nixpkgsConfig;
           }
         ]
         ++ extraModules;

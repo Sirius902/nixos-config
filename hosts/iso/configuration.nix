@@ -1,5 +1,4 @@
 {
-  inputs,
   lib,
   modulesPath,
   pkgs,
@@ -13,10 +12,7 @@
     ../../modules/zfs.nix
   ];
 
-  nixpkgs = {
-    hostPlatform = lib.mkDefault "x86_64-linux";
-    overlays = [inputs.nvim-conf.overlays.default];
-  };
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 

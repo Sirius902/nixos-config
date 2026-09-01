@@ -51,39 +51,32 @@
 
         nixosConfigurations = {
           sirius-lee = self.lib.nixosSystem {
-            system = "x86_64-linux";
             host = "sirius-lee";
           };
 
           nixtower = self.lib.nixosSystem {
-            system = "x86_64-linux";
             host = "nixtower";
           };
 
           hee-ho = self.lib.nixosSystem {
-            system = "x86_64-linux";
             host = "hee-ho";
           };
 
           iso = self.lib.nixosSystem {
-            system = "x86_64-linux";
             host = "iso";
             setHostName = false;
           };
 
           netboot = self.lib.nixosSystem {
-            system = "x86_64-linux";
             host = "netboot";
             setHostName = false;
           };
 
           raspberrypi = self.lib.nixosSystem {
-            system = "aarch64-linux";
             host = "raspberrypi";
           };
 
           sd = self.lib.nixosSystem {
-            system = "aarch64-linux";
             host = "sd";
             setHostName = false;
           };
@@ -91,12 +84,10 @@
 
         darwinConfigurations = {
           Tralsebook-V2 = self.lib.darwinSystem {
-            system = "aarch64-darwin";
             host = "Tralsebook-V2";
           };
 
           The-Rekening = self.lib.darwinSystem {
-            system = "aarch64-darwin";
             host = "The-Rekening";
           };
         };
@@ -107,7 +98,7 @@
         system,
         ...
       }: let
-        pkgs = import inputs.nixpkgs (self.lib.nixpkgsConfig system);
+        pkgs = self.lib.pkgsFor system;
         inherit (pkgs) lib;
 
         allPackages = import ./pkgs/all-packages.nix {inherit pkgs;};
