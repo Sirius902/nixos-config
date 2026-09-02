@@ -11,11 +11,11 @@ in {
     (prev.codex.override {
       inherit librusty_v8 librusty_v8_src_binding;
     }).overrideAttrs (finalAttrs: prevAttrs: {
-      version = "0.152.0";
+      version = "0.152.1";
 
       src = prevAttrs.src.override {
         tag = "rust-v${finalAttrs.version}";
-        hash = "sha256-UmdecJhS8khsz8BZzIBgmvdj589dQ/gCrbJtRj9uoBg=";
+        hash = "sha256-XPfKxUQACUgJ+LNTxjbBm4pNHB3NhuNci2ECovAv38w=";
       };
 
       cargoHash = "sha256-m50x+ClPnbxhq0Lg9csDkfOLbHh3EAqVNSM1gwEF8rk=";
