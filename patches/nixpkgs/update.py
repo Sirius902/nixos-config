@@ -268,7 +268,14 @@ def fetch_ref(repo: Path, source: str, ref: str, rev: str) -> None:
     )
     if fetched.returncode != 0:
         raise Die(f"could not fetch {source} {ref}")
-    if ls_remote(source, ref) != rev:
+    if git(
+        repo,
+        "cat-file",
+        "-e",
+        f"{rev}^{{commit}}",
+        check=False,
+        quiet=True,
+    ).returncode != 0:
         raise Die(f"{source} {ref} changed while it was being resolved; retry")
 
 
