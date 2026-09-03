@@ -142,9 +142,10 @@ neither serves must be vendored as a `file` entry.
 line earlier, and Nix caches github ref-to-rev resolution for `tarball-ttl`.
 
 Objects are kept in `~/.cache/nixos-config/nixpkgs`, overridable with
-`NIXOS_CONFIG_NIXPKGS_CACHE`. The cache repository itself is not reset or
-cleaned. Each replay uses a detached temporary worktree, removes it on success,
-and preserves it with a cleanup command on failure.
+`NIXOS_CONFIG_NIXPKGS_CACHE`. The cache is disposable; the updater does not
+reset or clean it, and its fetches do not run automatic Git maintenance. Each
+replay uses a detached temporary worktree, removes it on success, and preserves
+it with a cleanup command on failure.
 
 `SKIP_NIXPKGS=1` makes the script a no-op, for a `just update` that should
 leave the branch alone.

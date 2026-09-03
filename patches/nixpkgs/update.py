@@ -54,6 +54,21 @@ def git(repo: Path, *args: str, **kwargs: Any) -> subprocess.CompletedProcess[st
     return run("git", "-C", str(repo), *args, **kwargs)
 
 
+def has_commit(repo: Path, rev: str) -> bool:
+    return (
+        git(
+            repo,
+            "--no-lazy-fetch",
+            "cat-file",
+            "-e",
+            f"{rev}^{{commit}}",
+            check=False,
+            quiet=True,
+        ).returncode
+        == 0
+    )
+
+
 def url(repo: str) -> str:
     return f"https://github.com/{repo}.git"
 
@@ -223,14 +238,7 @@ def ls_remote(source: str, ref: str) -> str | None:
 def fetch_rev(spec: Spec, repo: Path, source: str, rev: str) -> None:
     if not SHA40.fullmatch(rev):
         raise Die(f"{source}: {rev} is not a full 40-character SHA")
-    if git(
-        repo,
-        "cat-file",
-        "-e",
-        f"{rev}^{{commit}}",
-        check=False,
-        quiet=True,
-    ).returncode == 0:
+    if has_commit(repo, rev):
         return
     for candidate in dict.fromkeys((source, spec.upstream)):
         fetch = git(
@@ -238,6 +246,7 @@ def fetch_rev(spec: Spec, repo: Path, source: str, rev: str) -> None:
             "fetch",
             "--quiet",
             "--filter=tree:0",
+            "--no-auto-maintenance",
             "--no-tags",
             "--no-write-fetch-head",
             url(candidate),
@@ -245,7 +254,7 @@ def fetch_rev(spec: Spec, repo: Path, source: str, rev: str) -> None:
             check=False,
             quiet=True,
         )
-        if fetch.returncode == 0:
+        if fetch.returncode == 0 and has_commit(repo, rev):
             return
     raise Die(
         f"neither {source} nor {spec.upstream} can serve {rev}; "
@@ -254,11 +263,14 @@ def fetch_rev(spec: Spec, repo: Path, source: str, rev: str) -> None:
 
 
 def fetch_ref(repo: Path, source: str, ref: str, rev: str) -> None:
+    if has_commit(repo, rev):
+        return
     fetched = git(
         repo,
         "fetch",
         "--quiet",
         "--filter=tree:0",
+        "--no-auto-maintenance",
         "--no-tags",
         "--no-write-fetch-head",
         url(source),
@@ -268,14 +280,7 @@ def fetch_ref(repo: Path, source: str, ref: str, rev: str) -> None:
     )
     if fetched.returncode != 0:
         raise Die(f"could not fetch {source} {ref}")
-    if git(
-        repo,
-        "cat-file",
-        "-e",
-        f"{rev}^{{commit}}",
-        check=False,
-        quiet=True,
-    ).returncode != 0:
+    if not has_commit(repo, rev):
         raise Die(f"{source} {ref} changed while it was being resolved; retry")
 
 
@@ -452,14 +457,37 @@ def replay(spec: Spec, repo: Path, entries: tuple[ReplayEntry, ...]) -> None:
             apply_file(spec, repo, entry)
 
 
+def fetch_tree(source: str, ref: str, rev: str) -> str:
+    with tempfile.TemporaryDirectory(prefix="nixos-config-nixpkgs-tree-") as root:
+        repo = Path(root)
+        run("git", "init", "--bare", "--quiet", str(repo))
+        if not has_commit(repo, rev):
+            fetched = git(
+                repo,
+                "fetch",
+                "--quiet",
+                "--depth=1",
+                "--no-auto-maintenance",
+                "--no-tags",
+                "--no-write-fetch-head",
+                url(source),
+                ref,
+                check=False,
+                quiet=True,
+            )
+            if fetched.returncode != 0:
+                raise Die(f"could not fetch {source} {ref}")
+        if not has_commit(repo, rev):
+            raise Die(f"{source} {ref} changed while it was being resolved; retry")
+        return git(repo, "rev-parse", f"{rev}^{{tree}}", capture=True).stdout.strip()
+
+
 def push(spec: Spec, repo: Path) -> None:
     remote = f"git@github.com:{spec.fork}.git"
-    remote_head = ls_remote(spec.fork, qualify_branch(spec.branch))
+    branch = qualify_branch(spec.branch)
+    remote_head = ls_remote(spec.fork, branch)
     if remote_head is not None:
-        fetch_rev(spec, repo, spec.fork, remote_head)
-        remote_tree = git(
-            repo, "rev-parse", f"{remote_head}^{{tree}}", capture=True
-        ).stdout.strip()
+        remote_tree = fetch_tree(spec.fork, branch, remote_head)
         local_tree = git(repo, "rev-parse", "HEAD^{tree}", capture=True).stdout.strip()
         if remote_tree == local_tree:
             print(f"{spec.fork} {spec.branch} already holds this tree; nothing to push.")
