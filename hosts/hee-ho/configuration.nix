@@ -6,11 +6,18 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/nixos/standard.nix
+    ../../modules/microvm-host.nix
     ./atm10-vm.nix
     ./eno2-e1000e-hang-workaround.nix
   ];
 
   networking.hostId = "b0e08309";
+
+  my.microvmHost = {
+    enable = true;
+    externalInterface = "eno2";
+    identityFile = "/home/chris/.ssh/id_ed25519";
+  };
 
   my.tailscale.enable = true;
   my.jdk = pkgs.graalvmPackages.graalvm-oracle;
