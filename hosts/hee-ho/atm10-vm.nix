@@ -49,7 +49,7 @@ in {
   };
 
   microvm.vms.atm10-vm = {
-    autostart = true;
+    autostart = false; # started on demand; it no longer has to hold 21.5 GiB 24/7
     config = {pkgs, ...}: {
       imports = [mcServers];
 
