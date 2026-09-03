@@ -1,7 +1,7 @@
 # anchor in a microVM: the server has no authentication and no TLS — knowing a
 # roomId is the whole of joining that room — so the hypervisor is the boundary
 # rather than in-guest systemd hardening.
-_: let
+{inputs, ...}: let
   anchorId = 800; # clear of nixpkgs' static ids and of NixOS's downward-from-999 allocation
   anchorGid = 800;
   # /var/lib is zroot/var/lib, declared and neededForBoot. hee-ho's / is tmpfs
@@ -37,7 +37,11 @@ in {
 
   microvm.vms.anchor-vm = {
     autostart = true;
-    config = {pkgs, ...}: {
+    config = {
+      lib,
+      pkgs,
+      ...
+    }: {
       imports = [anchorServer];
 
       microvm = {
@@ -60,6 +64,7 @@ in {
 
       services.anchor-server = {
         enable = true;
+        package = inputs.secrets.lib.overrideAnchorServer lib pkgs.anchor-server;
         hardening.enable = false; # the hypervisor is the boundary; in-guest hardening is redundant
         inherit dataDir;
         autoStart = true; # the VM is the gate, so the server starts with it
