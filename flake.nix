@@ -227,7 +227,8 @@
                 (pkgs)
                 _2ship2harkinian
                 dusklight
-                dusklight-rando
+                dusklight-randomizer
+                dusklight-basic-cosmetics
                 dusklight-ap
                 shipwright
                 shipwright-ap
