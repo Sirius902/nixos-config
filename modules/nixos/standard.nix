@@ -3,6 +3,7 @@
     ./base.nix
     ../jdk.nix
     ../vfio.nix
+    ../services/games/anchor-server/default.nix
     ../services/games/svends/default.nix
     ../services/games/synergyds/default.nix
     ../services/games/minecraft-servers/default.nix
