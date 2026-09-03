@@ -8,7 +8,6 @@
     archipelago
     poptracker
     dusklight
-    dusklight-rando
     dusklight-ap
     _2ship2harkinian
     wrye-bash
