@@ -10,11 +10,13 @@
   ];
 
   environment.systemPackages = [
-    pkgs.dusklight
     pkgs._2ship2harkinian
   ];
 
   home-manager.users = lib.genAttrs config.my.homeUsers (_: {
-    imports = [../../modules/home/shipwright.nix];
+    imports = [
+      ../../modules/home/dusklight.nix
+      ../../modules/home/shipwright.nix
+    ];
   });
 }
