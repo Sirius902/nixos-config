@@ -1,5 +1,7 @@
 {pkgs}: let
   packages = {
+    anchor-server = pkgs.callPackage ./anchor-server/package.nix {};
+
     archipelago = pkgs.callPackage ./archipelago/package.nix {
       extraPythonPackages = ps: [
         # Needed by Twilight Princess Client.
