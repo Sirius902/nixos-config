@@ -7,6 +7,7 @@
     ./hardware-configuration.nix
     ../../modules/nixos/standard.nix
     ../../modules/microvm-host.nix
+    ./anchor-vm.nix
     ./atm10-vm.nix
     ./eno2-e1000e-hang-workaround.nix
   ];
@@ -44,7 +45,8 @@
     extraCommandLineFile = config.sops.secrets.srcdsExtraCommandLine.path;
   };
 
-  # 32069 is hkmp; atm10's 25565 is DNAT'd to its microVM (atm10-vm-hostnet), not here.
+  # 32069 is hkmp; atm10's 25565 and anchor's 43383 are DNAT'd to their microVMs
+  # (<vm>-hostnet), not opened here.
   networking.firewall.allowedTCPPorts = [25566 32069];
   networking.firewall.allowedUDPPorts = [25566 32069];
 
