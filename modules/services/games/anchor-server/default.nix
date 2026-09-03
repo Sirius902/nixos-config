@@ -65,6 +65,8 @@ in {
   options.services.anchor-server = {
     enable = lib.mkEnableOption "the Anchor server";
 
+    package = lib.mkPackageOption pkgs "anchor-server" {};
+
     autoStart = lib.mkOption {
       type = lib.types.bool;
       default = true;
@@ -146,7 +148,7 @@ in {
           StandardOutput = "journal";
           StandardError = "journal";
 
-          ExecStart = lib.getExe pkgs.anchor-server;
+          ExecStart = lib.getExe cfg.package;
 
           # Stopped through the console rather than by signal: SIGTERM also
           # saves and exits cleanly, but first dumps every goroutine stack into
