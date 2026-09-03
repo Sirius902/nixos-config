@@ -17,9 +17,10 @@ old_version="$(jq --exit-status --raw-output '
   | select(type == "string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))
 ' "$manifest_file")"
 
-version="$(curl --silent --show-error --fail --location "$base_url/latest")"
+version="${1:-$(curl --silent --show-error --fail --location \
+  "$base_url/latest")}"
 if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  echo "error: latest endpoint returned an invalid version: $version" >&2
+  echo "error: invalid version: $version" >&2
   exit 1
 fi
 
