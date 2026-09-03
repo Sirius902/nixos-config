@@ -51,6 +51,8 @@
   funchookHash ? "sha256-u/RXMNyKL6L7p5gEFnAQTErPXXGKXv74jbYlBbG0Wy4=",
   capstoneVersion ? "4.0.2",
   capstoneHash ? "sha256-XMwQ7UaPC8YYu4yxsE4bbR3leYPfBHu5iixSLz05r3g=",
+  # Revisions that predate the mods framework set this false.
+  hasInTreeMods ? true,
 }: let
   nodVersion = "v2.0.0-alpha.10";
 
@@ -165,6 +167,15 @@ in
 
     postPatch = ''
       sed -i '/add_subdirectory(tests)/d' extern/aurora/CMakeLists.txt
+
+      ${lib.optionalString hasInTreeMods ''
+        # Each mod under mods/ is its own derivation (pkgs/dusklight/mods). CMake
+        # configures every add_subdirectory regardless of what gets built, so leaving
+        # them in drags the randomizer's FetchContent dependencies into the game build.
+        substituteInPlace CMakeLists.txt \
+          --replace-fail "if (DUSK_ENABLE_CODE_MODS AND CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)" \
+            "if (FALSE)"
+      ''}
 
       check_version() {
         local name="$1" expected="$2" var="$3"
