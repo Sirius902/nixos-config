@@ -396,8 +396,8 @@
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "473633c31a6a2f485af8b8692d4662a5cd71e2dc";
-        hash = "sha256-PwZi0ISor5SRZNGiccbGGEiEbVl5NQS4HZznZLh/q1Y=";
+        rev = "2eca0b5f0b7555c7ca67e043fbbc03ac4b2f7f9d";
+        hash = "sha256-xzaBYxGpl7TXXIM7F+1QJD5FgGf/tUiYpBiKXt2xb9g=";
 
         postCheckout = ''
           cd "$out"
@@ -411,11 +411,11 @@
             aacdec/fdk-aac \
             abseil-cpp \
             cpp-httplib \
-            dear_imgui \
             discord-rpc \
             freetype \
             glslang \
             hwinfo \
+            imgui \
             libressl \
             libusb \
             minimp3 \
@@ -431,8 +431,6 @@
           git -C externals/zydis submodule update --init --depth 1 dependencies/zycore
         '';
       };
-
-      patches = [];
 
       postPatch = ''
         substituteInPlace src/common/scm_rev.cpp.in \
