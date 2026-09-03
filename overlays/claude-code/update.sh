@@ -7,9 +7,9 @@ set -euo pipefail
 base_url="https://downloads.claude.ai/claude-code-releases"
 repo_root="$(git rev-parse --show-toplevel)"
 package_dir="$repo_root/overlays/claude-code"
-manifest_file="$package_dir/manifest.json"
+manifest_file="$package_dir/manifest.zst.json"
 temp_dir="$(mktemp -d)"
-manifest_temp="$temp_dir/manifest.json"
+manifest_temp="$temp_dir/manifest.zst.json"
 trap 'rm -f "$manifest_temp"; rmdir "$temp_dir"' EXIT
 
 old_version="$(jq --exit-status --raw-output '
@@ -24,7 +24,7 @@ if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 curl --silent --show-error --fail --location \
-  "$base_url/$version/manifest.json" \
+  "$base_url/$version/manifest.zst.json" \
   --output "$manifest_temp"
 
 expected_platforms='[
@@ -49,7 +49,7 @@ if ! jq --exit-status \
         . as $platform
         | $manifest.platforms[$platform]
         | type == "object"
-          and (.binary | type == "string" and length > 0)
+          and (.binary | type == "string" and endswith(".zst"))
           and (.checksum | type == "string" and test("^[0-9a-f]{64}$"))
           and (.size | type == "number" and . > 0)
       )
@@ -67,4 +67,4 @@ mv "$manifest_temp" "$manifest_file"
 git -C "$repo_root" commit --only \
   --message "claude-code: $old_version -> $version" \
   --message "Changelog: https://github.com/anthropics/claude-code/blob/v$version/CHANGELOG.md" \
-  -- overlays/claude-code/manifest.json
+  -- overlays/claude-code/manifest.zst.json

@@ -1,7 +1,7 @@
 final: prev: {
   claude-code =
     (prev.claude-code.override {
-      manifest = final.lib.importJSON ./manifest.json;
+      manifest = final.lib.importJSON ./manifest.zst.json;
     }).overrideAttrs (prevAttrs: {
       passthru =
         (prevAttrs.passthru or {})
