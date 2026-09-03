@@ -29,7 +29,11 @@
     esac
   '';
 in {
-  imports = [inputs.microvm.nixosModules.host];
+  my.microvmHost.vms.atm10-vm = {
+    index = 0;
+    forwardedTCPPorts = [25565];
+    oomScoreAdjust = 1000;
+  };
 
   # The native mc-atm10 service used to define this user; it's gone now, but the world
   # files keep its ownership and the VM writes them (over virtiofs) as this id, so pin
@@ -42,51 +46,6 @@ in {
   users.groups.mc-atm10 = {
     gid = mcGid;
     members = ["chris"];
-  };
-
-  # How `microvm -s` (and the backup units) authenticate: root borrows chris's key for
-  # vsock hosts. Remove it and the login breaks.
-  programs.ssh.extraConfig = ''
-    Host vsock-mux/* vsock/*
-      IdentityFile /home/chris/.ssh/id_ed25519
-      IdentitiesOnly yes
-  '';
-
-  # NetworkManager is told to ignore the tap at runtime (nmcli, not its config) so it
-  # is never reloaded — only ever touching vm-atm10, never eno2/Tailscale.
-  systemd.services."atm10-vm-hostnet" = {
-    description = "Host-side networking for atm10-vm (tap IP + game-port forward)";
-    after = ["microvm-tap-interfaces@atm10-vm.service"];
-    bindsTo = ["microvm-tap-interfaces@atm10-vm.service"];
-    partOf = ["microvm@atm10-vm.service"];
-    wantedBy = ["microvm@atm10-vm.service"];
-    path = [pkgs.iproute2 pkgs.networkmanager pkgs.iptables];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      # Remove the forward when the VM stops, so host:25565 isn't shadowed while off.
-      ExecStop = pkgs.writeShellScript "atm10-vm-forward-down" ''
-        iptables -t nat -D PREROUTING -i eno2 -p tcp --dport 25565 -j DNAT --to-destination 10.0.0.2:25565 2>/dev/null || true
-        iptables -D FORWARD -i eno2 -o vm-atm10 -d 10.0.0.2 -p tcp --dport 25565 -j ACCEPT 2>/dev/null || true
-      '';
-    };
-    script = ''
-      nmcli device set vm-atm10 managed no 2>/dev/null || true
-      ip addr replace 10.0.0.1/30 dev vm-atm10
-      ip link set vm-atm10 up
-
-      # -C guards make this idempotent on restart; -I beats any default-drop in FORWARD.
-      iptables -t nat -C PREROUTING -i eno2 -p tcp --dport 25565 -j DNAT --to-destination 10.0.0.2:25565 2>/dev/null \
-        || iptables -t nat -I PREROUTING -i eno2 -p tcp --dport 25565 -j DNAT --to-destination 10.0.0.2:25565
-      iptables -C FORWARD -i eno2 -o vm-atm10 -d 10.0.0.2 -p tcp --dport 25565 -j ACCEPT 2>/dev/null \
-        || iptables -I FORWARD -i eno2 -o vm-atm10 -d 10.0.0.2 -p tcp --dport 25565 -j ACCEPT
-    '';
-  };
-
-  networking.nat = {
-    enable = true;
-    internalInterfaces = ["vm-atm10"];
-    externalInterface = "eno2";
   };
 
   microvm.vms.atm10-vm = {
@@ -107,18 +66,6 @@ in {
             proto = "virtiofs";
           }
         ];
-        interfaces = [
-          {
-            type = "tap";
-            id = "vm-atm10";
-            mac = "02:00:00:00:0a:01";
-          }
-        ];
-        # vsock is the `microvm -s` login. NB: setting the cid also arms microvm.nix's
-        # notify relay (the boot killer) — neutralised in the host dropin below (#474).
-        vsock.cid = 42;
-        vsock.ssh.enable = true;
-
         # Boot output on the paravirtual console; the emulated 8250 serial is slow
         # enough to throttle the boot's console writes (microvm.nix#366).
         cloud-hypervisor.extraArgs = ["--console" "tty" "--serial" "off"];
@@ -140,7 +87,8 @@ in {
       users.users.mc-atm10.uid = mcId;
       users.groups.mc-atm10.gid = mcGid;
 
-      # Key-only root login for `microvm -s`, trusting just the key root presents (above).
+      # Key-only root login for `microvm -s`, trusting just the key root presents
+      # (`my.microvmHost.identityFile`).
       services.openssh.settings.PermitRootLogin = "prohibit-password";
       services.openssh.settings.PasswordAuthentication = false;
       users.users.root.openssh.authorizedKeys.keys = [
@@ -156,18 +104,6 @@ in {
         }
       ];
 
-      # Route + DNS via hee-ho's NAT for online-mode auth and player replies; wait-online
-      # off so the link can't stall boot.
-      systemd.network.enable = true;
-      systemd.network.wait-online.enable = false;
-      systemd.network.networks."10-host" = {
-        matchConfig.MACAddress = "02:00:00:00:0a:01";
-        address = ["10.0.0.2/30"];
-        routes = [{Gateway = "10.0.0.1";}];
-        networkConfig.IPv6AcceptRA = false;
-      };
-      networking.nameservers = ["1.1.1.1"]; # static resolv.conf — resolved off below
-      services.resolved.enable = false;
       services.timesyncd.enable = false; # kvm-clock gives the host's time; no NTP
 
       # The host's tap + DNAT gate all access (only 25565 in, admin over vsock), and an
@@ -183,20 +119,6 @@ in {
       environment.pathsToLink = ["/share/terminfo"];
 
       system.stateVersion = "26.05";
-    };
-  };
-
-  # Boot fix (#474): vsock.cid arms microvm.nix's socat notify relay whose 2s timeout
-  # stalls boot; Type=simple + NotifyAccess=none leaves NOTIFY_SOCKET unset so it never
-  # starts. OOMScoreAdjust makes the VM the first thing the kernel sacrifices if the host
-  # ever runs out of memory, so an OOM can't take down host services (sshd is already at
-  # -1000, tailscaled is protected in configuration.nix).
-  systemd.services."microvm@atm10-vm" = {
-    overrideStrategy = "asDropin";
-    serviceConfig = {
-      Type = lib.mkForce "simple";
-      NotifyAccess = lib.mkForce "none";
-      OOMScoreAdjust = 1000;
     };
   };
 
