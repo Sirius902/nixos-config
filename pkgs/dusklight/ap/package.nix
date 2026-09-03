@@ -44,6 +44,7 @@ in
     };
     symgenVersion = null;
     funchookVersion = null;
+    hasInTreeMods = false;
   })
   .overrideAttrs (finalAttrs: prevAttrs: {
     pname = "dusklight-ap";
