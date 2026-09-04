@@ -47,7 +47,7 @@
     meta = {
       description = "Ghidra Loader Module for X360 XEX Files";
       homepage = "https://github.com/zeroKilo/XEXLoaderWV";
-      license = lib.licenses.unlicense;
+      license = lib.licenses.unfree;
       maintainers = with lib.maintainers; [sirius902];
       platforms = lib.platforms.unix;
     };
