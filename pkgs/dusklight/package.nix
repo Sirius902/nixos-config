@@ -53,6 +53,8 @@
   capstoneHash ? "sha256-XMwQ7UaPC8YYu4yxsE4bbR3leYPfBHu5iixSLz05r3g=",
   # Revisions that predate the mods framework set this false.
   hasInTreeMods ? true,
+  # Revisions that predate the borealis submodule set this false.
+  hasBorealis ? true,
 }: let
   nodVersion = "v2.0.0-alpha.10";
 
@@ -327,6 +329,13 @@ in
       + lib.optionalString stdenv.hostPlatform.isDarwin ''
         mkdir -p $out/Applications
         mv Dusklight.app $out/Applications/Dusklight.app
+      ''
+      + ''
+        install -Dm644 -t $out/share/licenses/${finalAttrs.pname} $src/LICENSE.md
+        install -Dm644 -t $out/share/licenses/${finalAttrs.pname}/aurora $src/extern/aurora/LICENSE
+      ''
+      + lib.optionalString hasBorealis ''
+        install -Dm644 -t $out/share/licenses/${finalAttrs.pname}/borealis $src/extern/borealis/LICENSE
       ''
       + ''
         runHook postInstall
