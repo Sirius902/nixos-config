@@ -377,11 +377,6 @@
         hash = "sha256-aOphNSsTMFWBsbecM2Svic/c8tRutbQ6kE9HViEHNHg=";
       };
 
-      patches =
-        builtins.filter
-        (p: !final.lib.hasSuffix "ffmpeg-9-pix-fmts.patch" (baseNameOf (toString p)))
-        prevAttrs.patches;
-
       passthru =
         (prevAttrs.passthru or {})
         // {

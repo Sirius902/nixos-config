@@ -45,7 +45,7 @@
   services.resolved.enable = true;
   services.tailscale.useRoutingFeatures = "server";
 
-  services.journald.extraConfig = "SystemMaxUse=100M";
+  services.journald.settings.Journal.SystemMaxUse = "100M";
 
   my.tailscale.enable = true;
   my.memory = {
