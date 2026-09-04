@@ -45,6 +45,7 @@ in
     symgenVersion = null;
     funchookVersion = null;
     hasInTreeMods = false;
+    hasBorealis = false;
   })
   .overrideAttrs (finalAttrs: prevAttrs: {
     pname = "dusklight-ap";
