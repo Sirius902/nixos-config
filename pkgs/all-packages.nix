@@ -39,6 +39,7 @@
     dusklight-ap = pkgs.callPackage ./dusklight/ap/package.nix {};
     dusklight-tphd = pkgs.callPackage ./dusklight/tphd/package.nix {};
     dusklight-randomizer = pkgs.callPackage ./dusklight/mods/randomizer.nix {};
+    dusklight-cosmetics = pkgs.callPackage ./dusklight/mods/cosmetics.nix {};
 
     wrye-bash = pkgs.callPackage ./wrye-bash/package.nix {};
 

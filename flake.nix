@@ -229,6 +229,7 @@
                 dusklight
                 dusklight-rando
                 dusklight-randomizer
+                dusklight-cosmetics
                 dusklight-ap
                 shipwright
                 shipwright-ap
