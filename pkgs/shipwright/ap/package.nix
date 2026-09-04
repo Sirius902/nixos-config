@@ -332,7 +332,8 @@ in {
     + ''
       # TODO(Sirius902) Uncomment when upstream adds a root LICENSE file.
       # install -Dm644 -t $out/share/licenses/shipwright-ap ../LICENSE
-      test ! -f ../LICENSE || (echo "upstream LICENSE exists now, install it!" && false)
+      test ! -f ../LICENSE && test ! -f ../LICENSE.md \
+        || (echo "upstream LICENSE exists now, install it!" && false)
 
       install -Dm644 -t $out/share/licenses/shipwright-ap/OTRExporter ../OTRExporter/LICENSE
       install -Dm644 -t $out/share/licenses/shipwright-ap/ZAPDTR ../ZAPDTR/LICENSE
