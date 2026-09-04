@@ -163,7 +163,14 @@ in
     meta = {
       homepage = "https://github.com/RecompRando/MMRecompAPCppGlue";
       description = "Archipelago native glue library for MMRecompRando";
-      license = lib.licenses.mit;
+      license = with lib.licenses; [
+        # archipelago
+        mit
+        # MMRecompAPCppGlue
+        cc0
+        # lib/APCpp
+        lgpl21Only
+      ];
       maintainers = with lib.maintainers; [sirius902];
       platforms = ["x86_64-linux"];
     };

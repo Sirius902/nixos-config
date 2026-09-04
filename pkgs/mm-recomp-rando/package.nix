@@ -52,7 +52,12 @@ stdenv.mkDerivation {
   meta = {
     homepage = "https://github.com/RecompRando/MMRecompRando";
     description = "Archipelago randomizer mod for Majora's Mask: Recompiled";
-    license = lib.licenses.mit;
+    license = with lib.licenses; [
+      # MMRecompRando
+      gpl3Only
+      # mm-decomp, Zelda64RecompSyms
+      unfree
+    ];
     maintainers = with lib.maintainers; [sirius902];
     platforms = ["x86_64-linux"];
   };
