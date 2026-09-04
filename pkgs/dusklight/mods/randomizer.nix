@@ -9,6 +9,7 @@
   darwinMinVersionHook,
   dusklight,
   fmt,
+  nix-update-script,
 }: let
   base64pp-src = fetchFromGitHub {
     owner = "matheusgomes28";
@@ -33,9 +34,14 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "dusklight-randomizer";
+    version = "0-unstable-2026-09-04";
 
-    # A mod binds to the game ABI of the revision it was built against.
-    inherit (dusklight) src version;
+    src = fetchFromGitHub {
+      owner = "TwilitRealm";
+      repo = "dusklight-randomizer";
+      rev = "88b8648753c6ebcdef092eff09b50904ba08f067";
+      hash = "sha256-MToCOg04k8tPQkCKnkC3nVO8S+77/erQg+dSvKbwOCE=";
+    };
 
     nativeBuildInputs =
       [
@@ -61,8 +67,6 @@ in
       cmakeFlags+=("-DFETCHCONTENT_SOURCE_DIR_BASE64PP=$PWD/base64pp-src")
     '';
 
-    cmakeDir = "../mods/randomizer";
-
     # randomizer_generator_tests computes RANDO_LOGIC_TESTS_PATH from
     # CMAKE_SOURCE_DIR, which out of tree is the mod directory rather than the
     # game root.
@@ -74,6 +78,7 @@ in
         (lib.cmakeBool "FETCHCONTENT_FULLY_DISCONNECTED" true)
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_BATTERY-EMBED" "${battery-embed-src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_YAML-CPP" "${yaml-cpp-src}")
+        (lib.cmakeFeature "DUSKLIGHT_DIR" "${dusklight.src}")
         (lib.cmakeBool "BUILD_SHARED_LIBS" false)
       ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
@@ -93,8 +98,15 @@ in
     strictDeps = true;
     __structuredAttrs = true;
 
+    passthru.updateScript = nix-update-script {
+      extraArgs = [
+        "--version=branch"
+        "--version-regex=(0-unstable-.*)"
+      ];
+    };
+
     meta = {
-      homepage = "https://github.com/TwilitRealm/dusklight";
+      homepage = "https://github.com/TwilitRealm/dusklight-randomizer";
       description = "Randomizer mod for Dusklight";
       maintainers = with lib.maintainers; [sirius902];
       platforms = ["x86_64-linux" "aarch64-darwin"];
