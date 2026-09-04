@@ -351,6 +351,17 @@ in
       mainProgram = "dusklight";
       maintainers = with lib.maintainers; [sirius902];
       platforms = ["x86_64-linux" "aarch64-darwin"];
-      license = with lib.licenses; [unfree];
+      sourceProvenance = [
+        lib.sourceTypes.fromSource
+        lib.sourceTypes.binaryNativeCode
+      ];
+      license = with lib.licenses; [
+        # extern/aurora, extern/borealis
+        mit
+        # Dusklight
+        cc0
+        # Reverse engineering
+        unfree
+      ];
     };
   })
