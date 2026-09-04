@@ -80,6 +80,6 @@ stdenv.mkDerivation (finalAttrs: {
     description = "Cosmetic customization mod for Dusklight";
     maintainers = with lib.maintainers; [sirius902];
     platforms = ["x86_64-linux" "aarch64-darwin"];
-    license = with lib.licenses; [unfree];
+    license = lib.licenses.unfree;
   };
 })
