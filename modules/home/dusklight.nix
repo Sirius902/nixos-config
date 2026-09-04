@@ -7,7 +7,7 @@
 
   mods = {
     "randomizer.dusk" = "${pkgs.dusklight-randomizer}/lib/dusklight-randomizer/randomizer.dusk";
-    "basic_cosmetics_mod.dusk" = "${pkgs.dusklight-basic-cosmetics}/lib/dusklight-basic-cosmetics/basic_cosmetics_mod.dusk";
+    "cosmetics.dusk" = "${pkgs.dusklight-cosmetics}/lib/dusklight-cosmetics/cosmetics.dusk";
   };
 
   # Dusklight resolves its user directory with SDL_GetPrefPath under
