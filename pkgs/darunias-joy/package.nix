@@ -22,7 +22,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     sequence-otrizer
   ];
 
-  # Seven entries under data/Music are packed wrong as shipped: SequenceOTRizer
+  # Six entries under data/Music are packed wrong as shipped: SequenceOTRizer
   # only takes a .seq with a same-stem .meta, and it names every entry
   # custom/music/<meta line 1>_<lowercased meta line 3>, so a stem mismatch or
   # a duplicated title drops a sequence without a word and a trailing space
@@ -45,40 +45,33 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       sed -i "$2s/.*/$4/" "$1"
     }
 
-    # TODO(Sirius902) Drop once the .seq entry in Blue Water Blue Sky -May's
-    # Theme-.ootrs spells the apostrophe the way its .meta does: the zip holds
-    # a CP932 quote in the one and an ASCII quote in the other, so the stems
-    # never match.
-    seqDir="data/Music/Guilty Gear Series/Guilty Gear X/Blue Water Blue Sky -May's Theme-"
-    mv "$seqDir"/*.seq "$seqDir/Guilty Gear - Blue Water Blue Sky -May's Theme-.seq"
-
     # TODO(Sirius902) Drop once Oppressed People carries its own title rather
     # than a copy of the one next door, which it collides with and loses to.
-    retitle "data/Music/Final Fantasy Series/Final Fantasy VII/Oppressed People/Final Fantasy VII - Oppressed People.meta" \
+    retitle "data/Music/Final Fantasy VII/Oppressed People/Final Fantasy VII - Oppressed People.meta" \
       1 'Final Fantasy vii - Forested Temple' 'Final Fantasy VII - Oppressed People'
 
-    # TODO(Sirius902) Drop once the Hyperdimension Neptunia copies of these two
-    # are titled as the alternate arrangements they are, the way Mega Man X -
-    # Armored Armadillo v2 already is. Each pair is distinct .seq data on a
-    # distinct soundfont, so both are worth shipping, but sharing a title costs
-    # the standalone Mega Man Series copy.
-    retitle "data/Music/Hyperdimension Neptunia/Mega Man Series/Mega Man 2/Bubble Man/Mega Man 2 - Bubble Man.meta" \
+    # TODO(Sirius902) Drop once the [2] copies of these two are titled as
+    # the alternate arrangements they are, the way Mega Man X - Armored
+    # Armadillo v2 already is. Each pair is distinct .seq data on a distinct
+    # soundfont, so both are worth shipping, but sharing a title costs the
+    # standalone copy.
+    retitle "data/Music/Mega Man 2/Bubble Man [2]/Mega Man 2 - Bubble Man.meta" \
       1 'Mega Man 2 - Bubble Man' 'Mega Man 2 - Bubble Man v2'
-    retitle "data/Music/Hyperdimension Neptunia/Mega Man Series/Mega Man 2/Crash Man/Mega Man 2 - Crash Man.meta" \
+    retitle "data/Music/Mega Man 2/Crash Man [2]/Mega Man 2 - Crash Man.meta" \
       1 'Mega Man 2 - Crash Man' 'Mega Man 2 - Crash Man v2'
 
     # TODO(Sirius902) Drop once these two titles lose the trailing space that
     # StringUtils::Sanitize leaves alone and the archive name keeps.
-    retitle "data/Music/The Legend of Zelda Series/A Link to the Past/Death Mountain/Death Mountain.meta" \
+    retitle "data/Music/The Legend of Zelda A Link to the Past/Death Mountain/Death Mountain.meta" \
       1 'The Legend of Zelda: A Link to the Past - Death Mountain ' \
       'The Legend of Zelda: A Link to the Past - Death Mountain'
-    retitle "data/Music/The Legend of Zelda Series/A Link to the Past/Fanfare - Ocarina/Fanfare - Ocarina.meta" \
+    retitle "data/Music/The Legend of Zelda A Link to the Past/Ocarina/Fanfare - Ocarina.meta" \
       1 'The Legend of Zelda: A Link to the Past - Ocarina ' \
       'The Legend of Zelda: A Link to the Past - Ocarina'
 
     # TODO(Sirius902) Drop once Boss Defeated's type loses its trailing space,
     # which mangles the archive name and knocks CachePolicy down to 1.
-    retitle "data/Music/The Legend of Zelda Series/Twilight Princess/Boss Defeated/Boss Defeated.meta" \
+    retitle "data/Music/The Legend of Zelda Twilight Princess/Boss Defeated/Boss Defeated.meta" \
       3 'bgm ' bgm
 
     SequenceOTRizer --seq-path data/Music --otr-name daruniasjoy
