@@ -365,17 +365,12 @@
 
   (final: prev: {
     rpcs3 = prev.rpcs3.overrideAttrs (prevAttrs: {
-      version = "0.0.42-unstable-2026-09-04";
+      version = "0.0.42-unstable-2026-09-05";
       src = prevAttrs.src.override {
         tag = null;
-        rev = "33a723affa1554ef310a138d3c8810b29c3aa43c";
-        hash = "sha256-nsszicrYAXGsb2HZwZQpn9dmau6K42c/KmZt+6WGx94=";
+        rev = "de6c1b526d930e938b06b237731cbbf491076783";
+        hash = "sha256-T5x8hbde8DlyMg+Tck08bY+x+y7P9gHnVCtuCt9sqas=";
       };
-
-      patches =
-        builtins.filter
-        (p: !final.lib.hasSuffix "ffmpeg-9-pix-fmts.patch" (baseNameOf (toString p)))
-        prevAttrs.patches;
 
       passthru =
         (prevAttrs.passthru or {})
