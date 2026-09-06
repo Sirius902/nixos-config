@@ -121,23 +121,6 @@
   })
 
   (final: prev: {
-    niri = prev.niri.overrideAttrs (prevAttrs: {
-      patches =
-        (prevAttrs.patches or [])
-        ++ [
-          # FUTURE(Sirius902) Add SHM screencast fallback so Discord/Electron
-          # consumers that don't accept dmabuf modifiers can negotiate a format.
-          # https://github.com/niri-wm/niri/pull/1791 (fixes #455)
-          (final.fetchpatch {
-            name = "niri-pr-1791-shm-sharing.patch";
-            url = "https://github.com/niri-wm/niri/compare/8ed0da44d974c32c6877d2f4630c314da0717ecb...2ab59b90d55afbbe362a63e2a061afe4b524d8c4.diff";
-            hash = "sha256-q7rRmWgplPWAy/LDAbuSiuL+xTdCaPDx3DryZ3f+fqg=";
-          })
-        ];
-    });
-  })
-
-  (final: prev: {
     cosmic-comp = prev.cosmic-comp.overrideAttrs (prevAttrs: {
       patches =
         (prevAttrs.patches or [])
