@@ -15,7 +15,10 @@
   boot.kernelModules = ["ntsync" "nct6683"];
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
-  services.tailscale.useRoutingFeatures = "client";
+  services.tailscale = {
+    useRoutingFeatures = "both";
+    extraSetFlags = ["--advertise-exit-node" "--advertise-routes=10.0.0.0/24"];
+  };
 
   my.vfio = {
     enable = true;
