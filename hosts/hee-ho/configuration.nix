@@ -52,7 +52,11 @@
 
   # Must be enabled due to https://github.com/tailscale/tailscale/issues/4254.
   services.resolved.enable = true;
-  services.tailscale.useRoutingFeatures = "server";
+
+  services.tailscale = {
+    useRoutingFeatures = "server";
+    extraSetFlags = ["--advertise-exit-node" "--advertise-routes=192.168.1.0/24"];
+  };
 
   # Keep the OOM-killer off the remote-access path under memory pressure (sshd is
   # already -1000; the atm10 microVM is set to be sacrificed first).
