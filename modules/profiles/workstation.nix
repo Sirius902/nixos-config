@@ -37,7 +37,10 @@
     imports = [../home/games.nix];
   });
 
-  environment.systemPackages = with pkgs;
-    [waypipe]
-    ++ lib.optional config.services.ratbagd.enable piper;
+  environment.systemPackages =
+    [
+      pkgs.remmina
+      pkgs.waypipe
+    ]
+    ++ lib.optional config.services.ratbagd.enable pkgs.piper;
 }
