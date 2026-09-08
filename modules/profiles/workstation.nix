@@ -28,7 +28,7 @@
     zfs-admin.members = ["chris"];
   };
 
-  services.flatpak.enable = lib.mkDefault true;
+  services.flatpak.enable = lib.mkDefault false;
 
   # Configurable gaming mice (Logitech G600 etc.): ratbagctl CLI + Piper GUI
   services.ratbagd.enable = lib.mkDefault true;
