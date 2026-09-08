@@ -387,12 +387,12 @@
 
   (final: prev: {
     shadps4 = prev.shadps4.overrideAttrs (finalAttrs: prevAttrs: {
-      version = "0.18.0-unstable-2026-09-01";
+      version = "0.18.0-unstable-2026-09-08";
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "1403d31130f0e9ea61515801328bc49cd65116d7";
-        hash = "sha256-ebe952DsBQUKL7KglG+MbYSDe7fUTYDgT/EWzzMT3VA=";
+        rev = "507464a531c0e8ddb4308f9cad6a73ab413f92d3";
+        hash = "sha256-cN1zgmYg1NSclUxZOK+5W7kXkJdBOfTxPVveQFfA+KI=";
 
         postCheckout = ''
           cd "$out"
@@ -406,11 +406,11 @@
             aacdec/fdk-aac \
             abseil-cpp \
             cpp-httplib \
-            dear_imgui \
             discord-rpc \
             freetype \
             glslang \
             hwinfo \
+            imgui \
             libressl \
             libusb \
             minimp3 \
@@ -426,8 +426,6 @@
           git -C externals/zydis submodule update --init --depth 1 dependencies/zycore
         '';
       };
-
-      patches = [];
 
       postPatch = ''
         substituteInPlace src/common/scm_rev.cpp.in \
