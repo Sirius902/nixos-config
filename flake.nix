@@ -228,6 +228,7 @@
                 _2ship2harkinian
                 dusklight
                 dusklight-rando
+                dusklight-randomizer
                 dusklight-ap
                 shipwright
                 shipwright-ap
