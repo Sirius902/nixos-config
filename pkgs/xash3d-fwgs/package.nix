@@ -28,19 +28,19 @@
 in
   stdenv.mkDerivation {
     pname = "xash3d-fwgs";
-    version = "0-unstable-2026-08-27";
+    version = "0-unstable-2026-09-08";
 
     src = fetchFromGitHub {
       owner = "FWGS";
       repo = "xash3d-fwgs";
-      rev = "1442d14a69093780389104dcb7369aa3685945cf";
-      hash = "sha256-ytzmQBb3T8MHXsK2N2veT/7G3nnwlkOXnc4TYCoPJ9g=";
+      rev = "1de8289f2980aa34c70760ae0ebfb2e00ddb0f9e";
+      hash = "sha256-3YGC1DIpwEFQWe32PsJ0YTrq028+I1IpIdELzz1SR+Q=";
       postCheckout = ''
         cd $out/3rdparty
         git submodule update --init --recursive \
-          MultiEmulator extras/xash-extras gl-wes-v2 gl4es/gl4es \
+          MultiEmulator extras/xash-extras freevgui gl-wes-v2 gl4es/gl4es \
           libbacktrace/libbacktrace library_suffix maintui mainui mbedtls \
-          nanogl vgui_support
+          nanogl
       '';
     };
 
