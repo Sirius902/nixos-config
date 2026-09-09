@@ -48,6 +48,19 @@ Never include:
 - Narration of the diff, conversation context ("post-review", "as
   discussed"), or references to the author in the third person.
 
+### Bumps that carry a fix
+
+Fold a fix into the `pkg: old -> new` commit when the bump is what made it
+necessary — a renamed submodule, a path upstream moved, a workaround the new
+revision retires. The test is whether the change would still make sense with
+the bump reverted; if it would, it is its own commit. A bump nobody can build
+without a later commit is half a change, not an atomic one.
+
+A folded bump takes one body line naming the cause, above the generated
+`Diff:`/`Changelog:` line. Fallout from `flake: update inputs` is not folded
+into a package bump — it lands in its own commit directly after the lock
+update, since the lock is what broke it.
+
 ## Trailers
 
 A commit an agent wrote ends with that agent's `Co-authored-by:` trailer,
@@ -55,7 +68,9 @@ blank line before it. It is attribution, not a body — it needs no
 justification and doesn't make the commit one with a body. It creates no
 cross-reference, so unlike an issue link a rebase re-triggers nothing.
 Nothing else carries one: not tooling output like `nix-update` bumps, not
-commits written by hand.
+commits written by hand. A bump with a hand-written fix folded in is no
+longer only tooling output and does take the trailer, which is what marks it
+apart from the generated ones around it.
 
 The Never include rules apply to trailers too. `Fixes: owner/repo#N` is out
 for the same reason its prose form is.
