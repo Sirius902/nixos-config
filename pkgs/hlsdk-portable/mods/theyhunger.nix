@@ -7,8 +7,8 @@ hlsdk-portable.overrideAttrs (prevAttrs: {
   version = "0-unstable-2026-09-09";
 
   src = prevAttrs.src.override {
-    rev = "7fb322677d09cdcd95d98c5914919d9ce7ea80c6";
-    hash = "sha256-xsZ6ndKQVA0imPShAYGNPUir9OYwZv0WGxYJxW40gxQ=";
+    rev = "ac8e718892aa3c311311cfa0369dd8d951c50fa5";
+    hash = "sha256-WGjL9tOVEzppD6/k+bD9hvJcmcgIDHSSU4D+p0l+PSk=";
   };
 
   passthru =
