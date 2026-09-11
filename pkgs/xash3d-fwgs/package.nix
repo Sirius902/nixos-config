@@ -28,13 +28,13 @@
 in
   stdenv.mkDerivation {
     pname = "xash3d-fwgs";
-    version = "0-unstable-2026-09-10";
+    version = "0-unstable-2026-09-11";
 
     src = fetchFromGitHub {
       owner = "FWGS";
       repo = "xash3d-fwgs";
-      rev = "ec88a62d1d0a73181914c217368d7d8658a55b90";
-      hash = "sha256-CuybEdbapZ4f4gfm8GCN1qfGoAROswTlWEwdHK+3VRs=";
+      rev = "e9b63241616c390d4d1720ced80e88de2acf83a6";
+      hash = "sha256-9mnYu4cr/5x1VnuTjT6jCuH93YEklAfHcgmrF+exBXo=";
       postCheckout = ''
         cd $out/3rdparty
         git submodule update --init --recursive \
