@@ -99,6 +99,11 @@
     stripRoot = false;
   };
 
+  picosha2-src = fetchzip {
+    url = "https://github.com/okdshin/PicoSHA2/archive/refs/tags/v1.0.1.tar.gz";
+    hash = "sha256-3psCzbrwR+vO9TyTKOx+gEaWuHDx6pSgLOQ3DqrJsnI=";
+  };
+
   sqlite-src = fetchzip {
     url = "https://sqlite.org/2026/sqlite-amalgamation-3510300.zip";
     hash = "sha256-pNMR8zxaaqfAzQ0AQBOXMct4usdjey1Q0Gnitg06UhM=";
@@ -280,6 +285,7 @@ in
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_CXXOPTS" "${cxxopts.src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_JSON" "${nlohmann_json.src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_MINIZ" "${miniz-src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PICOSHA2" "${picosha2-src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DAWN_PREBUILT" "${dawn-src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_XXHASH" "${xxhash.src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_FMT" "${fmt.src}")
