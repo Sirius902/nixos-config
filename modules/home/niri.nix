@@ -172,7 +172,6 @@
     screenshot-path "~/Pictures/Screenshots/Screenshot_%Y-%m-%d_%H-%M-%S.png"
 
     // Startup
-    spawn-at-startup "xwayland-satellite"
     spawn-at-startup "noctalia"
 
     hotkey-overlay {
