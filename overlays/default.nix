@@ -121,6 +121,23 @@
   })
 
   (final: prev: {
+    xwayland-satellite = prev.xwayland-satellite.overrideAttrs (prevAttrs: {
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          # Stop focusing override-redirect popups, which X11 clients read as a
+          # dismissal of their own menus.
+          # https://github.com/Supreeeme/xwayland-satellite/pull/494
+          (final.fetchpatch {
+            name = "no-override-redirect-focus.patch";
+            url = "https://github.com/Supreeeme/xwayland-satellite/commit/add2795134593faafce60e404a0a75df68e9ee0c.diff";
+            hash = "sha256-/1zJYAIHC+xiVytHH5HDt83lZKLBGQQdAoS/y2ObTLc=";
+          })
+        ];
+    });
+  })
+
+  (final: prev: {
     cosmic-comp = prev.cosmic-comp.overrideAttrs (prevAttrs: {
       patches =
         (prevAttrs.patches or [])
