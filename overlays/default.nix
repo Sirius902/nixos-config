@@ -299,6 +299,16 @@
     });
   })
 
+  (_: prev: {
+    niri = prev.niri.overrideAttrs (prevAttrs: {
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          ../patches/niri/log-pointer-constraint-lifecycle.patch
+        ];
+    });
+  })
+
   # FUTURE(Sirius902) https://github.com/cosmic-utils/clipboard-manager/pull/207
   (final: prev: {
     cosmic-ext-applet-clipboard-manager = prev.cosmic-ext-applet-clipboard-manager.overrideAttrs (finalAttrs: prevAttrs: {

@@ -1,0 +1,211 @@
+From a48ddc80de14ed544f252f7be46c68b7f4898e8f Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Sun, 13 Sep 2026 13:54:42 -0700
+Subject: [PATCH] debug: trace the pointer constraint lifecycle
+
+Temporary instrumentation for triaging two pointer capture bugs under Proton.
+Not for upstream, and it changes no behaviour: every added line is a log.
+
+Three places, chosen so the journal distinguishes the competing explanations:
+
+- new_constraint() logs the client asking for the grab, and whether it asked
+  to lock or to confine. Nothing else creates a constraint, so an absent line
+  means the client never re-requested one and no compositor-side change could
+  have restored it.
+
+- maybe_activate_pointer_constraint() logs which guard refused, separating
+  "the constraint is gone" from "the constraint is there but the pointer is
+  outside its region".
+
+- The confine branch of on_pointer_motion() logs the motion it drops. That
+  branch discards both axes whenever either one would leave the surface or the
+  region, so a pointer resting against a region edge loses the perpendicular
+  component of every movement too. The log carries the delta, both positions,
+  the surface origin, the region, and which of the two conditions tripped.
+
+The motion log is rate limited to one line every 500ms, since it sits on the
+input path and the bug being chased can take a whole session to appear.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+---
+ src/handlers/mod.rs | 20 ++++++++++++++++++--
+ src/input/mod.rs    | 40 +++++++++++++++++++++++++++++++++++++++-
+ src/niri.rs         | 22 ++++++++++++++++++++--
+ 3 files changed, 77 insertions(+), 5 deletions(-)
+
+diff --git a/src/handlers/mod.rs b/src/handlers/mod.rs
+index 3532078b..dbf741fc 100644
+--- a/src/handlers/mod.rs
++++ b/src/handlers/mod.rs
+@@ -37,7 +37,9 @@ use smithay::wayland::keyboard_shortcuts_inhibit::{
+     KeyboardShortcutsInhibitHandler, KeyboardShortcutsInhibitState, KeyboardShortcutsInhibitor,
+ };
+ use smithay::wayland::output::OutputHandler;
+-use smithay::wayland::pointer_constraints::{with_pointer_constraint, PointerConstraintsHandler};
++use smithay::wayland::pointer_constraints::{
++    with_pointer_constraint, PointerConstraint, PointerConstraintsHandler,
++};
+ use smithay::wayland::security_context::{
+     SecurityContext, SecurityContextHandler, SecurityContextListenerSource,
+ };
+@@ -155,7 +157,21 @@ impl TabletSeatHandler for State {
+ delegate_tablet_manager!(State);
+ 
+ impl PointerConstraintsHandler for State {
+-    fn new_constraint(&mut self, _surface: &WlSurface, _pointer: &PointerHandle<Self>) {
++    fn new_constraint(&mut self, surface: &WlSurface, pointer: &PointerHandle<Self>) {
++        // constraint-debug: this is the client asking for the grab. Nothing else creates one, so
++        // an absent line here means the client never re-requested.
++        let kind = with_pointer_constraint(surface, pointer, |constraint| {
++            constraint.map(|constraint| match &*constraint {
++                PointerConstraint::Locked(_) => "locked",
++                PointerConstraint::Confined(_) => "confined",
++            })
++        });
++        info!(
++            "constraint-debug: client requested {:?} constraint on surface {:?}",
++            kind,
++            surface.id(),
++        );
++
+         // Pointer constraints track pointer focus internally, so make sure it's up to date before
+         // activating a new one.
+         self.refresh_pointer_contents();
+diff --git a/src/input/mod.rs b/src/input/mod.rs
+index f1ad4932..43fe1e9e 100644
+--- a/src/input/mod.rs
++++ b/src/input/mod.rs
+@@ -71,6 +71,23 @@ use backend_ext::{NiriInputBackend as InputBackend, NiriInputDevice as _};
+ 
+ pub const DOUBLE_CLICK_TIME: Duration = Duration::from_millis(400);
+ 
++// constraint-debug: pointer motion runs at input rate, so rate-limit the confine logging to keep
++// the journal readable across a long session.
++fn constraint_debug_ready() -> bool {
++    use std::sync::atomic::{AtomicU64, Ordering};
++
++    static LAST_MS: AtomicU64 = AtomicU64::new(0);
++
++    let now = get_monotonic_time().as_millis() as u64;
++    let last = LAST_MS.load(Ordering::Relaxed);
++    if now.saturating_sub(last) < 500 {
++        return false;
++    }
++
++    LAST_MS.store(now, Ordering::Relaxed);
++    true
++}
++
+ #[derive(Debug, Clone, Copy, PartialEq)]
+ pub struct TabletData {
+     pub aspect_ratio: f64,
+@@ -2546,21 +2563,42 @@ impl State {
+         // Handle confined pointer.
+         if let Some((focus_surface, region)) = pointer_confined {
+             let mut prevent = false;
++            let mut left_surface = false;
++            let mut left_region = false;
+ 
+             // Prevent the pointer from leaving the focused surface.
+             if Some(&focus_surface.0) != under.surface.as_ref().map(|(s, _)| s) {
+                 prevent = true;
++                left_surface = true;
+             }
+ 
+             // Prevent the pointer from leaving the confine region, if any.
+-            if let Some(region) = region {
++            if let Some(region) = &region {
+                 let new_pos_within_surface = new_pos - focus_surface.1;
+                 if !region.contains(new_pos_within_surface.to_i32_round()) {
+                     prevent = true;
++                    left_region = true;
+                 }
+             }
+ 
+             if prevent {
++                // constraint-debug: the whole motion is dropped here, both axes, whenever either
++                // one would leave. Log what was thrown away.
++                if constraint_debug_ready() {
++                    info!(
++                        "constraint-debug: confine dropped motion: delta={:?} pos={:?} \
++                         new_pos={:?} surface_origin={:?} left_surface={} left_region={} \
++                         region={:?}",
++                        event.delta(),
++                        pos,
++                        new_pos,
++                        focus_surface.1,
++                        left_surface,
++                        left_region,
++                        region,
++                    );
++                }
++
+                 pointer.relative_motion(
+                     self,
+                     Some(focus_surface),
+diff --git a/src/niri.rs b/src/niri.rs
+index ec40e01c..33cf588e 100644
+--- a/src/niri.rs
++++ b/src/niri.rs
+@@ -86,7 +86,9 @@ use smithay::wayland::keyboard_shortcuts_inhibit::{
+     KeyboardShortcutsInhibitState, KeyboardShortcutsInhibitor,
+ };
+ use smithay::wayland::output::OutputManagerState;
+-use smithay::wayland::pointer_constraints::{with_pointer_constraint, PointerConstraintsState};
++use smithay::wayland::pointer_constraints::{
++    with_pointer_constraint, PointerConstraint, PointerConstraintsState,
++};
+ use smithay::wayland::pointer_gestures::PointerGesturesState;
+ use smithay::wayland::presentation::PresentationState;
+ use smithay::wayland::relative_pointer::RelativePointerManagerState;
+@@ -6065,18 +6067,24 @@ impl Niri {
+     /// Make sure the pointer location and contents are up to date before calling this.
+     pub fn maybe_activate_pointer_constraint(&self) {
+         let Some((surface, surface_loc)) = &self.pointer_contents.surface else {
++            debug!("constraint-debug: activate skipped, nothing under the pointer");
+             return;
+         };
+ 
+         let pointer = self.seat.get_pointer().unwrap();
+         if Some(surface) != pointer.current_focus().as_ref() {
++            debug!("constraint-debug: activate skipped, pointer focus is a different surface");
+             return;
+         }
+ 
+         with_pointer_constraint(surface, &pointer, |constraint| {
+-            let Some(constraint) = constraint else { return };
++            let Some(constraint) = constraint else {
++                debug!("constraint-debug: activate skipped, surface has no constraint");
++                return;
++            };
+ 
+             if constraint.is_active() {
++                debug!("constraint-debug: activate skipped, already active");
+                 return;
+             }
+ 
+@@ -6085,11 +6093,21 @@ impl Niri {
+                 let pointer_pos = pointer.current_location();
+                 let pos_within_surface = pointer_pos - *surface_loc;
+                 if !region.contains(pos_within_surface.to_i32_round()) {
++                    info!(
++                        "constraint-debug: activate refused, pointer at {:?} outside region \
++                         {:?} (surface origin {:?})",
++                        pos_within_surface, region, surface_loc,
++                    );
+                     return;
+                 }
+             }
+ 
++            let kind = match &*constraint {
++                PointerConstraint::Locked(_) => "locked",
++                PointerConstraint::Confined(_) => "confined",
++            };
+             constraint.activate();
++            info!("constraint-debug: activated {kind} constraint");
+         });
+     }
+ 
+-- 
+2.55.0
+

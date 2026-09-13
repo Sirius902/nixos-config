@@ -274,6 +274,13 @@
         Mod+Shift+S     { screenshot-window; }
         Mod+Ctrl+S      { screenshot-screen; }
 
+        // Journal markers for pointer constraint triage. A keybind annotates the
+        // log without focusing a window, which typing into a terminal would.
+        // TODO(Sirius902) Drop with the constraint tracing patch.
+        Mod+F9  { spawn "systemd-cat" "-t" "ctest" "echo" "STEP"; }
+        Mod+F10 { spawn "systemd-cat" "-t" "ctest" "echo" "BROKEN"; }
+        Mod+F11 { spawn "systemd-cat" "-t" "ctest" "echo" "RECOVERED"; }
+
         // Audio / Media
         XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-up"; }
         XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-down"; }
