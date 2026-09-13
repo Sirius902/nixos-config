@@ -44,6 +44,8 @@ in
     };
     symgenVersion = null;
     funchookVersion = null;
+    rmluiRev = "f9b8c9e2935d5df2c7dff2c190d3968e99b0c3dc";
+    rmluiHash = "sha256-g4O/JZUrrcseOz8o2QJRt+2CeuiLnVeuDJc906xvuIg=";
     hasInTreeMods = false;
     hasBorealis = false;
   })

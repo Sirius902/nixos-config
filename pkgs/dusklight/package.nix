@@ -51,6 +51,8 @@
   funchookHash ? "sha256-u/RXMNyKL6L7p5gEFnAQTErPXXGKXv74jbYlBbG0Wy4=",
   capstoneVersion ? "4.0.2",
   capstoneHash ? "sha256-XMwQ7UaPC8YYu4yxsE4bbR3leYPfBHu5iixSLz05r3g=",
+  rmluiRev ? "0ae381e00d7426762bb5ed897973366358b16642",
+  rmluiHash ? "sha256-vfFtjNHw7coXWrGgtcFyuIsu5rctW5dBJoOt8MTZwDU=",
   # Revisions that predate the mods framework set this false.
   hasInTreeMods ? true,
   # Revisions that predate the borealis submodule set this false.
@@ -109,9 +111,11 @@
     hash = "sha256-pNMR8zxaaqfAzQ0AQBOXMct4usdjey1Q0Gnitg06UhM=";
   };
 
+  rmluiUrl = "https://github.com/mikke89/RmlUi/archive/${rmluiRev}.tar.gz";
+
   rmlui-src = fetchzip {
-    url = "https://github.com/mikke89/RmlUi/archive/f9b8c9e2935d5df2c7dff2c190d3968e99b0c3dc.tar.gz";
-    hash = "sha256-g4O/JZUrrcseOz8o2QJRt+2CeuiLnVeuDJc906xvuIg=";
+    url = rmluiUrl;
+    hash = rmluiHash;
   };
 
   funchook-src =
