@@ -88,26 +88,35 @@
     stripRoot = false;
   };
 
+  imguiRev = "v1.91.9b-docking";
+  imguiUrl = "https://github.com/ocornut/imgui/archive/refs/tags/${imguiRev}.tar.gz";
+
   imgui-src = fetchFromGitHub {
     owner = "ocornut";
     repo = "imgui";
-    rev = "v1.91.9b-docking";
+    rev = imguiRev;
     hash = "sha256-mQOJ6jCN+7VopgZ61yzaCnt4R1QLrW7+47xxMhFRHLQ=";
   };
 
+  minizUrl = "https://github.com/richgel999/miniz/releases/download/3.0.2/miniz-3.0.2.zip";
+
   miniz-src = fetchzip {
-    url = "https://github.com/richgel999/miniz/releases/download/3.0.2/miniz-3.0.2.zip";
+    url = minizUrl;
     hash = "sha256-DXysXkQEmoDAMMg1F8KexkwpXNyiHNzLJqXR9SMEkxk=";
     stripRoot = false;
   };
 
+  picosha2Url = "https://github.com/okdshin/PicoSHA2/archive/refs/tags/v1.0.1.tar.gz";
+
   picosha2-src = fetchzip {
-    url = "https://github.com/okdshin/PicoSHA2/archive/refs/tags/v1.0.1.tar.gz";
+    url = picosha2Url;
     hash = "sha256-3psCzbrwR+vO9TyTKOx+gEaWuHDx6pSgLOQ3DqrJsnI=";
   };
 
+  sqliteUrl = "https://sqlite.org/2026/sqlite-amalgamation-3510300.zip";
+
   sqlite-src = fetchzip {
-    url = "https://sqlite.org/2026/sqlite-amalgamation-3510300.zip";
+    url = sqliteUrl;
     hash = "sha256-pNMR8zxaaqfAzQ0AQBOXMct4usdjey1Q0Gnitg06UhM=";
   };
 
@@ -201,6 +210,31 @@ in
       }
       check_version "dawn" "${dawnVersion}" AURORA_DAWN_VERSION
       check_version "nod" "${nodVersion}" AURORA_NOD_VERSION
+
+      check_url() {
+        local name="$1" expected="$2" file="$3" prefix="$4"
+        local actual
+        # A revision predating the dependency declares nothing to check, and
+        # stdenv's `set -e -o pipefail` would abort on that grep's empty match
+        # before the emptiness test could pass it.
+        actual=$(grep -oE "$prefix[^\"[:space:]]*" "$file" | head -1 || true)
+        [[ -n "$actual" ]] || return 0
+        if [[ "$actual" != "$expected" ]]; then
+          echo "error: $name source mismatch: expected '$expected', got '$actual'"
+          echo "update $name in package.nix"
+          exit 1
+        fi
+      }
+      check_url rmlui "${rmluiUrl}" extern/aurora/extern/CMakeLists.txt \
+        "https://github.com/mikke89/RmlUi/archive/"
+      check_url imgui "${imguiUrl}" extern/aurora/extern/CMakeLists.txt \
+        "https://github.com/ocornut/imgui/archive/"
+      check_url sqlite3 "${sqliteUrl}" extern/aurora/extern/CMakeLists.txt \
+        "https://sqlite.org/"
+      check_url miniz "${minizUrl}" CMakeLists.txt \
+        "https://github.com/richgel999/miniz/"
+      check_url picosha2 "${picosha2Url}" CMakeLists.txt \
+        "https://github.com/okdshin/PicoSHA2/"
 
       check_pin() {
         local name="$1" expected="$2" actual="$3"
