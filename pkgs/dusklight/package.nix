@@ -3,7 +3,6 @@
   lib,
   cmake,
   pkg-config,
-  makeWrapper,
   fetchFromGitHub,
   fetchurl,
   fetchzip,
@@ -273,7 +272,6 @@ in
       [
         cmake
         pkg-config
-        makeWrapper
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         wayland
