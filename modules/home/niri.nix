@@ -167,6 +167,14 @@
         open-floating true
     }
 
+    // These are VA panels, which flicker under VRR whenever the framerate
+    // swings. Desktop use swings it constantly, so only let Wine and Proton
+    // games, which hold a steadier rate, turn it on.
+    window-rule {
+        match app-id="\\.exe$"
+        variable-refresh-rate true
+    }
+
     prefer-no-csd
 
     screenshot-path "~/Pictures/Screenshots/Screenshot_%Y-%m-%d_%H-%M-%S.png"
