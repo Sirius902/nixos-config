@@ -144,10 +144,13 @@ needs root and lands in a rootfs `/etc` that an update discards. Vulkan and EGL
 locate their drivers through JSON manifests carrying absolute store paths, so
 naming one file each is enough; the GLX vendor is a bare soname `dlopen` with
 no manifest, which is why `LD_LIBRARY_PATH` survives, holding exactly
-`${mesa}/lib`. Without that, the failure is silent rather than "not found":
-SteamOS's `ld.so.cache` serves its own `libGLX_mesa.so.0` into a Nix process.
-Which is why the check for it is where the library resolved from, not whether
-the game started:
+`${mesa}/lib`. It is not the host `ld.so.cache` that would otherwise answer
+that `dlopen` — nixpkgs patches that path store-local, so a Nix process cannot
+see the host's libraries at all by default. It is Steam, which puts its
+runtime's `LD_LIBRARY_PATH` in front of every lookup, `/usr/lib` among it. So
+the failure without this is not "not found", it is SteamOS's own
+`libGLX_mesa.so.0` loading into a Nix process and appearing to work — which is
+why the check is where the library resolved from, not whether the game started:
 
 ```console
 $ LD_DEBUG=libs ~/.nix-profile/bin/soh 2>&1 | grep libGLX_mesa   # /nix/store/…-mesa-…/lib, never /usr/lib
