@@ -6,10 +6,10 @@
   ];
 
   home.packages = with pkgs; [
-    archipelago
-    poptracker
-    dusklight-ap
     _2ship2harkinian
-    wrye-bash
+    archipelago
+    dusklight-ap
+    poptracker
+    xash3d-fwgs
   ];
 }
