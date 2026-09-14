@@ -97,10 +97,9 @@ from Stop. The paths never change across deploys.
 **Set no compatibility tool on these shortcuts.** pressure-vessel builds a
 container in which `/nix` does not exist.
 
-`archipelago` and `poptracker` carry the same launcher. They are not games, but
-they are SDL and OpenGL, so they need the driver shim below wherever they are
-started from — Game Mode shortcut or Desktop Mode alike. `croc`, `hx`, `nix`
-and `zellij` are terminal tools and are installed bare.
+Anything else in the profile is launched the same way and needs nothing added
+anywhere — `wrapForSteam` is applied to `home.path` whole, so every `bin/`
+entry is a launcher, `firefox` and `nix` no less than `soh`.
 
 The Steam overlay and F12 screenshots are lost on the OpenGL titles (the three
 soh forks, `2s2h`, `xash3d`): `gameoverlayrenderer.so` arrives by `LD_PRELOAD`,
@@ -123,14 +122,14 @@ $ ~/.local/state/nix/profiles/home-manager-<n>-link/activate
 
 ## Adding a game
 
-Add it to `modules/home/games/base.nix`, add its attr to the `wrapForSteam`
-list in `homes/deck/default.nix`, `just deploy-deck`, and create one shortcut.
-A game added to the first list and missed in the second still installs and
-still runs from a terminal; it fails on its first launch from Game Mode.
+Add it to `modules/home/games/base.nix`, `just deploy-deck`, create one
+shortcut. There is no second list to keep in step: the profile is wrapped as a
+whole, so whatever lands in it is launchable.
 
 `base.nix` is the set both machines get; the Deck imports it alone. Something
 the Deck should not carry goes in `games/full.nix` instead, which is what the
-workstation profile imports.
+workstation profile imports. Anything that is not a game goes straight into
+`homes/deck/default.nix`.
 
 ## Why the launchers set what they set
 
@@ -181,13 +180,21 @@ vendor by putting its own nixpkgs pin's entire driver closure on
 `GLIBCXX_3.4.NN not found` class came from. A single directory from the same
 pin as the games cannot shadow anything they ship.
 
-`targets.genericLinux.gpu` is mechanically better than this: it creates
+`targets.genericLinux.nixGL` is the packaged form of that and cannot be used
+here at all, whatever one thinks of the pin: it emits `makeWrapper` shell
+scripts, so its launchers are the thing `ld.so` kills. The old `runNixApp.sh`
+only ever worked around this by accident — a `#!/bin/bash` shebang runs under
+the *host* loader, which resolves `libGL.so.1` from `/usr/lib` and so survives
+the preload long enough to clear it. It also wraps a named list rather than the
+profile, leaves every injected variable in place, and defaults
+`vulkan.enable = false` because "Vulkan brings in several libraries that can
+cause symbol version conflicts" — which two of these games need.
+
+`targets.genericLinux.gpu` is the one mechanically better than this: it creates
 `/run/opengl-driver`, so every API resolves with no environment variables at
-all, and it covers every Nix app rather than a wrap list. It is rejected only
-because `non-nixos-gpu-setup` installs a `tmpfiles.d` rule into `/etc` as root
-— a privileged step to redo after every SteamOS update. It would also still
-need `wrapForSteam` for the injection half. If the Deck ever becomes a general
-Nix desktop rather than a fixed set of games, it becomes the right answer.
+all. It is rejected only because `non-nixos-gpu-setup` installs a `tmpfiles.d`
+rule into `/etc` as root — a privileged step to redo after every SteamOS
+update. It would also still need `wrapForSteam` for the injection half.
 
 If a SteamOS update ever breaks the driver shim outright, the update-proof
 answer is to stop using host drivers and ship the graphics stack whole; the

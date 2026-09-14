@@ -1,5 +1,5 @@
 {
-  basePkgs,
+  config,
   lib,
   pkgs,
   ...
@@ -33,26 +33,16 @@
   # the one the next deploy runs.
   nix.package = pkgs.nix;
 
-  # What Game Mode launches, as opposed to what `modules/home` installs. A game
-  # added there and missed here still installs and still runs from a terminal;
-  # it fails on its first launch from Game Mode.
-  #
-  # Substituted onto the package set rather than added as an overlay because
-  # `dusklight` is also a build input — of `dusklight-ap` and of both mod
-  # bundles — and an overlay feeds a wrapper carrying no `src` back into those.
-  _module.args.pkgs = lib.mkForce (basePkgs
-    // lib.genAttrs [
-      "_2ship2harkinian"
-      "archipelago"
-      "dusklight"
-      "dusklight-ap"
-      "poptracker"
-      "shipwright"
-      "shipwright_stable"
-      "shipwright-ap"
-      "xash3d-fwgs"
-      "zelda64recomp"
-    ] (name: basePkgs.wrapForSteam basePkgs.${name}));
+  # Every `bin/` entry in the profile, not a list of games: what Steam's
+  # launcher does is fatal to any nixpkgs wrapper script, and nearly every
+  # package is one. The body repeats home-manager's own `home.path`, which
+  # `wrapForSteam` takes whole.
+  home.path = lib.mkForce (pkgs.wrapForSteam (pkgs.buildEnv {
+    name = "home-manager-path";
+    paths = config.home.packages;
+    inherit (config.home) extraOutputsToInstall;
+    postBuild = config.home.extraProfileCommands;
+  }));
 
   # SteamOS ships its own manpages and mime database, and nothing in a gamescope
   # session reads a Nix profile's copies.
