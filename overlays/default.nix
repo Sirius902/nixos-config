@@ -528,8 +528,8 @@
           })
           (final.fetchpatch {
             name = "add-speed-hud.patch";
-            url = "https://github.com/FWGS/hlsdk-portable/compare/6ba528f2a36622a45c453f832934ab3adaca7c1c...9f354d92d0b5123246449ac95a1c751f3cb43f93.diff";
-            hash = "sha256-7Hsg9NtBejtj1BJPwuMYPryhj+lyXVgO+syTzn5SvGM=";
+            url = "https://github.com/FWGS/hlsdk-portable/compare/3ff784875a72b0b6f128a7b717e3949de64ce9f1...ea3ff3448769f57457284de973f07e086a5cf440.diff";
+            hash = "sha256-r1YVZQM/oX2dNUDR9IS8A3vQiH7RnNXG50w6EOeuv3Q=";
           })
         ];
 
