@@ -17,7 +17,16 @@
   home.packages = [
     pkgs.croc
     pkgs.nix
+    (pkgs.discord-canary.override {withMoonlight = true;})
   ];
+
+  programs.firefox = {
+    enable = true;
+    policies = {
+      DisableTelemetry = true;
+      DisableFirefoxStudies = true;
+    };
+  };
 
   # Activation otherwise resolves `nix-env` from the ambient `PATH`, so the
   # generation would depend on a Nix it does not carry, and could not update
