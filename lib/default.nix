@@ -5,11 +5,11 @@
       allowUnfree = true;
     };
   };
-in {
-  inherit nixpkgsConfig;
 
   pkgsFor = system:
     import inputs.nixpkgs ({inherit system;} // nixpkgsConfig);
+in {
+  inherit nixpkgsConfig pkgsFor;
 
   nixosSystem = {
     host,
@@ -45,5 +45,25 @@ in {
           }
         ]
         ++ extraModules;
+    };
+
+  # `homeManagerConfiguration` re-exports the overlays and config of the `pkgs`
+  # it is handed, so `pkgsFor` is all this needs to carry `nixpkgsConfig` in.
+  # `basePkgs` hands that same set to the configuration, for one that replaces
+  # an attr through `_module.args.pkgs` rather than through an overlay.
+  homeConfiguration = {
+    home,
+    system,
+    extraModules ? [],
+  }: let
+    pkgs = pkgsFor system;
+  in
+    inputs.home-manager.lib.homeManagerConfiguration {
+      inherit pkgs;
+      extraSpecialArgs = {
+        inherit inputs;
+        basePkgs = pkgs;
+      };
+      modules = [(../. + "/homes/${home}/default.nix")] ++ extraModules;
     };
 }
