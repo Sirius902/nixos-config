@@ -93,6 +93,9 @@
     enabled = true
     timeout = 900.0
 
+    [audio]
+    enable_overdrive = true
+
     [nightlight]
     enabled = true
     temperature_day = 6500
