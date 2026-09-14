@@ -114,8 +114,29 @@
       inherit (final.lib) concatLists escapeShellArgs mapAttrsToList optionalAttrs;
       inherit (final) mesa;
 
+      # `ld.so` acts on the loader variables before the first line of a wrapper
+      # script can clear them, so the script's own interpreter is already a
+      # casualty: Steam preloads an overlay that links `libGL.so.1`, a Nix
+      # loader does not resolve it, and an unresolvable dependency of a
+      # preloaded object is fatal rather than skipped. A static executable has
+      # no interpreter for `ld.so` to act on, which is what makes this the only
+      # thing that can safely be the entry point.
+      shim = final.writeText "wrap-for-steam.c" ''
+        #include <stdlib.h>
+        #include <unistd.h>
+
+        int main(int argc, char **argv) {
+          unsetenv("LD_PRELOAD");
+          unsetenv("LD_AUDIT");
+          unsetenv("LD_LIBRARY_PATH");
+          execv(TARGET, argv);
+          return 127;
+        }
+      '';
+
       unset = [
-        # Loader.
+        # Loader. Cleared once already by the shim, before this script's own
+        # interpreter loaded; repeated here so the list stays one thing.
         "LD_PRELOAD"
         "LD_AUDIT"
 
@@ -192,8 +213,11 @@
           ++ mapAttrsToList (name: value: ["--set-default" name value]) setDefault
         );
     in
-      final.runCommandLocal "${pkg.name}-steam" {
+      final.runCommandCC "${pkg.name}-steam" {
         nativeBuildInputs = [final.makeWrapper];
+        buildInputs = [final.glibc.static];
+        preferLocalBuild = true;
+        allowSubstitutes = false;
         passthru = {unwrapped = pkg;};
         # Carrying the whole `meta` would carry an `outputsToInstall` naming
         # outputs this derivation lacks, which breaks every `buildEnv`.
@@ -210,7 +234,9 @@
           rm $out/bin
           mkdir $out/bin
           for exe in ${pkg}/bin/*; do
-            makeWrapper "$exe" "$out/bin/$(basename "$exe")" ${escapeShellArgs args}
+            name=$(basename "$exe")
+            makeWrapper "$exe" "$out/bin/.$name-env" ${escapeShellArgs args}
+            $CC -Os -static -DTARGET="\"$out/bin/.$name-env\"" -o "$out/bin/$name" ${shim}
           done
         fi
       '';

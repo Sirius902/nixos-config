@@ -161,6 +161,17 @@ than an `env -i` allowlist: the harmful set is small and stable, the keep-set
 is large, session-dependent and grows with every gamescope release, and an
 allowlist's failure mode is a black window with no diagnostic.
 
+The loader variables are the exception, and they are why each `bin/` entry is a
+static executable rather than the shell script the rest of the policy lives in.
+`ld.so` acts on `LD_PRELOAD` before a script's first line runs, so a script
+cannot defend its own interpreter: Steam's overlay links `libGL.so.1`, a Nix
+loader does not resolve it, and an unresolvable dependency of a preloaded
+object is fatal rather than skipped — the wrapper dies at exit 127 having never
+reached the game. A static executable has no interpreter for `ld.so` to act on.
+It clears `LD_PRELOAD`, `LD_AUDIT` and `LD_LIBRARY_PATH`, then execs the script
+that does everything else. Anything that makes `bin/<exe>` dynamic again brings
+the failure straight back.
+
 This is what retires nixGL and its `--strip` argument. nixGL supplied the GLX
 vendor by putting its own nixpkgs pin's entire driver closure on
 `LD_LIBRARY_PATH`, ahead of every binary's `DT_RUNPATH` — which is where the
