@@ -76,8 +76,12 @@ it.
 
 ## Steam shortcuts
 
-Target `/home/deck/.nix-profile/bin/<exe>`, with no arguments and no wrapper
-script. The path never changes across deploys.
+Target `/home/deck/.nix-profile/bin/<exe>` and Start In
+`/home/deck/.nix-profile/bin/`, with no arguments and no wrapper script.
+Neither field may be relative — Steam expands no `~` and resolves `./` against
+a directory of its own choosing, and either one fails the `execve` before the
+launcher runs, which Game Mode shows as the Play button flicking straight back
+from Stop. The paths never change across deploys.
 
 | Game | `<exe>` |
 | --- | --- |
@@ -100,7 +104,11 @@ and `zellij` are terminal tools and are installed bare.
 
 The Steam overlay and F12 screenshots are lost on the OpenGL titles (the three
 soh forks, `2s2h`, `xash3d`): `gameoverlayrenderer.so` arrives by `LD_PRELOAD`,
-which is the first thing the launcher unsets. On the Vulkan titles the overlay
+which is the first thing the launcher unsets. The one `ELFCLASS32` complaint
+about that library per launch is not a symptom of any of this — Steam names
+both word sizes in `LD_PRELOAD` and every 64-bit process on the Deck rejects
+the 32-bit one. Here it is the launcher's own shell reporting it, a step before
+it clears the variable. On the Vulkan titles the overlay
 arrives as an implicit layer instead, which the launcher keeps, so it should
 survive; `VK_LOADER_LAYERS_DISABLE=~implicit~` turns it off if it crashes.
 Steam Input, the gamescope FPS overlay and save locations are unaffected —
