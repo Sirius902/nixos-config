@@ -15,8 +15,8 @@
 
   home-manager.users = lib.genAttrs config.my.homeUsers (_: {
     imports = [
-      ../../modules/home/dusklight.nix
-      ../../modules/home/shipwright.nix
+      ../../modules/home/games/dusklight.nix
+      ../../modules/home/games/shipwright.nix
     ];
   });
 }

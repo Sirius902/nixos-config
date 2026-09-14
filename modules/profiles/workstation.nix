@@ -34,7 +34,7 @@
   services.ratbagd.enable = lib.mkDefault true;
 
   home-manager.users = lib.genAttrs config.my.homeUsers (_: {
-    imports = [../home/games.nix];
+    imports = [../home/games/full.nix];
   });
 
   environment.systemPackages =
