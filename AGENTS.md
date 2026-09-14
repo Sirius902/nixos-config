@@ -13,3 +13,5 @@ changing anything it covers.
   freedesktop `.desktop` spec.
 - `docs/patches.md` — how patches are fetched and carried, and which of those
   rules `checks.patch-urls` enforces.
+- `docs/steam-deck.md` — a runbook: how the Deck's Home Manager generation is
+  built, pushed and activated, and what its launchers set and unset.
