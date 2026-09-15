@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   pkgs,
   ...
@@ -8,6 +7,12 @@
     ../../modules/home/games/base.nix
     ../../modules/home/helix.nix
     ../../modules/home/zellij.nix
+
+    # Every `bin/` entry in the profile, not a list of games: what Steam's
+    # launcher does is fatal to any nixpkgs wrapper script, and nearly every
+    # package is one. Declaring `apply` transforms home-manager's own profile
+    # definition in place, so there is nothing here to keep in step with it.
+    {options.home.path = lib.mkOption {apply = pkgs.wrapForSteam;};}
   ];
 
   home.username = "deck";
@@ -32,17 +37,6 @@
   # generation would depend on a Nix it does not carry, and could not update
   # the one the next deploy runs.
   nix.package = pkgs.nix;
-
-  # Every `bin/` entry in the profile, not a list of games: what Steam's
-  # launcher does is fatal to any nixpkgs wrapper script, and nearly every
-  # package is one. The body repeats home-manager's own `home.path`, which
-  # `wrapForSteam` takes whole.
-  home.path = lib.mkForce (pkgs.wrapForSteam (pkgs.buildEnv {
-    name = "home-manager-path";
-    paths = config.home.packages;
-    inherit (config.home) extraOutputsToInstall;
-    postBuild = config.home.extraProfileCommands;
-  }));
 
   # SteamOS ships its own manpages and mime database, and nothing in a gamescope
   # session reads a Nix profile's copies.
