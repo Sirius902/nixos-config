@@ -102,6 +102,161 @@
       '';
   })
 
+  # `wrapForSteam pkg` re-exports a package with every `bin/` entry relaunched
+  # through a fixed environment, so a Steam shortcut can point straight at it.
+  # A launched process inherits the Steam runtime's loader, glibc-internal,
+  # driver-discovery and toolkit-plugin variables, every one of them naming a
+  # foreign closure; and a non-NixOS host has no `/run/opengl-driver`, the path
+  # nixpkgs bakes into the GL and Vulkan dispatch libraries, leaving their
+  # driver lookups nowhere to land. See docs/steam-deck.md.
+  (final: _: {
+    wrapForSteam = pkg: let
+      inherit (final.lib) concatLists escapeShellArgs mapAttrsToList optionalAttrs;
+      inherit (final) mesa;
+
+      # `ld.so` acts on the loader variables before the first line of a wrapper
+      # script can clear them, so the script's own interpreter is already a
+      # casualty: Steam preloads an overlay that links `libGL.so.1`, a Nix
+      # loader does not resolve it, and an unresolvable dependency of a
+      # preloaded object is fatal rather than skipped. A static executable has
+      # no interpreter for `ld.so` to act on, which is what makes this the only
+      # thing that can safely be the entry point.
+      shim = final.writeText "wrap-for-steam.c" ''
+        #include <stdlib.h>
+        #include <unistd.h>
+
+        int main(int argc, char **argv) {
+          unsetenv("LD_PRELOAD");
+          unsetenv("LD_AUDIT");
+          unsetenv("LD_LIBRARY_PATH");
+          /* The kernel overwrites argv[0] with the script path when it runs a
+             shebang, so carrying it across takes a variable. A multi-call
+             binary like `nix` dispatches on it. */
+          if (argc > 0) {
+            setenv("WRAP_FOR_STEAM_ARGV0", argv[0], 1);
+          }
+          execv(TARGET, argv);
+          return 127;
+        }
+      '';
+
+      unset = [
+        # Loader. Cleared once already by the shim, before this script's own
+        # interpreter loaded; repeated here so the list stays one thing.
+        "LD_PRELOAD"
+        "LD_AUDIT"
+
+        # pressure-vessel points these at its own SDL, which then replaces the
+        # whole SDL ABI in-process.
+        "SDL_DYNAMIC_API"
+        "SDL3_DYNAMIC_API"
+
+        # Private glibc module formats.
+        "GCONV_PATH"
+        "LOCPATH"
+
+        # Driver discovery, superseded by the set below or wrong outright.
+        "VK_ICD_FILENAMES"
+        # Additive, so `VK_DRIVER_FILES` does not neutralise it.
+        "VK_ADD_DRIVER_FILES"
+        "VK_LAYER_PATH"
+        "VK_ADD_LAYER_PATH"
+        "VK_INSTANCE_LAYERS"
+        "LIBGL_DRIVERS_PATH"
+        "VDPAU_DRIVER_PATH"
+        "GBM_BACKENDS_PATH"
+        "__EGL_VENDOR_LIBRARY_DIRS"
+
+        # Toolkit plugin trees.
+        "GTK_PATH"
+        "GTK_IM_MODULE_FILE"
+        "GDK_PIXBUF_MODULE_FILE"
+        "GIO_MODULE_DIR"
+        "GIO_EXTRA_MODULES"
+        "GSETTINGS_SCHEMA_DIR"
+        "GST_PLUGIN_PATH"
+        "GST_PLUGIN_PATH_1_0"
+        "GST_PLUGIN_SYSTEM_PATH"
+        "GST_PLUGIN_SYSTEM_PATH_1_0"
+        "QT_PLUGIN_PATH"
+        "QT_QPA_PLATFORM_PLUGIN_PATH"
+        "QML_IMPORT_PATH"
+        "QML2_IMPORT_PATH"
+
+        # Interpreters and audio.
+        "PYTHONPATH"
+        "PYTHONHOME"
+        "PERL5LIB"
+        "PERLLIB"
+        "ALSA_CONFIG_PATH"
+        "ALSA_PLUGIN_DIR"
+      ];
+
+      set = {
+        # The GLX vendor is a bare soname `dlopen` with no manifest to name it
+        # by, so a search path is the only mechanism left; both JSON manifests
+        # below carry absolute store paths, which is why nothing else needs one.
+        LD_LIBRARY_PATH = "${mesa}/lib";
+        __GLX_VENDOR_LIBRARY_NAME = "mesa";
+        __EGL_VENDOR_LIBRARY_FILENAMES = "${mesa}/share/glvnd/egl_vendor.d/50_mesa.json";
+        # One ICD rather than the directory: a directory also enumerates
+        # lavapipe, putting a software device into `vkEnumeratePhysicalDevices`.
+        VK_DRIVER_FILES = "${mesa}/share/vulkan/icd.d/radeon_icd.x86_64.json";
+        LIBVA_DRIVERS_PATH = "${mesa}/lib/dri";
+      };
+
+      # Steam sources no login profile, so nothing has set these.
+      setDefault = {
+        LOCALE_ARCHIVE = "${final.glibcLocalesUtf8}/lib/locale/locale-archive";
+        SSL_CERT_FILE = "${final.cacert}/etc/ssl/certs/ca-bundle.crt";
+      };
+
+      args =
+        [
+          "--run"
+          "wrapForSteamArgv0=\${WRAP_FOR_STEAM_ARGV0-$0}; unset WRAP_FOR_STEAM_ARGV0"
+          "--argv0"
+          "$wrapForSteamArgv0"
+        ]
+        ++ concatLists (
+          map (name: ["--unset" name]) unset
+          ++ mapAttrsToList (name: value: ["--set" name value]) set
+          ++ mapAttrsToList (name: value: ["--set-default" name value]) setDefault
+        );
+    in
+      # The name has to survive unchanged, with only the hash to tell the two
+      # apart: home-manager retires the previous profile by selecting the store
+      # path that `endswith "home-manager-path"`, so a suffix here leaves the
+      # old one installed and every later activation dies on the file conflict.
+      final.runCommandCC pkg.name {
+        nativeBuildInputs = [final.makeWrapper];
+        buildInputs = [final.glibc.static];
+        preferLocalBuild = true;
+        allowSubstitutes = false;
+        passthru = {unwrapped = pkg;};
+        # Carrying the whole `meta` would carry an `outputsToInstall` naming
+        # outputs this derivation lacks, which breaks every `buildEnv`.
+        meta = optionalAttrs (pkg ? meta.mainProgram) {inherit (pkg.meta) mainProgram;};
+      } ''
+        shopt -s nullglob
+
+        mkdir -p $out
+        for entry in ${pkg}/*; do
+          ln -s "$entry" "$out/$(basename "$entry")"
+        done
+
+        if [ -d ${pkg}/bin ]; then
+          rm $out/bin
+          mkdir $out/bin
+          for exe in ${pkg}/bin/*; do
+            name=$(basename "$exe")
+            makeWrapper "$exe" "$out/bin/.$name-env" ${escapeShellArgs args}
+            $CC -Os -static -DTARGET="\"$out/bin/.$name-env\"" -o "$out/bin/$name" ${shim}
+          done
+        fi
+      '';
+  })
+
   (import ../pkgs/overlay.nix)
   (import ./codex)
   (import ./claude-code)
