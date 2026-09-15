@@ -5,11 +5,11 @@
       allowUnfree = true;
     };
   };
-in {
-  inherit nixpkgsConfig;
 
   pkgsFor = system:
     import inputs.nixpkgs ({inherit system;} // nixpkgsConfig);
+in {
+  inherit nixpkgsConfig pkgsFor;
 
   nixosSystem = {
     host,
@@ -45,5 +45,18 @@ in {
           }
         ]
         ++ extraModules;
+    };
+
+  # `homeManagerConfiguration` re-exports the overlays and config of the `pkgs`
+  # it is handed, so `pkgsFor` is all this needs to carry `nixpkgsConfig` in.
+  homeConfiguration = {
+    home,
+    system,
+    extraModules ? [],
+  }:
+    inputs.home-manager.lib.homeManagerConfiguration {
+      pkgs = pkgsFor system;
+      extraSpecialArgs = {inherit inputs;};
+      modules = [(../. + "/homes/${home}/default.nix")] ++ extraModules;
     };
 }

@@ -5,6 +5,8 @@ HOST := env_var_or_default(
 
 NIX_FLAGS := '--extra-experimental-features "nix-command flakes"'
 
+DECK_HOST := env_var_or_default("DECK_HOST", "steamdeck")
+
 default:
     just --list
 
@@ -44,6 +46,17 @@ build-raspberrypi:
 
 build-iso:
     nix {{ NIX_FLAGS }} build --no-link --print-out-paths ".#nixosConfigurations.iso.config.system.build.isoImage"
+
+build-deck:
+    nix {{ NIX_FLAGS }} build --no-link --print-out-paths ".#homeConfigurations.deck.activationPackage"
+
+deploy-deck host=DECK_HOST:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    gen=$(nix {{ NIX_FLAGS }} build --no-link --print-out-paths ".#homeConfigurations.deck.activationPackage")
+    nix {{ NIX_FLAGS }} copy --no-check-sigs --substitute-on-destination \
+        --to "ssh://deck@{{ host }}?remote-program=~/.nix-profile/bin/nix-store" "$gen"
+    ssh "deck@{{ host }}" "exec '$gen/activate'"
 
 anywhere ip:
     #!/usr/bin/env bash

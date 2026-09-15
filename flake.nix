@@ -91,6 +91,13 @@
             host = "The-Rekening";
           };
         };
+
+        homeConfigurations = {
+          deck = self.lib.homeConfiguration {
+            home = "deck";
+            system = "x86_64-linux";
+          };
+        };
       };
 
       perSystem = {
@@ -219,24 +226,7 @@
           };
         };
 
-        legacyPackages =
-          packageSet
-          // {
-            deck-games = pkgs.linkFarm "deck-games" {
-              inherit
-                (pkgs)
-                _2ship2harkinian
-                dusklight
-                dusklight-randomizer
-                dusklight-cosmetics
-                dusklight-ap
-                shipwright
-                shipwright-ap
-                xash3d-fwgs
-                zelda64recomp
-                ;
-            };
-          };
+        legacyPackages = packageSet;
 
         # Keep unavailable packages out of `nix flake check`.
         packages = lib.filterAttrs (_: p: p.meta.available or true) packageSet;
