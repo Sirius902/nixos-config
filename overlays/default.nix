@@ -224,7 +224,11 @@
           ++ mapAttrsToList (name: value: ["--set-default" name value]) setDefault
         );
     in
-      final.runCommandCC "${pkg.name}-steam" {
+      # The name has to survive unchanged, with only the hash to tell the two
+      # apart: home-manager retires the previous profile by selecting the store
+      # path that `endswith "home-manager-path"`, so a suffix here leaves the
+      # old one installed and every later activation dies on the file conflict.
+      final.runCommandCC pkg.name {
         nativeBuildInputs = [final.makeWrapper];
         buildInputs = [final.glibc.static];
         preferLocalBuild = true;
