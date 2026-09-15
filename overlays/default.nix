@@ -129,6 +129,12 @@
           unsetenv("LD_PRELOAD");
           unsetenv("LD_AUDIT");
           unsetenv("LD_LIBRARY_PATH");
+          /* The kernel overwrites argv[0] with the script path when it runs a
+             shebang, so carrying it across takes a variable. A multi-call
+             binary like `nix` dispatches on it. */
+          if (argc > 0) {
+            setenv("WRAP_FOR_STEAM_ARGV0", argv[0], 1);
+          }
           execv(TARGET, argv);
           return 127;
         }
@@ -206,7 +212,12 @@
       };
 
       args =
-        ["--inherit-argv0"]
+        [
+          "--run"
+          "wrapForSteamArgv0=\${WRAP_FOR_STEAM_ARGV0-$0}; unset WRAP_FOR_STEAM_ARGV0"
+          "--argv0"
+          "$wrapForSteamArgv0"
+        ]
         ++ concatLists (
           map (name: ["--unset" name]) unset
           ++ mapAttrsToList (name: value: ["--set" name value]) set
