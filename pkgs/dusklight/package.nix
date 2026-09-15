@@ -41,10 +41,10 @@
     darwin = "sha256-pM15OoUdHZ84Y9iORsvgahE6FzvQFOtjry0nNWvIqHo=";
     linux = "sha256-deRtiZ221q6PO9zejJBwa56fCM63KEh6y2p7nM+MOYU=";
   },
-  symgenVersion ? "1.3.4",
+  symgenVersion ? "1.3.5",
   symgenHashes ? {
-    darwin = "sha256-mD72J40wvuOPJA9FHKc2/SlNoOVwXuFQKazKxcejOCk=";
-    linux = "sha256-i4GgCi749d1LWa26G636ylfkcr8nJRa8EsRiXO+zdxg=";
+    darwin = "sha256-cCHJEv9VJbOBXks5Y9Pcdbwx7MWQOPT+KNyINi6y+Io=";
+    linux = "sha256-iG6KvegaBn+04hcUXiALrOA010b7g/JcGJAvWGnsZtE=";
   },
   funchookVersion ? "v1.1.3",
   funchookHash ? "sha256-u/RXMNyKL6L7p5gEFnAQTErPXXGKXv74jbYlBbG0Wy4=",
@@ -179,8 +179,8 @@ in
     src = fetchFromGitHub {
       owner = "TwilitRealm";
       repo = "dusklight";
-      rev = "7a296a794b763d04fe9f11da7d60d99e41070641";
-      hash = "sha256-5pFZXMroiPQG5MBWlnha7KRsLFzM9pI1QmhuwkOGjig=";
+      rev = "34fbd456bd6c86fb10aaf249f4d42cd8d0e48c71";
+      hash = "sha256-DwzbV1PvtcIz5X1XxudgAc3+q81NENdTEOqGo66i5Ho=";
       fetchSubmodules = true;
     };
 
