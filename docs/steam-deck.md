@@ -113,6 +113,17 @@ survive; `VK_LOADER_LAYERS_DISABLE=~implicit~` turns it off if it crashes.
 Steam Input, the gamescope FPS overlay and save locations are unaffected —
 none work by injection.
 
+## Apps that seed `$HOME` from the store
+
+An app that copies starter data out of its own installation — Archipelago's
+`Players/Templates`, Kivy's icon set — copies it out of `/nix/store`, where
+every file is read-only. Whether the copy lands read-only depends on which
+`shutil` call it used, and a later version that copies differently then cannot
+overwrite what an earlier one left. The symptom is `PermissionError` or a plain
+`rm -rf` refusing to delete, and the fix is `chmod -R u+w` on the directory
+before doing anything else. Nothing here can prevent it; the read-only store is
+the point.
+
 ## Rollback
 
 ```console
@@ -143,13 +154,12 @@ needs root and lands in a rootfs `/etc` that an update discards. Vulkan and EGL
 locate their drivers through JSON manifests carrying absolute store paths, so
 naming one file each is enough; the GLX vendor is a bare soname `dlopen` with
 no manifest, which is why `LD_LIBRARY_PATH` survives, holding exactly
-`${mesa}/lib`. It is not the host `ld.so.cache` that would otherwise answer
-that `dlopen` — nixpkgs patches that path store-local, so a Nix process cannot
-see the host's libraries at all by default. It is Steam, which puts its
-runtime's `LD_LIBRARY_PATH` in front of every lookup, `/usr/lib` among it. So
-the failure without this is not "not found", it is SteamOS's own
-`libGLX_mesa.so.0` loading into a Nix process and appearing to work — which is
-why the check is where the library resolved from, not whether the game started:
+`${mesa}/lib`. Nothing else would answer that `dlopen`: a Game Mode shortcut is
+handed `LD_LIBRARY_PATH` empty, nixpkgs patches `ld.so.cache` store-local, and
+the loader's built-in directories are store paths too, so a Nix process cannot
+reach the host's libraries at all. Check where the library resolved from rather
+than whether the game started — the neighbouring APIs fail soft, and a wrong
+`${mesa}` would too:
 
 ```console
 $ LD_DEBUG=libs ~/.nix-profile/bin/soh 2>&1 | grep libGLX_mesa   # /nix/store/…-mesa-…/lib, never /usr/lib
@@ -162,6 +172,14 @@ them naming a foreign closure. Those are unset. The list is a blocklist rather
 than an `env -i` allowlist: the harmful set is small and stable, the keep-set
 is large, session-dependent and grows with every gamescope release, and an
 allowlist's failure mode is a black window with no diagnostic.
+
+Measured against a Game Mode shortcut, only `LD_PRELOAD` is actually set of
+everything on that list, and `LD_LIBRARY_PATH` is set empty — no
+`SDL_DYNAMIC_API`, no `GCONV_PATH`, no `QT_PLUGIN_PATH`, no
+`VK_INSTANCE_LAYERS`. The rest earn their place in Desktop Mode, where a KDE
+session does set the toolkit variables, and against whatever a future gamescope
+adds. `ENABLE_VK_LAYER_VALVE_steam_overlay_1` is set and kept, so the Vulkan
+titles should have the overlay.
 
 The loader variables are the exception, and they are why each `bin/` entry is a
 static executable rather than the shell script the rest of the policy lives in.
