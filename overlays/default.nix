@@ -107,8 +107,8 @@
   # A launched process inherits the Steam runtime's loader, glibc-internal,
   # driver-discovery and toolkit-plugin variables, every one of them naming a
   # foreign closure; and a non-NixOS host has no `/run/opengl-driver`, the path
-  # nixpkgs bakes into the GL and Vulkan dispatch libraries, so their driver
-  # lookups fall through to the host `ld.so.cache`. See docs/steam-deck.md.
+  # nixpkgs bakes into the GL and Vulkan dispatch libraries, leaving their
+  # driver lookups nowhere to land. See docs/steam-deck.md.
   (final: _: {
     wrapForSteam = pkg: let
       inherit (final.lib) concatLists escapeShellArgs mapAttrsToList optionalAttrs;
