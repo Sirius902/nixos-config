@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }: {
   imports = [
@@ -9,12 +8,9 @@
     ../../modules/darwin/linux-builder.nix
   ];
 
-  environment.systemPackages = [
-    pkgs._2ship2harkinian
-  ];
-
   home-manager.users = lib.genAttrs config.my.homeUsers (_: {
     imports = [
+      ../../modules/home/games/_2ship2harkinian.nix
       ../../modules/home/games/dusklight.nix
       ../../modules/home/games/shipwright.nix
     ];
