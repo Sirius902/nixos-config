@@ -2,7 +2,7 @@
 Check that a sequence pack's OTR holds one well-formed entry per packable
 sequence in its source tree.
 
-SequenceOTRizer skips a folder whose .ootrs carries a .zbank, and reports it.
+SequenceOTRizer skips a folder whose archive carries a .zbank, and reports it.
 Everything else it drops -- a .seq with no same-stem .meta, a title that
 collides with one already added -- it drops silently, and it logs the AddFile
 that failed as if it had worked. So the source tree is the only honest count of
@@ -20,25 +20,38 @@ import mpyq  # type: ignore[import-untyped]
 # ZeldaOTRizer::Sequence::FromSeqFile.
 NAME_RE = re.compile(r"^custom/music/(?P<title>.+)_(?:bgm|fanfare)$")
 
+# Upstream's z64packer/sequtils.py counts any of these as the sequence.
+SEQ_SUFFIXES = frozenset({".aseq", ".seq", ".zseq"})
 
-def candidates(music: Path) -> list[Path]:
-    """The .ootrs under `music` that SequenceOTRizer should pack."""
+# An .ootrs ships the metadata SequenceOTRizer reads; an .mmrs keeps it out of
+# band, so its pack writes the .meta itself.
+METADATA = {".ootrs": ".meta", ".mmrs": None}
+
+
+def candidates(music: Path, format: str) -> list[Path]:
+    """The archives under `music` that SequenceOTRizer should pack."""
+    metadata = METADATA[format]
     found = []
-    for ootrs in sorted(music.rglob("*.ootrs")):
-        with zipfile.ZipFile(ootrs) as zf:
-            suffixes = {Path(n).suffix.lower() for n in zf.namelist()}
+    for archive in sorted(music.rglob(f"*{format}")):
+        with zipfile.ZipFile(archive) as zf:
+            suffixes = [Path(name).suffix.lower() for name in zf.namelist()]
         if ".zbank" in suffixes:
             continue
+        seqs = sum(suffix in SEQ_SUFFIXES for suffix in suffixes)
+        if seqs != 1:
+            sys.exit(f"error: {archive} holds {seqs} sequences, not one")
         # A stem mismatch between the two is a defect, but the source tree is
         # read unfixed, so it can only be caught by the entry count below.
-        if not {".seq", ".meta"} <= suffixes:
-            sys.exit(f"error: {ootrs} has no .seq/.meta pair")
-        found.append(ootrs)
+        if metadata is not None and metadata not in suffixes:
+            sys.exit(f"error: {archive} holds no {metadata}")
+        found.append(archive)
+    if not found:
+        sys.exit(f"error: {music} holds no {format} to pack")
     return found
 
 
-def main(music: Path, otr: Path) -> None:
-    expected = candidates(music)
+def main(music: Path, format: str, otr: Path) -> None:
+    expected = candidates(music, format)
     listfile = mpyq.MPQArchive(str(otr)).read_file("(listfile)").decode("utf-8")
     names = [line for line in listfile.replace("\r\n", "\n").split("\n") if line]
 
@@ -65,6 +78,6 @@ def main(music: Path, otr: Path) -> None:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        sys.exit(f"usage: {sys.argv[0]} <music-dir> <otr-file>")
-    main(Path(sys.argv[1]), Path(sys.argv[2]))
+    if len(sys.argv) != 4:
+        sys.exit(f"usage: {sys.argv[0]} <music-dir> <format> <otr-file>")
+    main(Path(sys.argv[1]), sys.argv[2], Path(sys.argv[3]))
