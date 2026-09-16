@@ -1,8 +1,8 @@
 {
-  "base": "ef34387ddd751e1ab8857adf4676492d32eb24ec",
+  "base": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
   "spans": {
     "NixOS/nixpkgs:refs/pull/496706/head": {
-      "base": "21430f495d51460368abaece0a87905ef3213dcb",
+      "base": "875bdb3243d3309ab12d3cecd63727f4ca70a519",
       "head": "71f8f21a50192425577f92f97eb5212a85dd0588"
     },
     "Sirius902/nixpkgs:refs/heads/shadps4-zenity": {
