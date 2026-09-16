@@ -39,8 +39,8 @@ in
     src = fetchFromGitHub {
       owner = "TwilitRealm";
       repo = "dusklight-randomizer";
-      rev = "b0e670b05f89a00ffbe091c96ccd258e81b17ad0";
-      hash = "sha256-rPXMgieY0zk6kCvRdcSzJK+4tYM1V1fbVJ/21C3Vj6g=";
+      rev = "3ecb7ea9ec482af7b3d3c8d333e10640f38e3973";
+      hash = "sha256-Q1NFO/lH6c2h02z63RhGWv9kO6tb7yu+veq1/iXAH88=";
     };
 
     nativeBuildInputs =
