@@ -17,13 +17,6 @@
     ../memory.nix
   ];
 
-  # nixpkgs removed the Go 1.25 builder sops-install-secrets asks for.
-  # https://github.com/Mic92/sops-nix/pull/984
-  sops.package = pkgs.callPackage "${inputs.sops-nix}/pkgs/sops-install-secrets" {
-    buildGo125Module = pkgs.buildGoModule;
-    vendorHash = "sha256-SXOd+0yh0DQr3uLVQBdw07J9j5HNuFJSOajDul1B1qo=";
-  };
-
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   nix.optimise.automatic = true;
