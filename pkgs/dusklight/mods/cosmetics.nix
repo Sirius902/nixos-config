@@ -14,13 +14,13 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "dusklight-cosmetics";
-  version = "0-unstable-2026-09-03";
+  version = "0-unstable-2026-09-18";
 
   src = fetchFromGitHub {
     owner = "TwilitRealm";
     repo = "dusklight-cosmetics";
-    rev = "93971c38aa7286c59be7c3874a95e12d1a37036a";
-    hash = "sha256-MerDtCz2LzSfcinfVpwkp2oB5LC9/yjDq3X0XyNtCP4=";
+    rev = "fd93491089fa95441789244f2b2fd22a451ecbcc";
+    hash = "sha256-NjXEGO7mwK67/uKbP/4KPdA402lAbxvKHiuE2Ex+K6Y=";
   };
 
   nativeBuildInputs =
