@@ -173,8 +173,15 @@
     // These are VA panels, which flicker under VRR whenever the framerate
     // swings. Desktop use swings it constantly, so only let Wine and Proton
     // games, which hold a steadier rate, turn it on.
+    //
+    // Valve's Wine fork forces WM_CLASS on the XWayland path to steam_app_<id>,
+    // or to steam_proton when no app id is set, so a Steam game never presents
+    // the exe name that winewayland.drv and plain Wine report.
     window-rule {
-        match app-id="\\.exe$"
+        match app-id=r#"^steam_app_\d+$"#
+        match app-id=r#"^steam_proton$"#
+        match app-id=r#"(?i)\.exe$"#
+        match app-id=r#"^gamescope$"#
         variable-refresh-rate true
     }
 
