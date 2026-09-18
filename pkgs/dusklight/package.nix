@@ -291,7 +291,6 @@ in
         sdl3
         fmt
         nlohmann_json
-        tracy
         freetype
         zstd
       ]
