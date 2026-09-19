@@ -136,7 +136,7 @@ in
       // {
         updateScript = nix-update-script {
           extraArgs = [
-            "--version=branch=rando-archi"
+            "--version=branch=rando-archi-old"
             "--version-regex=(0-unstable-.*)"
           ];
         };
