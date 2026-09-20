@@ -4,11 +4,11 @@
 }:
 hlsdk-portable.overrideAttrs (prevAttrs: {
   pname = prevAttrs.pname + "-theyhunger";
-  version = "0-unstable-2026-09-13";
+  version = "0-unstable-2026-09-20";
 
   src = prevAttrs.src.override {
-    rev = "be67e259de6042e5143e250dece795905a44b203";
-    hash = "sha256-1nkkCHsUN3TBMsAYelbJ1lFvP5wACI02OTsuRizqNzs=";
+    rev = "83c50c80e44dd81ee25102ea9a9af036be1399ad";
+    hash = "sha256-i1l2mlHtfJupnGfLjZDYS7v7ib64pmKpByHFAcrDQ7c=";
   };
 
   passthru =
