@@ -42,6 +42,11 @@ in
       darwin = "sha256-HT+qtlLaSHyoXPrUcXgcTGa877X5YfzbxRD4bJb7i1Y=";
       linux = "sha256-GFSd573b+VQx/VmFdNQgWDd0V9ayQlcw0Zuopke12ak=";
     };
+    nodVersion = "v2.0.0-alpha.10";
+    nodHashes = {
+      darwin = "sha256-8ZEejxksVgShNKUVRCBYaLOp9x/qOC9pAeVrElQUGUk=";
+      linux = "sha256-FVQWECVA2gWdc+n5OQ/Tvwn8z0qdgjSd1WlFt5HKOec=";
+    };
     symgenVersion = null;
     funchookVersion = null;
     rmluiRev = "f9b8c9e2935d5df2c7dff2c190d3968e99b0c3dc";

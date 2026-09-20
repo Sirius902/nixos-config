@@ -41,10 +41,15 @@
     darwin = "sha256-pM15OoUdHZ84Y9iORsvgahE6FzvQFOtjry0nNWvIqHo=";
     linux = "sha256-deRtiZ221q6PO9zejJBwa56fCM63KEh6y2p7nM+MOYU=";
   },
-  symgenVersion ? "1.3.4",
+  nodVersion ? "v2.0.0-alpha.12",
+  nodHashes ? {
+    darwin = "sha256-drh+u90TCMNzHbFOzjFW44+uPH5WRE+flvW0nW5rdwM=";
+    linux = "sha256-UepkfyagQmv2DGt4BOkl8g4xX+TxGNd0IXV93Xbmca4=";
+  },
+  symgenVersion ? "1.3.6",
   symgenHashes ? {
-    darwin = "sha256-mD72J40wvuOPJA9FHKc2/SlNoOVwXuFQKazKxcejOCk=";
-    linux = "sha256-i4GgCi749d1LWa26G636ylfkcr8nJRa8EsRiXO+zdxg=";
+    darwin = "sha256-a4NvT9flf8GYymv7PgFhUEyY8r4mIoGYSb/D8mXt9K8=";
+    linux = "sha256-I2vFzUvaA6jdU6RTHv/x/sO80ZsJiQiTubb49a538EE=";
   },
   funchookVersion ? "v1.1.3",
   funchookHash ? "sha256-u/RXMNyKL6L7p5gEFnAQTErPXXGKXv74jbYlBbG0Wy4=",
@@ -57,8 +62,6 @@
   # Revisions that predate the borealis submodule set this false.
   hasBorealis ? true,
 }: let
-  nodVersion = "v2.0.0-alpha.10";
-
   dawn-src = fetchzip {
     url = let
       platform =
@@ -82,8 +85,8 @@
     in "https://github.com/encounter/nod/releases/download/${nodVersion}/libnod-${platform}.tar.gz";
     hash =
       if stdenv.hostPlatform.isDarwin
-      then "sha256-8ZEejxksVgShNKUVRCBYaLOp9x/qOC9pAeVrElQUGUk="
-      else "sha256-FVQWECVA2gWdc+n5OQ/Tvwn8z0qdgjSd1WlFt5HKOec=";
+      then nodHashes.darwin
+      else nodHashes.linux;
     stripRoot = false;
   };
 
@@ -174,13 +177,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "dusklight";
-    version = "1.4.1-unstable-2026-09-12";
+    version = "2.0.1-unstable-2026-09-22";
 
     src = fetchFromGitHub {
       owner = "TwilitRealm";
       repo = "dusklight";
-      rev = "07b2f5accf96d9e59dde91741781a3511598a84c";
-      hash = "sha256-cmo9mXvftxc/Lqmf1ARtp/qk1SPCbpG2V8SR5WFLpbI=";
+      rev = "ad979d3dae092d0f5cbdaf49eabca7b4f1db4838";
+      hash = "sha256-RQ5hR9u2XwfDaCjtfgiaoFxwU1xvD7QfQ7Rm2jOtPYk=";
       fetchSubmodules = true;
     };
 
@@ -288,7 +291,6 @@ in
         sdl3
         fmt
         nlohmann_json
-        tracy
         freetype
         zstd
       ]
@@ -317,6 +319,7 @@ in
         (lib.cmakeFeature "BOREALIS_APP_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.src.rev}")
         (lib.cmakeFeature "DUSK_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.src.rev}")
         (lib.cmakeBool "CMAKE_FIND_PACKAGE_TARGETS_GLOBAL" true)
+        (lib.cmakeBool "CMAKE_DISABLE_FIND_PACKAGE_Tracy" true)
         (lib.cmakeBool "FETCHCONTENT_FULLY_DISCONNECTED" true)
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_CXXOPTS" "${cxxopts.src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_JSON" "${nlohmann_json.src}")

@@ -5,6 +5,11 @@
   stdenv,
 }:
 (dusklight.override {
+  nodVersion = "v2.0.0-alpha.10";
+  nodHashes = {
+    darwin = "sha256-8ZEejxksVgShNKUVRCBYaLOp9x/qOC9pAeVrElQUGUk=";
+    linux = "sha256-FVQWECVA2gWdc+n5OQ/Tvwn8z0qdgjSd1WlFt5HKOec=";
+  };
   symgenVersion = "1.3.2";
   symgenHashes = {
     darwin = "sha256-A0SDjRZ03wnBfD7t3PJuuJwzP9uF39ePaK3ENgcOzL4=";
