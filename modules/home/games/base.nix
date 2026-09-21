@@ -8,7 +8,6 @@
 
   home.packages = with pkgs; [
     archipelago
-    dusklight-ap
     poptracker
     xash3d-fwgs
   ];

@@ -25,7 +25,10 @@
     })
   mods;
 in {
-  home.packages = [pkgs.dusklight];
+  home.packages = [
+    pkgs.dusklight
+    pkgs.dusklight-ap
+  ];
 
   # Link the bundles individually rather than the mods directory, so the loader
   # keeps wiping and recreating the extraction cache it puts alongside them.
