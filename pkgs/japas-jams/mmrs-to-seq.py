@@ -15,6 +15,7 @@ import json
 import re
 import sys
 import zipfile
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -64,12 +65,12 @@ def main(src: Path, out: Path) -> None:
         if game.get("short_name")
     }
 
-    described = {song["file"] for song in songs}
-    present = {str(p.relative_to(music)) for p in music.rglob("*.mmrs")}
+    described = Counter(song["file"] for song in songs)
+    present = Counter(str(p.relative_to(music)) for p in music.rglob("*.mmrs"))
     if described != present:
+        disagree = (described - present) + (present - described)
         sys.exit(
-            f"error: z64songs.json and {music} disagree on "
-            f"{sorted(described ^ present)[:5]}"
+            f"error: z64songs.json and {music} disagree on {sorted(disagree)[:5]}"
         )
 
     titles: dict[str, Path] = {}
