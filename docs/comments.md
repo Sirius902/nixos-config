@@ -36,7 +36,8 @@ stays true for as long as the code around it does.
 
 5. **`TODO(<name>)` names the condition that retires it**, so a later reader
    can check whether it still applies instead of guessing. `FUTURE(<name>)`
-   for work with no such condition.
+   for work with no such condition, and `NOTE(<name>)` for a standing fact
+   that retires only with the code around it.
 
 ## Where the reason goes
 
@@ -47,11 +48,13 @@ stays true for as long as the code around it does.
 | why a vendored patch exists      | that patch's own commit message                    |
 | why a `fetchpatch` entry exists  | a one-liner above it, per `docs/patches.md` rule 8 |
 
-A vendored `patches = [./foo.patch]` entry therefore takes no comment: the file
-it names opens with a commit message saying everything a comment there would.
+A vendored `patches = [./foo.patch]` entry therefore takes a comment only when
+the file it names has no commit message of its own; about half of them here are
+a bare `diff --git`. Where the patch does open with a message, that message is
+the comment, and repeating it in the expression adds a second copy to keep true.
 The `fetchpatch` lists in `overlays/` and every entry in
-`patches/nixpkgs/default.nix` are the exception, because a URL or a bare rev
-has no message to read.
+`patches/nixpkgs/default.nix` always take one, because a URL or a bare rev has
+no message to read.
 
 ## The shape to avoid
 
