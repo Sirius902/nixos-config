@@ -44,8 +44,9 @@
   programs.man.enable = false;
   xdg.mime.enable = false;
 
-  i18n.glibcLocales = pkgs.glibcLocales.override {
-    allLocales = false;
-    locales = ["en_US.UTF-8/UTF-8"];
-  };
+  # home-manager only feeds `LOCALE_ARCHIVE_2_27`, which nothing Steam launches
+  # reads, while `wrapForSteam` sets `LOCALE_ARCHIVE`. Naming the archive it
+  # already references keeps the generation from carrying a second one that no
+  # substituter has.
+  i18n.glibcLocales = pkgs.glibcLocalesUtf8;
 }
