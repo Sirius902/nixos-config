@@ -250,6 +250,13 @@
           mkdir $out/bin
           for exe in ${pkg}/bin/*; do
             name=$(basename "$exe")
+            # A `bin/` entry that is not an executable file aborts makeWrapper,
+            # and the error names the merged profile rather than the package it
+            # came from.
+            if [ ! -f "$exe" ] || [ ! -x "$exe" ]; then
+              ln -s "$exe" "$out/bin/$name"
+              continue
+            fi
             makeWrapper "$exe" "$out/bin/.$name-env" ${escapeShellArgs args}
             $CC -Os -static -DTARGET="\"$out/bin/.$name-env\"" -o "$out/bin/$name" ${shim}
           done
