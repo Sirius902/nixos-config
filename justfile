@@ -5,6 +5,9 @@ HOST := env_var_or_default(
 
 NIX_FLAGS := '--extra-experimental-features "nix-command flakes"'
 
+# Hostname only. `deploy-deck` supplies the `deck@` user itself, so a user@host
+# here becomes deck@user@host, and a Host alias in ~/.ssh/config cannot set the
+# user either.
 DECK_HOST := env_var_or_default("DECK_HOST", "steamdeck")
 
 default:

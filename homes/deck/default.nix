@@ -12,6 +12,8 @@
     # launcher does is fatal to any nixpkgs wrapper script, and nearly every
     # package is one. Declaring `apply` transforms home-manager's own profile
     # definition in place, so there is nothing here to keep in step with it.
+    # It is available only because home-manager's own declaration sets no
+    # `apply`, and an option takes at most one.
     {options.home.path = lib.mkOption {apply = pkgs.wrapForSteam;};}
   ];
 
