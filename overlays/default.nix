@@ -42,17 +42,20 @@
           char target[4096];
           ssize_t len = readlink("/proc/self/exe", self, sizeof(self) - 1);
           if (len < 0) {
+            perror("/proc/self/exe");
             return 127;
           }
           self[len] = '\0';
 
           char *slash = strrchr(self, '/');
           if (slash == NULL) {
+            fprintf(stderr, "%s: not an absolute path\n", self);
             return 127;
           }
           *slash = '\0';
           if (snprintf(target, sizeof(target), "%s/.%s-env", self, slash + 1) >=
               (int)sizeof(target)) {
+            fprintf(stderr, "%s: wrapper path too long\n", self);
             return 127;
           }
 
@@ -66,6 +69,7 @@
             setenv("WRAP_FOR_STEAM_ARGV0", argv[0], 1);
           }
           execv(target, argv);
+          perror(target);
           return 127;
         }
       '';
