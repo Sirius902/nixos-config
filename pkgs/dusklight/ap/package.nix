@@ -51,6 +51,8 @@ in
     funchookVersion = null;
     rmluiRev = "f9b8c9e2935d5df2c7dff2c190d3968e99b0c3dc";
     rmluiHash = "sha256-g4O/JZUrrcseOz8o2QJRt+2CeuiLnVeuDJc906xvuIg=";
+    tracyUrl = "https://github.com/wolfpld/tracy/archive/6789e7d6f9a65ec98926b602097a33a9676d2606.tar.gz";
+    tracyHash = "sha256-Xxyd7G/mnXEPpN+ehmwl0AkAhS3CwObpJNDgcqbdUJg=";
     hasInTreeMods = false;
     hasBorealis = false;
   })

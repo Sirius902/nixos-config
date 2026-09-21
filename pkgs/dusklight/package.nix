@@ -29,7 +29,6 @@
   abseil-cpp,
   sdl3,
   fmt,
-  tracy,
   freetype,
   zstd,
   xxhash,
@@ -57,6 +56,8 @@
   capstoneHash ? "sha256-XMwQ7UaPC8YYu4yxsE4bbR3leYPfBHu5iixSLz05r3g=",
   rmluiRev ? "0ae381e00d7426762bb5ed897973366358b16642",
   rmluiHash ? "sha256-vfFtjNHw7coXWrGgtcFyuIsu5rctW5dBJoOt8MTZwDU=",
+  tracyUrl ? "https://github.com/wolfpld/tracy/archive/refs/tags/v0.14.1.zip",
+  tracyHash ? "sha256-vcLI9jb7eYcR162LgBQ2P4A0oiZuYRfYRQiDhlAk5TI=",
   # Revisions that predate the mods framework set this false.
   hasInTreeMods ? true,
   # Revisions that predate the borealis submodule set this false.
@@ -127,6 +128,11 @@
   rmlui-src = fetchzip {
     url = rmluiUrl;
     hash = rmluiHash;
+  };
+
+  tracy-src = fetchzip {
+    url = tracyUrl;
+    hash = tracyHash;
   };
 
   funchook-src =
@@ -237,6 +243,8 @@ in
         "https://github.com/richgel999/miniz/"
       check_url picosha2 "${picosha2Url}" CMakeLists.txt \
         "https://github.com/okdshin/PicoSHA2/"
+      check_url tracy "${tracyUrl}" extern/aurora/extern/CMakeLists.txt \
+        "https://github.com/wolfpld/tracy/archive/"
 
       check_pin() {
         local name="$1" expected="$2" actual="$3"
@@ -319,6 +327,9 @@ in
         (lib.cmakeFeature "BOREALIS_APP_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.src.rev}")
         (lib.cmakeFeature "DUSK_VERSION_OVERRIDE" "nix-${builtins.substring 0 7 finalAttrs.src.rev}")
         (lib.cmakeBool "CMAKE_FIND_PACKAGE_TARGETS_GLOBAL" true)
+        # aurora prefers a system Tracy and only falls back to FetchContent, so
+        # the lookup has to stay disabled for the source dir below to be reached
+        # at all.
         (lib.cmakeBool "CMAKE_DISABLE_FIND_PACKAGE_Tracy" true)
         (lib.cmakeBool "FETCHCONTENT_FULLY_DISCONNECTED" true)
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_CXXOPTS" "${cxxopts.src}")
@@ -328,7 +339,7 @@ in
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_DAWN_PREBUILT" "${dawn-src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_XXHASH" "${xxhash.src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_FMT" "${fmt.src}")
-        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_TRACY" "${tracy.src}")
+        (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_TRACY" "${tracy-src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_NOD_PREBUILT" "${nod-src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_FREETYPE" "${freetype.src}")
         (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_ZSTD" "${zstd.src}")
