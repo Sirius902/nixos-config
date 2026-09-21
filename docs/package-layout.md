@@ -12,10 +12,8 @@ while the NixOS system profile sets `ignoreCollisions = true` and silently
 shadows one of the files.
 
 A derivation with loose files in `bin/` or `lib/` works fine on its own; the
-flaw only surfaces when a second package ships the same names. This is exactly
-what broke when the games moved into `home.packages`: `dusklight` and
-`dusklight-rando` both shipped `bin/res/`, and the soh forks all shipped the
-same flat `lib/` app dump.
+flaw only surfaces when a second package ships the same names. That is why it
+tends to land all at once, when a set of related forks first shares a profile.
 
 ## Rules
 
@@ -30,7 +28,7 @@ standard prefixes, and nothing loose goes inside them:
 - `share/${pname}/` — the package's private data and self-contained app dirs
   (see below). The merge-designed freedesktop trees keep their usual layout:
   `share/applications`, `share/icons/hicolor`, `share/man`,
-  `share/licenses/${pname}`, `share/pixmaps`.
+  `share/licenses/${pname}`, `share/pixmaps`, `share/metainfo`, `share/doc`.
 - A tree a host application owns keeps that application's layout, not ours:
   `lib/udev/rules.d`, `lib/ghidra/Extensions`,
   `share/nautilus-python/extensions`.
@@ -88,27 +86,16 @@ package family (`sm64coopdx`, `starship-sf64`) use a whole app dir under
 - Wrappers referencing absolute store paths (`makeWrapper`, `wrapProgram
   --run`) just point into the namespaced dir (wwrando, wrye-bash).
 - CWD-relative apps get `makeWrapper --chdir $out/share/${pname}` (nixpkgs
-  `sm64coopdx`).
+  `sm64coopdx`, `zelda64recomp`).
 - Apps that *write* to their working directory instead get a wrapper that
   `cd`s into `''${XDG_DATA_HOME:-$HOME/.local/share}/<name>` and refreshes
   symlinks to the shipped store content on every launch — never copy the
   store content in, or it goes stale on updates. User-created files stay
-  real files (wwrando, zelda64recomp; nixpkgs `starship-sf64`).
+  real files (wwrando; nixpkgs `starship-sf64`).
 - Engine/plugin search paths go through env vars in the wrapper
   (`XASH3D_RODIR`, `LD_LIBRARY_PATH` for by-soname dlopen).
 
 ## Checking a package
-
-```console
-$ nix build .#foo.tests.layout
-```
-
-Every attr in `pkgs/all-packages.nix` carries that check — it is attached
-centrally, so a new package gets it without doing anything. It reads the built
-`$out` rather than the expression, which is what makes it indifferent to how a
-path was spelled, and it fails naming the offending path.
-
-To look around by hand:
 
 ```console
 $ find $(nix build --no-link --print-out-paths .#foo) -mindepth 1 -maxdepth 2
@@ -125,8 +112,7 @@ layout collisions — it only hides them by shadowing one package's files.
 ## Precedents
 
 - Good: nixpkgs `sm64coopdx` (`share/sm64coopdx` + `--chdir` wrapper),
-  `starship-sf64` (`share/starship-sf64`).
-- Bad: nixpkgs `shipwright`'s flat `lib/` dump (collides with any fork), and
-  the `zelda64recomp`/`mariokart64recomp` pair, which ship identical
-  `share/assets` + `share/recompcontrollerdb.txt` paths and cannot coexist in
-  a strict profile.
+  `starship-sf64` (`share/starship-sf64`), and the
+  `zelda64recomp`/`mariokart64recomp` pair, each under its own `share/${pname}`.
+- Bad: nixpkgs `shipwright`, which installs `soh.elf` and its assets straight
+  into `lib/` and symlinks `bin/soh` at them, so it collides with any fork.
