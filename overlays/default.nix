@@ -17,7 +17,7 @@
   # driver lookups nowhere to land. See docs/steam-deck.md.
   (final: _: {
     wrapForSteam = pkg: let
-      inherit (final.lib) concatLists escapeShellArgs mapAttrsToList optionalAttrs;
+      inherit (final.lib) concatLists escapeShellArgs mapAttrsToList;
       inherit (final) mesa;
 
       # `ld.so` acts on the loader variables before the first line of a wrapper
@@ -164,9 +164,10 @@
         preferLocalBuild = true;
         allowSubstitutes = false;
         passthru = {unwrapped = pkg;};
-        # Carrying the whole `meta` would carry an `outputsToInstall` naming
-        # outputs this derivation lacks, which breaks every `buildEnv`.
-        meta = optionalAttrs (pkg ? meta.mainProgram) {inherit (pkg.meta) mainProgram;};
+        # An `outputsToInstall` naming outputs this derivation lacks breaks
+        # every `buildEnv`; the rest of `meta` carries through, `priority`
+        # included.
+        meta = removeAttrs (pkg.meta or {}) ["outputsToInstall"];
       } ''
         shopt -s nullglob
 
