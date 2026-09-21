@@ -36,7 +36,7 @@ def sequence_member(archive: Path) -> str | None:
     with zipfile.ZipFile(archive) as zf:
         names = zf.namelist()
     # A sequence resource carries a bank index, not a bank, so SequenceOTRizer
-    # refuses a folder shipping its own .zbank. That is most of this collection.
+    # refuses a folder shipping its own .zbank.
     if any(Path(name).suffix.lower() == ".zbank" for name in names):
         return None
     seqs = [name for name in names if Path(name).suffix.lower() in SEQ_SUFFIXES]

@@ -43,8 +43,8 @@ in {
     pkgs.shipwright-ap
   ];
 
-  # Link the archives individually rather than the mods directory, so the game
-  # keeps writing custom_mod_files_go_here.txt and hand-dropped mods survive.
+  # Link the archives individually rather than the mods directory, so
+  # hand-dropped mods survive.
   xdg.dataFile = lib.optionalAttrs stdenv.hostPlatform.isLinux modLinks;
   home.file = lib.optionalAttrs stdenv.hostPlatform.isDarwin modLinks;
 }

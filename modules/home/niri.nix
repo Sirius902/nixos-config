@@ -170,9 +170,10 @@
         open-floating true
     }
 
-    // These are VA panels, which flicker under VRR whenever the framerate
-    // swings. Desktop use swings it constantly, so only let Wine and Proton
-    // games, which hold a steadier rate, turn it on.
+    // VRR flickers whenever the framerate swings, which desktop use does
+    // constantly, so it is enabled per window rather than globally. The
+    // patterns are broader than "games": `.exe` catches anything Wine runs,
+    // and gamescope is neither Wine nor Proton.
     //
     // Valve's Wine fork forces WM_CLASS on the XWayland path to steam_app_<id>,
     // or to steam_proton when no app id is set, so a Steam game never presents
