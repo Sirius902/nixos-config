@@ -1,7 +1,6 @@
 {
   applyPatches,
   bzip2,
-  callPackage,
   cmake,
   fetchFromGitHub,
   glew,
@@ -128,9 +127,9 @@ in {
       ];
     };
 
-    # Checks a pack this built against the sequences it was built from. Lives
-    # here because every pack needs it and none of them own it.
-    mkOtrTest = callPackage ./otr-test.nix {};
+    # Checks a pack this built against the tree it was packed from. Lives here
+    # because every pack needs it and none of them own it.
+    checkOtr = ./check-otr.py;
   };
 
   meta = {

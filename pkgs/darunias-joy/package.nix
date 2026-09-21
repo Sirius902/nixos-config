@@ -3,10 +3,11 @@
   fetchFromGitHub,
   lib,
   nix-update-script,
+  python3,
   sequence-otrizer,
   stdenvNoCC,
 }:
-stdenvNoCC.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation {
   pname = "darunias-joy";
   version = "0-unstable-2026-09-06";
 
@@ -85,18 +86,23 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
+  doInstallCheck = true;
+  nativeInstallCheckInputs = [(python3.withPackages (ps: [ps.mpyq]))];
+
+  installCheckPhase = ''
+    runHook preInstallCheck
+
+    python3 ${sequence-otrizer.checkOtr} data/Music "$out/share/darunias-joy/daruniasjoy.otr"
+
+    runHook postInstallCheck
+  '';
+
   passthru = {
     updateScript = nix-update-script {
       extraArgs = [
         "--version=branch=Custom-Music-2.0"
         "--version-regex=(0-unstable-.*)"
       ];
-    };
-
-    tests.otr = sequence-otrizer.mkOtrTest {
-      pack = finalAttrs.finalPackage;
-      inherit (finalAttrs) src;
-      otr = "share/darunias-joy/daruniasjoy.otr";
     };
   };
 
@@ -111,4 +117,4 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     platforms = lib.platforms.all;
     maintainers = with lib.maintainers; [sirius902];
   };
-})
+}

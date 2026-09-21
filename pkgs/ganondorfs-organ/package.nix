@@ -3,10 +3,11 @@
   fetchFromGitHub,
   lib,
   nix-update-script,
+  python3,
   sequence-otrizer,
   stdenvNoCC,
 }:
-stdenvNoCC.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation {
   pname = "ganondorfs-organ";
   version = "0-unstable-2026-09-13";
 
@@ -40,18 +41,23 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
+  doInstallCheck = true;
+  nativeInstallCheckInputs = [(python3.withPackages (ps: [ps.mpyq]))];
+
+  installCheckPhase = ''
+    runHook preInstallCheck
+
+    python3 ${sequence-otrizer.checkOtr} data/Music "$out/share/ganondorfs-organ/ganondorfsorgan.otr"
+
+    runHook postInstallCheck
+  '';
+
   passthru = {
     updateScript = nix-update-script {
       extraArgs = [
         "--version=branch=main"
         "--version-regex=(0-unstable-.*)"
       ];
-    };
-
-    tests.otr = sequence-otrizer.mkOtrTest {
-      pack = finalAttrs.finalPackage;
-      inherit (finalAttrs) src;
-      otr = "share/ganondorfs-organ/ganondorfsorgan.otr";
     };
   };
 
@@ -66,4 +72,4 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     platforms = lib.platforms.all;
     maintainers = with lib.maintainers; [sirius902];
   };
-})
+}

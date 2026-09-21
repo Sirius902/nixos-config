@@ -6,7 +6,7 @@
   sequence-otrizer,
   stdenvNoCC,
 }:
-stdenvNoCC.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation {
   pname = "japas-jams";
   version = "0-unstable-2026-09-13";
 
@@ -38,20 +38,23 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
+  doInstallCheck = true;
+  nativeInstallCheckInputs = [(python3.withPackages (ps: [ps.mpyq]))];
+
+  installCheckPhase = ''
+    runHook preInstallCheck
+
+    python3 ${sequence-otrizer.checkOtr} sequences "$out/share/japas-jams/japasjams.otr"
+
+    runHook postInstallCheck
+  '';
+
   passthru = {
     updateScript = nix-update-script {
       extraArgs = [
         "--version=branch=main"
         "--version-regex=(0-unstable-.*)"
       ];
-    };
-
-    tests.otr = sequence-otrizer.mkOtrTest {
-      pack = finalAttrs.finalPackage;
-      inherit (finalAttrs) src;
-      otr = "share/japas-jams/japasjams.otr";
-      music = "Music";
-      format = ".mmrs";
     };
   };
 
@@ -66,4 +69,4 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     platforms = lib.platforms.all;
     maintainers = with lib.maintainers; [sirius902];
   };
-})
+}
