@@ -28,10 +28,34 @@
       # no interpreter for `ld.so` to act on, which is what makes this the only
       # thing that can safely be the entry point.
       shim = final.writeText "wrap-for-steam.c" ''
+        #include <stdio.h>
         #include <stdlib.h>
+        #include <string.h>
         #include <unistd.h>
 
         int main(int argc, char **argv) {
+          /* One compiled shim is hardlinked to every name, so the wrapper to
+             exec is derived rather than baked in. /proc/self/exe resolves the
+             whole symlink chain from the profile, landing beside the wrapper
+             in the same store directory. */
+          char self[4096];
+          char target[4096];
+          ssize_t len = readlink("/proc/self/exe", self, sizeof(self) - 1);
+          if (len < 0) {
+            return 127;
+          }
+          self[len] = '\0';
+
+          char *slash = strrchr(self, '/');
+          if (slash == NULL) {
+            return 127;
+          }
+          *slash = '\0';
+          if (snprintf(target, sizeof(target), "%s/.%s-env", self, slash + 1) >=
+              (int)sizeof(target)) {
+            return 127;
+          }
+
           unsetenv("LD_PRELOAD");
           unsetenv("LD_AUDIT");
           unsetenv("LD_LIBRARY_PATH");
@@ -41,7 +65,7 @@
           if (argc > 0) {
             setenv("WRAP_FOR_STEAM_ARGV0", argv[0], 1);
           }
-          execv(TARGET, argv);
+          execv(target, argv);
           return 127;
         }
       '';
@@ -154,6 +178,7 @@
         if [ -d ${pkg}/bin ]; then
           rm $out/bin
           mkdir $out/bin
+          $CC -Os -static -o "$out/bin/.wrap-for-steam" ${shim}
           for exe in ${pkg}/bin/*; do
             name=$(basename "$exe")
             # A `bin/` entry that is not an executable file aborts makeWrapper,
@@ -164,7 +189,7 @@
               continue
             fi
             makeWrapper "$exe" "$out/bin/.$name-env" ${escapeShellArgs args}
-            $CC -Os -static -DTARGET="\"$out/bin/.$name-env\"" -o "$out/bin/$name" ${shim}
+            ln "$out/bin/.wrap-for-steam" "$out/bin/$name"
           done
         fi
       '';
