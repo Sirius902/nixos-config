@@ -127,10 +127,23 @@
         in
           lib.genAttrs (builtins.filter isDerivation overlayNames) (name: pkgs.${name});
 
+        ourPackages = lib.mapAttrs (name: _: pkgs.${name}) allPackages;
+
         packageSet =
-          (lib.mapAttrs (name: _: pkgs.${name}) allPackages)
+          ourPackages
           // overlayPackages
           // {inherit (pkgs.graalvmPackages) graalvm-ce_8;};
+
+        # `nix flake check` builds `checks` but only evaluates `packages`, so a
+        # `passthru.tests` entry runs nowhere until it is lifted here. Only
+        # `pkgs/` is swept, since nixpkgs tests the packages we merely override.
+        packageTests =
+          lib.concatMapAttrs (
+            name: pkg:
+              lib.mapAttrs' (test: drv: lib.nameValuePair "${name}-${test}" drv)
+              (lib.filterAttrs (_: lib.isDerivation) (pkg.passthru.tests or {}))
+          )
+          (lib.filterAttrs (_: p: p.meta.available or true) ourPackages);
       in {
         formatter = pkgs.alejandra;
 
@@ -231,65 +244,69 @@
         # Keep unavailable packages out of `nix flake check`.
         packages = lib.filterAttrs (_: p: p.meta.available or true) packageSet;
 
-        checks.deadnix = pkgs.runCommandLocal "deadnix-check" {} ''
-          ${lib.getExe pkgs.deadnix} --fail ${self}
-          touch $out
-        '';
+        checks =
+          packageTests
+          // {
+            deadnix = pkgs.runCommandLocal "deadnix-check" {} ''
+              ${lib.getExe pkgs.deadnix} --fail ${self}
+              touch $out
+            '';
 
-        checks.mypy = let
-          python = pkgs.python3.withPackages (ps: [ps.mypy ps.httpx ps.mpyq]);
-        in
-          pkgs.runCommandLocal "mypy-check" {} ''
-            export MYPY_CACHE_DIR="$(mktemp -d)"
-            ${python}/bin/mypy --config-file ${self}/mypy.ini ${self}
-            touch $out
-          '';
+            mypy = let
+              python = pkgs.python3.withPackages (ps: [ps.mypy ps.httpx ps.mpyq]);
+            in
+              pkgs.runCommandLocal "mypy-check" {} ''
+                export MYPY_CACHE_DIR="$(mktemp -d)"
+                ${python}/bin/mypy --config-file ${self}/mypy.ini ${self}
+                touch $out
+              '';
 
-        # Enforce the fetched patch conventions in docs/patches.md.
-        checks.patch-urls = pkgs.runCommandLocal "patch-urls-check" {} ''
-          status=0
+            # Enforce the fetched patch conventions in docs/patches.md.
+            patch-urls = pkgs.runCommandLocal "patch-urls-check" {} ''
+              status=0
 
-          check() {
-            local reason="$1" pattern="$2"
-            local hits
-            if hits="$(grep -rnE --include='*.nix' -e "$pattern" -- ${self})"; then
-              echo "error: $reason" >&2
-              echo "$hits" | sed 's|^${self}/|  |' >&2
-              status=1
-            fi
-          }
+              check() {
+                local reason="$1" pattern="$2"
+                local hits
+                if hits="$(grep -rnE --include='*.nix' -e "$pattern" -- ${self})"; then
+                  echo "error: $reason" >&2
+                  echo "$hits" | sed 's|^${self}/|  |' >&2
+                  status=1
+                fi
+              }
 
-          check "use fetchpatch (v1), which strips the unstable index lines v2 keeps" \
-            '\bfetchpatch2\b'
-          check "GitHub patch URLs take no query parameters" \
-            'https://github\.com/[^"]*\?'
-          check "pin a commit SHA instead of a pull request URL, which follows the branch" \
-            'https://github\.com/[^"]*/pull/[0-9]+\.(diff|patch)'
-          check "fetch GitHub patches as .diff, not .patch" \
-            'https://github\.com/[^"]*\.patch'
+              check "use fetchpatch (v1), which strips the unstable index lines v2 keeps" \
+                '\bfetchpatch2\b'
+              check "GitHub patch URLs take no query parameters" \
+                'https://github\.com/[^"]*\?'
+              check "pin a commit SHA instead of a pull request URL, which follows the branch" \
+                'https://github\.com/[^"]*/pull/[0-9]+\.(diff|patch)'
+              check "fetch GitHub patches as .diff, not .patch" \
+                'https://github\.com/[^"]*\.patch'
 
-          if [ "$status" -ne 0 ]; then
-            echo "see docs/patches.md" >&2
-            exit 1
-          fi
+              if [ "$status" -ne 0 ]; then
+                echo "see docs/patches.md" >&2
+                exit 1
+              fi
 
-          touch $out
-        '';
+              touch $out
+            '';
 
-        checks.ruff = pkgs.runCommandLocal "ruff-check" {} ''
-          ${lib.getExe pkgs.ruff} check --config ${self}/ruff.toml ${self}
-          touch $out
-        '';
+            ruff = pkgs.runCommandLocal "ruff-check" {} ''
+              ${lib.getExe pkgs.ruff} check --config ${self}/ruff.toml ${self}
+              touch $out
+            '';
 
-        checks.shellcheck = pkgs.runCommandLocal "shellcheck-check" {} ''
-          find ${self} -name '*.sh' -exec ${lib.getExe pkgs.shellcheck} {} +
-          touch $out
-        '';
+            shellcheck = pkgs.runCommandLocal "shellcheck-check" {} ''
+              find ${self} -name '*.sh' -exec ${lib.getExe pkgs.shellcheck} {} +
+              touch $out
+            '';
 
-        checks.statix = pkgs.runCommandLocal "statix-check" {} ''
-          ${lib.getExe pkgs.statix} check ${self} --config ${self}/statix.toml
-          touch $out
-        '';
+            statix = pkgs.runCommandLocal "statix-check" {} ''
+              ${lib.getExe pkgs.statix} check ${self} --config ${self}/statix.toml
+              touch $out
+            '';
+          };
 
         devShells.default = pkgs.mkShell {
           packages = [pkgs.just pkgs.statix];
