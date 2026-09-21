@@ -112,7 +112,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     homepage = "https://github.com/DaruniasJoy/OoT-Custom-Sequences";
-    description = "Darunia's Joy";
+    description = "Custom Ocarina of Time music sequences for Ship of Harkinian";
     license = lib.licenses.unfree;
     platforms = lib.platforms.all;
     maintainers = with lib.maintainers; [sirius902];

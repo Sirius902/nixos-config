@@ -67,7 +67,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     homepage = "https://github.com/GanondorfsOrgan/Ganondorfs-Organ";
-    description = "Ganondorf's Organ";
+    description = "Custom Ocarina of Time music sequences for Ship of Harkinian";
     license = lib.licenses.unfree;
     platforms = lib.platforms.all;
     maintainers = with lib.maintainers; [sirius902];

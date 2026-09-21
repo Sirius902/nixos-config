@@ -64,7 +64,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     homepage = "https://github.com/Japas-Jams/MM-Custom-Sequences";
-    description = "Japas' Jams";
+    description = "Custom Majora's Mask music sequences for 2 Ship 2 Harkinian";
     license = lib.licenses.unfree;
     platforms = lib.platforms.all;
     maintainers = with lib.maintainers; [sirius902];
