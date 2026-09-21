@@ -5,30 +5,20 @@ built, pushed and activated, and what to do when something about that breaks.
 
 The Deck runs a single-user, rootless Nix and a standalone Home Manager
 generation. Everything is built on the workstation and pushed; nothing is ever
-built or evaluated on the Deck, and nothing is installed outside `/nix/store`
-and `$HOME`.
-
-The generation owns the whole of `~/.nix-profile`, Nix itself included, so a
-deploy updates the Nix binary along with everything else and nothing else may
-be installed there by hand.
+built or evaluated on the Deck, and nothing outside `/nix/store` and `$HOME` is
+touched. The generation owns the whole of `~/.nix-profile`, Nix included, so
+nothing may be installed there by hand.
 
 ## Deck prerequisites
 
-- **`/nix` is a bind mount** from `/.steamos/offload/nix`, on the persistent
-  partition, which is what makes the store survive a SteamOS update. Check it
-  with `findmnt /nix`. If an update leaves it unmounted, remount it
-  (`sudo mount --bind /.steamos/offload/nix /nix`) before deploying — Nix will
-  otherwise happily start a second store on the rootfs.
-- **`experimental-features = nix-command`** in `~/.config/nix/nix.conf`.
-  Activation uses `nix profile install` once `~/.nix-profile/manifest.json`
-  exists. Do not manage that file from Home Manager: `linkGeneration` and
-  `installPackages` are unordered siblings of the activation DAG, so it would
-  race.
+- `/nix` is a bind mount from `/.steamos/offload/nix`, which is what makes the
+  store survive a SteamOS update. `findmnt /nix`.
+- `experimental-features = nix-command` in `~/.config/nix/nix.conf`.
 
 ## First activation
 
-`just deploy-deck` in three steps, because the profile has to be emptied
-between the copy and the activation:
+On a fresh Deck, or after a SteamOS reinstall, the three steps have to be run by
+hand, because the profile has to be emptied between the copy and the activation:
 
 ```console
 $ gen=$(just build-deck)
@@ -38,24 +28,13 @@ $ ssh deck@steamdeck 'nix profile remove --all'
 $ ssh deck@steamdeck "HOME_MANAGER_BACKUP_EXT=hm-bak exec '$gen/activate'"
 ```
 
-`nix profile install` fails on a file already claimed by another element, and
-the generation ships every one of those names, so `~/.nix-profile` has to be
-empty of anything Home Manager does not own. It cannot be emptied earlier: the
-copy resolves `remote-program` through that same profile. Between the two, the
-Deck has no `nix` on `PATH` — recover with the store path
-`nix profile list` printed, or with `$gen/activate`, which carries its own.
+The profile cannot be emptied any earlier, because the copy resolves
+`remote-program` through it. In between, the Deck has no `nix` on `PATH` —
+recover with `$gen/activate`, which carries its own.
 
 `HOME_MANAGER_BACKUP_EXT` is the standalone equivalent of
-`home-manager.backupFileExtension`, which does not exist outside the NixOS
-module. It is needed on the first run only: any `.otr`, `.nrm` or `.so` sitting
-in a mod directory as a real file makes `checkLinkTargets` abort.
-
-Also clear what the old pipeline left behind:
-
-- Repoint every Steam shortcut (below) and drop the `runNixApp.sh` wrapper and
-  any `--strip` argument.
-- `nix-env -p ~/.local/state/nix/profiles/games --delete-generations old`, then
-  `rm ~/.local/state/nix/profiles/games*` and `nix-collect-garbage`.
+`home-manager.backupFileExtension`, which exists only in the NixOS module. A
+real file where a link belongs otherwise aborts `checkLinkTargets`.
 
 ## Steady state
 
@@ -63,66 +42,28 @@ Also clear what the old pipeline left behind:
 $ just deploy-deck
 ```
 
-`DECK_HOST` overrides the default hostname. `--substitute-on-destination` has
-the Deck pull unpatched paths — Mesa above all — from cache.nixos.org rather
-than over wifi; the personal-fork paths still come from the workstation.
-Substitution is not a build.
-
-Activation is a DAG, not a transaction: `checkLinkTargets` →
-`writeBoundary` → `installPackages` + `linkGeneration`. The usual failure, a
-real file where a link belongs, aborts in `checkLinkTargets` before anything is
-written, and the script is idempotent, so a partial run is fixed by rerunning
-it.
+`DECK_HOST` overrides the hostname. `--substitute-on-destination` has the Deck
+pull unpatched paths — Mesa above all — from cache.nixos.org rather than over
+wifi; substitution is not a build.
 
 ## Steam shortcuts
 
-Target `/home/deck/.nix-profile/bin/<exe>` and Start In
-`/home/deck/.nix-profile/bin/`, with no arguments and no wrapper script.
-Neither field may be relative — Steam expands no `~` and resolves `./` against
-a directory of its own choosing, and either one fails the `execve` before the
+Target `/home/deck/.nix-profile/bin/<exe>`, Start In
+`/home/deck/.nix-profile/bin/`, no arguments and no wrapper script. Neither
+field may be relative: Steam expands no `~` and resolves `./` against a
+directory of its own choosing, and either one fails the `execve` before the
 launcher runs, which Game Mode shows as the Play button flicking straight back
-from Stop. The paths never change across deploys.
-
-| Game | `<exe>` |
-| --- | --- |
-| Ship of Harkinian | `soh` |
-| Ship of Harkinian (stable) | `soh-stable` |
-| Ship of Harkinian (Archipelago) | `soh-ap` |
-| 2 Ship 2 Harkinian | `2s2h` |
-| Dusklight | `dusklight` |
-| Dusklight (Archipelago) | `dusklight-ap` |
-| Xash3D FWGS | `xash3d` |
-| Zelda 64: Recompiled | `Zelda64Recompiled` |
+from Stop. The paths never change across deploys, and `ls ~/.nix-profile/bin` is
+the list of them.
 
 **Set no compatibility tool on these shortcuts.** pressure-vessel builds a
 container in which `/nix` does not exist.
 
-Anything else in the profile is launched the same way and needs nothing added
-anywhere — `wrapForSteam` is applied to `home.path` whole, so every `bin/`
-entry is a launcher, `firefox` and `nix` no less than `soh`.
+The Steam overlay and F12 screenshots are lost on the OpenGL titles:
+`gameoverlayrenderer.so` arrives by `LD_PRELOAD`, which the launcher unsets.
 
-The Steam overlay and F12 screenshots are lost on the OpenGL titles (the three
-soh forks, `2s2h`, `xash3d`): `gameoverlayrenderer.so` arrives by `LD_PRELOAD`,
-which is the first thing the launcher unsets. The one `ELFCLASS32` complaint
-about that library per launch is not a symptom of any of this — Steam names
-both word sizes in `LD_PRELOAD` and every 64-bit process on the Deck rejects
-the 32-bit one. Here it is the launcher's own shell reporting it, a step before
-it clears the variable. On the Vulkan titles the overlay
-arrives as an implicit layer instead, which the launcher keeps, so it should
-survive; `VK_LOADER_LAYERS_DISABLE=~implicit~` turns it off if it crashes.
-Steam Input, the gamescope FPS overlay and save locations are unaffected —
-none work by injection.
-
-## Apps that seed `$HOME` from the store
-
-An app that copies starter data out of its own installation — Archipelago's
-`Players/Templates`, Kivy's icon set — copies it out of `/nix/store`, where
-every file is read-only. Whether the copy lands read-only depends on which
-`shutil` call it used, and a later version that copies differently then cannot
-overwrite what an earlier one left. The symptom is `PermissionError` or a plain
-`rm -rf` refusing to delete, and the fix is `chmod -R u+w` on the directory
-before doing anything else. Nothing here can prevent it; the read-only store is
-the point.
+An app that seeds `$HOME` from its own installation copies out of the read-only
+store; `chmod -R u+w` the directory when that leaves it unwritable.
 
 ## Rollback
 
@@ -133,31 +74,15 @@ $ ~/.local/state/nix/profiles/home-manager-<n>-link/activate
 
 ## Adding a game
 
-Add it to `modules/home/games/base.nix`, `just deploy-deck`, create one
-shortcut. There is no second list to keep in step: the profile is wrapped as a
-whole, so whatever lands in it is launchable.
+Add it to `modules/home/games/base.nix` and `just deploy-deck`, then create one
+shortcut. A game that needs mod files linked gets its own module there instead.
+Something the Deck should not carry goes in `games/full.nix`, which only the
+workstation imports.
 
-`base.nix` is the set both machines get; the Deck imports it alone. Something
-the Deck should not carry goes in `games/full.nix` instead, which is what the
-workstation profile imports. Anything that is not a game goes straight into
-`homes/deck/default.nix`.
+## Troubleshooting the launchers
 
-## Why the launchers set what they set
-
-`wrapForSteam` in `overlays/default.nix` generates them, for two unrelated
-problems:
-
-**Drivers.** A Nix game links the dispatch libraries — libglvnd and
-vulkan-loader hold no driver code — and nixpkgs patches them to find the real
-driver under `/run/opengl-driver`. SteamOS has no such path, and creating one
-needs root and lands in a rootfs `/etc` that an update discards. Vulkan and EGL
-locate their drivers through JSON manifests carrying absolute store paths, so
-naming one file each is enough; the GLX vendor is a bare soname `dlopen` with
-no manifest, which is why `LD_LIBRARY_PATH` survives, holding exactly
-`${mesa}/lib`. Nothing else would answer that `dlopen`: a Game Mode shortcut is
-handed `LD_LIBRARY_PATH` empty, nixpkgs patches `ld.so.cache` store-local, and
-the loader's built-in directories are store paths too, so a Nix process cannot
-reach the host's libraries at all. Check where the library resolved from rather
+`wrapForSteam` in `overlays/default.nix` generates them, and its comments carry
+why each variable is set or unset. Check where a library resolved from rather
 than whether the game started — the neighbouring APIs fail soft, and a wrong
 `${mesa}` would too:
 
@@ -165,55 +90,3 @@ than whether the game started — the neighbouring APIs fail soft, and a wrong
 $ LD_DEBUG=libs ~/.nix-profile/bin/soh 2>&1 | grep libGLX_mesa   # /nix/store/…-mesa-…/lib, never /usr/lib
 $ VK_LOADER_DEBUG=all ~/.nix-profile/bin/Zelda64Recompiled 2>&1 | grep -i icd   # exactly one, radeon
 ```
-
-**Injection.** Steam hands a launched process its runtime's `LD_PRELOAD`,
-`SDL_DYNAMIC_API`, `GCONV_PATH`, `QT_PLUGIN_PATH` and the rest, every one of
-them naming a foreign closure. Those are unset. The list is a blocklist rather
-than an `env -i` allowlist: the harmful set is small and stable, the keep-set
-is large, session-dependent and grows with every gamescope release, and an
-allowlist's failure mode is a black window with no diagnostic.
-
-Measured against a Game Mode shortcut, only `LD_PRELOAD` is actually set of
-everything on that list, and `LD_LIBRARY_PATH` is set empty — no
-`SDL_DYNAMIC_API`, no `GCONV_PATH`, no `QT_PLUGIN_PATH`, no
-`VK_INSTANCE_LAYERS`. The rest earn their place in Desktop Mode, where a KDE
-session does set the toolkit variables, and against whatever a future gamescope
-adds. `ENABLE_VK_LAYER_VALVE_steam_overlay_1` is set and kept, so the Vulkan
-titles should have the overlay.
-
-The loader variables are the exception, and they are why each `bin/` entry is a
-static executable rather than the shell script the rest of the policy lives in.
-`ld.so` acts on `LD_PRELOAD` before a script's first line runs, so a script
-cannot defend its own interpreter: Steam's overlay links `libGL.so.1`, a Nix
-loader does not resolve it, and an unresolvable dependency of a preloaded
-object is fatal rather than skipped — the wrapper dies at exit 127 having never
-reached the game. A static executable has no interpreter for `ld.so` to act on.
-It clears `LD_PRELOAD`, `LD_AUDIT` and `LD_LIBRARY_PATH`, then execs the script
-that does everything else. Anything that makes `bin/<exe>` dynamic again brings
-the failure straight back.
-
-This is what retires nixGL and its `--strip` argument. nixGL supplied the GLX
-vendor by putting its own nixpkgs pin's entire driver closure on
-`LD_LIBRARY_PATH`, ahead of every binary's `DT_RUNPATH` — which is where the
-`GLIBCXX_3.4.NN not found` class came from. A single directory from the same
-pin as the games cannot shadow anything they ship.
-
-`targets.genericLinux.nixGL` is the packaged form of that and cannot be used
-here at all, whatever one thinks of the pin: it emits `makeWrapper` shell
-scripts, so its launchers are the thing `ld.so` kills. The old `runNixApp.sh`
-only ever worked around this by accident — a `#!/bin/bash` shebang runs under
-the *host* loader, which resolves `libGL.so.1` from `/usr/lib` and so survives
-the preload long enough to clear it. It also wraps a named list rather than the
-profile, leaves every injected variable in place, and defaults
-`vulkan.enable = false` because "Vulkan brings in several libraries that can
-cause symbol version conflicts" — which two of these games need.
-
-`targets.genericLinux.gpu` is the one mechanically better than this: it creates
-`/run/opengl-driver`, so every API resolves with no environment variables at
-all. It is rejected only because `non-nixos-gpu-setup` installs a `tmpfiles.d`
-rule into `/etc` as root — a privileged step to redo after every SteamOS
-update. It would also still need `wrapForSteam` for the injection half.
-
-If a SteamOS update ever breaks the driver shim outright, the update-proof
-answer is to stop using host drivers and ship the graphics stack whole; the
-marginal closure for that is about +852 MB.
