@@ -20,6 +20,9 @@
       inherit (final.lib) concatLists escapeShellArgs mapAttrsToList;
       inherit (final) mesa;
 
+      # mesa names each ICD manifest for the CPU family meson built it for.
+      vulkanArch = final.stdenv.hostPlatform.parsed.cpu.name;
+
       # `ld.so` acts on the loader variables before the first line of a wrapper
       # script can clear them, so the script's own interpreter is already a
       # casualty: Steam preloads an overlay that links `libGL.so.1`, a Nix
@@ -135,7 +138,9 @@
         __EGL_VENDOR_LIBRARY_FILENAMES = "${mesa}/share/glvnd/egl_vendor.d/50_mesa.json";
         # One ICD rather than the directory: a directory also enumerates
         # lavapipe, putting a software device into `vkEnumeratePhysicalDevices`.
-        VK_DRIVER_FILES = "${mesa}/share/vulkan/icd.d/radeon_icd.x86_64.json";
+        # `VK_DRIVER_FILES` replaces discovery rather than adding to it, so the
+        # driver named here has to be the host's — AMD, for the Deck.
+        VK_DRIVER_FILES = "${mesa}/share/vulkan/icd.d/radeon_icd.${vulkanArch}.json";
         LIBVA_DRIVERS_PATH = "${mesa}/lib/dri";
       };
 
