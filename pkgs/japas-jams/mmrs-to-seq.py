@@ -31,10 +31,8 @@ def load_manifest(path: Path) -> list[dict[str, Any]]:
     return [entry for entry in entries if isinstance(entry, dict)]
 
 
-def sequence_member(archive: Path) -> str | None:
+def sequence_member(archive: Path, names: list[str]) -> str | None:
     """The sequence in `archive`, or None if it is one SequenceOTRizer skips."""
-    with zipfile.ZipFile(archive) as zf:
-        names = zf.namelist()
     # A sequence resource carries a bank index, not a bank, so SequenceOTRizer
     # refuses a folder shipping its own .zbank.
     if any(Path(name).suffix.lower() == ".zbank" for name in names):
@@ -77,9 +75,11 @@ def main(src: Path, out: Path) -> None:
     packed = 0
     for song in songs:
         archive = music / song["file"]
-        member = sequence_member(archive)
-        if member is None:
-            continue
+        with zipfile.ZipFile(archive) as zf:
+            member = sequence_member(archive, zf.namelist())
+            if member is None:
+                continue
+            sequence = zf.read(member)
         font = font_index(archive, member)
 
         kind = song["type"]
@@ -90,7 +90,7 @@ def main(src: Path, out: Path) -> None:
         # so an f"{game} - {song}" here would diverge from every title upstream
         # ships in its own packs.
         title = f"{short_names.get(song['game'], song['game'])} - {song['song']}"
-        if not title or title != title.strip():
+        if title != title.strip():
             sys.exit(f"error: {archive} would be titled {title!r}")
         clash = titles.setdefault(title.lower(), archive)
         if clash != archive:
@@ -98,8 +98,7 @@ def main(src: Path, out: Path) -> None:
 
         folder = out / song["file"].removesuffix(".mmrs")
         folder.mkdir(parents=True)
-        with zipfile.ZipFile(archive) as zf:
-            (folder / "sequence.seq").write_bytes(zf.read(member))
+        (folder / "sequence.seq").write_bytes(sequence)
         (folder / "sequence.meta").write_text(
             f"{title}\n{font:X}\n{kind}\n", encoding="utf-8"
         )

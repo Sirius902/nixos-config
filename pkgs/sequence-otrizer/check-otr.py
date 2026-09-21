@@ -64,7 +64,7 @@ def main(tree: Path, otr: Path) -> None:
         if match is None:
             sys.exit(f"error: {otr} holds malformed entry name {name!r}")
         title = match["title"]
-        if not title or title != title.strip():
+        if title != title.strip():
             sys.exit(f"error: {otr} entry {name!r} has an untrimmed title")
 
     print(f"{otr}: {len(names)} sequences, all named, all distinct")

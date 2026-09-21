@@ -6,7 +6,7 @@
   sequence-otrizer,
   stdenvNoCC,
 }:
-stdenvNoCC.mkDerivation {
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "japas-jams";
   version = "0-unstable-2026-09-13";
 
@@ -34,7 +34,7 @@ stdenvNoCC.mkDerivation {
 
   installPhase = ''
     runHook preInstall
-    install -Dm444 -t $out/share/japas-jams mods/japasjams.otr
+    install -Dm444 -t $out/share/${finalAttrs.pname} mods/japasjams.otr
     runHook postInstall
   '';
 
@@ -44,7 +44,7 @@ stdenvNoCC.mkDerivation {
   installCheckPhase = ''
     runHook preInstallCheck
 
-    python3 ${sequence-otrizer.checkOtr} sequences "$out/share/japas-jams/japasjams.otr"
+    python3 ${sequence-otrizer.checkOtr} sequences "$out/share/${finalAttrs.pname}/japasjams.otr"
 
     runHook postInstallCheck
   '';
@@ -69,4 +69,4 @@ stdenvNoCC.mkDerivation {
     platforms = lib.platforms.all;
     maintainers = with lib.maintainers; [sirius902];
   };
-}
+})
