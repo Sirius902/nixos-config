@@ -9,13 +9,13 @@
 }:
 stdenvNoCC.mkDerivation {
   pname = "darunias-joy";
-  version = "0-unstable-2026-09-06";
+  version = "0-unstable-2026-09-23";
 
   src = fetchFromGitHub {
     owner = "DaruniasJoy";
     repo = "OoT-Custom-Sequences";
-    rev = "e3b8f0d67a6c15fada886473988af6413be1c2fa";
-    hash = "sha256-mzQFQjuS7Int7m+ZA1nbj2EyovibE9vAdxNSoAa9eCQ=";
+    rev = "20c5a964f7ca4fdb0065723945d2f31291777170";
+    hash = "sha256-ZM0PwJ18Ih0OCbPjzm91nB2JwSZgsDYcBf0a07XFJXI=";
   };
 
   nativeBuildInputs = [
