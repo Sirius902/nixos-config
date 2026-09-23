@@ -440,7 +440,11 @@
       patches =
         (prevAttrs.patches or [])
         ++ [
-          ../patches/gamescope/add-window-cycle.patch
+          (final.fetchpatch {
+            name = "add-window-cycle.patch";
+            url = "https://github.com/Sirius902/gamescope/compare/2cfb4803984e8e4144805b57ebb5d38ea42bec13...a290bf927a11149a8b20438bea71cab067fd7ae6.diff";
+            hash = "sha256-SyxEpac0l24jENfzO6Ksl+GgKPhXwM8RF/KvwXqBH0Q=";
+          })
           (final.fetchpatch {
             name = "clamp-cursor-adaptive-sync.patch";
             url = "https://github.com/ValveSoftware/gamescope/commit/2b18c4eee02bc8600ce11705cada906e6bbe8232.diff";
