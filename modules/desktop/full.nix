@@ -155,7 +155,9 @@ in {
       transmission_4-gtk
       (discord-canary.override {withMoonlight = true;})
       vlc
-      wineWow64Packages.stableFull
+      # TODO(Sirius902) Back to stableFull once it reaches 12.0; 11.0 ships
+      # byte-identical winealsa.drv/winepulse.drv that the store optimiser merges.
+      wineWow64Packages.unstableFull
       winetricks
       wgnord
       xivlauncher
