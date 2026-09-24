@@ -453,6 +453,31 @@
     });
   })
 
+  # TODO(Sirius902) Drop once GE-Proton's Wine stops shipping winealsa.drv and
+  # winepulse.drv as byte-identical placeholders, as upstream Wine did in 11.2.
+  # The store optimiser hardlinks the pair, and Wine loads a hardlinked DLL as
+  # the module already mapped under the other name, so winealsa's MIDI calls
+  # reach winepulse's stubs and never complete.
+  # https://gitlab.winehq.org/wine/wine/-/commit/f180045107a53e22073f961646888ee557ac5fac
+  # https://github.com/NixOS/nixpkgs/issues/444543
+  (final: prev: {
+    proton-ge-bin = prev.proton-ge-bin.overrideAttrs (prevAttrs: {
+      src = final.applyPatches {
+        inherit (prevAttrs) src;
+        postPatch = ''
+          for dir in files/lib/wine/{i386,x86_64}-windows; do
+            if ! cmp -s "$dir/winealsa.drv" "$dir/winepulse.drv"; then
+              echo "$dir: winealsa.drv and winepulse.drv are missing or no longer identical" >&2
+              exit 1
+            fi
+            printf '\0%s\0' winealsa.drv >> "$dir/winealsa.drv"
+          done
+        '';
+      };
+      disallowedReferences = [prevAttrs.src];
+    });
+  })
+
   (final: prev: {
     rpcs3 = prev.rpcs3.overrideAttrs (prevAttrs: {
       version = "0.0.42-unstable-2026-09-23";
