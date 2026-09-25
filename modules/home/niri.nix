@@ -104,6 +104,9 @@
     [location]
     auto_locate = true
 
+    [weather]
+    unit = "imperial"
+
     [calendar]
     event_time_format = "%I:%M %p"
 
