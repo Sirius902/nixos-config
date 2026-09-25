@@ -102,9 +102,7 @@
     temperature_night = 3400
 
     [location]
-    custom_schedule = true
-    sunset = "20:00"
-    sunrise = "07:00"
+    auto_locate = true
 
     [calendar]
     event_time_format = "%I:%M %p"
