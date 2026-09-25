@@ -554,14 +554,18 @@
       cmakeFlags =
         (prevAttrs.cmakeFlags or [])
         ++ [
-          (final.lib.cmakeBool "ENABLE_SYSTEM_LIBRARIES" true)
           (final.lib.cmakeBool "SPDLOG_FMT_EXTERNAL" true)
+        ];
+
+      nativeBuildInputs =
+        (prevAttrs.nativeBuildInputs or [])
+        ++ [
+          final.python3
         ];
 
       buildInputs =
         (prevAttrs.buildInputs or [])
         ++ [
-          final.glslang
           final.openal-soft
         ];
 
