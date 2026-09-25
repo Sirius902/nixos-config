@@ -120,13 +120,13 @@ stdenv.mkDerivation (finalAttrs: let
   };
 in {
   pname = "2ship2harkinian";
-  version = "5.0.1-unstable-2026-09-16";
+  version = "5.0.1-unstable-2026-09-25";
 
   src = fetchFromGitHub {
     owner = "HarbourMasters";
     repo = "2ship2harkinian";
-    rev = "8531560498d246214fb9ac91c428bd2b1fc00c52";
-    hash = "sha256-6e5M4DH1DfVByMUBM8n2OSztCM73lPfAUac9zmaqc80=";
+    rev = "e8757c14a0fc8701461b0458c9ed72c118bcfc67";
+    hash = "sha256-Xi4r6qIpGTbCuWwfxNyNjsIhXy8x1KgdX1eYOgvbxoc=";
     fetchSubmodules = true;
     deepClone = true;
     postFetch = ''
