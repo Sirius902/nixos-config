@@ -23,5 +23,11 @@
     {
       file = ./poptracker-linux-dialog-helper.patch;
     }
+    # TODO(Sirius902) bottles is missing libxfixes. Make PR?
+    {
+      branch = "bottles-libs";
+      against = "master";
+      from = "Sirius902/nixpkgs";
+    }
   ];
 }

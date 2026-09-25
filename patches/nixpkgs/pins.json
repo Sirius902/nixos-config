@@ -5,6 +5,10 @@
       "base": "b97662739e744fb85d8b7b892c8250ca20df6532",
       "head": "71f8f21a50192425577f92f97eb5212a85dd0588"
     },
+    "Sirius902/nixpkgs:refs/heads/bottles-libs": {
+      "base": "fbe840e7184ed15fd5b1ca8f1a8746462a38d59c",
+      "head": "0158ecfa910b3dbcc997a34582ffb212b4fb06f3"
+    },
     "Sirius902/nixpkgs:refs/heads/shadps4-zenity": {
       "base": "d0356a338b3a5df3adf8f85b173fd4b5cfd6f70d",
       "head": "e7a9edbc8788feb0d0c6b4a52772f2641a46c53d"
