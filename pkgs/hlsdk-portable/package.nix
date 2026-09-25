@@ -8,14 +8,14 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "hlsdk-portable";
-  version = "0-unstable-2026-09-24";
+  version = "0-unstable-2026-09-25";
 
   src = fetchFromGitHub {
     owner = "FWGS";
     repo = "hlsdk-portable";
     fetchSubmodules = true;
-    rev = "3f3d54bc5df7d36834430270db0e777d7fed063c";
-    hash = "sha256-Dcm0PwA8Vjv7jnY4DLByJ25PDVRjoVVucXkZRnLOq+w=";
+    rev = "70c6025b74a7114fc54e44e3d219bf366636ff63";
+    hash = "sha256-t2itB4PA78DKIWn48l/tCn+he2YYBoLYo0h69VD679c=";
   };
 
   nativeBuildInputs = [
