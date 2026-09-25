@@ -760,11 +760,11 @@
 
   (final: prev: {
     zelda64recomp = prev.zelda64recomp.overrideAttrs (prevAttrs: {
-      version = "1.2.2-unstable-2026-05-17";
+      version = "1.2.2-unstable-2026-09-25";
       src = prevAttrs.src.override {
         tag = null;
-        rev = "1a9c26613c6e0906140dc8bcca7362cbe00bf1eb";
-        hash = "sha256-tx+xBwqp+onksivFnM1uMtO3IhsgKbJl5aO1ahH+w3c=";
+        rev = "0fca34d194028c40f3c87937be0c07d31c860b4e";
+        hash = "sha256-ljkEzqoVbhd3bHdMkQZUniRpUMNVQcnFKMF/rl4DwH0=";
       };
 
       passthru =
