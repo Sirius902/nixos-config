@@ -442,8 +442,8 @@
         ++ [
           (final.fetchpatch {
             name = "add-window-cycle.patch";
-            url = "https://github.com/Sirius902/gamescope/compare/2cfb4803984e8e4144805b57ebb5d38ea42bec13...a290bf927a11149a8b20438bea71cab067fd7ae6.diff";
-            hash = "sha256-SyxEpac0l24jENfzO6Ksl+GgKPhXwM8RF/KvwXqBH0Q=";
+            url = "https://github.com/Sirius902/gamescope/compare/2cfb4803984e8e4144805b57ebb5d38ea42bec13...63f7c6a83dce250b518afcb769203df69577bced.diff";
+            hash = "sha256-2vi5EoCKMaKY+UMIWy9CooeN5YM+aPKH2UUNutsxdtM=";
           })
         ];
 
