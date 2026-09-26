@@ -437,6 +437,11 @@
 
   (final: prev: {
     gamescope = prev.gamescope.overrideAttrs (prevAttrs: {
+      version = "3.16.29";
+      src = prevAttrs.src.override {
+        hash = "sha256-HffYFSUfvh6zD3qxSPZNCS504RU6qJiX3ysv26OilNE=";
+      };
+
       patches =
         (prevAttrs.patches or [])
         ++ [
@@ -450,6 +455,12 @@
       # FUTURE(Sirius902) Disable fast math to fix blurriness on Wayland.
       # https://github.com/ValveSoftware/gamescope/issues/1622
       NIX_CFLAGS_COMPILE = (prevAttrs.NIX_CFLAGS_COMPILE or []) ++ ["-fno-fast-math"];
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {};
+        };
     });
   })
 
