@@ -610,6 +610,12 @@
           final.openal-soft
         ];
 
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          ../patches/shadps4/fix-build-with-fmt-12.2.patch
+        ];
+
       passthru =
         (prevAttrs.passthru or {})
         // {
