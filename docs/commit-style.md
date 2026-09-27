@@ -53,11 +53,11 @@ Never include:
 
 ### Bumps that carry a fix
 
-Fold a fix into the `pkg: old -> new` commit when the bump is what made it
-necessary — a renamed submodule, a path upstream moved, a workaround the new
-revision retires. The test is whether the change would still make sense with
-the bump reverted; if it would, it is its own commit. A bump nobody can build
-without a later commit is half a change, not an atomic one.
+Fold a fix into the `pkg: old -> new` commit only when `nix-update` itself
+fails without it — a submodule that `postCheckout` names was renamed or
+dropped upstream, say, so the new source never prefetches. When `nix-update`
+succeeds and the package then fails to build, the bump stays as generated and
+the fix is its own commit.
 
 A folded bump takes one body line naming the cause, above the generated
 `Diff:`/`Changelog:` line. Fallout from `flake: update inputs` is not folded
