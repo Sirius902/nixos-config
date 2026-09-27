@@ -1,0 +1,42 @@
+From 5f8f659f07b0fed1dad4df35869b6eb16f6046a2 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Sun, 27 Sep 2026 01:51:49 -0700
+Subject: [PATCH] mangoapp: size the window to the output in every layout
+
+33c2c7d removed the branch that shrank the window to the HUD, but left
+the horizontal check guarding the resize to the output size. Outside
+horizontal mode mangoapp now leaves the window at the 1280x800 it is
+created with, and since gamescope composites the external overlay
+unscaled from the output origin, every position is confined to the
+top-left 1280x800 of a larger output; bottom-right lands near the
+middle of a 2560x1440 screen.
+
+Resize in every layout again, keeping the guard against a zero size
+from before 378a3b6: msg_read_thread publishes new_frame before it
+stores the output size.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ src/app/main.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/app/main.cpp b/src/app/main.cpp
+index 551da63..28f571e 100644
+--- a/src/app/main.cpp
++++ b/src/app/main.cpp
+@@ -332,10 +332,10 @@ static bool render(GLFWwindow* window, overlay_params& real_params) {
+     int w, h;
+     glfwGetWindowSize(window, &w, &h);
+     window_size_changed = w != window_size.x || h != window_size.y;
+-    if (real_params.enabled[OVERLAY_PARAM_ENABLED_horizontal])
+     // trying to reduce height will break direct scanout in some cases
+     // just leave it for now, we'll revisit it in server
+-    glfwSetWindowSize(window, screenWidth, screenHeight);
++    if (screenWidth && screenHeight)
++        glfwSetWindowSize(window, screenWidth, screenHeight);
+ 
+     ImGui::EndFrame();
+ 
+-- 
+2.55.0
+

@@ -469,6 +469,16 @@
     });
   })
 
+  (_: prev: {
+    mangohud = prev.mangohud.overrideAttrs (prevAttrs: {
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          ../patches/mangohud/mangoapp-size-window-to-output.patch
+        ];
+    });
+  })
+
   # TODO(Sirius902) Drop once GE-Proton's Wine stops shipping winealsa.drv and
   # winepulse.drv as byte-identical placeholders, as upstream Wine did in 11.2.
   # The store optimiser hardlinks the pair, and Wine loads a hardlinked DLL as
