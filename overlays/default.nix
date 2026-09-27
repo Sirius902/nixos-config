@@ -450,6 +450,11 @@
             url = "https://github.com/Sirius902/gamescope/compare/2cfb4803984e8e4144805b57ebb5d38ea42bec13...63f7c6a83dce250b518afcb769203df69577bced.diff";
             hash = "sha256-2vi5EoCKMaKY+UMIWy9CooeN5YM+aPKH2UUNutsxdtM=";
           })
+          (final.fetchpatch {
+            name = "pointer-input-fixes.patch";
+            url = "https://github.com/Sirius902/gamescope/compare/63f7c6a83dce250b518afcb769203df69577bced...496c33f005d0529942c0cde2fb62f426eb163ee3.diff";
+            hash = "sha256-w7wF+A67ETjRjxFx1jT3/4y+GfURTUI/zJod0GDz1Lk=";
+          })
         ];
 
       # FUTURE(Sirius902) Disable fast math to fix blurriness on Wayland.
