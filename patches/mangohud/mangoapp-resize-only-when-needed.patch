@@ -1,0 +1,43 @@
+From b44dbfba9dffa5b492eb6dd04c6ec52e94aaeb24 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Sun, 27 Sep 2026 02:27:24 -0700
+Subject: [PATCH] mangoapp: resize only when the window isn't output-sized
+
+render() reports a size change when the window differs from the HUD,
+a check that dates from 33f1f0c, when the window was sized to the HUD.
+Since 33c2c7d it no longer is, so the check always passes: the main
+loop builds each frame three times, and each pass sends a resize to
+the size the window already has.
+
+Compare against the output size instead, and resize only when the
+window doesn't match it.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ src/app/main.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/app/main.cpp b/src/app/main.cpp
+index 28f571e..8f80c51 100644
+--- a/src/app/main.cpp
++++ b/src/app/main.cpp
+@@ -328,13 +328,13 @@ static bool render(GLFWwindow* window, overlay_params& real_params) {
+     render_imgui(sw_stats, real_params, window_size, true);
+     get_atom_info();
+     overlay_end_frame();
+-    static bool window_size_changed = false;
+     int w, h;
+     glfwGetWindowSize(window, &w, &h);
+-    window_size_changed = w != window_size.x || h != window_size.y;
+     // trying to reduce height will break direct scanout in some cases
+     // just leave it for now, we'll revisit it in server
+-    if (screenWidth && screenHeight)
++    bool window_size_changed = screenWidth && screenHeight &&
++        (w != (int)screenWidth || h != (int)screenHeight);
++    if (window_size_changed)
+         glfwSetWindowSize(window, screenWidth, screenHeight);
+ 
+     ImGui::EndFrame();
+-- 
+2.55.0
+

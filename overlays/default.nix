@@ -475,6 +475,7 @@
         (prevAttrs.patches or [])
         ++ [
           ../patches/mangohud/mangoapp-size-window-to-output.patch
+          ../patches/mangohud/mangoapp-resize-only-when-needed.patch
         ];
     });
   })
