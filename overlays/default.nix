@@ -469,11 +469,17 @@
     });
   })
 
-  (_: prev: {
+  (final: prev: {
     mangohud = prev.mangohud.overrideAttrs (prevAttrs: {
       patches =
         (prevAttrs.patches or [])
         ++ [
+          # Throttle mangoapp to one render per game frame https://github.com/flightlessmango/MangoHud/issues/2060
+          (final.fetchpatch {
+            name = "mangoapp-throttle-to-game-frames.patch";
+            url = "https://github.com/flightlessmango/MangoHud/commit/2c1dc5283c045e9a7e424dc913fbafcdcc7e3be1.diff";
+            hash = "sha256-+EIJ5Ci0wXYIu9+p92O9RyyKFI9f9LUNB7XAA48JtPs=";
+          })
           ../patches/mangohud/mangoapp-size-window-to-output.patch
           ../patches/mangohud/mangoapp-resize-only-when-needed.patch
         ];
