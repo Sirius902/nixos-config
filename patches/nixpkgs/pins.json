@@ -1,8 +1,8 @@
 {
-  "base": "e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
+  "base": "e158d9ed9b51c98974c5e66e1ba1c9e0255fecaa",
   "spans": {
     "NixOS/nixpkgs:refs/pull/496706/head": {
-      "base": "fc805333a7b12d3e2926d1bfdeb59629a8f78baa",
+      "base": "48f36b907942f05436b2cb69acaed031a3e84a1c",
       "head": "71f8f21a50192425577f92f97eb5212a85dd0588"
     },
     "Sirius902/nixpkgs:refs/heads/bottles-libs": {
