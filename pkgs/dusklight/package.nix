@@ -267,10 +267,13 @@ in
         cp -r ${capstone-src} capstone-src
         chmod -R +w funchook-src capstone-src
         cmake -DSOURCE_DIR="$PWD/funchook-src" -P cmake/PatchFunchook.cmake
+        # funchook's add_subdirectory and the patch step dusklight injects both
+        # hardcode capstone at funchook's own binary dir, so the vendored copy
+        # has to be staged into that path instead of replacing SOURCE_DIR.
         substituteInPlace funchook-src/cmake/capstone.cmake.in \
-          --replace-fail "GIT_REPOSITORY    https://github.com/aquynh/capstone.git" 'DOWNLOAD_COMMAND ""' \
-          --replace-fail "GIT_TAG           ${capstoneVersion}" "" \
-          --replace-fail 'SOURCE_DIR        "''${CMAKE_CURRENT_BINARY_DIR}/capstone-src"' "SOURCE_DIR        \"$PWD/capstone-src\""
+          --replace-fail "GIT_REPOSITORY    https://github.com/aquynh/capstone.git" \
+            "DOWNLOAD_COMMAND  \"\''${CMAKE_COMMAND}\" -E copy_directory \"$PWD/capstone-src\" <SOURCE_DIR>" \
+          --replace-fail "GIT_TAG           ${capstoneVersion}" ""
         cmakeFlags+=("-DFETCHCONTENT_SOURCE_DIR_FUNCHOOK=$PWD/funchook-src")
       ''}
 
