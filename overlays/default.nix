@@ -455,6 +455,14 @@
             url = "https://github.com/Sirius902/gamescope/compare/63f7c6a83dce250b518afcb769203df69577bced...496c33f005d0529942c0cde2fb62f426eb163ee3.diff";
             hash = "sha256-w7wF+A67ETjRjxFx1jT3/4y+GfURTUI/zJod0GDz1Lk=";
           })
+          # TODO(Sirius902) Drop once upstream stops recording symless keycodes as held, or
+          # stops losing their releases. One stale entry breaks exact-set matching for every
+          # binding for the rest of the session -- gamescope's own and Steam's alike.
+          (final.fetchpatch {
+            name = "hotkey-fixes.patch";
+            url = "https://github.com/Sirius902/gamescope/compare/496c33f005d0529942c0cde2fb62f426eb163ee3...3f95899b0786a69e76420a31c8c0410c2f9b1fe0.diff";
+            hash = "sha256-x09eSB0mUiI0idRy97mSQGlLkDSB3LBAGj9J+shxOlM=";
+          })
         ];
 
       # FUTURE(Sirius902) Disable fast math to fix blurriness on Wayland.
