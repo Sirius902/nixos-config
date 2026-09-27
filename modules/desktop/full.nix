@@ -42,7 +42,10 @@ in {
           proton-ge-bin
         ];
       };
-      gamescope.enable = true;
+      gamescope = {
+        enable = true;
+        enableWsi = true;
+      };
       coolercontrol.enable = true;
     };
 
