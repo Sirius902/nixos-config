@@ -1,5 +1,6 @@
 default_mode "locked"
 dangerously_enable_paste_buffer_read true
+scroll_mode_sync false
 show_startup_tips false
 
 keybinds clear-defaults=true {
