@@ -226,10 +226,12 @@ in {
     ]
     ++ lib.optionals stdenv.hostPlatform.isDarwin [
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
-      # Toolchain workaround: clang-scan-deps interprets argv instead of exec'ing
-      # the clang wrapper, so the wrapper's libc++ -isystem never applies and
-      # scanning fails on <cstdlib>. Upstream is C++20 but ships no module units,
-      # so scanning buys nothing. Drop this if a nixpkgs bump fixes the scanner.
+    ]
+    ++ lib.optionals stdenv.cc.isClang [
+      # Upstream is C++20 but ships no module units, and clang-scan-deps
+      # interprets argv instead of exec'ing the cc wrapper, so the wrapper's
+      # libc++ -isystem never applies and scanning fails on <cstdlib>.
+      # TODO(Sirius902) Drop once nixpkgs' scanner picks that up.
       (lib.cmakeBool "CMAKE_CXX_SCAN_FOR_MODULES" false)
     ];
 
