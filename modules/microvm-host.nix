@@ -182,6 +182,11 @@
       # dropin below (#474).
       vsock.cid = vm.cid;
       vsock.ssh.enable = true;
+
+      # This host's store is ZFS, whose O_DIRECT alignment is the recordsize;
+      # cloud-hypervisor makes that the guest's block size, which Linux rejects
+      # as too large, so the store disk never appears (cloud-hypervisor#8477).
+      storeDiskDirect = false;
     };
 
     # Route + DNS via the host's NAT for whatever the guest has to reach
