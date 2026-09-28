@@ -81,6 +81,12 @@ in
         (lib.cmakeFeature "DUSKLIGHT_DIR" "${dusklight.src}")
         (lib.cmakeBool "BUILD_SHARED_LIBS" false)
       ]
+      ++ lib.optionals stdenv.cc.isClang [
+        # Nothing here imports a C++20 module, and the scan CMP0155 forces on
+        # anyway runs clang-scan-deps outside the cc wrapper that puts libc++
+        # on the include path.
+        (lib.cmakeBool "CMAKE_CXX_SCAN_FOR_MODULES" false)
+      ]
       ++ lib.optionals stdenv.hostPlatform.isDarwin [
         # A game-feature mod links against the game binary with -bundle_loader;
         # without this the SDK downloads a link stub over the network.
