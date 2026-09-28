@@ -14,8 +14,8 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "FWGS";
     repo = "hlsdk-portable";
     fetchSubmodules = true;
-    rev = "a5565b687b2e144382dbb9f66457b28e332cf276";
-    hash = "sha256-lrq4Yd3T0TmqVvY5fojMYQZT5M4aD2BDcYmdfg0CGA4=";
+    rev = "6c168fc79d95c8ffb934fa37aaafbbd424e03c1a";
+    hash = "sha256-EsijCnzuepoMs+/aHrNbNzGbQhYSmpNpxPLqVyN1wvU=";
   };
 
   nativeBuildInputs = [
