@@ -51,7 +51,7 @@ in {
         alias open='xdg-open 2>/dev/null'
 
         launch() {
-          setsid --fork "$@" </dev/null >/dev/null 2>&1
+          setsid --fork systemd-run --user --scope --collect --expand-environment=no "$@" </dev/null >/dev/null 2>&1
           exit
         }
       '')
