@@ -458,6 +458,11 @@
           updateScript = final.nix-update-script {};
         };
     });
+
+    gamescope-wsi = final.gamescope.override {
+      enableExecutable = false;
+      enableWsi = true;
+    };
   })
 
   (final: prev: {
