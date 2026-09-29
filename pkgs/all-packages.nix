@@ -10,6 +10,8 @@
   enemizer-cli = pkgs.callPackage ./enemizer-cli/package.nix {};
   sni = pkgs.callPackage ./sni/package.nix {};
 
+  clang-format_14 = pkgs.callPackage ./clang-format_14/package.nix {};
+
   gcfeederd = pkgs.callPackage ./gcfeederd/package.nix {};
   gcviewer = pkgs.callPackage ./gcviewer/package.nix {};
 
