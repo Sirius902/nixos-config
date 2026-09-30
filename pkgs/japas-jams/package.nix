@@ -8,13 +8,13 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "japas-jams";
-  version = "0-unstable-2026-09-25";
+  version = "0-unstable-2026-09-29";
 
   src = fetchFromGitHub {
     owner = "Japas-Jams";
     repo = "MM-Custom-Sequences";
-    rev = "42e8f399e249999d92ebe70f7530d3bff2e5651e";
-    hash = "sha256-uR8JyEbuIjB3U+5RsCeoKQasslPZv9yEhBGbD3SFdck=";
+    rev = "21151fb00d5203871cc0017506aee91909f3ab6c";
+    hash = "sha256-4KhjsehFE88KZzRV/ZjORAQUlembd5VvbIH9N8ZIGLY=";
   };
 
   nativeBuildInputs = [
