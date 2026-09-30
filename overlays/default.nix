@@ -512,8 +512,8 @@
       version = "0.0.42-unstable-2026-09-30";
       src = prevAttrs.src.override {
         tag = null;
-        rev = "cefa1285a82fc957949366c9af5bb91bf615eb00";
-        hash = "sha256-QBy470IQ0zKWH1BPAwh8r2+2Dc0sphrkGjhRv4tIdgc=";
+        rev = "1331e307ce8c17b4bf262b37eab06609123a30a1";
+        hash = "sha256-UyVcEBgHdmauDWoigMuVJpEtrvjMtRtr3DO+c7zDS60=";
       };
 
       passthru =
