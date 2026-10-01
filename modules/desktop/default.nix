@@ -105,14 +105,16 @@ in {
           <?xml version="1.0"?>
           <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
           <fontconfig>
-            <!-- Qt's gnome platform theme requests GNOME's uninstalled UI
-                 font by name. Fontconfig classes it as system-ui, whose
-                 nonlatin list ranks Noto Sans CJK KR ahead of the sansSerif
-                 defaults, so Qt would take Han characters from the KR face. -->
-            <match target="pattern">
-              <test qual="any" name="family"><string>Adwaita Sans</string></test>
-              <edit name="family" mode="assign" binding="same"><string>Noto Sans</string></edit>
-            </match>
+            <!-- GTK and Qt's gnome platform theme request GNOME's uninstalled
+                 UI font, which fontconfig classes as system-ui. Its system-ui
+                 list ranks Noto Sans CJK KR ahead of the sansSerif defaults,
+                 so both would take Han characters from the KR face. -->
+            <alias>
+              <family>system-ui</family>
+              <prefer>
+                ${lib.concatMapStrings (f: "<family>${f}</family>") config.fonts.fontconfig.defaultFonts.sansSerif}
+              </prefer>
+            </alias>
             <!-- A fallback query naming no family gets monospace weakly, and
                  defaultFonts binds the same. Fontconfig ranks language
                  coverage above a weak family match, so the symbol-only faces
