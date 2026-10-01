@@ -30,7 +30,6 @@ in {
       cosmic-icons
       cosmic-monitor
       fuzzel
-      pwvucontrol
       xwayland-satellite
     ];
 
