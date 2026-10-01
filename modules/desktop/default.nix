@@ -89,7 +89,13 @@ in {
 
       fontconfig = {
         defaultFonts = {
-          monospace = ["JetBrainsMono Nerd Font" "Noto Sans Mono CJK JP"];
+          monospace = [
+            "JetBrainsMono Nerd Font"
+            "Noto Sans Mono CJK JP"
+            "Noto Sans Symbols 2"
+            "Noto Sans Math"
+            "Noto Sans Symbols"
+          ];
           sansSerif = ["Noto Sans" "Noto Sans CJK JP"];
           serif = ["Noto Serif" "Noto Serif CJK JP"];
           emoji = ["Noto Color Emoji"];
@@ -114,6 +120,16 @@ in {
               <test qual="any" name="family"><string>Adwaita Mono</string></test>
               <edit name="family" mode="assign" binding="same"><string>JetBrainsMono Nerd Font</string></edit>
             </match>
+            <!-- A fallback query naming no family gets monospace weakly, and
+                 defaultFonts binds the same. Fontconfig ranks language
+                 coverage above a weak family match, so the symbol-only faces
+                 would lose a missing glyph to any font covering the locale. -->
+            <alias binding="strong">
+              <family>monospace</family>
+              <prefer>
+                ${lib.concatMapStrings (f: "<family>${f}</family>") config.fonts.fontconfig.defaultFonts.monospace}
+              </prefer>
+            </alias>
           </fontconfig>
         '';
       };
