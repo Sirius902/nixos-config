@@ -101,24 +101,17 @@ in {
           emoji = ["Noto Color Emoji"];
         };
 
-        # Qt's gnome platform theme requests the uninstalled GNOME default UI
-        # fonts by name; without a substitution the nonlatin alias rules hand
-        # them to Noto Sans CJK KR.
         localConf = ''
           <?xml version="1.0"?>
           <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
           <fontconfig>
+            <!-- Qt's gnome platform theme requests GNOME's uninstalled UI
+                 font by name. Fontconfig classes it as system-ui, whose
+                 nonlatin list ranks Noto Sans CJK KR ahead of the sansSerif
+                 defaults, so Qt would take Han characters from the KR face. -->
             <match target="pattern">
               <test qual="any" name="family"><string>Adwaita Sans</string></test>
               <edit name="family" mode="assign" binding="same"><string>Noto Sans</string></edit>
-            </match>
-            <match target="pattern">
-              <test qual="any" name="family"><string>Cantarell</string></test>
-              <edit name="family" mode="assign" binding="same"><string>Noto Sans</string></edit>
-            </match>
-            <match target="pattern">
-              <test qual="any" name="family"><string>Adwaita Mono</string></test>
-              <edit name="family" mode="assign" binding="same"><string>JetBrainsMono Nerd Font</string></edit>
             </match>
             <!-- A fallback query naming no family gets monospace weakly, and
                  defaultFonts binds the same. Fontconfig ranks language
