@@ -130,6 +130,9 @@ in {
       };
     };
 
+    # Currently for GParted, which relaunches itself through pkexec.
+    security.polkit.enablePkexecWrapper = true;
+
     environment.systemPackages = with pkgs; [
       chromium
       gparted
