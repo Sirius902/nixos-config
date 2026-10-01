@@ -12,6 +12,11 @@ in {
       useNautilus = false;
     };
 
+    xdg.portal = {
+      extraPortals = [pkgs.xdg-desktop-portal-cosmic];
+      config.niri."org.freedesktop.impl.portal.FileChooser" = lib.mkForce "cosmic";
+    };
+
     programs.noctalia = {
       enable = true;
       recommendedServices.enable = true;
