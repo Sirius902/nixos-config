@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   cfg = config.my.desktop;
@@ -13,7 +14,14 @@ in {
       services.displayManager.sddm.enable = lib.mkForce (dm == "kde");
     }
     (lib.mkIf (dm == "niri") {
-      services.displayManager.noctalia-greeter.enable = true;
+      services.displayManager.noctalia-greeter = {
+        enable = true;
+        cursorTheme = {
+          package = pkgs.pop-icon-theme;
+          name = "Pop";
+        };
+        settings.cursor.size = 16;
+      };
 
       # noctalia-greeter discovers sessions from /run/current-system/sw/share.
       environment.pathsToLink = ["/share/wayland-sessions"];
