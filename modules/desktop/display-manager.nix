@@ -22,9 +22,6 @@ in {
         };
         settings.cursor.size = 16;
       };
-
-      # noctalia-greeter discovers sessions from /run/current-system/sw/share.
-      environment.pathsToLink = ["/share/wayland-sessions"];
     })
   ]);
 }
