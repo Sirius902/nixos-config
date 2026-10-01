@@ -21,6 +21,7 @@ in {
           name = "Pop";
         };
         settings.cursor.size = 16;
+        passwordlessSyncUsers = config.my.homeUsers;
       };
     })
   ]);

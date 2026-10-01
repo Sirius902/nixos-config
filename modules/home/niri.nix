@@ -25,6 +25,9 @@
     polkit_agent = true
     time_format = "{:%I:%M %p}"
 
+    [shell.greeter_sync]
+    auto_sync = true
+
     [[shell.session.actions]]
     action = "lock"
     shortcut = "1"
