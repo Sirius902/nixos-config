@@ -5,4 +5,5 @@
   "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNZ/75xSxabkX/jQ2vkeN9+YLEmhOa8ts02knstxzcfZWBt/nppq9wT2JdFj7Gb8j265Tq3k9WhNdt0Zoz2cZ7o= Tralsebook-V2@secretive.Tralsebook-V2.local"
   "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBI0kg9w+Xg5bVP2+AEob242RgrL41pnmqTtHKV8ij4oQVV+tM3CqPNcMpXh/GmnmuCvXn0yRfEW0KtvSfHs9BWY= Seriously@secretive.The-Rekening.local"
   "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNJHJAFFFLtdKkCp5nJcNlMy5fYGI61uznLG6Z5xHvgwvKUJKlqrbMKaGvlSWu/lfawiNH2iVdLuXO1mX8k2IN8= iphone-15-pro"
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP0dFQfRgnhBLMGsJdB2M9MHs/gZFh6D5oi1/8WNTg2O iOS"
 ]
