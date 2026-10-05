@@ -74,13 +74,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "archipelago";
-    version = "0.6.7";
+    version = "0.6.8";
 
     src = fetchFromGitHub {
       owner = "ArchipelagoMW";
       repo = "Archipelago";
       tag = finalAttrs.version;
-      hash = "sha256-v/EXsZDImi32/P6rjqqPMKMBoiUEn/8z7lBjr8MTrvM=";
+      hash = "sha256-n6OOEmEC69FhtBUwMiiM8BZeEbbqWFbOgn+pglXuBgU=";
     };
 
     patches = [./user-data-umask.patch];
