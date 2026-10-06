@@ -13,6 +13,7 @@
   libopus,
   libogg,
   libvorbis,
+  libmpg123,
   bzip2,
   hlsdk-portable,
   makeWrapper,
@@ -59,6 +60,7 @@ in
         libopus
         libogg
         libvorbis
+        libmpg123
         bzip2
         SDL2
       ]
