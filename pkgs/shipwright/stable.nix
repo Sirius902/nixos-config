@@ -106,6 +106,34 @@ stdenv.mkDerivation (finalAttrs: let
     hash = "sha256-zhRFEmPYNFLqQCfvdAaG5VBNle9Qm8FepIIIrT9sh88=";
   };
 
+  monocypher = fetchFromGitHub {
+    owner = "LoupVaillant";
+    repo = "Monocypher";
+    rev = "0d85f98c9d9b0227e42cf795cb527dff372b40a4";
+    hash = "sha256-RrM8Ep/CM7U5Q4+4FAHfBknb6b0upohoiqy4f7eMye0=";
+  };
+
+  tinyxml2 = fetchFromGitHub {
+    owner = "leethomason";
+    repo = "tinyxml2";
+    tag = "10.0.0";
+    hash = "sha256-9xrpPFMxkAecg3hMHzzThuy0iDt970Iqhxs57Od+g2g=";
+  };
+
+  yaml-cpp = fetchFromGitHub {
+    owner = "jbeder";
+    repo = "yaml-cpp";
+    tag = "yaml-cpp-0.9.0";
+    hash = "sha256-+FOsPQY44h1g9tEw3O281LkiYKXdW2jnFKw+oTRkhGw=";
+  };
+
+  zlib' = fetchFromGitHub {
+    owner = "madler";
+    repo = "zlib";
+    tag = "v1.3.1";
+    hash = "sha256-TkPLWSN5QcPlL9D0kc/yhH0/puE9bFND24aj5NVDKYs=";
+  };
+
   metalcpp = fetchFromGitHub {
     owner = "briaguya-ai";
     repo = "single-header-metal-cpp";
@@ -193,6 +221,9 @@ in {
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_PRISM" "${prism}")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STORMLIB" "${stormlib'}")
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_THREADPOOL" "${thread_pool}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_MONOCYPHER" "${monocypher}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_TINYXML2" "${tinyxml2}")
+      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_YAML-CPP" "${yaml-cpp}")
     ]
     ++ lib.optionals stdenv.hostPlatform.isDarwin [
       (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_METALCPP" "${metalcpp}")
@@ -215,6 +246,11 @@ in {
     cp ${stb_impl} ./stb/${stb_impl.name}
     substituteInPlace libultraship/cmake/dependencies/common.cmake \
       --replace-fail "\''${STB_DIR}" "$(readlink -f ./stb)"
+
+    # zlib's CMakeLists renames zconf.h inside its source dir at configure
+    # time, so it cannot be used directly from the read-only store.
+    cp -r --no-preserve=mode ${zlib'} zlib-src
+    cmakeFlagsArray+=("-DFETCHCONTENT_SOURCE_DIR_ZLIB=$PWD/zlib-src")
   '';
 
   postPatch = ''
@@ -235,7 +271,7 @@ in {
   postInstall =
     ''
       # Vendored dependency headers and static libs; not part of the package.
-      rm -r $out/share/shipwright-stable/{include,lib}
+      rm -r $out/share/shipwright-stable/{include,lib} $out/lib $out/include
     ''
     + lib.optionalString stdenv.hostPlatform.isLinux ''
       mkdir -p $out/bin
@@ -286,8 +322,7 @@ in {
       test ! -f ../LICENSE && test ! -f ../LICENSE.md \
         || (echo "upstream LICENSE exists now, install it!" && false)
 
-      install -Dm644 -t $out/share/licenses/shipwright-stable/OTRExporter ../OTRExporter/LICENSE
-      install -Dm644 -t $out/share/licenses/shipwright-stable/ZAPDTR ../ZAPDTR/LICENSE
+      install -Dm644 -t $out/share/licenses/shipwright-stable/torch ../torch/LICENSE
       install -Dm644 -t $out/share/licenses/shipwright-stable/libgfxd ${libgfxd}/LICENSE
       install -Dm644 -t $out/share/licenses/shipwright-stable/libultraship ../libultraship/LICENSE
       install -Dm644 -t $out/share/licenses/shipwright-stable/thread_pool ${thread_pool}/LICENSE.txt
