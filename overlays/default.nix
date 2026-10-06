@@ -806,19 +806,6 @@
         hash = "sha256-LyeTLz0tWJeskv/TXrbD4dPNsego935eBR+o5i1N5C4=";
       };
 
-      patches =
-        (prevAttrs.patches or [])
-        ++ [
-          # Fix building against GCC 16's libstdc++ https://github.com/mikke89/RmlUi/pull/766
-          (final.fetchpatch {
-            name = "rmlui-robin-hood-cstdint.patch";
-            url = "https://github.com/mikke89/RmlUi/commit/8c27b0a5cb601a3c57ecddc6ce8769ca93a97cb8.diff";
-            stripLen = 1;
-            extraPrefix = "lib/RmlUi/";
-            hash = "sha256-oIyPlnBsLcrGIbylT16i5SLttyXmzF5ZP1js/JDRG3o=";
-          })
-        ];
-
       passthru =
         (prevAttrs.passthru or {})
         // {
