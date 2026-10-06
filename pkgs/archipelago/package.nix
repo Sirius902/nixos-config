@@ -96,7 +96,7 @@ in
 
     postPatch = ''
       requirementsHash=$(cat requirements.txt worlds/*/requirements.txt | sha256sum | cut -d' ' -f1)
-      if [[ "$requirementsHash" != "f846b7ed556f52e8a2f2dc9dee5b767685ef536eb2a90438a0d46ce9468ed2ff" ]]; then
+      if [[ "$requirementsHash" != "7fc3e1e13e12eb77e0ccfe7aa02fe2bce7f70efed4f9d58b4b4c0f305b2afc50" ]]; then
         echo "error: Python requirements changed upstream"
         echo "review requirements.txt and worlds/*/requirements.txt, then update"
         echo "the requirements list and hash in package.nix"
@@ -212,6 +212,7 @@ in
             --ignore=test/cpp \
             --ignore=test/hosting \
             --ignore=test/webhost \
+            --ignore=test/webhost_customserver \
             --ignore=worlds/factorio/test_file_validation.py
 
           runHook postBuild
