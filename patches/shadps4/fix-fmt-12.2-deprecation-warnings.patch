@@ -1,0 +1,53 @@
+From ff6971d8e0b0f8141111d2761faddfc17123de36 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Sun, 27 Sep 2026 15:13:36 -0700
+Subject: [PATCH] Fix fmt 12.2 format_string deprecation warnings
+
+fmt 12.2 deprecates format_string's implicit conversion to string_view,
+which Log, AssertFail and UnreachableFail rely on to pass their format
+string to VLog, so every file that logs warns. Call get() instead.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ src/common/assert.h      | 4 ++--
+ src/common/logging/log.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/common/assert.h b/src/common/assert.h
+index d1d3c07b..f7ddc84d 100644
+--- a/src/common/assert.h
++++ b/src/common/assert.h
+@@ -26,7 +26,7 @@ template <typename... Args>
+ SHAD_NO_INLINE void AssertFail(const char* file, int line, const char* func,
+                                fmt::format_string<Args...> format, Args... args) {
+     Common::Log::VLog(Common::Log::Class::Debug, Common::Log::Level::Critical, file, line, func,
+-                      format, fmt::make_format_args(args...));
++                      format.get(), fmt::make_format_args(args...));
+     assert_fail_impl();
+ }
+ 
+@@ -34,7 +34,7 @@ template <typename... Args>
+ [[noreturn]] SHAD_NO_INLINE void UnreachableFail(const char* file, int line, const char* func,
+                                                  fmt::format_string<Args...> format, Args... args) {
+     Common::Log::VLog(Common::Log::Class::Debug, Common::Log::Level::Critical, file, line, func,
+-                      format, fmt::make_format_args(args...));
++                      format.get(), fmt::make_format_args(args...));
+     unreachable_impl();
+ }
+ 
+diff --git a/src/common/logging/log.h b/src/common/logging/log.h
+index d47fc77f..89a91cbc 100644
+--- a/src/common/logging/log.h
++++ b/src/common/logging/log.h
+@@ -41,7 +41,7 @@ void VLog(Class log_class, Level level, const char* file, int line, const char*
+ template <typename... Args>
+ void Log(Class log_class, Level level, const char* file, int line, const char* func,
+          fmt::format_string<Args...> format, Args&&... args) {
+-    VLog(log_class, level, file, line, func, format, fmt::make_format_args(args...));
++    VLog(log_class, level, file, line, func, format.get(), fmt::make_format_args(args...));
+ }
+ 
+ } // namespace Common::Log
+-- 
+2.55.0
+

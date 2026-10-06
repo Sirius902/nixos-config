@@ -601,7 +601,7 @@
       patches =
         (prevAttrs.patches or [])
         ++ [
-          ../patches/shadps4/fix-build-with-fmt-12.2.patch
+          ../patches/shadps4/fix-fmt-12.2-deprecation-warnings.patch
         ];
 
       passthru =
