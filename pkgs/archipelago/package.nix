@@ -13,7 +13,10 @@
 }: let
   python = python312.override {
     self = python;
-    packageOverrides = pfinal: _: {
+    packageOverrides = pfinal: pprev: {
+      anyio = pprev.anyio.overridePythonAttrs (prevAttrs: {
+        patches = (prevAttrs.patches or []) ++ [./anyio-server-stream-hostname.patch];
+      });
       asyncgui = pfinal.callPackage ./python-modules/asyncgui {};
       asynckivy = pfinal.callPackage ./python-modules/asynckivy {};
       dolphin-memory-engine = pfinal.callPackage ./python-modules/dolphin-memory-engine {};

@@ -1,0 +1,29 @@
+From 5bb0305e7d474286343b59dd17f0965f248fc165 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Alex=20Gr=C3=B6nholm?= <alex.gronholm@nextday.fi>
+Date: Sat, 3 Oct 2026 00:20:27 +0300
+Subject: [PATCH] Don't pass `hostname` to TLSStream.wrap() for the server
+ stream
+
+This breaks on newer Pythons (3.12.15+)
+
+(cherry picked from commit 818e4ac441fa27e9fac893496fc5a4fbe0a58689)
+[No test_receive_invalid_max_bytes hunk: 4.14.2 has no server TLSStream]
+---
+ tests/streams/test_tls.py | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/tests/streams/test_tls.py b/tests/streams/test_tls.py
+index f403598..1ca240d 100644
+--- a/tests/streams/test_tls.py
++++ b/tests/streams/test_tls.py
+@@ -615,7 +615,6 @@ async def test_tls_connectable(
+         async with await TLSStream.wrap(
+             server_stream,
+             server_side=True,
+-            hostname="localhost",
+             ssl_context=server_context,
+         ) as server_tls_stream:
+             message = await server_tls_stream.receive()
+-- 
+2.55.0
+
