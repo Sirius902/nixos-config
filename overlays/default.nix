@@ -211,13 +211,19 @@
 
   inputs.nvim-conf.overlays.default
 
-  (_: prev: {
+  (final: prev: {
     nix-update = prev.nix-update.overrideAttrs (prevAttrs: {
       patches =
         (prevAttrs.patches or [])
         ++ [
           # https://github.com/Mic92/nix-update/issues/327
           ../patches/nix-update/0001-resolve-flake-attributes-through-legacyPackages.patch
+          # Skip unchanged versions of sources without a rev or tag https://github.com/Mic92/nix-update/pull/660
+          (final.fetchpatch {
+            name = "skip-unchanged-versions-without-rev-or-tag.patch";
+            url = "https://github.com/Mic92/nix-update/commit/d45c6cfe392bea64b2fdaa3978f9a0cc1ee34d3e.diff";
+            hash = "sha256-9da+ksjUJegyyKUTTpTciW1QuNqFnJpjycvqvXd4GP8=";
+          })
         ];
     });
   })
