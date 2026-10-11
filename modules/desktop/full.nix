@@ -104,6 +104,7 @@ in {
     # py-dolphin-memory-engine (used by Archipelago) scans /proc/*/comm for
     # "dolphin-emu" but the nix wrapper binary shows ".dolphin-emu-wr".
     environment.sessionVariables.DME_DOLPHIN_PROCESS_NAME = ".dolphin-emu-wr";
+    environment.sessionVariables.WAYLANDDRV_FOCUS_LOSS = "0";
 
     environment.systemPackages = with pkgs; [
       (bottles.override {
