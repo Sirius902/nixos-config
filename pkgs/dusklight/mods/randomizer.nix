@@ -34,13 +34,13 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "dusklight-randomizer";
-    version = "0-unstable-2026-10-10";
+    version = "0-unstable-2026-10-11";
 
     src = fetchFromGitHub {
       owner = "TwilitRealm";
       repo = "dusklight-randomizer";
-      rev = "b7475a8f7e6081484c31f1d696f071533aef277b";
-      hash = "sha256-9vsSuwTyIL4If+FhS9A/clrxyY2fC6ts9ZXz5t/6WRs=";
+      rev = "8cdfa8c45f26da74be8e2c913a6323a580bbee1f";
+      hash = "sha256-Bko6LjqYu/YdL4rm0DS0AZWa34oYi4lEfSVihlp7Wxo=";
     };
 
     nativeBuildInputs =
