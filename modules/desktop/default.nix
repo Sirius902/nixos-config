@@ -8,6 +8,7 @@
 in {
   imports = [
     ./full.nix
+    ./proton-wineland.nix
     ./display-manager.nix
     ./rnnoise.nix
     ./cosmic/default.nix

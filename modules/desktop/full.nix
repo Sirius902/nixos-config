@@ -40,7 +40,6 @@ in {
         ];
         extraCompatPackages = with pkgs; [
           proton-ge-bin
-          proton-wineland
         ];
       };
       gamescope = {
