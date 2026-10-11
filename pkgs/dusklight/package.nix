@@ -369,6 +369,13 @@ in
     env.NIX_LDFLAGS = lib.optionalString stdenv.hostPlatform.isLinux "-rpath ${lib.makeLibraryPath [vulkan-loader libglvnd]}";
     dontPatchELF = true;
 
+    # Mods hook file-local functions by translation unit, which symgen only
+    # recovers from DWARF. The debug info must not ship, since its paths
+    # reference every build input, and the default strip list skips share/.
+    cmakeBuildType = "RelWithDebInfo";
+    separateDebugInfo = true;
+    stripDebugList = lib.optionals stdenv.hostPlatform.isLinux ["share/${finalAttrs.pname}"];
+
     strictDeps = true;
     __structuredAttrs = true;
 
