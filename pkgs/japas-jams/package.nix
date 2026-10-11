@@ -13,8 +13,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   src = fetchFromGitHub {
     owner = "Japas-Jams";
     repo = "MM-Custom-Sequences";
-    rev = "d0d0f973e8e9bef1f9797eda4ece04fac4e96650";
-    hash = "sha256-iMBYjoBnLVNLgeRRLkih105KCue6/ceyme58vmTKtQ0=";
+    rev = "acfb30825a835ab3c383456fd36d946fae49cbe8";
+    hash = "sha256-HA/0gESJ49K9LCdaktmow9eMwWWhk8z5f0vsCPQdJ+w=";
   };
 
   nativeBuildInputs = [
