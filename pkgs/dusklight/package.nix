@@ -364,6 +364,13 @@ in
     # iterable to nlohmann::json's traits, breaking to_json resolution.
     env.NIX_CFLAGS_COMPILE = "-DUNISTR_FROM_CHAR_EXPLICIT=explicit";
 
+    # Dawn dlopens the Vulkan and EGL loaders by soname, which the RPATH shrink
+    # would drop as unneeded. The path is set at link time because growing the
+    # RUNPATH afterwards adds a program header, which lands on the symbol
+    # manifest symgen packs right behind the header table.
+    env.NIX_LDFLAGS = lib.optionalString stdenv.hostPlatform.isLinux "-rpath ${lib.makeLibraryPath [vulkan-loader libglvnd]}";
+    dontPatchELF = true;
+
     strictDeps = true;
     __structuredAttrs = true;
 
@@ -399,15 +406,6 @@ in
       + ''
         runHook postInstall
       '';
-
-    # The bundled Dawn (WebGPU) dlopens libvulkan.so.1 / libEGL.so by soname at
-    # runtime; nothing links them, so Nix's RPATH shrink drops them and the GPU
-    # backends fall back to Null (no window). Re-add the loaders to the RUNPATH.
-    postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
-      for bin in $out/share/${finalAttrs.pname}/dusklight*; do
-        patchelf --add-rpath "${lib.makeLibraryPath [vulkan-loader libglvnd]}" "$bin"
-      done
-    '';
 
     passthru.updateScript = nix-update-script {
       extraArgs = ["--version=branch"];
