@@ -54,8 +54,8 @@
   funchookHash ? "sha256-u/RXMNyKL6L7p5gEFnAQTErPXXGKXv74jbYlBbG0Wy4=",
   capstoneVersion ? "4.0.2",
   capstoneHash ? "sha256-XMwQ7UaPC8YYu4yxsE4bbR3leYPfBHu5iixSLz05r3g=",
-  rmluiRev ? "0ae381e00d7426762bb5ed897973366358b16642",
-  rmluiHash ? "sha256-vfFtjNHw7coXWrGgtcFyuIsu5rctW5dBJoOt8MTZwDU=",
+  rmluiUrl ? "https://github.com/encounter/RmlUi/archive/f00a0fee38391b2f927114e11bea18dc0a7dba1e.tar.gz",
+  rmluiHash ? "sha256-pyTD/WXdmJmcCgqMjn11bYFHrEshZ4/SiJVOVGSs9M0=",
   tracyUrl ? "https://github.com/wolfpld/tracy/archive/refs/tags/v0.14.1.zip",
   tracyHash ? "sha256-vcLI9jb7eYcR162LgBQ2P4A0oiZuYRfYRQiDhlAk5TI=",
   # Revisions that predate the mods framework set this false.
@@ -122,8 +122,6 @@
     url = sqliteUrl;
     hash = "sha256-pNMR8zxaaqfAzQ0AQBOXMct4usdjey1Q0Gnitg06UhM=";
   };
-
-  rmluiUrl = "https://github.com/mikke89/RmlUi/archive/${rmluiRev}.tar.gz";
 
   rmlui-src = fetchzip {
     url = rmluiUrl;
@@ -234,7 +232,7 @@ in
         fi
       }
       check_url rmlui "${rmluiUrl}" extern/aurora/extern/CMakeLists.txt \
-        "https://github.com/mikke89/RmlUi/archive/"
+        "https://github.com/[^/]+/RmlUi/archive/"
       check_url imgui "${imguiUrl}" extern/aurora/extern/CMakeLists.txt \
         "https://github.com/ocornut/imgui/archive/"
       check_url sqlite3 "${sqliteUrl}" extern/aurora/extern/CMakeLists.txt \
