@@ -23,6 +23,8 @@
   mm-recomp-rando = pkgs.callPackage ./mm-recomp-rando/package.nix {};
   apcpp-glue = pkgs.callPackage ./mm-recomp-rando/glue.nix {};
 
+  proton-wineland = pkgs.callPackage ./proton-wineland/package.nix {};
+
   sequence-otrizer = pkgs.callPackage ./sequence-otrizer/package.nix {};
   darunias-joy = pkgs.callPackage ./darunias-joy/package.nix {};
   ganondorfs-organ = pkgs.callPackage ./ganondorfs-organ/package.nix {};
