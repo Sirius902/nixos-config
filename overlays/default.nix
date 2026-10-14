@@ -518,8 +518,8 @@
       version = "0.0.43-unstable-2026-10-14";
       src = prevAttrs.src.override {
         tag = null;
-        rev = "80603d9c5eeef73dca3bd59b77af45add041e793";
-        hash = "sha256-mxrvyj2rkSIa+2NuDQdM+fCgcj+yq9TbLgv/ybUDPUs=";
+        rev = "6d7020d5d40bc3e0f1227f2eebb6a312d953c286";
+        hash = "sha256-+iMtmuR/vrETcheq6nRcn08o2S4ZJmP7XEseEaHZCV4=";
       };
 
       passthru =
