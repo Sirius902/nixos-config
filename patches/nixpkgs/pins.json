@@ -2,7 +2,7 @@
   "base": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
   "spans": {
     "NixOS/nixpkgs:refs/pull/496706/head": {
-      "base": "14d9cf4ddb2f6be278348451456139da2a5193ca",
+      "base": "218414d9075dc7d1bdf7f840e11869319b50e0df",
       "head": "71f8f21a50192425577f92f97eb5212a85dd0588"
     },
     "Sirius902/nixpkgs:refs/heads/shadps4-zenity": {
