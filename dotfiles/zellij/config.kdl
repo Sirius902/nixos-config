@@ -111,6 +111,8 @@ keybinds clear-defaults=true {
         bind "w" { SearchToggleOption "Wrap"; }
     }
     session {
+        bind "[" { FocusGuestSession; SwitchToMode "locked"; }
+        bind "]" { FocusHostSession; SwitchToMode "locked"; }
         bind "a" {
             LaunchOrFocusPlugin "zellij:about" {
                 floating true
@@ -126,6 +128,7 @@ keybinds clear-defaults=true {
             SwitchToMode "locked"
         }
         bind "d" { Detach; }
+        bind "f" { ToggleHostFullscreen; SwitchToMode "locked"; }
         bind "l" {
             LaunchOrFocusPlugin "zellij:layout-manager" {
                 floating true
