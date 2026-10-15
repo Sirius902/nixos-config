@@ -8,11 +8,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   steamDisplayName = "Proton-Wineland";
 
   pname = "proton-wineland";
-  version = "11.0-20261011";
+  version = "11.0-20261015";
 
   src = fetchzip {
     url = "https://github.com/nanomatters/proton-cachyos/releases/download/wineland-${finalAttrs.version}/proton-wineland-${finalAttrs.version}-x86_64.tar.xz";
-    hash = "sha256-xS1nQiOVneoJzjUKmw7Ia58dsrBEd4kr0xi83fs7iSk=";
+    hash = "sha256-cacwol74hOi8dEdkH4djbGrSOvP5ILJPxITgzueajus=";
   };
 
   dontUnpack = true;
