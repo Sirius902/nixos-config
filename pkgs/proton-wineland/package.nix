@@ -11,7 +11,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   version = "11.0-20261015";
 
   src = fetchzip {
-    url = "https://github.com/nanomatters/proton-cachyos/releases/download/wineland-${finalAttrs.version}/proton-wineland-${finalAttrs.version}-x86_64.tar.xz";
+    url = "https://github.com/nanomatters/proton-salkim/releases/download/wineland-${finalAttrs.version}/proton-wineland-${finalAttrs.version}-x86_64.tar.xz";
     hash = "sha256-cacwol74hOi8dEdkH4djbGrSOvP5ILJPxITgzueajus=";
   };
 
@@ -52,7 +52,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Wayland-focused Proton-CachyOS fork for Steam Play";
-    homepage = "https://github.com/nanomatters/proton-cachyos";
+    homepage = "https://github.com/nanomatters/proton-salkim";
     license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [sirius902];
     platforms = ["x86_64-linux"];
