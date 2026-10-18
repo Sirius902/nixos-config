@@ -26,7 +26,6 @@
   nlohmann_json,
   tinyxml-2,
   spdlog,
-  writeTextFile,
   fixDarwinDylibNames,
   applyPatches,
   libopus,
@@ -71,14 +70,6 @@ stdenv.mkDerivation (finalAttrs: let
     repo = "prism-processor";
     rev = "1de054450e7b3c5f777d2e3dfcb228ad120c329d";
     hash = "sha256-5MlscqbKlUm4nYW+Obf5KlnUdtHK/xlDUc4wxr52ySM=";
-  };
-
-  stb_impl = writeTextFile {
-    name = "stb_impl.c";
-    text = ''
-      #define STB_IMAGE_IMPLEMENTATION
-      #include "stb_image.h"
-    '';
   };
 
   stb' = fetchurl {
@@ -162,7 +153,6 @@ in {
 
   patches = [
     ./darwin-fixes.patch
-    ./disable-downloading-stb_image.patch
   ];
 
   nativeBuildInputs =
@@ -247,11 +237,9 @@ in {
   hardeningDisable = ["format"];
 
   preConfigure = ''
-    mkdir stb
-    cp ${stb'} ./stb/${stb'.name}
-    cp ${stb_impl} ./stb/${stb_impl.name}
-    substituteInPlace libultraship/cmake/dependencies/common.cmake \
-      --replace-fail "\''${STB_DIR}" "$(readlink -f ./stb)"
+    # libultraship downloads stb_image.h at configure time unless the build
+    # tree already holds a copy matching its pinned hash.
+    install -Dm644 ${stb'} build/_deps/stb/stb_image.h
 
     # zlib's CMakeLists renames zconf.h inside its source dir at configure
     # time, so it cannot be used directly from the read-only store.
