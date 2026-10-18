@@ -18,16 +18,16 @@ stdenvNoCC.mkDerivation {
     hash = "sha256-/yQpIEXbPlJhiv6CDZ6sBO3p/pXVkiulE9l65us2s1U=";
   };
 
-  nativeBuildInputs = [
-    _7zz
-    sequence-otrizer
-  ];
+  nativeBuildInputs = [sequence-otrizer];
 
   buildPhase = ''
     runHook preBuild
 
+    # TODO(Sirius902) Move _7zz back to nativeBuildInputs once its setup hook
+    # leaves directory sources to the default unpacker instead of extracting
+    # every archive under them.
     find data/Music -name '*.ootrs' -print0 | while IFS= read -r -d "" archive; do
-      7zz x -tzip -y -bso0 -bsp0 -o"''${archive%.ootrs}" "$archive"
+      ${lib.getExe _7zz} x -tzip -y -bso0 -bsp0 -o"''${archive%.ootrs}" "$archive"
     done
 
     SequenceOTRizer --seq-path data/Music --otr-name ganondorfsorgan

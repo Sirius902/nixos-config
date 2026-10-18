@@ -18,10 +18,7 @@ stdenvNoCC.mkDerivation {
     hash = "sha256-+Msb8qdTgDnWDMiI9xXU79LC1bh2n9TWmiBZ9QcNn40=";
   };
 
-  nativeBuildInputs = [
-    _7zz
-    sequence-otrizer
-  ];
+  nativeBuildInputs = [sequence-otrizer];
 
   # Six entries under data/Music are packed wrong as shipped: SequenceOTRizer
   # only takes a .seq with a same-stem .meta, and it names every entry
@@ -32,8 +29,11 @@ stdenvNoCC.mkDerivation {
   buildPhase = ''
     runHook preBuild
 
+    # TODO(Sirius902) Move _7zz back to nativeBuildInputs once its setup hook
+    # leaves directory sources to the default unpacker instead of extracting
+    # every archive under them.
     find data/Music -name '*.ootrs' -print0 | while IFS= read -r -d "" archive; do
-      7zz x -tzip -y -bso0 -bsp0 -o"''${archive%.ootrs}" "$archive"
+      ${lib.getExe _7zz} x -tzip -y -bso0 -bsp0 -o"''${archive%.ootrs}" "$archive"
     done
 
     retitle() { # <meta> <line> <expected> <replacement>
