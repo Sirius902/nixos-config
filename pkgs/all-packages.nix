@@ -20,6 +20,9 @@
 
   kh-melon-mix = pkgs.callPackage ./kh-melon-mix/package.nix {};
 
+  kytyps5 = pkgs.callPackage ./kytyps5/package.nix {};
+  kytyps5-qtlauncher = pkgs.callPackage ./kytyps5/qtlauncher/package.nix {};
+
   mm-recomp-rando = pkgs.callPackage ./mm-recomp-rando/package.nix {};
   apcpp-glue = pkgs.callPackage ./mm-recomp-rando/glue.nix {};
 
