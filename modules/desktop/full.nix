@@ -133,7 +133,7 @@ in {
       heroic
       keymapp
       krita
-      kytyps5-qtlauncher
+      kytyps5-qtlauncher_chenxiao
       libreoffice
       mangohud
       me3
