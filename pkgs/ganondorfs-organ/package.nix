@@ -9,13 +9,13 @@
 }:
 stdenvNoCC.mkDerivation {
   pname = "ganondorfs-organ";
-  version = "0-unstable-2026-10-06";
+  version = "0-unstable-2026-10-19";
 
   src = fetchFromGitHub {
     owner = "GanondorfsOrgan";
     repo = "Ganondorfs-Organ";
-    rev = "f31167616804109a5a70c24b6f62172e35831b77";
-    hash = "sha256-/yQpIEXbPlJhiv6CDZ6sBO3p/pXVkiulE9l65us2s1U=";
+    rev = "fc62d07f4ea02f0a94a1474f003e0976b2cdba31";
+    hash = "sha256-yIFBZSuCeQK6jRIDmCEfbg4lv0BTdrHQreV047RiwN8=";
   };
 
   nativeBuildInputs = [sequence-otrizer];
