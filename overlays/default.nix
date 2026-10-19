@@ -729,6 +729,18 @@
     });
   })
 
+  (_: prev: let
+    withBackgroundGamepadInput = launcher:
+      launcher.overrideAttrs (prevAttrs: {
+        qtWrapperArgs =
+          (prevAttrs.qtWrapperArgs or [])
+          ++ ["--set-default" "SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS" "1"];
+      });
+  in {
+    kytyps5-qtlauncher = withBackgroundGamepadInput prev.kytyps5-qtlauncher;
+    kytyps5-qtlauncher_chenxiao = withBackgroundGamepadInput prev.kytyps5-qtlauncher_chenxiao;
+  })
+
   (final: prev: {
     hlsdk-portable = prev.hlsdk-portable.overrideAttrs (prevAttrs: {
       patches =
