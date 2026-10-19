@@ -43,8 +43,9 @@ not relocated.
 The attr in `pkgs/all-packages.nix` and the derivation's `pname` may differ,
 and the attr's suffix says which kind of variant it is: `_suffix` selects a
 version channel of the same product (`shipwright_stable`, `ffmpeg_8`,
-`linux_testing`), while `-suffix` names a different edition or fork
-(`shipwright-ap`, `nodejs-slim`).
+`linux_testing`) or a plain fork of it, named for the fork and appended to
+the attr it forks (`kytyps5_chenxiao`, `kytyps5-qtlauncher_chenxiao`), while
+`-suffix` names a different edition (`shipwright-ap`, `nodejs-slim`).
 
 nixpkgs never carries a *variant* `_` suffix into pname — `ffmpeg_8` is pname
 `ffmpeg`, `qemu_full` is pname `qemu` — because those pins are never
