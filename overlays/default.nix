@@ -378,6 +378,28 @@
       };
   })
 
+  # TODO(Sirius902) Drop once nixpkgs' patchelf has
+  # https://github.com/NixOS/patchelf/pull/672. Without it, setting an
+  # executable's interpreter and then its RPATH can leave .dynamic under a
+  # read-only mapping, and ld.so segfaults writing to it before main runs.
+  (final: prev: {
+    graalvmPackages =
+      prev.graalvmPackages
+      // {
+        graalvm-oracle = prev.graalvmPackages.graalvm-oracle.overrideAttrs (prevAttrs: {
+          nativeBuildInputs =
+            final.lib.optional final.stdenv.hostPlatform.isLinux (final.patchelf.overrideAttrs (finalAttrs: _: {
+              version = "0.15.2";
+              src = final.fetchurl {
+                url = "https://github.com/NixOS/patchelf/releases/download/${finalAttrs.version}/patchelf-${finalAttrs.version}.tar.bz2";
+                hash = "sha256-F3RfVkFZyOIo/EEtplogSLhGxLa0Igt3y/IkFuAvLXw=";
+              };
+            }))
+            ++ (prevAttrs.nativeBuildInputs or []);
+        });
+      };
+  })
+
   # glfw3-minecraft backs prismlauncher's "Use system installation of GLFW"
   # tweak. GLFW 3.4 (release) aborts the whole game with SIGABRT the instant a
   # file is dragged onto the window on Wayland: its wl_data_offer listener wires
