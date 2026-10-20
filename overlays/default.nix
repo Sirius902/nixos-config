@@ -382,22 +382,33 @@
   # https://github.com/NixOS/patchelf/pull/672. Without it, setting an
   # executable's interpreter and then its RPATH can leave .dynamic under a
   # read-only mapping, and ld.so segfaults writing to it before main runs.
-  (final: prev: {
+  (final: prev: let
+    withPatchelf_0_15 = pkg:
+      pkg.overrideAttrs (prevAttrs: {
+        nativeBuildInputs =
+          final.lib.optional final.stdenv.hostPlatform.isLinux (final.patchelf.overrideAttrs (finalAttrs: _: {
+            version = "0.15.2";
+            src = final.fetchurl {
+              url = "https://github.com/NixOS/patchelf/releases/download/${finalAttrs.version}/patchelf-${finalAttrs.version}.tar.bz2";
+              hash = "sha256-F3RfVkFZyOIo/EEtplogSLhGxLa0Igt3y/IkFuAvLXw=";
+            };
+          }))
+          ++ (prevAttrs.nativeBuildInputs or []);
+      });
+  in {
     graalvmPackages =
       prev.graalvmPackages
       // {
-        graalvm-oracle = prev.graalvmPackages.graalvm-oracle.overrideAttrs (prevAttrs: {
-          nativeBuildInputs =
-            final.lib.optional final.stdenv.hostPlatform.isLinux (final.patchelf.overrideAttrs (finalAttrs: _: {
-              version = "0.15.2";
-              src = final.fetchurl {
-                url = "https://github.com/NixOS/patchelf/releases/download/${finalAttrs.version}/patchelf-${finalAttrs.version}.tar.bz2";
-                hash = "sha256-F3RfVkFZyOIo/EEtplogSLhGxLa0Igt3y/IkFuAvLXw=";
-              };
-            }))
-            ++ (prevAttrs.nativeBuildInputs or []);
-        });
+        graalvm-oracle = withPatchelf_0_15 prev.graalvmPackages.graalvm-oracle;
       };
+
+    jetbrains =
+      prev.jetbrains
+      // {
+        rider = withPatchelf_0_15 prev.jetbrains.rider;
+      };
+
+    keymapp = withPatchelf_0_15 prev.keymapp;
   })
 
   # glfw3-minecraft backs prismlauncher's "Use system installation of GLFW"
