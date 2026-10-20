@@ -51,26 +51,34 @@ stdenvNoCC.mkDerivation {
     retitle "data/Music/Final Fantasy VII/Oppressed People/Final Fantasy VII - Oppressed People.meta" \
       1 'Final Fantasy vii - Forested Temple' 'Final Fantasy VII - Oppressed People'
 
-    # TODO(Sirius902) Drop once the [2] copies of these are titled as the
+    # TODO(Sirius902) Drop once the numbered copies of these are titled as the
     # alternate arrangements they are, the way Mega Man X - Armored Armadillo
-    # v2 already is. Each pair is distinct .seq data, so both are worth
-    # shipping, but sharing a title costs one of the two its entry.
+    # v2 already is. Each copy is distinct .seq data, so all are worth
+    # shipping, but sharing a title costs all but one of them its entry.
     retitle "data/Music/Brave Fencer Musashi/Twinpeak Mountain [2]/Brave Fencer Musashi - Twinpeak Mountain.meta" \
       1 'Brave Fencer Musashi - Twinpeak Mountain' 'Brave Fencer Musashi - Twinpeak Mountain v2'
+    retitle "data/Music/Mega Man 2/Air Man [3]/MM2 AM.meta" \
+      1 'Mega Man 2 - Air Man' 'Mega Man 2 - Air Man v3'
     retitle "data/Music/Mega Man 2/Bubble Man [2]/Mega Man 2 - Bubble Man.meta" \
       1 'Mega Man 2 - Bubble Man' 'Mega Man 2 - Bubble Man v2'
+    retitle "data/Music/Mega Man 2/Bubble Man [3]/MM2 BM.meta" \
+      1 'Mega Man 2 - Bubble Man' 'Mega Man 2 - Bubble Man v3'
     retitle "data/Music/Mega Man 2/Crash Man [2]/Mega Man 2 - Crash Man.meta" \
       1 'Mega Man 2 - Crash Man' 'Mega Man 2 - Crash Man v2'
+    retitle "data/Music/Mega Man 2/Crash Man [3]/MM2 CM.meta" \
+      1 'Mega Man 2 - Crash Man' 'Mega Man 2 - Crash Man v3'
     retitle "data/Music/Mega Man 3/Hard Man [2]/Mega Man 3 - Hard Man.meta" \
       1 'Mega Man 3 - Hard Man' 'Mega Man 3 - Hard Man v2'
     retitle "data/Music/Mega Man 3/Snake Man [2]/Mega Man 3 - Snake Man.meta" \
       1 'Mega Man 3 - Snake Man' 'Mega Man 3 - Snake Man v2'
     retitle "data/Music/Mega Man 3/Spark Man [2]/Mega Man 3 - Spark Man.meta" \
       1 'Mega Man 3 - Spark Man' 'Mega Man 3 - Spark Man v2'
+    retitle "data/Music/Mega Man X2/Bubble Crab [2]/MMX2 BC2.meta" \
+      1 'Mega Man X2 - Bubble Crab' 'Mega Man X2 - Bubble Crab v2'
 
     # TODO(Sirius902) Drop once these titles lose the trailing space that
     # StringUtils::Sanitize leaves alone and the archive name keeps.
-    retitle "data/Music/Mega Man X Corrupted/Crystal Raffler/MMX Corrupted - Crystal Raffler.meta" \
+    retitle "data/Music/Mega Man X Corrupted/Crystal Rafflar/MMX Corrupted - Crystal Raffler.meta" \
       1 'MMX Corrupted - Crystal Raffler ' 'MMX Corrupted - Crystal Raffler'
     retitle "data/Music/The Legend of Zelda A Link to the Past/Death Mountain/Death Mountain.meta" \
       1 'The Legend of Zelda: A Link to the Past - Death Mountain ' \
