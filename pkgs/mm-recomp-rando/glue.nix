@@ -12,7 +12,9 @@
 }: let
   pythonEnv = python311.withPackages (ps: [
     ps.pyyaml
-    ps.websockets
+    # TODO(Sirius902) Drop once this embeds Python 3.12 or later. The
+    # websockets tests pull in sphinx, which nixpkgs only supports on 3.12+.
+    (ps.websockets.overridePythonAttrs {doCheck = false;})
     ps.schema
     ps.typing-extensions
   ]);
