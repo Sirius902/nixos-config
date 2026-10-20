@@ -620,8 +620,11 @@
           final.python3
         ];
 
+      # TODO(Sirius902) Use nixpkgs' zarchive again once it has
+      # ZArchiveReader::OpenFromStream, which shadPS4 calls ahead of any
+      # ZArchive release.
       buildInputs =
-        (prevAttrs.buildInputs or [])
+        final.lib.remove final.zarchive (prevAttrs.buildInputs or [])
         ++ [
           final.openal-soft
         ];
