@@ -35,7 +35,6 @@ in {
         localNetworkGameTransfers.openFirewall = true;
         protontricks.enable = true;
         extraPackages = with pkgs; [
-          gamescope
           mangohud
         ];
         extraCompatPackages = with pkgs; [
@@ -45,6 +44,7 @@ in {
       gamescope = {
         enable = true;
         enableWsi = true;
+        env.DISABLE_MANGOHUD = "1";
       };
       coolercontrol.enable = true;
     };
@@ -98,6 +98,7 @@ in {
       imports = [
         ../home/gcviewer.nix
         ../home/gcfeederd.nix
+        ../home/mangohud.nix
       ];
     });
 
@@ -135,7 +136,6 @@ in {
       krita
       kytyps5-qtlauncher_chenxiao
       libreoffice
-      mangohud
       me3
       ntfs3g
       (wrapOBS {
