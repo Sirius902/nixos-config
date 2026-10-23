@@ -14,8 +14,8 @@ stdenvNoCC.mkDerivation {
   src = fetchFromGitHub {
     owner = "DaruniasJoy";
     repo = "OoT-Custom-Sequences";
-    rev = "fa71eef774b17d124bebb0c8ef1596c616f94a26";
-    hash = "sha256-pToIF43Yyfe19o2fC2Ek+ihZroOvxHNGyZOgwogRbJc=";
+    rev = "f7dc54ca486c613299845226ba6d4ade31d66792";
+    hash = "sha256-3gZUWeTFJaahC4m2SxoeFNSTc5XN9iO3WDz7Z0Xg9Is=";
   };
 
   nativeBuildInputs = [sequence-otrizer];
