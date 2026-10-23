@@ -16,6 +16,16 @@
   nix-update-script,
 }: let
   fetchContentSources = {
+    opus = fetchFromGitHub {
+      owner = "xiph";
+      repo = "opus";
+      rev = "ddbe48383984d56acd9e1ab6a090c54ca6b735a6";
+      hash = "sha256-XUj2mV+5SVPGa6ZKTPa/eY5xVwkpPmCuGULxrVG0VOE=";
+      # Opus derives its version from git metadata or a release tarball's package_version.
+      postFetch = ''
+        echo 'PACKAGE_VERSION="1.5.2"' > "$out/package_version"
+      '';
+    };
     xbyak = fetchFromGitHub {
       owner = "herumi";
       repo = "xbyak";
@@ -149,6 +159,7 @@ in
       ln -s ../share/${finalAttrs.pname}/kyty_emulator $out/bin/${finalAttrs.meta.mainProgram}
 
       install -Dm644 -t $out/share/licenses/${finalAttrs.pname} ../LICENSE ../LICENSES/*
+      install -Dm644 -t $out/share/licenses/${finalAttrs.pname}/opus ${fetchContentSources.opus}/COPYING
 
       runHook postInstall
     '';
