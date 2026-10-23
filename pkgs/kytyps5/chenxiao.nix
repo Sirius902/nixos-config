@@ -45,13 +45,13 @@
 in
   clangStdenv.mkDerivation (finalAttrs: {
     pname = "kytyps5-chenxiao";
-    version = "0-unstable-2026-10-22";
+    version = "0-unstable-2026-10-23";
 
     src = fetchFromGitHub {
       owner = "chenxiao07";
       repo = "KytyPS5";
-      rev = "b42cde42066aadaa0ac773b5619c8a0938de0ec9";
-      hash = "sha256-UYAoTI7T0zrLqVpenuGHQAYKcAOggAp4bGhunXxqQ20=";
+      rev = "37ba6e28d20c2a815c2309216ea873b8c436c2c7";
+      hash = "sha256-TMhJu0Ypn8m6pERWsdveTjwNn6yFbHI/NHvnLBXW+BM=";
       postCheckout = ''
         git -C "$out" log -1 --pretty=%ct > "$out/SOURCE_DATE_EPOCH"
 
