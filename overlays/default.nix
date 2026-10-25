@@ -459,9 +459,9 @@
 
   (final: prev: {
     gamescope = prev.gamescope.overrideAttrs (prevAttrs: {
-      version = "3.16.31";
+      version = "3.17.0";
       src = prevAttrs.src.override {
-        hash = "sha256-mCCf/CfKBqxNvmRbaAJsOMrnnRutPr9nEePHmAq/PUM=";
+        hash = "sha256-7+KC69Ps86IkICMJdtg2x9b0A6SwE7ITKP0yibZ2bx8=";
       };
 
       patches =
