@@ -792,6 +792,40 @@
         hash = "sha256-1zLWY+/qQ8/YH/Ts6HqgyRuQWmW03S1ruxI3ZDtUBtY=";
       };
 
+      patches = [];
+      postPatch = "";
+
+      nativeBuildInputs =
+        (prevAttrs.nativeBuildInputs or [])
+        ++ [
+          final.meson
+          final.ninja
+          final.pkg-config
+        ];
+
+      buildFlags = [];
+      mesonBuildType = "release";
+
+      # binutils' ar has no LTO plugin to index the vendored liblua's LTO objects.
+      preConfigure = ''
+        export AR=gcc-ar
+      '';
+
+      installPhase = null;
+
+      postInstall = ''
+        ln -sf ${final.cacert}/etc/ssl/certs/ca-bundle.crt $out/share/poptracker/assets/cacert.pem
+        wrapProgram $out/bin/poptracker --prefix PATH : ${
+          final.lib.makeBinPath [
+            final.which
+            final.kdePackages.kdialog
+          ]
+        }
+        mkdir -p $out/share/icons/hicolor/{64x64,512x512}/apps
+        ln -s $out/share/poptracker/assets/icon.png $out/share/icons/hicolor/64x64/apps/poptracker.png
+        mv $out/share/icons/poptracker.png $out/share/icons/hicolor/512x512/apps/poptracker.png
+      '';
+
       passthru =
         (prevAttrs.passthru or {})
         // {
