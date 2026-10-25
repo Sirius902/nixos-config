@@ -792,9 +792,9 @@
 
   (final: prev: {
     poptracker = prev.poptracker.overrideAttrs (prevAttrs: {
-      version = "0.35.4";
+      version = "0.36.0";
       src = prevAttrs.src.override {
-        hash = "sha256-ilnBVwzd/tdolchgjz5EsMou7fMWT0xU/gTC+HBnDjU=";
+        hash = "sha256-1zLWY+/qQ8/YH/Ts6HqgyRuQWmW03S1ruxI3ZDtUBtY=";
       };
 
       passthru =
