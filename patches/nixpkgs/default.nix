@@ -19,9 +19,5 @@
     {
       pr = 496706;
     }
-    # TODO(Sirius902) poptracker wraps kdialog into PATH on darwin. Make PR?
-    {
-      file = ./poptracker-linux-dialog-helper.patch;
-    }
   ];
 }
