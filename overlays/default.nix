@@ -253,10 +253,10 @@
   # FUTURE(Sirius902) https://github.com/cosmic-utils/clipboard-manager/pull/207
   (final: prev: {
     cosmic-ext-applet-clipboard-manager = prev.cosmic-ext-applet-clipboard-manager.overrideAttrs (finalAttrs: prevAttrs: {
-      version = "0-unstable-2026-09-24";
+      version = "0-unstable-2026-10-25";
       src = prevAttrs.src.override {
-        rev = "1914df800d0626316161031453047dbc4015e8ad";
-        hash = "sha256-164MiyRI2hrkiAl+rhGJMLlqcldXBqnrjPK8jsN9v3g=";
+        rev = "27a246fab0c3051a89f67e137dddada1869145ca";
+        hash = "sha256-SsP4DxaJtzfvQkGWQ+fZcIgUngyP94LRh+ymffowNHw=";
       };
       cargoDeps = final.rustPlatform.fetchCargoVendor {
         inherit (finalAttrs) pname version src;
