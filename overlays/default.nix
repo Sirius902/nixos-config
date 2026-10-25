@@ -548,11 +548,11 @@
 
   (final: prev: {
     rpcs3 = prev.rpcs3.overrideAttrs (prevAttrs: {
-      version = "0.0.43-unstable-2026-10-23";
+      version = "0.0.43-unstable-2026-10-25";
       src = prevAttrs.src.override {
         tag = null;
-        rev = "87766f9e985a0f4e64b4139e44de26bab4dffe37";
-        hash = "sha256-eGgyZO04CNxuRflUoay/8BLLefzcZReULv8Ehr8S3A0=";
+        rev = "d00d80231af3f9b0286f38fd72f7513583f1a9d4";
+        hash = "sha256-wLk8pGjO0XBTZVnr2utuISOloDUFzUbEQ+ZwSgoOabM=";
       };
 
       passthru =
