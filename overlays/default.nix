@@ -923,19 +923,4 @@
         };
     });
   })
-
-  (final: prev: {
-    mozc = prev.mozc.overrideAttrs (prevAttrs: {
-      patches =
-        (prevAttrs.patches or [])
-        ++ [
-          # Drop the leading :: Qt 6.12's uic rejects in a class name https://github.com/NixOS/nixpkgs/issues/576522
-          (final.fetchpatch {
-            name = "dictionary-tool-class-name.patch";
-            url = "https://github.com/google/mozc/commit/29c082a64b577b661694148760a2ae19817beb57.diff";
-            hash = "sha256-Gft1mnLPSMexDMg/PVhwjUVl9D9g1cVGvVNgFmpK168=";
-          })
-        ];
-    });
-  })
 ]
