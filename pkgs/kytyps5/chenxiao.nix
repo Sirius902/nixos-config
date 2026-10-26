@@ -81,6 +81,8 @@ in
       '';
     };
 
+    patches = [./guard-syswm-include.patch];
+
     postPatch = ''
       check_pin() {
         local name="$1" url="$2" expected="$3" actual

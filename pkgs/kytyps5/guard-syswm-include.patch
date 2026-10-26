@@ -1,0 +1,32 @@
+From b47cb1566cccf7e1d17759b4be50453dc2fdc09d Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Mon, 26 Oct 2026 14:06:01 -0700
+Subject: [PATCH] Include SDL_syswm.h in window.cpp only on Windows
+
+Only the Windows return-focus code uses SDL_SysWMinfo, yet the include
+is unconditional. On Linux SDL_syswm.h pulls in Xlib, whose None macro
+breaks the None enumerators in emulatorConfig.h and BitArray::None() in
+bitArray.h, both included after it. Guard it the way swapchain.cpp does.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ src/graphics/presentation/window/window.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/graphics/presentation/window/window.cpp b/src/graphics/presentation/window/window.cpp
+index d82a7f6..fdbfd86 100644
+--- a/src/graphics/presentation/window/window.cpp
++++ b/src/graphics/presentation/window/window.cpp
+@@ -14,7 +14,9 @@
+ #include "SDL_rwops.h"
+ #include "SDL_stdinc.h"
+ #include "SDL_surface.h"
++#if defined(_WIN32)
+ #include "SDL_syswm.h"
++#endif
+ #include "SDL_thread.h"
+ #include "SDL_touch.h"
+ #include "SDL_video.h"
+-- 
+2.56.0
+
