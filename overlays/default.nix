@@ -209,8 +209,6 @@
   (import ./claude-code)
   (import ./moonlight)
 
-  inputs.nvim-conf.overlays.default
-
   # TODO(Sirius902) Drop once nixpkgs' discord copies its native modules into
   # place instead of symlinking them: Discord now refuses to load a module whose
   # real path lies outside its module directory, leaving the window blank.

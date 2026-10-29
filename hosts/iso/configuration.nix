@@ -24,7 +24,7 @@
     pkgs.ghostty
     pkgs.htop
     pkgs.just
-    pkgs.nvim
+    pkgs.neovim
     pkgs.pv
   ];
 

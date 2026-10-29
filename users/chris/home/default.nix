@@ -82,8 +82,7 @@ in {
 
   home.packages =
     [
-      # TODO: Add vimdiff alias somehow.
-      pkgs.nvim
+      pkgs.neovim
       pkgs.pure-prompt
     ]
     ++ (lib.optionals (!stdenv.hostPlatform.isDarwin) [

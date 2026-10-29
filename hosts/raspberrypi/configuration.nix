@@ -56,7 +56,7 @@
 
   environment.systemPackages = with pkgs; [
     ghostty.terminfo
-    nvim
+    neovim
     libraspberrypi
     wakeonlan
   ];

@@ -26,7 +26,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.sops-nix.follows = "sops-nix";
     };
-    nvim-conf.url = "github:Sirius902/nvim-conf";
     microvm = {
       url = "github:microvm-nix/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
