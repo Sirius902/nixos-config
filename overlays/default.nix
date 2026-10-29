@@ -211,6 +211,23 @@
 
   inputs.nvim-conf.overlays.default
 
+  # TODO(Sirius902) Drop once nixpkgs' discord copies its native modules into
+  # place instead of symlinking them: Discord now refuses to load a module whose
+  # real path lies outside its module directory, leaving the window blank.
+  # `writeShellScript` builds nothing in the package but that staging script.
+  (final: prev: {
+    discord = prev.discord.override {
+      writeShellScript = name: text: let
+        link = ''ln -sn "$store_modules/$m" "$modules_dir/$m"'';
+      in
+        assert final.lib.hasInfix link text;
+          final.writeShellScript name (builtins.replaceStrings [link] [
+              ''cp -RL "$store_modules/$m" "$modules_dir/$m" && chmod -R u+w "$modules_dir/$m"''
+            ]
+            text);
+    };
+  })
+
   (final: prev: {
     nix-update = prev.nix-update.overrideAttrs (prevAttrs: {
       patches =
