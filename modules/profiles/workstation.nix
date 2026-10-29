@@ -17,7 +17,6 @@
   };
 
   my.gpu = lib.mkDefault "amd";
-  my.xrdp.enable = lib.mkDefault false;
   my.secureBoot.enable = lib.mkDefault true;
   my.docker.enable = lib.mkDefault false;
   my.tailscale.enable = lib.mkDefault true;

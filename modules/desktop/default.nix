@@ -14,7 +14,6 @@ in {
     ./cosmic/default.nix
     ./gnome/default.nix
     ./kde/default.nix
-    ./i3/default.nix
     ./niri/default.nix
     ./fcitx.nix
     ./ibus.nix
@@ -28,7 +27,7 @@ in {
       description = "Enable full desktop with gaming/dev tools.";
     };
     environment = lib.mkOption {
-      type = lib.types.nullOr (lib.types.enum ["cosmic" "gnome" "kde" "i3" "niri"]);
+      type = lib.types.nullOr (lib.types.enum ["cosmic" "gnome" "kde" "niri"]);
       default = null;
       description = "Desktop environment to use.";
     };

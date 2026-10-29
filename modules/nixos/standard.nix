@@ -9,7 +9,6 @@
     ../services/games/minecraft-servers/default.nix
     ../desktop/default.nix
     ../gpu.nix
-    ../xrdp.nix
     ../secure-boot.nix
     ../docker.nix
   ];
