@@ -1,4 +1,4 @@
-{inputs}: [
+_: [
   # Merge repo-local maintainers into `lib.maintainers`. `lib` is an attribute
   # of the package set, so `callPackage` hands the extended one to every
   # `pkgs/*/package.nix` and entries read exactly as they would in nixpkgs.
