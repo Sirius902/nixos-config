@@ -527,6 +527,12 @@
           })
           ../patches/mangohud/mangoapp-size-window-to-output.patch
           ../patches/mangohud/mangoapp-resize-only-when-needed.patch
+          # Fix vkCreateDevice segfault on queues created with flags https://github.com/flightlessmango/MangoHud/issues/2123
+          (final.fetchpatch {
+            name = "vulkan-use-get-device-queue2-for-flagged-queues.patch";
+            url = "https://github.com/flightlessmango/MangoHud/commit/c5728a94dba8352111ac6236585f0c489ec66f1f.diff";
+            hash = "sha256-E5hNemmphk3gNRiN9Zqmjo5fRbMGN5UF0Fw2jiaVo+o=";
+          })
         ];
     });
   })
