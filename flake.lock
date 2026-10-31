@@ -124,11 +124,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1793411134,
-        "narHash": "sha256-7qwA8bVG4rqju8pECpHEDho22BdCUmq4KRctIYzpjew=",
+        "lastModified": 1793414911,
+        "narHash": "sha256-PH1RPkizt9tSxGw/6bqymCJ3rEd/lm1bM6cNwXqOXFU=",
         "owner": "Sirius902",
         "repo": "nixpkgs",
-        "rev": "5c9d57a48ee1841f099be90df98e0c088f128edf",
+        "rev": "78045ec23dbdbf924e0ad772216c807f386a4628",
         "type": "github"
       },
       "original": {
