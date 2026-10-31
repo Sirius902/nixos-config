@@ -2,6 +2,8 @@
   lib,
   clangStdenv,
   fetchFromGitHub,
+  fetchurl,
+  linkFarm,
   cmake,
   ninja,
   pkg-config,
@@ -10,6 +12,7 @@
   gitMinimal,
   llvmPackages,
   ffmpeg,
+  libx11,
   sdl3,
   dejavu_fonts,
   versionCheckHook,
@@ -25,6 +28,12 @@
       postFetch = ''
         echo 'PACKAGE_VERSION="1.5.2"' > "$out/package_version"
       '';
+    };
+    openxr = fetchFromGitHub {
+      owner = "KhronosGroup";
+      repo = "OpenXR-SDK";
+      rev = "f2448a8797c85814aa892efc1ab8707900fbcc78";
+      hash = "sha256-glcHMArDabXbrxO4CY2QeTJFTeUTQH4v1O03LuhML7E=";
     };
     xbyak = fetchFromGitHub {
       owner = "herumi";
@@ -52,6 +61,23 @@
       hash = "sha256-hX637O/mVLTzmG0a9swJu9w+3o26VHo+K/9RhMuf1lI=";
     };
   };
+
+  notoSans = let
+    fetchNotoSans = file: hash: {
+      name = baseNameOf file;
+      path = fetchurl {
+        url = "https://raw.githubusercontent.com/notofonts/notofonts.github.io/42af67ccd12bc0e31ed85384bf73e39248265374/fonts/${file}";
+        inherit hash;
+      };
+    };
+  in
+    linkFarm "noto-sans" [
+      (fetchNotoSans "LICENSE" "sha256-8glbCL7QiyOm/iYRL81nmivuPwAu7wd+sF0hXtEFG9g=")
+      (fetchNotoSans "NotoSans/hinted/ttf/NotoSans-Regular.ttf" "sha256-R4xVjqcWAzzWDANDj2KN+nVpTc9rX21QWi8F/StPOCM=")
+      (fetchNotoSans "NotoSans/hinted/ttf/NotoSans-Bold.ttf" "sha256-HfB1o4D8fLiYrPZMH3s7TdeA3jyqhgF4v5Kd41gXqRM=")
+      (fetchNotoSans "NotoSans/hinted/ttf/NotoSans-Italic.ttf" "sha256-Rn4/ie7KQQi7hxCiueDPIoGsVtWwYJIRqDd20FBe7LU=")
+      (fetchNotoSans "NotoSans/hinted/ttf/NotoSans-BoldItalic.ttf" "sha256-G2AqnWNTvkLJHfCXpIV7afomlvJnA9ejO1ShXYfCYiw=")
+    ];
 in
   clangStdenv.mkDerivation (finalAttrs: {
     pname = "kytyps5";
@@ -97,6 +123,9 @@ in
       install -Dm644 ${./ffmpeg.cmake} 3rdparty/ffmpeg-core/CMakeLists.txt
       # The SDL3 submodule builds statically and dlopens its backends by soname.
       install -Dm644 ${./sdl3.cmake} 3rdparty/SDL3/CMakeLists.txt
+      # libFont's fallback font is downloaded at configure time unless each file already matches its hash.
+      substituteInPlace 3rdparty/CMakeLists.txt \
+        --replace-fail 'set(KYTY_NOTO_SANS_DIR "''${FETCHCONTENT_BASE_DIR}/noto-sans")' 'set(KYTY_NOTO_SANS_DIR "${notoSans}")'
 
       # A FETCHCONTENT_SOURCE_DIR override skips the declaration's PATCH_COMMAND.
       cp -r ${fetchContentSources.zarchive_source} zarchive-src
@@ -128,6 +157,8 @@ in
 
     buildInputs = [
       ffmpeg
+      # OpenXR-SDK's default xlib backend won't configure without X11.
+      libx11
       sdl3
     ];
 
@@ -152,6 +183,8 @@ in
 
       install -Dm644 -t $out/share/licenses/${finalAttrs.pname} ../LICENSE ../LICENSES/Kyty-MIT.txt
       install -Dm644 -t $out/share/licenses/${finalAttrs.pname}/opus ${fetchContentSources.opus}/COPYING
+      install -Dm644 -t $out/share/licenses/${finalAttrs.pname}/openxr ${fetchContentSources.openxr}/LICENSE
+      install -Dm644 -t $out/share/licenses/${finalAttrs.pname}/noto-sans ${notoSans}/LICENSE
 
       runHook postInstall
     '';
