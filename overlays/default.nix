@@ -973,4 +973,24 @@ _: [
         };
     });
   })
+
+  (final: prev: {
+    croc = prev.croc.overrideAttrs (finalAttrs: prevAttrs: {
+      version = "11.6.0";
+
+      src = prevAttrs.src.override {
+        rev = null;
+        tag = "v${finalAttrs.version}";
+        hash = "sha256-ChqDWIVGUI4bmBb/Id1Dh+Ok1PkxJivQ6VeXfUu5jSk=";
+      };
+
+      vendorHash = "sha256-s1G2FjKoLp0ork79PVBVas9dUED7pkmZuSVhwEmb0tc=";
+
+      passthru =
+        (prevAttrs.passthru or {})
+        // {
+          updateScript = final.nix-update-script {};
+        };
+    });
+  })
 ]
