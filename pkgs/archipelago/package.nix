@@ -176,6 +176,8 @@ in
       runHook postInstall
     '';
 
+    stripDebugList = ["share/archipelago"];
+
     desktopItems = [
       (makeDesktopItem {
         name = "archipelago";
