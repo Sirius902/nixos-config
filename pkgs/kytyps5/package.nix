@@ -173,6 +173,9 @@ in
       ]
       ++ lib.mapAttrsToList (name: src: lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_${lib.toUpper name}" "${src}") (removeAttrs fetchContentSources ["zarchive_source"]);
 
+    # Opus's hardening checks embed __FILE__, which would keep its source tree in the closure.
+    env.NIX_CFLAGS_COMPILE = "-fmacro-prefix-map=${fetchContentSources.opus}=opus";
+
     ninjaFlags = ["kyty_emulator"];
 
     strictDeps = true;
