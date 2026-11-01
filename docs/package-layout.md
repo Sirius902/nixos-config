@@ -96,6 +96,16 @@ package family (`sm64coopdx`, `starship-sf64`) use a whole app dir under
 - Engine/plugin search paths go through env vars in the wrapper
   (`XASH3D_RODIR`, `LD_LIBRARY_PATH` for by-soname dlopen).
 
+## Stripping native code
+
+The strip hook only searches `stripDebugList`, whose default (`bin`, `lib`,
+`libexec` and the like) leaves out `share/`. Binaries in an app dir there keep
+their debug info, which names the toolchain and source trees they were built
+from and so keeps all of those in the runtime closure. Set `stripDebugList` to
+the app dir. Where crashes still need debugging, also set
+`separateDebugInfo = true`; it copies the debug info into a `debug` output
+before the strip runs.
+
 ## Checking a package
 
 ```console
