@@ -929,12 +929,12 @@ _: [
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "86d554802d7560acf12b5c5a2b3acb344069b5ce";
-        hash = "sha256-ZoIMjagGNvK4mHiBdExHZ89A3+EnO0711C2DFRBr8MM=";
+        rev = "833d8c05965ac1e2242799d3c9b0e0fadbcbb7f8";
+        hash = "sha256-TEmCNpZDB/ApUNTWlrcCbjeC17KJe8L3dImPcGfB4Yo=";
 
         leaveDotGit = false;
         postFetch = ''
-          echo 86d554802d7560acf12b5c5a2b3acb344069b5ce > $out/COMMIT
+          echo 833d8c05965ac1e2242799d3c9b0e0fadbcbb7f8 > $out/COMMIT
         '';
       };
 
