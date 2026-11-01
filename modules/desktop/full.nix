@@ -111,6 +111,7 @@ in {
       (bottles.override {
         removeWarningPopup = true;
       })
+      croc
       dolphin-emu
       (retroarch.withCores (cores: [
         cores.mupen64plus
