@@ -64,6 +64,9 @@ kytyps5.overrideAttrs (finalAttrs: prevAttrs: {
     runHook postInstall
   '';
 
+  # kytyps5 points the strip hook at its share/ app dir; the launcher's binary is in libexec.
+  stripDebugList = ["libexec"];
+
   desktopItems = [
     (makeDesktopItem {
       name = finalAttrs.pname;

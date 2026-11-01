@@ -143,6 +143,10 @@ in
 
       substituteInPlace src/graphics/presentation/systemOverlay.cpp \
         --replace-fail /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf ${dejavu_fonts}/share/fonts/truetype/DejaVuSans.ttf
+
+      # Upstream strips Release links outright, which leaves separateDebugInfo nothing to separate.
+      substituteInPlace CMakeLists.txt \
+        --replace-fail '$<$<CONFIG:Release>:-Wl,--strip-all>' ""
     '';
 
     nativeBuildInputs = [
@@ -188,6 +192,9 @@ in
 
       runHook postInstall
     '';
+
+    separateDebugInfo = true;
+    stripDebugList = ["share/${finalAttrs.pname}"];
 
     nativeInstallCheckInputs = [versionCheckHook];
     versionCheckProgramArg = "--help";
