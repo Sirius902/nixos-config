@@ -893,6 +893,20 @@ _: [
         hash = "sha256-LyeTLz0tWJeskv/TXrbD4dPNsego935eBR+o5i1N5C4=";
       };
 
+      patches =
+        (prevAttrs.patches or [])
+        ++ [
+          # Fix building against N64Recomp's got_ram_addr section tables https://github.com/N64Recomp/N64ModernRuntime/pull/150
+          (final.fetchpatch {
+            name = "n64modernruntime-pic-jump-tables.patch";
+            url = "https://github.com/N64Recomp/N64ModernRuntime/commit/e4342ae030a9d94aa97a81aafd3368ed7daa74df.diff";
+            stripLen = 1;
+            extraPrefix = "lib/N64ModernRuntime/";
+            excludes = ["lib/N64ModernRuntime/N64Recomp"];
+            hash = "sha256-pheuE+ABN9DZDeWDv5NFCoP+0dT8DGps6YKdsdTf0Os=";
+          })
+        ];
+
       passthru =
         (prevAttrs.passthru or {})
         // {
