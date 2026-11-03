@@ -9,6 +9,7 @@
   home.packages = with pkgs; [
     archipelago
     poptracker
+    rpcs3
     xash3d-fwgs
   ];
 }

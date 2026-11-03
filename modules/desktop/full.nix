@@ -153,7 +153,6 @@ in {
         ];
       })
       mcpelauncher-ui-qt
-      rpcs3
       scarab
       shadps4-qtlauncher
       spotify
