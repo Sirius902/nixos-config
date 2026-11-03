@@ -23,6 +23,7 @@
 
   home.packages = [
     pkgs.croc
+    pkgs.nh
     pkgs.nix
     (pkgs.discord-canary.override {withMoonlight = true;})
   ];
