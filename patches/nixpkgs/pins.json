@@ -1,8 +1,8 @@
 {
-  "base": "0bb2eedc20e4739f29e8045034f2828ad7054f8f",
+  "base": "1d060086d60cb76a40cf37109f979d88a5bd6396",
   "spans": {
     "NixOS/nixpkgs:refs/pull/496706/head": {
-      "base": "3a69d275686c1643b02dfd718b495b109f5f5b80",
+      "base": "7c584c0bc05438f35169d8df073ed7021370fa10",
       "head": "71f8f21a50192425577f92f97eb5212a85dd0588"
     }
   }
