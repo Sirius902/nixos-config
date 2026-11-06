@@ -2,7 +2,7 @@
   "base": "1d060086d60cb76a40cf37109f979d88a5bd6396",
   "spans": {
     "NixOS/nixpkgs:refs/pull/496706/head": {
-      "base": "7c584c0bc05438f35169d8df073ed7021370fa10",
+      "base": "6df1f9af25d1bd18f393f81afa91aefd1c5f684a",
       "head": "71f8f21a50192425577f92f97eb5212a85dd0588"
     }
   }
