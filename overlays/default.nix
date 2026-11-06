@@ -658,12 +658,12 @@ _: [
     });
 
     shadps4-qtlauncher = prev.shadps4-qtlauncher.overrideAttrs (finalAttrs: prevAttrs: {
-      version = "0-unstable-2026-11-05";
+      version = "0-unstable-2026-11-06";
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "bb04e14060ed0a6b85fb2e35f38720f798a2371a";
-        hash = "sha256-8SZm/cdV1n2uT0SPEtrFuzcPFT04oX3SqmOWeumDW6c=";
+        rev = "ecc85072dae45c05628934fdb6b3aa036e9f1d4b";
+        hash = "sha256-ORg9JjCAgRTrpp58ekpDFABYf1W8q9ejpzrGdapPABQ=";
 
         postCheckout = ''
           cd "$out"
