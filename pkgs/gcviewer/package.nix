@@ -29,7 +29,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     sha256 = "sha256-U8cyKJ8bWGwFaDowLsI4yhvThvstOcaWkvk2KAIT12A=";
   };
 
-  cargoBuildFlags = ["--no-default-features"];
+  buildNoDefaultFeatures = true;
   cargoHash = "sha256-ubrVF6WQg1brQoYJxY1sgNnWxwGr+FadO+C+EPJbeRU=";
 
   nativeBuildInputs =
