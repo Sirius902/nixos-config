@@ -248,38 +248,6 @@ _: [
     });
   })
 
-  # FUTURE(Sirius902) https://github.com/cosmic-utils/clipboard-manager/pull/207
-  (final: prev: {
-    cosmic-ext-applet-clipboard-manager = prev.cosmic-ext-applet-clipboard-manager.overrideAttrs (finalAttrs: prevAttrs: {
-      version = "0-unstable-2026-10-25";
-      src = prevAttrs.src.override {
-        rev = "27a246fab0c3051a89f67e137dddada1869145ca";
-        hash = "sha256-SsP4DxaJtzfvQkGWQ+fZcIgUngyP94LRh+ymffowNHw=";
-      };
-      cargoDeps = final.rustPlatform.fetchCargoVendor {
-        inherit (finalAttrs) pname version src;
-        hash = "sha256-ABo4fAtFCaIyNukOUZqHpBhR0fANkb/h7lz755LyRpA=";
-      };
-
-      patches =
-        (prevAttrs.patches or [])
-        ++ [
-          ../patches/clipboard-manager/fix-clipboard-freeze.patch
-        ];
-
-      passthru =
-        (prevAttrs.passthru or {})
-        // {
-          updateScript = final.nix-update-script {
-            extraArgs = [
-              "--version=branch"
-              "--version-regex=(0-unstable-.*)"
-            ];
-          };
-        };
-    });
-  })
-
   # Make NSO GameCube triggers digital for ship-like derivations.
   (final: prev:
     if prev.stdenv.hostPlatform.isLinux
