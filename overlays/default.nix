@@ -973,15 +973,15 @@ _: [
 
   (final: prev: {
     croc = prev.croc.overrideAttrs (finalAttrs: prevAttrs: {
-      version = "11.6.4";
+      version = "11.6.5";
 
       src = prevAttrs.src.override {
         rev = null;
         tag = "v${finalAttrs.version}";
-        hash = "sha256-YEiELW6GEarhXmHgdcZ5XVqpkmBVCACZx4KBGCW7DGg=";
+        hash = "sha256-qx4mMmlL2V/B6TBDwrf38m0poXtH5wdvIUyIJzcT5Dw=";
       };
 
-      vendorHash = "sha256-QAxBlzrvvIDZ3bWWKhw/D3wleP/0j0WhaLPxN6DNDNc=";
+      vendorHash = "sha256-GfiuhffMi+yIlouDRiPFD4JX50xNcHaRXSUITlml3e0=";
 
       passthru =
         (prevAttrs.passthru or {})
