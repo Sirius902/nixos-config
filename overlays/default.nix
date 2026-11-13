@@ -214,10 +214,14 @@ _: [
       patches =
         (prevAttrs.patches or [])
         ++ [
-          # https://github.com/Mic92/nix-update/issues/327
-          ../patches/nix-update/0001-resolve-flake-attributes-through-legacyPackages.patch
+          # Resolve flake attributes through legacyPackages https://github.com/Mic92/nix-update/pull/686
+          (final.fetchpatch {
+            name = "resolve-flake-attributes-through-legacy-packages.patch";
+            url = "https://github.com/Mic92/nix-update/commit/35210538f0495323af4b767fb446540f6f4e851b.diff";
+            hash = "sha256-HRhA7GKBqv4VgcC68DV9pXdiqYbois2hw4kCXbzCyro=";
+          })
           # https://github.com/Mic92/nix-update/issues/687
-          ../patches/nix-update/0002-copy-the-flake-into-the-store-with-nix-flake-prefetch.patch
+          ../patches/nix-update/0001-copy-the-flake-into-the-store-with-nix-flake-prefetch.patch
           # Skip unchanged versions of sources without a rev or tag https://github.com/Mic92/nix-update/pull/660
           (final.fetchpatch {
             name = "skip-unchanged-versions-without-rev-or-tag.patch";
