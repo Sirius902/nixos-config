@@ -96,6 +96,8 @@ nixpkgs itself is not patched with `fetchpatch`. `patches/nixpkgs/default.nix`
 declares a patch set, `patches/nixpkgs/update.py` replays it onto the tip of
 `nixos-unstable` and pushes the result to the `nixos-config` branch of
 `Sirius902/nixpkgs`, and `flake.nix` locks that branch as the `nixpkgs` input.
+The set may be empty, as rule 10 leaves it once every patch has landed; the
+branch then carries `nixos-unstable` unpatched, and `flake.nix` stays as it is.
 
 It is an input so patches to modules, `lib`, and nixpkgs' flake are visible
 during evaluation. Fixed entries follow rule 4, every entry follows rule 8,

@@ -196,9 +196,6 @@ def parse_spec() -> Spec:
         else:
             entries.append(PatchFile(Path(patch["file"])))
 
-    if not entries:
-        raise Die(f"{SPEC_FILE} lists no patches")
-
     return Spec(
         upstream=upstream,
         channel=qualify_branch(raw["base"]["ref"]),
