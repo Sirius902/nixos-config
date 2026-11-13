@@ -216,6 +216,8 @@ _: [
         ++ [
           # https://github.com/Mic92/nix-update/issues/327
           ../patches/nix-update/0001-resolve-flake-attributes-through-legacyPackages.patch
+          # https://github.com/Mic92/nix-update/issues/687
+          ../patches/nix-update/0002-copy-the-flake-into-the-store-with-nix-flake-prefetch.patch
           # Skip unchanged versions of sources without a rev or tag https://github.com/Mic92/nix-update/pull/660
           (final.fetchpatch {
             name = "skip-unchanged-versions-without-rev-or-tag.patch";

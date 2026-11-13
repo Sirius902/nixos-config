@@ -1,0 +1,56 @@
+From d871e6b1760ecda2bf2e51edd71204a450a5eac9 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Thu, 12 Nov 2026 20:12:36 -0800
+Subject: [PATCH] copy the flake into the store with nix flake prefetch
+
+get_flake_store_path() relied on nix flake metadata copying the flake
+into the store, but since Nix 2.35 the command only reports where the
+copy would go. The store path handed to builtins.getFlake then does not
+exist, so the first evaluation after an update edits a file fails with
+"No such file or directory".
+
+nix flake prefetch copies the same tree, and its JSON carries the same
+locked and original attributes, so a flake in a subdirectory still
+resolves to its dir.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ nix_update/options.py | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/nix_update/options.py b/nix_update/options.py
+index 476f9a3..e1b475f 100644
+--- a/nix_update/options.py
++++ b/nix_update/options.py
+@@ -101,22 +101,25 @@ def _metadata_flake_dir(metadata: dict[str, Any]) -> str | None:
+ def get_flake_store_path(import_path: str) -> str | None:
+     """Copy a local flake into the Nix store and return its store path.
+ 
+-    Uses ``nix flake metadata`` so that git-ignored files are excluded and
++    Uses ``nix flake prefetch`` so that git-ignored files are excluded and
+     only tracked content is copied.  For flakes in a subdirectory of a git
+     repository the reported store path is the repository root, so the
+     flake's subdirectory is appended.  Returns *None* when the command
+     fails (e.g. the directory is not a flake).
++
++    ``nix flake metadata`` reports the same path, but as of Nix 2.35 it no
++    longer copies the flake there.
+     """
+     try:
+         result = subprocess.run(
+-            ["nix", "flake", "metadata", "--json"],
++            ["nix", "flake", "prefetch", "--json", "."],
+             cwd=import_path,
+             capture_output=True,
+             text=True,
+             check=True,
+         )
+         metadata = json.loads(result.stdout)
+-        path = metadata.get("path")
++        path = metadata.get("storePath")
+         if not isinstance(path, str):
+             return None
+ 
+-- 
+2.56.0
+
