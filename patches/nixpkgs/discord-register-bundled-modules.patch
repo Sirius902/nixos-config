@@ -1,0 +1,81 @@
+From 44c4e8854ee7df0b543e10c521e46be5bf60cd9e Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Fri, 13 Nov 2026 10:30:14 -0800
+Subject: [PATCH] discord: register bundled modules for newer bootstraps
+
+Discord's newer bootstraps no longer carry the legacy module updater,
+which is what put the modules directory on Node's search path, and the
+native updater that replaced it does not start from the store, so
+nothing registers the modules this package bundles and
+discord_desktop_core fails to load. Register them from an entry point
+added to app.asar that runs ahead of Discord's own, which mods loading
+the original asar go through as well.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ pkgs/by-name/di/discord/linux.nix           | 19 +++++++++++++++++++
+ pkgs/by-name/di/discord/register-modules.js |  8 ++++++++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 pkgs/by-name/di/discord/register-modules.js
+
+diff --git a/pkgs/by-name/di/discord/linux.nix b/pkgs/by-name/di/discord/linux.nix
+index d553dbf275fb..2de13a2b1550 100644
+--- a/pkgs/by-name/di/discord/linux.nix
++++ b/pkgs/by-name/di/discord/linux.nix
+@@ -32,6 +32,8 @@
+   makeShellWrapper,
+   gtk3,
+   brotli,
++  asar,
++  jq,
+   addDriverRunpath,
+   fetchurl,
+   makeDesktopItem,
+@@ -164,6 +166,8 @@ stdenv.mkDerivation (finalAttrs: {
+   nativeBuildInputs = [
+     makeShellWrapper
+     brotli
++    asar
++    jq
+   ]
+   ++ lib.optionals (!useFHSEnv) [
+     autoPatchelfHook
+@@ -214,6 +218,21 @@ stdenv.mkDerivation (finalAttrs: {
+     brotli -d < $src | tar xf - --strip-components=1 -C $out/opt/${binaryName}
+     chmod +x $out/opt/${binaryName}/${binaryName}
+ 
++    # Discord's newer bootstraps no longer carry the legacy module updater that
++    # put the modules directory on Node's search path, and the native updater
++    # that replaced it does not start from the store. Register the bundled
++    # modules from an entry point that runs ahead of Discord's own; the
++    # renderer's native module check reads the same search path.
++    # See https://github.com/NixOS/nixpkgs/issues/587050
++    asar extract $out/opt/${binaryName}/resources/app.asar bootstrap
++    main=$(jq -er .main bootstrap/package.json)
++    substitute ${./register-modules.js} bootstrap/nix-register-modules.js --subst-var main
++    jq '.main = "nix-register-modules.js"' bootstrap/package.json > package.json
++    mv package.json bootstrap/package.json
++    rm $out/opt/${binaryName}/resources/app.asar
++    asar pack bootstrap $out/opt/${binaryName}/resources/app.asar
++    rm -r bootstrap
++
+     # The module directory layout must match what Discord's node runtime
+     # expects: modules/<name>/ (the moduleUpdater extracts zips into
+     # path.join(moduleInstallPath, moduleName) see processUnzipQueue)
+diff --git a/pkgs/by-name/di/discord/register-modules.js b/pkgs/by-name/di/discord/register-modules.js
+new file mode 100644
+index 000000000000..a03a01b32dbf
+--- /dev/null
++++ b/pkgs/by-name/di/discord/register-modules.js
+@@ -0,0 +1,8 @@
++// Registers the modules this package bundles, then hands over to Discord's
++// own entry point (@main@). See linux.nix.
++const path = require("path");
++require("module").globalPaths.push(path.join(process.resourcesPath, "..", "modules"));
++const main = path.join(__dirname, "@main@");
++// Discord derives its resources path from require.main.filename
++require.main.filename = main;
++require(main);
+-- 
+2.56.0
+
