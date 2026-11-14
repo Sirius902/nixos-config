@@ -1,0 +1,164 @@
+From 534fb8be6a458488ca6dec0e4917c0ec7e520a58 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Fri, 13 Nov 2026 12:56:31 -0800
+Subject: [PATCH] Fix moonbase's settings entry and stale finds on current
+ Discord
+
+Discord's bundles now load chunks by bare numeric ID, writing round ones
+in exponent form (592e3), where moonmap's lazy loading and spacepack's
+lazyLoad read quoted IDs. The GuildSettings chunks were never force-loaded,
+so AppCard.css and Breadcrumbs never mapped and moonbase never added its
+settings section. Queue those chunks from the mapping, hand chunk IDs to
+the runtime as numbers, and match the new form in moonbase's filter bar.
+
+Also update finds Discord rewrote: the Notice colors lost PLAYSTATION, the
+forum sort menu's class hash changed, and noHideToken's hideToken export
+and devtools callback guard took new shapes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../ui/extensions/filterBar.tsx               |  2 +-
+ .../core-extensions/src/noHideToken/index.ts  | 10 +++++-----
+ .../src/spacepack/webpackModules/spacepack.ts |  3 ++-
+ .../design/components/Notice/web/Notice.ts    |  5 ++---
+ .../modules/forums/web/SortMenu.css.ts        |  2 +-
+ .../guild_settings/web/SearchSection.css.ts   | 20 +++++++++++++++----
+ 6 files changed, 27 insertions(+), 15 deletions(-)
+
+diff --git a/packages/core-extensions/src/moonbase/webpackModules/ui/extensions/filterBar.tsx b/packages/core-extensions/src/moonbase/webpackModules/ui/extensions/filterBar.tsx
+index 53ba74b..785f242 100644
+--- a/packages/core-extensions/src/moonbase/webpackModules/ui/extensions/filterBar.tsx
++++ b/packages/core-extensions/src/moonbase/webpackModules/ui/extensions/filterBar.tsx
+@@ -36,7 +36,7 @@ let HeaderClasses: any;
+ let ForumsClasses: any;
+ let SortMenuClasses: any;
+ spacepack
+-  .lazyLoad('"Missing channel in Channel.openChannelContextMenu"', /e\("(\d+)"\)/g, /webpackId:(\d+?),/)
++  .lazyLoad('"Missing channel in Channel.openChannelContextMenu"', /\.e\((\d+(?:e\d+)?)\)/g, /webpackId:(\d+?),/)
+   .then(() => {
+     ForumsClasses = spacepack.require("discord/modules/forums/web/Forums.css");
+     HeaderClasses = spacepack.require("discord/modules/forums/web/Header.css");
+diff --git a/packages/core-extensions/src/noHideToken/index.ts b/packages/core-extensions/src/noHideToken/index.ts
+index 58b9c86..4a92294 100644
+--- a/packages/core-extensions/src/noHideToken/index.ts
++++ b/packages/core-extensions/src/noHideToken/index.ts
+@@ -2,10 +2,10 @@ import type { Patch } from "@moonlight-mod/types";
+ 
+ export const patches: Patch[] = [
+   {
+-    find: "hideToken:()=>",
++    find: "hideToken:function(){",
+     replace: {
+-      match: /hideToken:\(\)=>.+?,/,
+-      replacement: `hideToken:()=>{},`
++      match: /hideToken:function\(\){[^}]*}/,
++      replacement: "hideToken:function(){}"
+     }
+   },
+ 
+@@ -14,8 +14,8 @@ export const patches: Patch[] = [
+   {
+     find: ".Messages.SELF_XSS_HEADER)",
+     replace: {
+-      match: /null\!=\i&&"0\.0\.0"===\i\.app\.getVersion\(\)/,
+-      replacement: "true"
++      match: /null==\i\|\|"0\.0\.0"!==\i\.app\.getVersion\(\)/,
++      replacement: "false"
+     }
+   }
+ ];
+diff --git a/packages/core-extensions/src/spacepack/webpackModules/spacepack.ts b/packages/core-extensions/src/spacepack/webpackModules/spacepack.ts
+index 7f8cb0f..c0eff6f 100644
+--- a/packages/core-extensions/src/spacepack/webpackModules/spacepack.ts
++++ b/packages/core-extensions/src/spacepack/webpackModules/spacepack.ts
+@@ -256,7 +256,8 @@ export const spacepack: Spacepack = {
+       return Promise.reject("Module ID match failed");
+     }
+ 
+-    await Promise.all(chunkIds.map((c) => webpackRequire.e(c)));
++    // Discord's runtime matches chunk IDs as numbers, and its minifier writes round ones as e.g. 592e3
++    await Promise.all(chunkIds.map((c) => webpackRequire.e(/^\d+(?:e\d+)?$/.test(c) ? Number(c) : c)));
+     return webpackRequire(moduleId);
+   },
+ 
+diff --git a/packages/mappings/src/mappings/discord/design/components/Notice/web/Notice.ts b/packages/mappings/src/mappings/discord/design/components/Notice/web/Notice.ts
+index e81f079..01d18c7 100644
+--- a/packages/mappings/src/mappings/discord/design/components/Notice/web/Notice.ts
++++ b/packages/mappings/src/mappings/discord/design/components/Notice/web/Notice.ts
+@@ -12,7 +12,6 @@ type NoticeColors = {
+   STREAMER_MODE: string;
+   CUSTOM: string;
+   SPOTIFY: string;
+-  PLAYSTATION: string; // notice how it's a CSS class instead of having games
+   PREMIUM_TIER_0: string;
+   PREMIUM_TIER_1: string;
+   PREMIUM_TIER_2: string;
+@@ -44,7 +43,7 @@ register((moonmap) => {
+   const name = "discord/design/components/Notice/web/Notice";
+   moonmap.register({
+     name,
+-    find: [",STREAMER_MODE:", ",PLAYSTATION:"],
++    find: [",STREAMER_MODE:", ",PREMIUM_TIER_0:"],
+     process({ id }) {
+       moonmap.addModule(id, name);
+ 
+@@ -62,7 +61,7 @@ register((moonmap) => {
+       });
+       moonmap.addExport(name, "NoticeColors", {
+         type: ModuleExportType.Key,
+-        find: "PLAYSTATION"
++        find: "PREMIUM_TIER_0"
+       });
+ 
+       return true;
+diff --git a/packages/mappings/src/mappings/discord/modules/forums/web/SortMenu.css.ts b/packages/mappings/src/mappings/discord/modules/forums/web/SortMenu.css.ts
+index 2e6cd51..10b909c 100644
+--- a/packages/mappings/src/mappings/discord/modules/forums/web/SortMenu.css.ts
++++ b/packages/mappings/src/mappings/discord/modules/forums/web/SortMenu.css.ts
+@@ -12,7 +12,7 @@ register((moonmap) => {
+     name,
+     // theres no way to have this actually be non-breaking anymore, this is the only class
+     // there are currently 37 modules that are just a single class of container
+-    find: '"container_f8b2d2"',
++    find: '"container_medo7F"',
+     process({ id }) {
+       moonmap.addModule(id, name);
+ 
+diff --git a/packages/mappings/src/mappings/discord/modules/guild_settings/web/SearchSection.css.ts b/packages/mappings/src/mappings/discord/modules/guild_settings/web/SearchSection.css.ts
+index 8034ba7..63c7472 100644
+--- a/packages/mappings/src/mappings/discord/modules/guild_settings/web/SearchSection.css.ts
++++ b/packages/mappings/src/mappings/discord/modules/guild_settings/web/SearchSection.css.ts
+@@ -24,14 +24,26 @@ register((moonmap) => {
+   moonmap.register({
+     name,
+     find: ["removeButtonContainer:", "removeButtonDisabled:"],
+-    lazy: {
+-      find: "renderArtisanalHack",
+-      chunk: /\[(?:.\.e\("\d+?"\),?)+\][^}]+?webpackId:\d+,name:"GuildSettings"/
+-    },
+     process({ id }) {
+       moonmap.addModule(id, name);
+ 
+       return true;
+     }
+   });
++
++  // moonmap's lazy loading only reads quoted chunk IDs, and Discord's are now bare numbers
++  moonmap.register({
++    name: `${name}#GuildSettings`,
++    find: 'name:"GuildSettings"',
++    process({ code }) {
++      const loader = code.match(/\[((?:[\w$]+\.e\(\d+(?:e\d+)?\),?)+)\][^}]+?webpackId:\d+,name:"GuildSettings"/);
++      if (loader == null) return false;
++
++      // @ts-expect-error moonmap keeps its force-load queue private
++      const forceLoad: Set<number> = moonmap.mustForceLoad;
++      for (const [, chunkId] of loader[1].matchAll(/\((\d+(?:e\d+)?)\)/g)) forceLoad.add(Number(chunkId));
++
++      return true;
++    }
++  });
+ });
+-- 
+2.56.0
+
