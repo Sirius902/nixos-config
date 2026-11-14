@@ -10,13 +10,13 @@
 }:
 buildGoModule (finalAttrs: {
   pname = "sni";
-  version = "0.0.103";
+  version = "0.0.104a";
 
   src = fetchFromGitHub {
     owner = "alttpo";
     repo = "sni";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-3W1ykRQFp+t3sWbAhS9Mm1412OYtFU6mU1qXCaxE6lE=";
+    hash = "sha256-C2UZE/REe/FqkRNK9To7Qc5pQa/OI55TRb2kpSSQ0Ak=";
   };
 
   vendorHash = "sha256-o4CShxZ8HUL2zcIEcdhr7xTjuVUIPj86zyRTYgsC6dc=";
