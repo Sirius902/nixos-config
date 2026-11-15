@@ -501,12 +501,6 @@ _: [
           --replace-fail @BUILD_DATE@ $(cat SOURCE_DATE_EPOCH)
       '';
 
-      cmakeFlags =
-        (prevAttrs.cmakeFlags or [])
-        ++ [
-          (final.lib.cmakeBool "SPDLOG_FMT_EXTERNAL" true)
-        ];
-
       buildInputs =
         (prevAttrs.buildInputs or [])
         ++ [
@@ -553,12 +547,6 @@ _: [
             zstd
         '';
       };
-
-      cmakeFlags =
-        (prevAttrs.cmakeFlags or [])
-        ++ [
-          (final.lib.cmakeBool "SPDLOG_FMT_EXTERNAL" true)
-        ];
 
       buildInputs =
         (prevAttrs.buildInputs or [])
