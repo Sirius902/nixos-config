@@ -15,3 +15,5 @@ changing anything it covers.
   rules `checks.patch-urls` enforces.
 - `docs/steam-deck.md` — a runbook: how the Deck's Home Manager generation is
   built, pushed and activated, and what its launchers set and unset.
+- `docs/microvms.md` — a runbook: adding, migrating, running and removing
+  hee-ho's servers, each in a microVM; every preflight failure points here.
