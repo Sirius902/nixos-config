@@ -457,7 +457,7 @@ _: [
       src = prevAttrs.src.override {
         tag = null;
         rev = "a26cac679b3f95fee5b591689adec9e53b62adfb";
-        hash = "sha256-IMEOpHFz7UFM90f3yO1iOQiMIHwYMdsxKddtKbbg3bI=";
+        hash = "sha256-0cJvV1SXHngAC2Pfk87Nh7JzzxIvchta+gWx71er2CA=";
 
         postCheckout = ''
           cd "$out"
@@ -472,14 +472,12 @@ _: [
             abseil-cpp \
             cpp-httplib \
             discord-rpc \
-            freetype \
             glslang \
             hwinfo \
             imgui \
             libressl \
             libusb \
             minimp3 \
-            miniupnp \
             protobuf \
             sirit \
             spdlog \
@@ -531,7 +529,7 @@ _: [
       src = prevAttrs.src.override {
         tag = null;
         rev = "ecc85072dae45c05628934fdb6b3aa036e9f1d4b";
-        hash = "sha256-ORg9JjCAgRTrpp58ekpDFABYf1W8q9ejpzrGdapPABQ=";
+        hash = "sha256-WLtQ/VdzJp7I9mDPkX0bhxkimm2moAD7PND7k03F2Fg=";
 
         postCheckout = ''
           cd "$out"
@@ -542,9 +540,7 @@ _: [
           git -C externals submodule update --init --depth 1 \
             json \
             spdlog \
-            volk \
-            zarchive \
-            zstd
+            volk
         '';
       };
 
