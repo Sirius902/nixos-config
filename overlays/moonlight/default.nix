@@ -6,17 +6,13 @@ final: prev: {
       tag = null;
       hash = "sha256-E51fkzzqe1nZt3S/9f0zJWEo5XKQ23A7Bllqrd/Cndc=";
     };
-    patches = [
-      (final.fetchurl {
-        name = "disable_updates.patch";
-        url = "https://raw.githubusercontent.com/NixOS/nixpkgs/df14c8e0a9120b0702e89fed5b2c908de6e0b9f4/pkgs/by-name/mo/moonlight/disable_updates.patch";
-        sha256 = "sha256-J2CCzLd9TEhdmEt3Zlh2cbKFx8kapROMpAEZVCcQjVg=";
-      })
-      # TODO(Sirius902) Drop once upstream moonlight has its own fixes for these.
-      ../../patches/moonlight/fix-settings-entry-and-stale-finds.patch
-    ];
+    patches =
+      (prevAttrs.patches or [])
+      ++ [
+        # TODO(Sirius902) Drop once upstream moonlight has its own fixes for these.
+        ../../patches/moonlight/fix-settings-entry-and-stale-finds.patch
+      ];
     pnpmDeps = prevAttrs.pnpmDeps.override {
-      fetcherVersion = 3;
       hash = "sha256-g1wlpbUlGwE3Chrry89gJX2+3+jY/jyXYwiAWAfoHlA=";
     };
 
