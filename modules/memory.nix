@@ -1,7 +1,7 @@
 # Shared memory profile: compressed-RAM swap (zram) in place of disk swap, a
 # swappiness tuned for in-memory swap, and an optional ZFS ARC cap.
 #
-# Inert until a host sets `my.memory.enable = true` (same pattern as my.jdk).
+# Inert until a host sets `my.memory.enable = true`.
 # Declare the host's RAM with `my.memory.ramGiB` and the rest is derived; every
 # derived value is still individually overridable.
 #

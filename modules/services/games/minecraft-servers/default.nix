@@ -31,9 +31,13 @@
 
       jdk = lib.mkOption {
         type = lib.types.package;
+        default = config.my.jdk;
+        defaultText = lib.literalExpression "config.my.jdk";
         description = ''
-          JDK/JRE used to launch the server; placed on PATH for `start.sh`. MUST
-          match the Minecraft version (1.12 -> 8, 1.20.x -> 17, 1.21 -> 21).
+          JDK/JRE used to launch the server; placed on PATH for `start.sh`.
+          Set it for a server whose Minecraft or loader needs another Java:
+          1.12 runs only on 8, and a loader's bundled ASM caps how new a
+          Java it can read.
         '';
       };
 

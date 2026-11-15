@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{
   my.microvms.atm10 = {
     vcpu = 8;
     memory = 21504; # MiB: -Xmx16G heap + ~5 GiB JVM overhead for the pack + guest
@@ -9,6 +9,6 @@
       path = "/media/data/mc/servers/atm10";
       snapshots = true;
     };
-    guest.services.minecraft-servers.servers.atm10.jdk = pkgs.graalvmPackages.graalvm-oracle;
+    guest.services.minecraft-servers.servers.atm10 = {};
   };
 }

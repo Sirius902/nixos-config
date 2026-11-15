@@ -20,7 +20,6 @@
   my.microvmOwner = "chris";
 
   my.tailscale.enable = true;
-  my.jdk = pkgs.graalvmPackages.graalvm-oracle;
   my.memory = {
     enable = true;
     ramGiB = 32;

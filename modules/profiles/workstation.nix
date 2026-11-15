@@ -20,7 +20,6 @@
   my.secureBoot.enable = lib.mkDefault true;
   my.docker.enable = lib.mkDefault false;
   my.tailscale.enable = lib.mkDefault true;
-  my.jdk = lib.mkDefault pkgs.graalvmPackages.graalvm-oracle;
 
   # Machines I sit at keep unprivileged `zfs list`/`zfs get`; see modules/zfs.nix.
   users.groups = lib.mkIf config.boot.zfs.enabled {

@@ -44,6 +44,7 @@
   '';
 in {
   imports = [
+    ../jdk.nix
     ./guest-options.nix
     ../services/games/anchor-server
     ../services/games/minecraft-servers
