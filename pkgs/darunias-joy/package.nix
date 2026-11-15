@@ -15,7 +15,18 @@ stdenvNoCC.mkDerivation {
     owner = "DaruniasJoy";
     repo = "OoT-Custom-Sequences";
     rev = "1f08093f06aa81b20ef41d1f09af31451e61fde5";
-    hash = "sha256-KU+9f+UY3WVqjKsTrf/Tu+nK3pbhtgmH5ytwep2tFuw=";
+    hash = "sha256-LJNQlrkv8x8XaO7J5lCFZRKeoyTPuhM6237PW+Dwm4Y=";
+    # TODO(Sirius902) Drop once Partners in Time's tracks share one casing of
+    # its folder. A case-insensitive filesystem unpacks both into the casing it
+    # meets first, so do the same where they unpack as two, to keep one hash.
+    postFetch = ''
+      kept="$out/data/Music/Mario & Luigi Partners In Time"
+      other="$out/data/Music/Mario & Luigi Partners in Time"
+      if [ ! "$kept" -ef "$other" ]; then
+        mv -t "$kept" "$other"/*
+        rmdir "$other"
+      fi
+    '';
   };
 
   nativeBuildInputs = [sequence-otrizer];
