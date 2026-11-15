@@ -1,3 +1,6 @@
+# Sven Co-op dedicated server for a microVM guest (modules/microvms). It
+# updates itself anonymously before every start; `vm console` reaches its
+# console, and all output goes to the journal.
 {
   config,
   lib,
@@ -5,18 +8,11 @@
   ...
 }: let
   cfg = config.services.svends;
+
+  fifo = "/run/svends.stdin";
 in {
   options.services.svends = {
     enable = lib.mkEnableOption "svends";
-
-    autoStart = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = ''
-        Whether to start the server on boot (sets `wantedBy`). When false, the
-        unit still exists and is started on demand with `systemctl start svends`.
-      '';
-    };
 
     port = lib.mkOption {
       type = lib.types.port;
@@ -44,9 +40,11 @@ in {
 
     dataDir = lib.mkOption {
       type = lib.types.path;
-      default = "/var/lib/svends";
+      default = config.my.vm.dataPath;
+      defaultText = lib.literalExpression "config.my.vm.dataPath";
       description = ''
-        Directory to store Sven Co-op state/data files.
+        Directory the server is installed in, and the service user's home,
+        where steamcmd keeps its own install.
       '';
     };
 
@@ -66,27 +64,12 @@ in {
         read at service start so the contents stay out of the Nix store.
       '';
     };
-
-    openFirewall = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = ''
-        Whether to open ports in the firewall for the server.
-      '';
-    };
   };
 
   config = lib.mkIf cfg.enable {
-    networking.firewall = lib.mkIf cfg.openFirewall {
-      allowedUDPPorts = [cfg.port] ++ lib.optional (!cfg.insecure) 26900; # Game traffic, VAC
-      allowedTCPPorts = [cfg.port];
-    };
-
     users.users.svends = {
       description = "Sven Co-op server service user";
       home = cfg.dataDir;
-      createHome = true;
-      homeMode = "0770";
       isSystemUser = true;
       group = "svends";
     };
@@ -97,7 +80,10 @@ in {
       description = "Update Sven Co-op Dedicated Server";
       after = ["network-online.target"];
       wants = ["network-online.target"];
+      unitConfig.RequiresMountsFor = [cfg.dataDir];
 
+      # Once per start and without retries: the server starts when this ends
+      # either way, and a retry would update the files under it.
       serviceConfig = {
         Type = "oneshot";
 
@@ -105,63 +91,24 @@ in {
         Group = "svends";
         WorkingDirectory = cfg.dataDir;
 
+        # No `validate`: it would revert shipped files edited since, such as
+        # admins.txt.
         ExecStart = pkgs.writeShellScript "svends-update-start" ''
           ${pkgs.steamcmd}/bin/steamcmd \
             +@ShutdownOnFailedCommand 1 \
             +@NoPromptForPassword 1 \
             +force_install_dir ${cfg.dataDir} \
             +login anonymous \
-            +app_update 276060 validate \
+            +app_update 276060 \
             +quit
         '';
-
-        Restart = "on-failure";
-        RestartSec = "5s";
-        StartLimitBurst = 2;
-
-        # Hardening
-        ProtectSystem = "strict";
-        ReadWritePaths = [cfg.dataDir];
-        ProtectHome = true;
-        PrivateTmp = true;
-        PrivateDevices = true;
-
-        CapabilityBoundingSet = [""];
-        LockPersonality = true;
-        NoNewPrivileges = true;
-        ProtectClock = true;
-        ProtectControlGroups = true;
-        ProtectHostname = true;
-        ProtectKernelLogs = true;
-        ProtectKernelModules = true;
-        ProtectKernelTunables = true;
-        ProtectProc = "invisible";
-        RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
-        RestrictNamespaces = ["user" "mnt"];
-        RestrictRealtime = true;
-        RestrictSUIDSGID = true;
-        SystemCallArchitectures = ["native" "x86"];
-        SystemCallErrorNumber = "EPERM";
-        SystemCallFilter = [
-          "@system-service"
-          "@mount"
-          "~@clock"
-          "~@cpu-emulation"
-          "~@debug"
-          "~@module"
-          "~@obsolete"
-          "~@raw-io"
-          "~@reboot"
-          "~@swap"
-        ];
-        UMask = "0007";
       };
     };
 
     systemd.sockets.svends = {
       bindsTo = ["svends.service"];
       socketConfig = {
-        ListenFIFO = "/run/svends.stdin";
+        ListenFIFO = fifo;
         SocketMode = "0660";
         SocketUser = "svends";
         SocketGroup = "svends";
@@ -172,13 +119,15 @@ in {
 
     systemd.services.svends = {
       description = "Sven Co-op Dedicated Server";
-      wantedBy = lib.optionals cfg.autoStart ["multi-user.target"];
+      wantedBy = ["multi-user.target"];
       requires = ["svends.socket"];
+      wants = ["svends-update.service"];
       after = [
         "network.target"
         "svends.socket"
         "svends-update.service"
       ];
+      unitConfig.RequiresMountsFor = [cfg.dataDir] ++ lib.optional (cfg.extraCommandLineFile != null) cfg.extraCommandLineFile;
 
       serviceConfig = {
         User = "svends";
@@ -193,8 +142,6 @@ in {
         StandardOutput = "journal";
         StandardError = "journal";
 
-        CPUQuota = "200%";
-        MemoryMax = "4G";
         TasksMax = 128;
         LimitNOFILE = 4096;
 
@@ -212,7 +159,7 @@ in {
         '';
 
         ExecStop = pkgs.writeShellScript "svends-stop" ''
-          echo quit > ${config.systemd.sockets.svends.socketConfig.ListenFIFO}
+          echo quit > ${fifo}
 
           # Wait for the PID of the server to disappear before returning,
           # so systemd doesn't attempt to SIGKILL it.
@@ -223,46 +170,14 @@ in {
 
         Restart = "always";
         SuccessExitStatus = "0 130";
+      };
+    };
 
-        # Hardening
-        ProtectSystem = "strict";
-        ReadWritePaths = [cfg.dataDir];
-
-        CapabilityBoundingSet = [""];
-        DeviceAllow = [""];
-        LockPersonality = true;
-        NoNewPrivileges = true;
-        PrivateDevices = true;
-        PrivateTmp = true;
-        PrivateUsers = true;
-        ProtectClock = true;
-        ProtectControlGroups = true;
-        ProtectHome = true;
-        ProtectHostname = true;
-        ProtectKernelLogs = true;
-        ProtectKernelModules = true;
-        ProtectKernelTunables = true;
-        ProtectProc = "invisible";
-        RemoveIPC = true;
-        RestrictAddressFamilies = ["AF_INET" "AF_INET6"];
-        RestrictNamespaces = ["user" "mnt"];
-        RestrictRealtime = true;
-        RestrictSUIDSGID = true;
-        SystemCallArchitectures = ["native" "x86"];
-        SystemCallErrorNumber = "EPERM";
-        SystemCallFilter = [
-          "@system-service"
-          "@mount"
-          "~@clock"
-          "~@cpu-emulation"
-          "~@debug"
-          "~@module"
-          "~@obsolete"
-          "~@raw-io"
-          "~@reboot"
-          "~@swap"
-        ];
-        UMask = "0007";
+    my.vm = {
+      dataUser = "svends";
+      console = {
+        unit = "svends.service";
+        input = fifo;
       };
     };
   };

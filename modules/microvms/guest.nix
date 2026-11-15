@@ -47,6 +47,8 @@ in {
     ./guest-options.nix
     ../services/games/anchor-server
     ../services/games/minecraft-servers
+    ../services/games/svends
+    ../services/games/synergyds
   ];
 
   microvm = {

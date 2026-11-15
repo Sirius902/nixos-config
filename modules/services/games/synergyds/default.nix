@@ -1,3 +1,6 @@
+# Synergy dedicated server for a microVM guest (modules/microvms). Nothing
+# updates it: downloading Synergy takes the owner's Steam login. `vm console`
+# reaches its console, and all output goes to the journal.
 {
   config,
   lib,
@@ -5,18 +8,11 @@
   ...
 }: let
   cfg = config.services.synergyds;
+
+  fifo = "/run/synergyds.stdin";
 in {
   options.services.synergyds = {
     enable = lib.mkEnableOption "synergyds";
-
-    autoStart = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = ''
-        Whether to start the server on boot (sets `wantedBy`). When false, the
-        unit still exists and is started on demand with `systemctl start synergyds`.
-      '';
-    };
 
     port = lib.mkOption {
       type = lib.types.port;
@@ -44,9 +40,10 @@ in {
 
     dataDir = lib.mkOption {
       type = lib.types.path;
-      default = "/var/lib/synergyds";
+      default = config.my.vm.dataPath;
+      defaultText = lib.literalExpression "config.my.vm.dataPath";
       description = ''
-        Directory to store Synergy state/data files.
+        The service user's home, holding the Steam install with Synergy.
       '';
     };
 
@@ -66,108 +63,22 @@ in {
         read at service start so the contents stay out of the Nix store.
       '';
     };
-
-    openFirewall = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = ''
-        Whether to open ports in the firewall for the server.
-      '';
-    };
   };
 
   config = lib.mkIf cfg.enable {
-    networking.firewall = lib.mkIf cfg.openFirewall {
-      allowedUDPPorts = [cfg.port] ++ lib.optional (!cfg.insecure) 26900; # Game traffic, VAC
-      allowedTCPPorts = [cfg.port];
-    };
-
     users.users.synergyds = {
       description = "Synergy server service user";
       home = cfg.dataDir;
-      createHome = true;
-      homeMode = "0770";
       isSystemUser = true;
       group = "synergyds";
     };
 
     users.groups.synergyds = {};
 
-    systemd.services.synergyds-update = {
-      description = "Update Synergy Dedicated Server";
-      after = ["network-online.target"];
-      wants = ["network-online.target"];
-
-      serviceConfig = {
-        Type = "oneshot";
-
-        User = "synergyds";
-        Group = "synergyds";
-        WorkingDirectory = cfg.dataDir;
-
-        # TODO(Sirius902) This isn't going to work, we need to be auth'd as my
-        # Steam account to download the games.
-        ExecStart = pkgs.writeShellScript "synergyds-update-start" ''
-          ${pkgs.steamcmd}/bin/steamcmd \
-            +@ShutdownOnFailedCommand 1 \
-            +@NoPromptForPassword 1 \
-            +force_install_dir ${cfg.dataDir} \
-            +login anonymous \
-            +app_update 220 \
-            +app_update 420 \
-            +app_update 380 \
-            +app_update 17520 validate \
-            +quit
-        '';
-
-        Restart = "on-failure";
-        RestartSec = "5s";
-        StartLimitBurst = 2;
-
-        # Hardening
-        ProtectSystem = "strict";
-        ReadWritePaths = [cfg.dataDir];
-        ProtectHome = true;
-        PrivateTmp = true;
-        PrivateDevices = true;
-
-        CapabilityBoundingSet = [""];
-        LockPersonality = true;
-        NoNewPrivileges = true;
-        ProtectClock = true;
-        ProtectControlGroups = true;
-        ProtectHostname = true;
-        ProtectKernelLogs = true;
-        ProtectKernelModules = true;
-        ProtectKernelTunables = true;
-        ProtectProc = "invisible";
-        RemoveIPC = true;
-        RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
-        RestrictNamespaces = ["user" "mnt"];
-        RestrictRealtime = true;
-        RestrictSUIDSGID = true;
-        SystemCallArchitectures = ["native" "x86"];
-        SystemCallErrorNumber = "EPERM";
-        SystemCallFilter = [
-          "@system-service"
-          "@mount"
-          "~@clock"
-          "~@cpu-emulation"
-          "~@debug"
-          "~@module"
-          "~@obsolete"
-          "~@raw-io"
-          "~@reboot"
-          "~@swap"
-        ];
-        UMask = "0007";
-      };
-    };
-
     systemd.sockets.synergyds = {
       bindsTo = ["synergyds.service"];
       socketConfig = {
-        ListenFIFO = "/run/synergyds.stdin";
+        ListenFIFO = fifo;
         SocketMode = "0660";
         SocketUser = "synergyds";
         SocketGroup = "synergyds";
@@ -178,13 +89,13 @@ in {
 
     systemd.services.synergyds = {
       description = "Synergy Dedicated Server";
-      wantedBy = lib.optionals cfg.autoStart ["multi-user.target"];
+      wantedBy = ["multi-user.target"];
       requires = ["synergyds.socket"];
       after = [
         "network.target"
         "synergyds.socket"
-        "synergyds-update.service"
       ];
+      unitConfig.RequiresMountsFor = [cfg.dataDir] ++ lib.optional (cfg.extraCommandLineFile != null) cfg.extraCommandLineFile;
 
       serviceConfig = {
         User = "synergyds";
@@ -203,8 +114,6 @@ in {
         StandardOutput = "journal";
         StandardError = "journal";
 
-        CPUQuota = "200%";
-        MemoryMax = "4G";
         TasksMax = 128;
         LimitNOFILE = 4096;
 
@@ -238,7 +147,7 @@ in {
           '';
 
         ExecStop = pkgs.writeShellScript "synergyds-stop" ''
-          echo quit > ${config.systemd.sockets.synergyds.socketConfig.ListenFIFO}
+          echo quit > ${fifo}
 
           # Wait for the PID of the server to disappear before returning,
           # so systemd doesn't attempt to SIGKILL it.
@@ -249,45 +158,14 @@ in {
 
         Restart = "always";
         SuccessExitStatus = "0 130";
+      };
+    };
 
-        # Hardening
-        ProtectSystem = "strict";
-        ReadWritePaths = [cfg.dataDir];
-
-        CapabilityBoundingSet = [""];
-        DeviceAllow = [""];
-        LockPersonality = true;
-        NoNewPrivileges = true;
-        PrivateDevices = true;
-        PrivateTmp = true;
-        PrivateUsers = true;
-        ProtectClock = true;
-        ProtectControlGroups = true;
-        ProtectHome = true;
-        ProtectHostname = true;
-        ProtectKernelLogs = true;
-        ProtectKernelModules = true;
-        ProtectKernelTunables = true;
-        ProtectProc = "invisible";
-        RestrictAddressFamilies = ["AF_INET" "AF_INET6"];
-        RestrictNamespaces = ["user" "mnt"];
-        RestrictRealtime = true;
-        RestrictSUIDSGID = true;
-        SystemCallArchitectures = ["native" "x86"];
-        SystemCallErrorNumber = "EPERM";
-        SystemCallFilter = [
-          "@system-service"
-          "@mount"
-          "~@clock"
-          "~@cpu-emulation"
-          "~@debug"
-          "~@module"
-          "~@obsolete"
-          "~@raw-io"
-          "~@reboot"
-          "~@swap"
-        ];
-        UMask = "0007";
+    my.vm = {
+      dataUser = "synergyds";
+      console = {
+        unit = "synergyds.service";
+        input = fifo;
       };
     };
   };

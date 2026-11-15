@@ -10,6 +10,8 @@
     ./vms/anchor.nix
     ./vms/atm10.nix
     ./vms/rl2.nix
+    ./vms/svends.nix
+    ./vms/synergyds.nix
     ./eno2-e1000e-hang-workaround.nix
   ];
 
@@ -22,24 +24,6 @@
   my.memory = {
     enable = true;
     ramGiB = 32;
-  };
-
-  users.users.chris.extraGroups = ["svends" "synergyds"];
-
-  services.svends = {
-    enable = true;
-    autoStart = false;
-    openFirewall = true;
-    insecure = true;
-  };
-
-  sops.secrets.srcdsExtraCommandLine = {};
-  services.synergyds = {
-    enable = true;
-    autoStart = false;
-    openFirewall = true;
-    insecure = true;
-    extraCommandLineFile = config.sops.secrets.srcdsExtraCommandLine.path;
   };
 
   # 32069 is hkmp; the microVMs open their own ports (vms/).
