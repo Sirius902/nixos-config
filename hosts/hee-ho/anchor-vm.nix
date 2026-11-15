@@ -43,7 +43,7 @@ in {
       pkgs,
       ...
     }: {
-      imports = [anchorServer];
+      imports = [anchorServer ../../modules/microvms/guest-options.nix];
 
       microvm = {
         hypervisor = "cloud-hypervisor";
@@ -66,9 +66,7 @@ in {
       services.anchor-server = {
         enable = true;
         package = inputs.secrets.lib.overrideAnchorServer lib pkgs.anchor-server;
-        hardening.enable = false; # the hypervisor is the boundary; in-guest hardening is redundant
         inherit dataDir;
-        autoStart = true; # the VM is the gate, so the server starts with it
       };
 
       users.users.anchor-server.uid = anchorId;

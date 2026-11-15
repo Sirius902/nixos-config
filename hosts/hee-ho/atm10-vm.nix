@@ -51,7 +51,7 @@ in {
   microvm.vms.atm10-vm = {
     autostart = false; # started on demand; it no longer has to hold 21.5 GiB 24/7
     config = {pkgs, ...}: {
-      imports = [mcServers];
+      imports = [mcServers ../../modules/microvms/guest-options.nix];
 
       microvm = {
         hypervisor = "cloud-hypervisor";
@@ -76,11 +76,8 @@ in {
       services.minecraft-servers = {
         enable = true;
         servers.atm10 = {
-          hardening.enable = false; # the hypervisor is the boundary; in-guest hardening is redundant
           jdk = pkgs.graalvmPackages.graalvm-oracle;
           inherit dataDir;
-          port = 25565;
-          autoStart = true; # the VM is the gate, so the server starts with it
         };
       };
 
