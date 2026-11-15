@@ -292,64 +292,6 @@ _: [
       )
     else {})
 
-  # Add graalvm-ce_8.
-  (final: prev: let
-    srcs = {
-      "x86_64-linux" = {
-        url = "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.3.1/graalvm-ce-java8-linux-amd64-21.3.1.tar.gz";
-        hash = "sha256-uey9VC3h7Qo9pGpinyJmqIIDJpj1/LxU2JI3K5GJsO0=";
-      };
-    };
-  in {
-    graalvmPackages =
-      (prev.graalvmPackages or {})
-      // {
-        graalvm-ce_8 = prev.graalvmPackages.graalvm-ce.overrideAttrs (prevAttrs: {
-          version = "8";
-          src = final.fetchurl srcs.${final.stdenv.hostPlatform.system};
-          meta =
-            prevAttrs.meta
-            // {
-              platforms = builtins.attrNames srcs;
-            };
-          postInstall = ''
-            # jni.h expects jni_md.h to be in the header search path.
-            ln -sf $out/include/linux/*_md.h $out/include/
-
-            mkdir -p $out/share
-            # move files in $out like LICENSE.txt
-            find $out/ -maxdepth 1 -type f -exec mv {} $out/share \;
-
-            # copy-paste openjdk's preFixup
-            # Set JAVA_HOME automatically.
-            mkdir -p $out/nix-support
-            cat > $out/nix-support/setup-hook << EOF
-            if [ -z "\''${JAVA_HOME-}" ]; then export JAVA_HOME=$out; fi
-            EOF
-          '';
-
-          installCheckPhase = ''
-            runHook preInstallCheck
-
-            echo ${final.lib.escapeShellArg ''
-              public class HelloWorld {
-                public static void main(String[] args) {
-                  System.out.println("Hello World");
-                }
-              }
-            ''} > HelloWorld.java
-            $out/bin/javac HelloWorld.java
-
-            # run on JVM with Graal Compiler
-            echo "Testing GraalVM"
-            $out/bin/java -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI -XX:+UseJVMCICompiler HelloWorld | fgrep 'Hello World'
-
-            runHook postInstallCheck
-          '';
-        });
-      };
-  })
-
   # glfw3-minecraft backs prismlauncher's "Use system installation of GLFW"
   # tweak. GLFW 3.4 (release) aborts the whole game with SIGABRT the instant a
   # file is dragged onto the window on Wayland: its wl_data_offer listener wires

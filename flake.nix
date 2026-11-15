@@ -131,10 +131,7 @@
 
         ourPackages = lib.mapAttrs (name: _: pkgs.${name}) allPackages;
 
-        packageSet =
-          ourPackages
-          // overlayPackages
-          // {inherit (pkgs.graalvmPackages) graalvm-ce_8;};
+        packageSet = ourPackages // overlayPackages;
 
         # `nix flake check` builds `checks` but only evaluates `packages`, so a
         # `passthru.tests` entry runs nowhere until it is lifted here. Only
