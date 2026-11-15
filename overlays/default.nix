@@ -507,17 +507,8 @@ _: [
           (final.lib.cmakeBool "SPDLOG_FMT_EXTERNAL" true)
         ];
 
-      nativeBuildInputs =
-        (prevAttrs.nativeBuildInputs or [])
-        ++ [
-          final.python3
-        ];
-
-      # TODO(Sirius902) Use nixpkgs' zarchive again once it has
-      # ZArchiveReader::OpenFromStream, which shadPS4 calls ahead of any
-      # ZArchive release.
       buildInputs =
-        final.lib.remove final.zarchive (prevAttrs.buildInputs or [])
+        (prevAttrs.buildInputs or [])
         ++ [
           final.openal-soft
         ];
@@ -540,7 +531,7 @@ _: [
         };
     });
 
-    shadps4-qtlauncher = prev.shadps4-qtlauncher.overrideAttrs (finalAttrs: prevAttrs: {
+    shadps4-qtlauncher = prev.shadps4-qtlauncher.overrideAttrs (prevAttrs: {
       version = "0-unstable-2026-11-06";
 
       src = prevAttrs.src.override {
@@ -563,24 +554,6 @@ _: [
         '';
       };
 
-      postPatch = ''
-        substituteInPlace src/common/scm_rev.cpp.in \
-          --replace-fail @APP_VERSION@ ${finalAttrs.version} \
-          --replace-fail @GIT_REV@ $(cat COMMIT) \
-          --replace-fail @GIT_BRANCH@ ${finalAttrs.version} \
-          --replace-fail @GIT_DESC@ nixpkgs \
-          --replace-fail @BUILD_DATE@ $(cat SOURCE_DATE_EPOCH)
-
-        substituteInPlace src/common/versions.cpp \
-          --replace-fail "@shadps4-qt@" "$out"
-
-        substituteInPlace src/qt_gui/gui_settings.cpp \
-          --replace-fail "@shadps4-qt@" "$out"
-
-        substituteInPlace src/qt_gui/version_dialog.cpp \
-          --replace-fail "@shadps4-qt@" "$out"
-      '';
-
       cmakeFlags =
         (prevAttrs.cmakeFlags or [])
         ++ [
@@ -592,11 +565,6 @@ _: [
         ++ [
           final.openal-soft
         ];
-
-      patches =
-        builtins.filter
-        (p: !final.lib.hasSuffix "version-directory.patch" (baseNameOf (toString p)))
-        prevAttrs.patches;
 
       passthru =
         (prevAttrs.passthru or {})
