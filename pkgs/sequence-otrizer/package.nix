@@ -3,6 +3,7 @@
   bzip2,
   cmake,
   fetchFromGitHub,
+  fetchpatch,
   glew,
   lib,
   libGL,
@@ -44,6 +45,12 @@ stdenv.mkDerivation (finalAttrs: let
     patches = [
       ./libultraship-source-date-epoch.patch
       ./libultraship-fmt-compile-time-check.patch
+      # Fix CrashHandler compile on arm64-linux https://github.com/Kenix3/libultraship/pull/105
+      (fetchpatch {
+        name = "libultraship-crash-handler-arm64-linux-fix.patch";
+        url = "https://github.com/Kenix3/libultraship/commit/f20f8415a08cdec0ef6d8384fbfdaed479049a4f.diff";
+        hash = "sha256-9YUYK4xGNoT14hR9Nap/wyJZhxdZ9otKewxDmbt29qA=";
+      })
     ];
   };
 in {
