@@ -37,6 +37,7 @@ in {
 
   microvm.vms.anchor-vm = {
     autostart = true;
+    restartIfChanged = false;
     config = {
       lib,
       pkgs,
