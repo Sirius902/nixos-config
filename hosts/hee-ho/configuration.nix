@@ -7,12 +7,16 @@
     ./hardware-configuration.nix
     ../../modules/nixos/standard.nix
     ../../modules/microvm-host.nix
+    ../../modules/microvms
     ./anchor-vm.nix
     ./atm10-vm.nix
+    ./vms/rl2.nix
     ./eno2-e1000e-hang-workaround.nix
   ];
 
   networking.hostId = "b0e08309";
+
+  my.microvmOwner = "chris";
 
   my.microvmHost = {
     enable = true;
