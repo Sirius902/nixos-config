@@ -127,8 +127,8 @@ in {
       gimp3
       imhex
       inkscape
-      jetbrains.idea
-      jetbrains.rider
+      intellij-idea
+      rider
       (ghidra.withExtensions (_: [
         ghidra-extensions.gamecube-loader
         ghidra-extensions.xex-loader-wv
