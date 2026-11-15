@@ -90,6 +90,7 @@ in {
 
     # For wgnord
     services.resolved.enable = true;
+    services.wgnord.enable = true;
 
     # melonds LAN port
     networking.firewall.allowedTCPPorts = [7064];
