@@ -41,9 +41,12 @@ stdenvNoCC.mkDerivation {
     }
 
     # TODO(Sirius902) Drop once Alice in Wonderland's .seq is cased the way its
-    # .meta is, which SequenceOTRizer needs to pair the two.
+    # .meta is, which SequenceOTRizer needs to pair the two. The rename steps
+    # through a third name, as a case-insensitive filesystem takes both casings
+    # for the same file.
     seqDir="data/Music/Touhou 5 Mystic Square/Alice in Wonderland"
-    mv "$seqDir/Touhou 5 - Alice in wonderland.seq" "$seqDir/Touhou 5 - Alice in Wonderland.seq"
+    mv "$seqDir/Touhou 5 - Alice in wonderland.seq" "$seqDir/recase.tmp"
+    mv "$seqDir/recase.tmp" "$seqDir/Touhou 5 - Alice in Wonderland.seq"
 
     # TODO(Sirius902) Drop once the Lunatic Eyes ~ Invisible Full Moon copy is
     # titled as the alternate arrangement it is. Its .seq data is distinct from
