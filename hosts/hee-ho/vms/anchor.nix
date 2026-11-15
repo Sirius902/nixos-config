@@ -11,7 +11,6 @@
     # variable or config file reaches it.
     ports.tcp = [43383];
     egress = "none";
-    autostart = true;
     oomScoreAdjust = 500;
     data = {
       dataset = "data/srv/anchor";
