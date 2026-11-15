@@ -75,5 +75,12 @@ commits written by hand. A bump with a hand-written fix folded in is no
 longer only tooling output and does take the trailer, which is what marks it
 apart from the generated ones around it.
 
+Where nixpkgs' automation/AI policy applies, the agent trailer is the
+`Assisted-by:` form that policy mandates instead of `Co-Authored-By:`,
+naming the tool and the model with its version, such as
+`Assisted-by: Claude Code (Claude Opus 5.5)`. The policy defines where it
+applies and what else it requires:
+https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md#automationai-policy
+
 The Never include rules apply to trailers too. `Fixes: owner/repo#N` is out
 for the same reason its prose form is.
