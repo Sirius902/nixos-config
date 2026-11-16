@@ -1,20 +1,20 @@
 {
-  "version": "25.0.3",
+  "version": "25.5.5.0.3",
   "platforms": {
     "aarch64-darwin": {
-      "name": "graalvm-jdk-25.0.3_macos-aarch64_bin.tar.gz",
-      "url": "https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.3_macos-aarch64_bin.tar.gz",
-      "hash": "sha256-o/Aih4g9drGLK4DeVrC+Vymss8BLgdSwsP38/ZNSKPM="
+      "name": "graalvm-jdk-25i5-25.0.5.0.3_macos-aarch64_bin.tar.gz",
+      "url": "https://gds.oracle.com/api/20220101/artifacts/BF6672CC60414825B2A46D483FF0C3D7/content",
+      "hash": "sha256-PFHY72LGPrhFRyfzLWeq/zmvq+TJCzyBHBFUcCnBCBk="
     },
     "aarch64-linux": {
-      "name": "graalvm-jdk-25.0.3_linux-aarch64_bin.tar.gz",
-      "url": "https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.3_linux-aarch64_bin.tar.gz",
-      "hash": "sha256-LG5e9jCExfOcZ8v1wz0jyFLfhI0QzVDXbmZ//5yc8rw="
+      "name": "graalvm-jdk-25i5-25.0.5.0.3_linux-aarch64_bin.tar.gz",
+      "url": "https://gds.oracle.com/api/20220101/artifacts/4975F92EBD2744B8A644B0EFBC9573E4/content",
+      "hash": "sha256-xOQjzb8hljMp1Pt4Rv3CI23NnLPplkhNBsO202O1ioM="
     },
     "x86_64-linux": {
-      "name": "graalvm-jdk-25.0.3_linux-x64_bin.tar.gz",
-      "url": "https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.3_linux-x64_bin.tar.gz",
-      "hash": "sha256-G1KWYTw9ElIdWU4cmTAt+I2OHwfXSreYPb9XIAC5LHw="
+      "name": "graalvm-jdk-25i5-25.0.5.0.3_linux-x64_bin.tar.gz",
+      "url": "https://gds.oracle.com/api/20220101/artifacts/D95C37081B8A44CDADD213FEB1F8FB00/content",
+      "hash": "sha256-kFgvQFy4moJaQyl82sx/QnzgQDmiSfXw/HXJW1BgCwg="
     }
   }
 }
