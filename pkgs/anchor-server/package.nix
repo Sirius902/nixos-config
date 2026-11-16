@@ -6,13 +6,13 @@
 }:
 buildGoModule {
   pname = "anchor-server";
-  version = "0-unstable-2026-08-19";
+  version = "0-unstable-2026-11-15";
 
   src = fetchFromGitHub {
     owner = "garrettjoecox";
     repo = "anchor";
-    rev = "bf7b43c10b19428ceba54772c7bae3abca44a345";
-    hash = "sha256-eUogAhS/WGDK9wO5RtLZXlyj6CJIwjFSOIrTqjMXZeU=";
+    rev = "55971905898c5716d9e14896034b02d676eeda36";
+    hash = "sha256-haS5/yqIEZW2FTmOFw/Iwkae0Uxu8JmGBx+N4c+eRFI=";
   };
 
   __structuredAttrs = true;
