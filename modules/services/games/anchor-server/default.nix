@@ -22,8 +22,8 @@ in {
       default = config.my.vm.dataPath;
       defaultText = lib.literalExpression "config.my.vm.dataPath";
       description = ''
-        Server working directory. The server reads `stats.json` and rewrites it
-        relative to the CWD, every 30s and on shutdown.
+        Server working directory. Anything the server keeps across restarts is
+        written relative to it.
       '';
     };
   };
