@@ -207,6 +207,7 @@ _: [
 
   (import ../pkgs/overlay.nix)
   (import ./claude-code)
+  (import ./graalvm-oracle)
   (import ./moonlight)
 
   (final: prev: {
