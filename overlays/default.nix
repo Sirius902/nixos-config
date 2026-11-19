@@ -221,8 +221,12 @@ _: [
             url = "https://github.com/Mic92/nix-update/commit/35210538f0495323af4b767fb446540f6f4e851b.diff";
             hash = "sha256-HRhA7GKBqv4VgcC68DV9pXdiqYbois2hw4kCXbzCyro=";
           })
-          # https://github.com/Mic92/nix-update/issues/687
-          ../patches/nix-update/0001-copy-the-flake-into-the-store-with-nix-flake-prefetch.patch
+          # Prefetch flake sources that nix flake metadata did not copy https://github.com/Mic92/nix-update/pull/692
+          (final.fetchpatch {
+            name = "prefetch-flake-sources.patch";
+            url = "https://github.com/Mic92/nix-update/commit/d545c1fad667e573128cad0db55fdc77134a4d3c.diff";
+            hash = "sha256-CVSihQevWIwKSnjKo9ilw1hdi4a1t0xr6DunAUKSBFA=";
+          })
           # Skip unchanged versions of sources without a rev or tag https://github.com/Mic92/nix-update/pull/660
           (final.fetchpatch {
             name = "skip-unchanged-versions-without-rev-or-tag.patch";
