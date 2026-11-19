@@ -30,7 +30,7 @@ melonds.overrideAttrs (prevAttrs: {
 
   qtWrapperArgs =
     (prevAttrs.qtWrapperArgs or [])
-    ++ lib.optionals stdenv.hostPlatform.isLinux ["--set QT_QPA_PLATFORM xcb"];
+    ++ lib.optionals stdenv.hostPlatform.isLinux ["--set" "QT_QPA_PLATFORM" "xcb"];
 
   # A bare melonDS collides with nixpkgs' melonds in a profile, so rename the
   # entry point on both platforms.

@@ -320,7 +320,10 @@ _: [
         ++ final.lib.optionals final.stdenv.hostPlatform.isLinux [
           # Java is cronge, some RLCraft mod fails to initialize without fontconfig
           # in `LD_LIBRARY_PATH`.
-          "--prefix LD_LIBRARY_PATH : ${final.lib.makeLibraryPath [final.fontconfig]}"
+          "--prefix"
+          "LD_LIBRARY_PATH"
+          ":"
+          (final.lib.makeLibraryPath [final.fontconfig])
         ];
     });
   })
