@@ -14,5 +14,9 @@
     {
       file = ./discord-register-bundled-modules.patch;
     }
+    # TODO(Sirius902) Drop once nixpkgs' gradle update script stops binding nixpkgs.
+    {
+      file = ./gradle-drop-nixpkgs-bind.patch;
+    }
   ];
 }

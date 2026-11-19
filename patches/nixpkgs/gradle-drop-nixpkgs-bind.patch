@@ -1,0 +1,39 @@
+From 4e818b709d24a02837f2118ea92ebb6c283afc44 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Wed, 18 Nov 2026 21:18:05 -0800
+Subject: [PATCH] gradle: drop the nixpkgs bind from the update script
+
+The sandbox stopped evaluating nixpkgs once nix-shell was handed the
+source .drv, but the bind of `path` stayed. Nix 2.35 only hashes a
+flake or fetchTarball nixpkgs unless its outPath reaches a derivation,
+so the bound store path may not exist and bwrap aborts.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ pkgs/development/tools/build-managers/gradle/update-deps.nix | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/pkgs/development/tools/build-managers/gradle/update-deps.nix b/pkgs/development/tools/build-managers/gradle/update-deps.nix
+index b31a5c755667..64c141756ac6 100644
+--- a/pkgs/development/tools/build-managers/gradle/update-deps.nix
++++ b/pkgs/development/tools/build-managers/gradle/update-deps.nix
+@@ -5,7 +5,6 @@
+   stdenvNoCC,
+   writeTextFile,
+   writeShellScript,
+-  path,
+   bubblewrap,
+   coreutils,
+   curl,
+@@ -143,7 +142,7 @@ lib.makeOverridable (
+         bwrap \
+           --unshare-all --share-net --clearenv --chdir / --setenv HOME /homeless-shelter \
+           --tmpfs /home --bind /tmp /tmp --ro-bind /nix /nix --ro-bind /run /run --proc /proc --dev /dev  \
+-          --ro-bind ${toString path} ${toString path} --bind "$MITM_CACHE_CERT_DIR" "$MITM_CACHE_CERT_DIR" \
++          --bind "$MITM_CACHE_CERT_DIR" "$MITM_CACHE_CERT_DIR" \
+           ${builtins.concatStringsSep " " (map (x: "--setenv ${x} \"\$${x}\"") keep)} \
+           --setenv NIX_BUILD_SHELL ${runtimeShell} ${bwrapFlags} ''${BWRAP_FLAGS:-} \
+           -- ${nix}/bin/nix-shell --pure --run ${gradleScript} ${nixShellKeep} ${sourceDrvPath}
+-- 
+2.56.0
+
