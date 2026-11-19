@@ -777,7 +777,10 @@ _: [
             '';
           };
         in [
-          "--prefix LD_PRELOAD : ${allowPtrace}/lib/allow-ptrace.so"
+          "--prefix"
+          "LD_PRELOAD"
+          ":"
+          "${allowPtrace}/lib/allow-ptrace.so"
         ]);
 
       passthru =
