@@ -45,7 +45,7 @@
       rev = "f8745da6ff1ad1e7bab384bd1f9d742439278e99";
       hash = "sha256-tNFWIT9ydfozB8dWcmTMuZLCQmQudTFJIkSr0aG7S44=";
     };
-    zarchive_source = fetchFromGitHub {
+    zarchive_reader2 = fetchFromGitHub {
       owner = "Exzap";
       repo = "ZArchive";
       rev = "d2c717730092c7bf8cbb033b12fd4001b7c4d932";
@@ -101,10 +101,10 @@ in
       install -Dm644 ${./sdl2.cmake} 3rdparty/SDL2/CMakeLists.txt
 
       # A FETCHCONTENT_SOURCE_DIR override skips the declaration's PATCH_COMMAND.
-      cp -r ${fetchContentSources.zarchive_source} zarchive-src
+      cp -r ${fetchContentSources.zarchive_reader2} zarchive-src
       chmod -R u+w zarchive-src
       git -C zarchive-src apply --ignore-whitespace ../3rdparty/patches/zarchive-reader.patch
-      cmakeFlags+=("-DFETCHCONTENT_SOURCE_DIR_ZARCHIVE_SOURCE=$PWD/zarchive-src")
+      cmakeFlags+=("-DFETCHCONTENT_SOURCE_DIR_ZARCHIVE_READER2=$PWD/zarchive-src")
 
       # ThinLTO objects need lld at every link, CMake's compiler checks included, and its backend
       # otherwise sizes its thread pool to the machine rather than to the build's core limit.
@@ -146,7 +146,7 @@ in
         (lib.cmakeFeature "CMAKE_C_FLAGS_RELEASE" "-O3 -DNDEBUG -march=x86-64-v3")
         (lib.cmakeFeature "CMAKE_CXX_FLAGS_RELEASE" "-O3 -DNDEBUG -march=x86-64-v3 -flto=thin")
       ]
-      ++ lib.mapAttrsToList (name: src: lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_${lib.toUpper name}" "${src}") (removeAttrs fetchContentSources ["zarchive_source"]);
+      ++ lib.mapAttrsToList (name: src: lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_${lib.toUpper name}" "${src}") (removeAttrs fetchContentSources ["zarchive_reader2"]);
 
     ninjaFlags = ["kyty_emulator"];
 
