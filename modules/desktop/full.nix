@@ -37,9 +37,6 @@ in {
         extraPackages = with pkgs; [
           mangohud
         ];
-        extraCompatPackages = with pkgs; [
-          proton-ge-bin
-        ];
       };
       gamescope = {
         enable = true;
