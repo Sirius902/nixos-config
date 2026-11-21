@@ -71,8 +71,8 @@ would trust them.
 
    Size the VM's `memory` at the heap plus about 2 GiB for the JVM and guest.
 
-5. `vm start <name>`, then `vm console <name>` to watch it load. A mistake in
-   step 4 shows up in `vm logs <name>`.
+5. `vm start <name>`, then `vm logs -f <name>` to watch it load. A mistake in
+   step 4 shows up there.
 
 ## Migrating existing data
 
@@ -106,6 +106,10 @@ $ vm shell <name>          # root shell in the guest
 
 No doas: starting and stopping go through polkit, the console and shell
 through `vm-admin`.
+
+`vm start` returns once the guest is up, before the server has loaded;
+`vm logs -f` shows the load, steamcmd's update included. `vm console` waits
+for the server to start, then attaches; Ctrl-D while it waits is fine.
 
 `vm stop` lets the server save before the VM powers off. A Minecraft server
 reads its console only once it has loaded, so a stop during loading waits for

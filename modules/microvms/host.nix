@@ -164,11 +164,11 @@
       ++ portArg "--udp-ports" vm.ports.udp
     );
 
-  # vm-control <name> <command>: one command to the guest's control port,
-  # which answers ok.
+  # vm-control <socket> <command>: one command to the guest's control port
+  # through a vsock socket of the VM, which answers ok.
   vmControl = pkgs.writeShellScript "vm-control" ''
     printf 'CONNECT 1024\n%s\n' "$2" \
-      | ${lib.getExe pkgs.socat} -t 10 - "UNIX-CONNECT:/run/vm/$1/vsock.sock" \
+      | ${lib.getExe pkgs.socat} -t 10 - "UNIX-CONNECT:$1" \
       | ${pkgs.gnugrep}/bin/grep -qx ok
   '';
 
@@ -184,13 +184,13 @@
         exit 0
       fi
       # A snapshot of a running server is crash-consistent even unquiesced.
-      ${vmControl} ${name} quiesce || echo "vm-${name}: quiesce failed; snapshotting anyway" >&2
+      ${vmControl} /run/vm/${name}/vsock.sock quiesce || echo "vm-${name}: quiesce failed; snapshotting anyway" >&2
     '';
 
   postSnapshot = name:
     pkgs.writeShellScript "vm-${name}-post-snapshot" ''
       if ${config.systemd.package}/bin/systemctl is-active --quiet vm-${name}.service; then
-        ${vmControl} ${name} resume || echo "vm-${name}: resume failed" >&2
+        ${vmControl} /run/vm/${name}/vsock.sock resume || echo "vm-${name}: resume failed" >&2
       fi
       exit 0
     '';
@@ -351,8 +351,9 @@
         sandbox
         // vmUser name
         // {
-          Type = "notify";
-          NotifyAccess = "all";
+          # Not notify: that would give every guest process a socket to the
+          # host's PID1. Up instead once the guest's control port answers.
+          Type = "exec";
           WorkingDirectory = "/run/vm/${name}";
           BindPaths = ["/run/vm/${name}" "/dev/kvm"];
           UMask = "0027";
@@ -361,8 +362,15 @@
             echo ${runnerOf name} > /run/vm/${name}/runner
           '';
           ExecStart = "${runnerOf name}/bin/microvm-run";
+          ExecStartPost = pkgs.writeShellScript "vm-${name}-wait-guest" ''
+            : "''${MAINPID:?MAINPID not set}"
+            until ${vmControl} /run/vm/${name}/notify.vsock ping 2>/dev/null; do
+              kill -0 "$MAINPID" || exit 1 # the VM died: fail now, not at the timeout
+              ${pkgs.coreutils}/bin/sleep 0.5
+            done
+          '';
           ExecStop = "${runnerOf name}/bin/microvm-shutdown";
-          TimeoutStartSec = "10min";
+          TimeoutStartSec = "3min";
           TimeoutStopSec = "5min";
           OOMScoreAdjust = vm.oomScoreAdjust;
           DevicePolicy = "closed";

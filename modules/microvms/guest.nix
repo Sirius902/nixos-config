@@ -14,9 +14,28 @@
     ''
     else ''
       if ! systemctl is-active --quiet ${cfg.console.unit}; then
-        echo "${cfg.console.unit} is not running"
-        exit 1
+        echo "waiting for ${cfg.console.unit} to start"
+        while ! systemctl is-active --quiet ${cfg.console.unit}; do
+          # While the guest boots, the server may still be queued behind
+          # other units; after that, only a start in progress is worth
+          # waiting for.
+          case $(systemctl is-system-running) in
+            initializing | starting) ;;
+            *)
+              if [ "$(systemctl show --property=ActiveState --value ${cfg.console.unit})" != activating ]; then
+                echo "${cfg.console.unit} is not running"
+                exit 1
+              fi
+              ;;
+          esac
+          sleep 1
+        done
       fi
+      # Without the FIFO, cat > would create a plain file in its place.
+      [ -p ${cfg.console.input} ] || {
+        echo "${cfg.console.unit} has no console input"
+        exit 1
+      }
       journalctl --follow --lines=50 --output=cat --unit=${cfg.console.unit} &
       cat > ${cfg.console.input}
       kill $!
@@ -25,6 +44,9 @@
   controlHandler = pkgs.writeShellScript "vm-control" ''
     read -r cmd || exit 1
     case "$cmd" in
+      ping)
+        echo ok
+        ;;
       quiesce)
         ${cfg.quiesce}
         echo ok
