@@ -421,8 +421,11 @@
     users = vms: "{ ${lib.concatMapStringsSep ", " (n: ''"vm-${n}"'') vms} }";
     withEgress = mode: lib.filter (n: cfg.${n}.egress == mode) names;
     rules =
-      lib.optional (withEgress "internet" != [])
-      "meta skuid ${users (withEgress "internet")} ct state new ip daddr @blocked4 reject"
+      lib.optionals (withEgress "internet" != []) [
+        "meta skuid ${users (withEgress "internet")} ct state new ip daddr @blocked4 reject"
+        # This network's own public address reaches the router, not the internet.
+        "meta skuid ${users (withEgress "internet")} ct state new ip daddr @wan4 reject"
+      ]
       ++ lib.optional (withEgress "none" != [])
       "meta skuid ${users (withEgress "none")} ct state new reject"
       ++ ["meta skuid ${users names} meta nfproto ipv6 reject"];
@@ -436,12 +439,56 @@
           flags interval
           elements = { 0.0.0.0/8, 10.0.0.0/8, 100.64.0.0/10, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12, 192.0.0.0/24, 192.168.0.0/16, 198.18.0.0/15, 224.0.0.0/4, 240.0.0.0/4 }
         }
+        set wan4 {
+          type ipv4_addr
+        }
         chain output {
           type filter hook output priority filter; policy accept;
           ${lib.concatStringsSep "\n    " rules}
         }
       }
     '';
+
+  nft = lib.getExe pkgs.nftables;
+
+  wanIpFile = "/var/lib/vm-wan-ip/ip";
+  # Strict, since the address is pasted into nft's input.
+  ipv4 = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$";
+
+  # One transaction, so a reload never leaves wan4 empty and a failed load
+  # fails the unit.
+  egressApply = pkgs.writeShellScript "vm-egress-apply" ''
+    re=${lib.escapeShellArg ipv4}
+    ip=
+    [ -r ${wanIpFile} ] && read -r ip < ${wanIpFile}
+    {
+      ${pkgs.coreutils}/bin/cat ${egressRules}
+      if [[ $ip =~ $re ]]; then
+        echo "add element inet microvm wan4 { $ip }"
+      fi
+    } | ${nft} -f -
+  '';
+
+  wanIpLookup = pkgs.writeShellScript "vm-wan-ip-lookup" ''
+    re=${lib.escapeShellArg ipv4}
+    ip=$(${lib.getExe pkgs.dig} +short txt ch whoami.cloudflare @1.1.1.1 | ${pkgs.coreutils}/bin/tr -d '"')
+    if ! [[ $ip =~ $re ]]; then
+      printf 'no IPv4 address in the answer: %q\n' "$ip" >&2
+      exit 1
+    fi
+    printf '%s\n' "$ip" > "$STATE_DIRECTORY/ip.tmp" &&
+      ${pkgs.coreutils}/bin/mv -f "$STATE_DIRECTORY/ip.tmp" "$STATE_DIRECTORY/ip"
+  '';
+
+  wanIpUpdate = pkgs.writeShellScript "vm-wan-ip-update" ''
+    re=${lib.escapeShellArg ipv4}
+    ip=
+    [ -r ${wanIpFile} ] && read -r ip < ${wanIpFile}
+    [[ $ip =~ $re ]] || exit 1
+    if ${nft} list table inet microvm > /dev/null 2>&1; then
+      printf 'flush set inet microvm wan4\nadd element inet microvm wan4 { %s }\n' "$ip" | ${nft} -f -
+    fi
+  '';
 
   inventory = pkgs.writeText "vm-inventory" (lib.concatMapStrings (name: let
     vm = cfg.${name};
@@ -542,9 +589,48 @@ in {
             serviceConfig = {
               Type = "oneshot";
               RemainAfterExit = true;
-              ExecStart = "${lib.getExe pkgs.nftables} -f ${egressRules}";
-              ExecReload = "${lib.getExe pkgs.nftables} -f ${egressRules}";
-              ExecStop = "${lib.getExe pkgs.nftables} delete table inet microvm";
+              ExecStart = egressApply;
+              ExecReload = egressApply;
+              ExecStop = "${nft} delete table inet microvm";
+            };
+          };
+
+          services.vm-wan-ip = {
+            description = "Public address for VM egress rules";
+            after = ["vm-egress.service" "network-online.target"];
+            wants = ["network-online.target"];
+            serviceConfig = {
+              Type = "oneshot";
+              DynamicUser = true;
+              StateDirectory = "vm-wan-ip";
+              ExecStart = wanIpLookup;
+              # The answer comes off the internet, so only the unprivileged
+              # lookup parses it; root just rechecks the file it wrote.
+              ExecStartPost = "+${wanIpUpdate}";
+              CapabilityBoundingSet = [""];
+              PrivateDevices = true;
+              ProtectKernelTunables = true;
+              ProtectKernelModules = true;
+              ProtectKernelLogs = true;
+              ProtectControlGroups = true;
+              ProtectClock = true;
+              ProtectHostname = true;
+              ProtectProc = "invisible";
+              RestrictNamespaces = true;
+              RestrictRealtime = true;
+              LockPersonality = true;
+              MemoryDenyWriteExecute = true;
+              SystemCallArchitectures = "native";
+              SystemCallFilter = "@system-service";
+              RestrictAddressFamilies = ["AF_INET" "AF_INET6"];
+            };
+          };
+
+          timers.vm-wan-ip = {
+            wantedBy = ["timers.target"];
+            timerConfig = {
+              OnBootSec = "1min";
+              OnUnitActiveSec = "5min";
             };
           };
 

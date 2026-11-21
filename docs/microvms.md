@@ -5,12 +5,14 @@ migrate, run and remove one. Every preflight failure points here.
 
 Each server runs in a microVM of its own, declared in
 `hosts/hee-ho/vms/<name>.nix` and run by `modules/microvms`. A VM can't see
-the host's files, the LAN, the tailnet, the host itself or the other VMs. On
-the host, a VM's helpers see only their own programs and that VM's sockets and
-data. Its data is one ZFS dataset that on disk is plainly yours (chris's); the
-VM sees the same files through a view in which they're its own, so nothing
-ever needs a permissions fix. Don't run git inside a server directory: files
-the VM writes are yours on disk, so git would trust them.
+the host's files, the LAN, the tailnet, the host itself, the other VMs or this
+network's own public address, so it can't reach this host's servers through
+the router either. On the host, a VM's helpers see only their own programs
+and that VM's sockets and data. Its data is one ZFS dataset that on disk is
+plainly yours (chris's); the VM sees the same files through a view in which
+they're its own, so nothing ever needs a permissions fix. Don't run git
+inside a server directory: files the VM writes are yours on disk, so git
+would trust them.
 
 ## Adding a server
 

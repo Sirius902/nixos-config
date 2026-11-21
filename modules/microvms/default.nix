@@ -93,8 +93,9 @@
         default = "internet";
         description = ''
           Connections the VM may open. `internet` excludes the LAN, the
-          tailnet, the host and every other private or special range;
-          `none` allows nothing. Neither limits inbound connections.
+          tailnet, the host, this network's own public address (hairpin NAT
+          included) and every other private or special range; `none` allows
+          nothing. Neither limits inbound connections.
         '';
       };
 
