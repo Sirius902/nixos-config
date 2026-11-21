@@ -80,10 +80,34 @@ in {
       };
     };
 
-    fonts.packages = with pkgs; [
-      nerd-fonts.jetbrains-mono
-      noto-fonts-cjk-sans
-    ];
+    fonts = {
+      packages = with pkgs; [
+        nerd-fonts.jetbrains-mono
+        noto-fonts-cjk-sans
+      ];
+
+      fontconfig = {
+        defaultFonts = {
+          sansSerif = ["DejaVu Sans" "Noto Sans CJK JP"];
+          serif = ["DejaVu Serif" "Noto Serif CJK JP"];
+          monospace = ["DejaVu Sans Mono" "Noto Sans Mono CJK JP"];
+        };
+
+        # GTK and Qt ask for GNOME's Adwaita Sans, which isn't installed;
+        # fontconfig files it under system-ui, whose list ranks Noto Sans CJK KR
+        # ahead of the sans-serif defaults.
+        localConf = ''
+          <?xml version="1.0"?>
+          <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+          <fontconfig>
+            <alias>
+              <family>system-ui</family>
+              <prefer><family>sans-serif</family></prefer>
+            </alias>
+          </fontconfig>
+        '';
+      };
+    };
 
     # Currently for GParted, which relaunches itself through pkexec.
     security.polkit.enablePkexecWrapper = true;
