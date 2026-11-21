@@ -67,17 +67,10 @@
     Group = "vm-${name}";
   };
 
-  # Mount points only, so virtiofsd sees nothing of the host beyond its binds.
-  emptyRoot = pkgs.runCommand "vm-empty-root" {} ''
-    mkdir -p $out/{dev,nix/store,proc,run,share,sys,tmp,var/tmp}
-  '';
-
   virtiofsdSandbox =
     sandbox
     // {
-      RootDirectory = emptyRoot;
       MountAPIVFS = true;
-      BindReadOnlyPaths = ["/nix/store"];
       PrivateDevices = true;
       PrivateNetwork = true;
       RestrictNamespaces = true;
@@ -261,6 +254,10 @@
       after = ["vm-${name}-share.service"] ++ partnerOrder name;
       partOf = ["vm-${name}.service"];
       restartIfChanged = false;
+      confinement = {
+        enable = true;
+        binSh = null;
+      };
       serviceConfig =
         virtiofsdSandbox
         // vmUser name
@@ -288,6 +285,10 @@
       after = partnerOrder name;
       partOf = ["vm-${name}.service"];
       restartIfChanged = false;
+      confinement = {
+        enable = true;
+        binSh = null;
+      };
       serviceConfig =
         virtiofsdSandbox
         // vmUser name
@@ -304,6 +305,10 @@
       after = ["vm-${name}-preflight.service" "vm-egress.service" "network-online.target"] ++ partnerOrder name;
       bindsTo = ["vm-${name}.service"];
       restartIfChanged = false;
+      confinement = {
+        enable = true;
+        binSh = null;
+      };
       serviceConfig =
         sandbox
         // vmUser name
@@ -311,7 +316,9 @@
           Type = "forking";
           PIDFile = "/run/vm/${name}/passt.pid";
           ExecStart = passt name vm;
-          ReadWritePaths = ["/run/vm/${name}"];
+          BindPaths = ["/run/vm/${name}"];
+          # The private /dev's /dev/log points here, and nothing else binds it.
+          BindReadOnlyPaths = ["/run/systemd/journal/dev-log"];
           UMask = "0077";
           # passt sandboxes itself in these.
           RestrictNamespaces = "user mnt uts ipc pid";
@@ -334,6 +341,12 @@
       conflicts = map (p: "vm-${p}.service") (partners name);
       wantedBy = lib.optional vm.autostart "multi-user.target";
       restartIfChanged = false;
+      confinement = {
+        enable = true;
+        binSh = null;
+        # The runner calls rm from PATH.
+        packages = [pkgs.coreutils];
+      };
       serviceConfig =
         sandbox
         // vmUser name
@@ -341,7 +354,7 @@
           Type = "notify";
           NotifyAccess = "all";
           WorkingDirectory = "/run/vm/${name}";
-          ReadWritePaths = ["/run/vm/${name}"];
+          BindPaths = ["/run/vm/${name}" "/dev/kvm"];
           UMask = "0027";
           # What is running, for `vm status` to compare with what is current.
           ExecStartPre = pkgs.writeShellScript "vm-${name}-record-runner" ''
@@ -379,6 +392,10 @@
 
     services."vm-${name}-vsock@" = {
       description = "VM ${name}: vsock connection";
+      confinement = {
+        enable = true;
+        binSh = null;
+      };
       serviceConfig =
         sandbox
         // vmUser name
@@ -387,6 +404,7 @@
           # its command, before a slower answer such as a quiesce's arrives.
           ExecStart = "${lib.getExe pkgs.socat} -t 60 STDIO UNIX-CONNECT:/run/vm/${name}/notify.vsock";
           StandardInput = "socket";
+          BindReadOnlyPaths = ["/run/vm/${name}"];
           PrivateDevices = true;
           PrivateNetwork = true;
           RestrictNamespaces = true;
@@ -476,6 +494,15 @@ in {
           assertion = lib.allUnique (map (n: cfg.${n}.data.path) names);
           message = "my.microvms: each VM needs a data path of its own.";
         }
+        (let
+          vmUsers = map (n: "vm-${n}") names;
+          unconfined = lib.attrNames (lib.filterAttrs (_: s:
+            lib.elem (s.serviceConfig.User or null) vmUsers && !s.confinement.enable)
+          config.systemd.services);
+        in {
+          assertion = unconfined == [];
+          message = "my.microvms: units that run as a VM's user need confinement.enable, which these lack: ${lib.concatMapStringsSep ", " (s: "${s}.service") unconfined}. A process can read the root of any other process with the same user, so one unconfined unit opens the host to all of them.";
+        })
       ];
 
     users.users = lib.mapAttrs' (name: _:

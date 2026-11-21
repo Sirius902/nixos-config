@@ -5,11 +5,12 @@ migrate, run and remove one. Every preflight failure points here.
 
 Each server runs in a microVM of its own, declared in
 `hosts/hee-ho/vms/<name>.nix` and run by `modules/microvms`. A VM can't see
-the host's files, the LAN, the tailnet, the host itself or the other VMs. Its
-data is one ZFS dataset that on disk is plainly yours (chris's); the VM sees
-the same files through a view in which they're its own, so nothing ever needs
-a permissions fix. Don't run git inside a server directory: files the VM
-writes are yours on disk, so git would trust them.
+the host's files, the LAN, the tailnet, the host itself or the other VMs. On
+the host, a VM's helpers see only their own programs and that VM's sockets and
+data. Its data is one ZFS dataset that on disk is plainly yours (chris's); the
+VM sees the same files through a view in which they're its own, so nothing
+ever needs a permissions fix. Don't run git inside a server directory: files
+the VM writes are yours on disk, so git would trust them.
 
 ## Adding a server
 
@@ -170,5 +171,24 @@ $ doas zfs destroy -r <dataset>
 - The server itself failing (no `start.sh`, unaccepted EULA, a crash) is in
   `vm logs <name>`.
 - The host side of a VM is units `vm-<name>`, `vm-<name>-preflight`,
-  `-share`, `-fs-data`, `-fs-secrets` (with secrets) and `-net`;
-  `systemctl status` shows each.
+  `-share`, `-fs-data`, `-fs-secrets` (with secrets), `-net`, and a
+  `-vsock@` relay per console or shell connection; `systemctl status` shows
+  each, and `vm logs <name>` all of them.
+- Every unit that runs as `vm-<name>` is confined: its root holds only its
+  own programs and the sockets and data it binds. One that lacks a path fails
+  at start, in `vm logs <name>`, in one of three ways:
+  - `status=226/NAMESPACE`, naming the bind source that's missing;
+  - `<cmd>: command not found`: add the package to the unit's
+    `confinement.packages` in `modules/microvms/host.nix`;
+  - the program's own error that it failed to open some path.
+
+  If the unit still won't run, try in this order:
+  1. Any unit: `serviceConfig.PrivateUsers = false`, keeping confinement.
+     It adds little here.
+  2. `vm-<name>` failing on `/dev/kvm`: `PrivateDevices = false`, and drop
+     `"/dev/kvm"` from its `BindPaths`. `DeviceAllow` still limits it to
+     `/dev/kvm`.
+  3. `-net`: add `--chroot-fallback` to passt's arguments.
+  4. Only if passt still fails: drop confinement for `-net` alone and exempt
+     it in the assertion, saying why. passt confines itself before the guest
+     can reach it.

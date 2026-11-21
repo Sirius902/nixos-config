@@ -211,7 +211,8 @@ case $cmd in
     known "${1:-}"
     exec journalctl "${follow[@]}" \
       --unit="vm-$1.service" --unit="vm-$1-preflight.service" --unit="vm-$1-share.service" \
-      --unit="vm-$1-fs-data.service" --unit="vm-$1-fs-secrets.service" --unit="vm-$1-net.service"
+      --unit="vm-$1-fs-data.service" --unit="vm-$1-fs-secrets.service" --unit="vm-$1-net.service" \
+      --unit="vm-$1-vsock@*"
     ;;
   console)
     known "${1:-}"
