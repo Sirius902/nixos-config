@@ -61,7 +61,8 @@ would trust them.
    ```
 
    A Minecraft server also needs `eula.txt` (`eula=true`), a `server.properties`
-   whose `server-port` is the declared port, and a foreground `start.sh`:
+   whose `server-port` is the declared port and that sets
+   `sync-chunk-writes=false`, and a foreground `start.sh`:
 
    ```sh
    #!/bin/sh
