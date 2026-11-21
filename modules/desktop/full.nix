@@ -95,7 +95,6 @@ in {
     home-manager.users = lib.genAttrs config.my.homeUsers (_: {
       imports = [
         ../home/gcviewer.nix
-        ../home/gcfeederd.nix
         ../home/mangohud.nix
       ];
     });
