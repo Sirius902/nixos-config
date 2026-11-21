@@ -37,7 +37,7 @@ if ! exists "$dataset"; then
   if has_files && ! mountpoint -q "$path"; then
     problem "$path holds files but isn't dataset $dataset. Move them onto a new dataset:" \
       "doas mv $path $path.old" \
-      "doas zfs create -o mountpoint=$path -o setuid=off -o devices=off -o exec=off $dataset" \
+      "doas zfs create -o mountpoint=$path -o setuid=off -o devices=off -o exec=off -o refquota=250G $dataset" \
       "doas rsync -aHAX $path.old/ $path/" \
       "doas chown -hR $owner: $path" \
       "# once the server works from the dataset: doas rm -rf $path.old"
@@ -47,7 +47,7 @@ if ! exists "$dataset"; then
     if [ "$parent" != "$dataset" ] && ! exists "$parent"; then
       fixes+=("doas zfs create -p -o canmount=off $parent")
     fi
-    fixes+=("doas zfs create -o mountpoint=$path -o setuid=off -o devices=off -o exec=off $dataset")
+    fixes+=("doas zfs create -o mountpoint=$path -o setuid=off -o devices=off -o exec=off -o refquota=250G $dataset")
     problem "dataset $dataset doesn't exist. Create it:" "${fixes[@]}"
   fi
   finish

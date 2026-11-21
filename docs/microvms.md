@@ -40,9 +40,9 @@ would trust them.
    directory, which ZFS creates as root's:
 
    ```console
-   $ doas zfs create -o mountpoint=/media/data/mc/servers/<name> \
-       -o setuid=off -o devices=off -o exec=off data/mc/<name>   # Minecraft
-   $ doas zfs create data/srv/<name>                            # anything else
+   $ doas zfs create -o mountpoint=/media/data/mc/servers/<name> -o setuid=off \
+       -o devices=off -o exec=off -o refquota=250G data/mc/<name>   # Minecraft
+   $ doas zfs create -o refquota=250G data/srv/<name>               # anything else
    $ doas chown chris: <path>
    ```
 
