@@ -1,6 +1,10 @@
 theme = Kanagawa Wave
 font-size = 14
 font-family = JetBrainsMonoNL Nerd Font Mono
+# Ghostty reuses any fallback font it has already loaded before asking
+# fontconfig, so whichever loads first would otherwise take every glyph it has.
+font-family = DejaVu Sans Mono
+font-family = Noto Sans Mono CJK JP
 
 keybind = shift+ctrl+up=goto_split:top
 keybind = shift+ctrl+down=goto_split:bottom
