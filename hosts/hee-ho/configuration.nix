@@ -25,9 +25,10 @@
     ramGiB = 32;
   };
 
-  # 32069 is hkmp; the microVMs open their own ports (vms/).
-  networking.firewall.allowedTCPPorts = [25566 32069];
-  networking.firewall.allowedUDPPorts = [25566 32069];
+  # Native test servers, reachable only over Tailscale; 32069 is hkmp. The
+  # microVMs open their own ports (vms/).
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [25566 32069];
+  networking.firewall.interfaces.tailscale0.allowedUDPPorts = [25566 32069];
 
   # Must be enabled due to https://github.com/tailscale/tailscale/issues/4254.
   services.resolved.enable = true;
