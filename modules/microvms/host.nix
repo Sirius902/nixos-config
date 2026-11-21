@@ -60,6 +60,8 @@
     RestrictSUIDSGID = true;
     SystemCallArchitectures = "native";
     MemoryDenyWriteExecute = true;
+    # The kernel's default minus shared-anonymous memory, which is guest RAM.
+    CoredumpFilter = "private-anonymous elf-headers private-huge";
   };
 
   vmUser = name: {
