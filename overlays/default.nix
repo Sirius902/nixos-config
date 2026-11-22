@@ -726,12 +726,12 @@ _: [
 
       src = prevAttrs.src.override {
         tag = null;
-        rev = "b2c2c21e58d4acc5de49e8c7d3bc76c8e34f6476";
-        hash = "sha256-neSWRQB5opKdgDQCz2M6ANXuSoSufky08Jjx+B4QXK8=";
+        rev = "a76221bc3109da6147d7e22b941c64712103dd6e";
+        hash = "sha256-dSj3sJS4DbjohGeWEYcw4hI7piB6P5GmlqRbOQ96VPM=";
 
         leaveDotGit = false;
         postFetch = ''
-          echo b2c2c21e58d4acc5de49e8c7d3bc76c8e34f6476 > $out/COMMIT
+          echo a76221bc3109da6147d7e22b941c64712103dd6e > $out/COMMIT
         '';
       };
 
