@@ -40,18 +40,14 @@ boot *FLAGS:
 switch-darwin *FLAGS:
     nh darwin switch -H "{{ HOST }}" ".#" {{ FLAGS }}
 
-switch-to-configuration drv:
-    nix-env -p /nix/var/nix/profiles/system --set "{{ drv }}"
-    "{{ drv }}/bin/switch-to-configuration" switch
+build-raspberrypi *FLAGS:
+    nix {{ NIX_FLAGS }} build --no-link --print-out-paths ".#nixosConfigurations.raspberrypi.config.system.build.toplevel" {{ FLAGS }}
 
-build-raspberrypi:
-    nix {{ NIX_FLAGS }} build --no-link --print-out-paths ".#nixosConfigurations.raspberrypi.config.system.build.toplevel"
+build-iso *FLAGS:
+    nix {{ NIX_FLAGS }} build --no-link --print-out-paths ".#nixosConfigurations.iso.config.system.build.isoImage" {{ FLAGS }}
 
-build-iso:
-    nix {{ NIX_FLAGS }} build --no-link --print-out-paths ".#nixosConfigurations.iso.config.system.build.isoImage"
-
-build-deck:
-    nix {{ NIX_FLAGS }} build --no-link --print-out-paths ".#homeConfigurations.deck.activationPackage"
+build-deck *FLAGS:
+    nix {{ NIX_FLAGS }} build --no-link --print-out-paths ".#homeConfigurations.deck.activationPackage" {{ FLAGS }}
 
 deploy-deck host=DECK_HOST:
     #!/usr/bin/env bash
@@ -60,16 +56,3 @@ deploy-deck host=DECK_HOST:
     nix {{ NIX_FLAGS }} copy --no-check-sigs --substitute-on-destination \
         --to "ssh://deck@{{ host }}?remote-program=~/.nix-profile/bin/nix-store" "$gen"
     ssh "deck@{{ host }}" "exec '$gen/activate'"
-
-anywhere ip:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    temp=$(mktemp -d)
-    trap "rm -rf $temp" EXIT
-    keydir="/persist/config/sops/age"
-    mkdir -p "$temp/$keydir"
-    rsync -a "$keydir/keys.txt" "$temp/$keydir/keys.txt"
-    nix {{ NIX_FLAGS }} run github:nix-community/nixos-anywhere -- --extra-files "$temp" --flake ".#{{ HOST }}" "root@{{ ip }}"
-
-anywhere-test *FLAGS:
-    nix {{ NIX_FLAGS }} run github:nix-community/nixos-anywhere -- --flake ".#{{ HOST }}" --vm-test {{ FLAGS }}
