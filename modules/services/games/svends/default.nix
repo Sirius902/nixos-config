@@ -148,6 +148,10 @@ in {
         ExecStart = pkgs.writeShellScript "svends-start" ''
           extra_args=${lib.escapeShellArg cfg.extraCommandLine}
           ${lib.optionalString (cfg.extraCommandLineFile != null) ''extra_args="$extra_args''${extra_args:+ }$(<"$CREDENTIALS_DIRECTORY/extra-command-line")"''}
+          # svends_run looks for steamclient.so here first and otherwise loads the
+          # older copy in its own directory; this points it at steamcmd's current one.
+          mkdir -p ${cfg.dataDir}/.steam/sdk32
+          ln -sfn ${cfg.dataDir}/.local/share/Steam/linux32/steamclient.so ${cfg.dataDir}/.steam/sdk32/steamclient.so
           ${pkgs.steam-run}/bin/steam-run ./svends_run \
             -console \
             -port ${toString cfg.port} \
