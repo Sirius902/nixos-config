@@ -338,6 +338,8 @@
           "vm-${name}-net.service"
         ]
         ++ lib.optional (hasSecrets name) "vm-${name}-fs-secrets.socket";
+      # A new passt can't revive a running guest's network, so the VM ends with its passt.
+      bindsTo = ["vm-${name}-net.service"];
       wants = ["vm-${name}-vsock.socket"];
       after = lib.remove "vm-${name}.service" (unitsOf name) ++ partnerOrder name;
       conflicts = map (p: "vm-${p}.service") (partners name);
