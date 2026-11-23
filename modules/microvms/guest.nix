@@ -6,6 +6,8 @@
 }: let
   cfg = config.my.vm;
 
+  gateway = "10.0.2.2";
+
   console =
     if cfg.console == null
     then ''
@@ -94,10 +96,33 @@ in {
   systemd.network.networks."10-uplink" = {
     matchConfig.Type = "ether";
     address = ["10.0.2.15/24"];
-    routes = [{Gateway = "10.0.2.2";}];
+    routes = [{Gateway = gateway;}];
     networkConfig = {
       LinkLocalAddressing = "no";
       IPv6AcceptRA = false;
+    };
+  };
+  # passt sends to a guest at the source MAC of frames the guest has sent,
+  # broadcasting until it has seen one, and TCP drops segments that arrive
+  # broadcast, so no TCP connection reaches a guest until it has sent a frame.
+  systemd.services.uplink-announce = {
+    description = "Announce the guest on its uplink";
+    wants = ["systemd-networkd.service"];
+    after = ["systemd-networkd.service"];
+    # With systemd-networkd-wait-online off, this is what
+    # network-online.target waits for.
+    wantedBy = ["multi-user.target" "network-online.target"];
+    before = ["network-online.target"];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "uplink-announce" ''
+        ${config.systemd.package}/lib/systemd/systemd-networkd-wait-online --any --operational-state=routable --timeout=30 ||
+          echo "uplink not routable after 30s; announcing anyway" >&2
+        dev=$(${pkgs.iproute2}/bin/ip -o route get ${gateway} | ${pkgs.gnused}/bin/sed -n 's/.* dev \([^ ]*\).*/\1/p')
+        exec ${pkgs.iputils}/bin/arping -f -w 5 -I "$dev" ${gateway}
+      '';
+      Restart = "on-failure";
+      RestartSec = "5s";
     };
   };
   networking.nameservers = ["1.1.1.1"];
