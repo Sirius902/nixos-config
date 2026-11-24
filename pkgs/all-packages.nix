@@ -55,6 +55,7 @@
   tes3mp-server = (pkgs.callPackage ./tes3mp/package.nix {buildServer = true;}).overrideAttrs (prevAttrs: {
     passthru = removeAttrs (prevAttrs.passthru or {}) ["updateScript"];
   });
+  tes3mp-corescripts = pkgs.callPackage ./tes3mp/corescripts.nix {};
 
   hlsdk-portable = pkgs.callPackage ./hlsdk-portable/package.nix {};
   hlsdk-portable-bshift = pkgs.callPackage ./hlsdk-portable/mods/bshift.nix {};
