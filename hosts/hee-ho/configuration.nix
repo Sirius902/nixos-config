@@ -12,6 +12,7 @@
     ./vms/rl2.nix
     ./vms/svends.nix
     ./vms/synergyds.nix
+    ./vms/tes3mp.nix
     ./eno2-e1000e-hang-workaround.nix
   ];
 
