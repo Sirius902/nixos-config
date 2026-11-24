@@ -167,10 +167,10 @@ in {
       SDL2
       boost187
       libGL
-      luajit
       lz4
     ]
     ++ lib.optionals buildServer [
+      luajit
       openscenegraph
     ]
     ++ lib.optionals (!buildServer) [
@@ -212,12 +212,18 @@ in {
       (lib.cmakeBool "BUILD_WIZARD" false)
       (lib.cmakeBool "BUILD_BROWSER" false)
       (lib.cmakeBool "BUILD_MWINIIMPORTER" false)
+    ]
+    ++ lib.optionals (!buildServer) [
+      (lib.cmakeBool "BUILD_OPENMW_MP" false)
     ];
 
-  env = {
-    LANG = "C.UTF-8";
-    NIX_CFLAGS_COMPILE = "-fpermissive";
-  };
+  env =
+    {
+      LANG = "C.UTF-8";
+    }
+    // lib.optionalAttrs buildServer {
+      NIX_CFLAGS_COMPILE = "-fpermissive";
+    };
 
   dontWrapQtApps = true;
 
@@ -227,13 +233,16 @@ in {
       rmdir $out/share/metainfo
 
       mkdir -p $out/bin
-      ln -s $out/share/tes3mp/tes3mp-server $out/bin/tes3mp-server
     ''
     + lib.optionalString buildServer ''
+      ln -s $out/share/tes3mp/tes3mp-server $out/bin/tes3mp-server
+      rm $out/share/tes3mp/tes3mp-client-default.cfg
       rm $out/share/applications/org.openmw.launcher.desktop
       rmdir $out/share/applications $out/share/pixmaps
     ''
     + lib.optionalString (!buildServer) ''
+      rm $out/share/tes3mp/tes3mp-server-default.cfg
+
       ln -s $out/share/tes3mp/tes3mp $out/bin/tes3mp
       ln -s $out/share/tes3mp/tes3mp-browser $out/bin/tes3mp-browser
       ln -s $out/share/tes3mp/openmw-launcher $out/bin/tes3mp-launcher
