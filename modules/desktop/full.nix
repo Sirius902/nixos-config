@@ -143,6 +143,7 @@ in {
         ];
       })
       openmw
+      tes3mp
       (prismlauncher.override {
         jdks = [
           temurin-bin-8
