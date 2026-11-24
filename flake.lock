@@ -25,11 +25,11 @@
         "nixpkgs-lib": "nixpkgs-lib"
       },
       "locked": {
-        "lastModified": 1788306937,
-        "narHash": "sha256-lbrI1UYVpFgKSsyrU9oeF7FHfnu8nLD9ja0ou9f2rxk=",
+        "lastModified": 1793576659,
+        "narHash": "sha256-V1h85lUaJBQoHFrB2vpXZOE0Ju1MYSnIpsehoVZYlDo=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "f16b25b8c3d2809b87925d0b76652d7821a75c68",
+        "rev": "ea2630b7470978622c7689a1ff75d2b389175399",
         "type": "github"
       },
       "original": {
@@ -140,11 +140,11 @@
     },
     "nixpkgs-lib": {
       "locked": {
-        "lastModified": 1788057806,
-        "narHash": "sha256-DTQSMxzDWmT0zhguthvegnVkn7CFqGCv4IHCzk5ZUpM=",
+        "lastModified": 1793504054,
+        "narHash": "sha256-ThkfL3D/FhCiZFc9+3BtxwuMmpuK+/bGtXCSo1+yVew=",
         "owner": "nix-community",
         "repo": "nixpkgs.lib",
-        "rev": "596e2e3940e09b2abbeb03f75fa1828c57fcd72c",
+        "rev": "7851ba61fd862b277cb6a9cef37394bc18bb94e4",
         "type": "github"
       },
       "original": {
@@ -176,11 +176,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794800570,
-        "narHash": "sha256-9LcpZ4AaI0pVnA5RpkhgqxW4LctEiPb0T1jYWAprBh4=",
+        "lastModified": 1795545821,
+        "narHash": "sha256-PQpbJe7ERtblIDcnCuy4uD5mdeYWOyXtEgnk6yyUjTA=",
         "ref": "refs/heads/main",
-        "rev": "43f08f63003d15a2d0bd2e3708cc4c66f2414003",
-        "revCount": 90,
+        "rev": "fa4887948f309d3d52a225cac48719a10e8b3022",
+        "revCount": 92,
         "type": "git",
         "url": "ssh://git@github.com/Sirius902/nixos-secrets"
       },
