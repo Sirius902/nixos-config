@@ -74,6 +74,7 @@ in {
     ../services/games/minecraft-servers
     ../services/games/svends
     ../services/games/synergyds
+    ../services/games/tes3mp-server
   ];
 
   microvm = {
