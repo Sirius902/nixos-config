@@ -3,9 +3,9 @@
 
 inventory=@inventory@
 
-declare -A ports memory cpus partners runner autostart dataset datapath
+declare -A ports memory cpus partners runner autostart dataset datapath console
 names=()
-while IFS='|' read -r n p m c pa r a d dp; do
+while IFS='|' read -r n p m c pa r a d dp co; do
   names+=("$n")
   ports[$n]=$p
   memory[$n]=$m
@@ -15,6 +15,7 @@ while IFS='|' read -r n p m c pa r a d dp; do
   autostart[$n]=$a
   dataset[$n]=$d
   datapath[$n]=$dp
+  console[$n]=$co
 done < "$inventory"
 
 usage() {
@@ -216,6 +217,7 @@ case $cmd in
     ;;
   console)
     known "${1:-}"
+    [ "${console[$1]}" = yes ] || die "$1 has no console; 'vm logs -f $1' shows its output"
     sock=$(admin_socket "$1")
     echo "attached to $1's console; Ctrl-D detaches" >&2
     { printf 'CONNECT 1024\nconsole\n'; cat; } | socat - "UNIX-CONNECT:$sock" | sed -u '1{/^OK /d}'

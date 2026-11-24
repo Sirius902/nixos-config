@@ -519,6 +519,11 @@
       )
       vm.data.dataset
       vm.data.path
+      (
+        if vm.system.my.vm.console != null
+        then "yes"
+        else "no"
+      )
     ]
     + "\n")
   names);
