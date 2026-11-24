@@ -1,0 +1,28 @@
+From e6269490454fd72031874f3a94172dd6d508fe53 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Mon, 23 Nov 2026 21:13:34 -0800
+Subject: [PATCH 2/2] Include <algorithm> in filesystemarchive.cpp
+
+It calls std::transform but relied on another header to include
+<algorithm>, which no longer happens with GCC 14.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ components/vfs/filesystemarchive.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/components/vfs/filesystemarchive.cpp b/components/vfs/filesystemarchive.cpp
+index 6eef4b9..608323e 100644
+--- a/components/vfs/filesystemarchive.cpp
++++ b/components/vfs/filesystemarchive.cpp
+@@ -1,5 +1,7 @@
+ #include "filesystemarchive.hpp"
+ 
++#include <algorithm>
++
+ #include <boost/filesystem.hpp>
+ 
+ #include <components/debug/debuglog.hpp>
+-- 
+2.56.0
+

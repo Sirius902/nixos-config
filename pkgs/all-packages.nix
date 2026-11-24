@@ -51,6 +51,11 @@
 
   wrye-bash = pkgs.callPackage ./wrye-bash/package.nix {};
 
+  tes3mp = pkgs.callPackage ./tes3mp/package.nix {};
+  tes3mp-server = (pkgs.callPackage ./tes3mp/package.nix {buildServer = true;}).overrideAttrs (prevAttrs: {
+    passthru = removeAttrs (prevAttrs.passthru or {}) ["updateScript"];
+  });
+
   hlsdk-portable = pkgs.callPackage ./hlsdk-portable/package.nix {};
   hlsdk-portable-bshift = pkgs.callPackage ./hlsdk-portable/mods/bshift.nix {};
   hlsdk-portable-opfor = pkgs.callPackage ./hlsdk-portable/mods/opfor.nix {};
