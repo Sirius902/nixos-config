@@ -220,7 +220,16 @@ case $cmd in
     [ "${console[$1]}" = yes ] || die "$1 has no console; 'vm logs -f $1' shows its output"
     sock=$(admin_socket "$1")
     echo "attached to $1's console; Ctrl-D detaches" >&2
-    { printf 'CONNECT 1024\nconsole\n'; cat; } | socat - "UNIX-CONNECT:$sock" | sed -u '1{/^OK /d}'
+    # Whatever reads the terminal stays blocked there after the guest hangs up,
+    # until the next line typed, so it runs apart and is killed on exit.
+    exec {tty}<&0
+    exec {keys}< <(
+      printf 'CONNECT 1024\nconsole\n'
+      exec cat <&"$tty"
+    )
+    feeder=$!
+    trap 'kill "$feeder" 2> /dev/null || true' EXIT
+    socat - "UNIX-CONNECT:$sock" <&"$keys" | sed -u '1{/^OK /d}'
     ;;
   shell)
     known "${1:-}"
