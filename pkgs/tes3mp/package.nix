@@ -6,6 +6,7 @@
   fetchpatch,
   cmake,
   pkg-config,
+  makeBinaryWrapper,
   copyDesktopItems,
   makeDesktopItem,
   libsForQt5,
@@ -91,6 +92,17 @@ gcc14Stdenv.mkDerivation (finalAttrs: let
       ];
   });
 
+  # CoreScripts sets decode_null_as_lightuserdata, which only TES3MP's fork has.
+  lua-cjson' = luajit.pkgs.lua-cjson.overrideAttrs {
+    version = "2.1.0.7-unstable-2019-04-14";
+    src = fetchFromGitHub {
+      owner = "TES3MP";
+      repo = "lua-cjson";
+      rev = "c3abdb769ffd88c74d8c421d49af9f5d2c8cf845";
+      hash = "sha256-kMlxa93zhE8ZDg51aeGp+uiJgu7ocQvYBDEIRlLLhmo=";
+    };
+  };
+
   recast = fetchFromGitHub {
     owner = "recastnavigation";
     repo = "recastnavigation";
@@ -156,6 +168,9 @@ in {
     [
       cmake
       pkg-config
+    ]
+    ++ lib.optionals buildServer [
+      makeBinaryWrapper
     ]
     ++ lib.optionals (!buildServer) [
       copyDesktopItems
@@ -239,6 +254,9 @@ in {
       rm $out/share/tes3mp/tes3mp-client-default.cfg
       rm $out/share/applications/org.openmw.launcher.desktop
       rmdir $out/share/applications $out/share/pixmaps
+
+      # Copied: nixpkgs' Lua packages keep luarocks and its tools in their runtime closure.
+      install -Dm755 ${lua-cjson'}/lib/lua/${luajit.luaversion}/cjson.so $out/lib/tes3mp/cjson.so
     ''
     + lib.optionalString (!buildServer) ''
       rm $out/share/tes3mp/tes3mp-server-default.cfg
@@ -252,11 +270,16 @@ in {
       install -Dm644 ../files/tes3mp/tes3mp_logo.png $out/share/pixmaps/tes3mp.png
     '';
 
-  postFixup = lib.optionalString (!buildServer) ''
-    wrapQtApp $out/share/tes3mp/openmw-launcher
-    wrapQtApp $out/share/tes3mp/openmw-wizard
-    wrapQtApp $out/share/tes3mp/tes3mp-browser
-  '';
+  postFixup =
+    lib.optionalString buildServer ''
+      wrapProgram $out/share/tes3mp/tes3mp-server \
+        --prefix LUA_CPATH ';' "$out/lib/tes3mp/?.so"
+    ''
+    + lib.optionalString (!buildServer) ''
+      wrapQtApp $out/share/tes3mp/openmw-launcher
+      wrapQtApp $out/share/tes3mp/openmw-wizard
+      wrapQtApp $out/share/tes3mp/tes3mp-browser
+    '';
 
   desktopItems = lib.optionals (!buildServer) [
     (makeDesktopItem {
