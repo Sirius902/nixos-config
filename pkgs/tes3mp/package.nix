@@ -129,22 +129,38 @@ in {
     '';
   };
 
-  patches = [
-    # Include <cstdint> for GCC 13 https://github.com/TES3MP/TES3MP/pull/674
-    (fetchpatch {
-      name = "include-cstdint.patch";
-      url = "https://github.com/TES3MP/TES3MP/commit/7921f71a79e96f817a2009100e5105a7948b3fe2.diff";
-      hash = "sha256-mpxuOSPA2xixgBeYXsxutEUI7VJL5PxAeZgaNU7YkJQ=";
-    })
-    # Add missing includes and a cast for GCC 14 https://github.com/TES3MP/TES3MP/pull/691
-    (fetchpatch {
-      name = "gcc-14-includes-and-cast.patch";
-      url = "https://github.com/TES3MP/TES3MP/commit/a877ccd5d2f6d49be9f2a5a5c458910e850ed47c.diff";
-      hash = "sha256-l3kcqBoKKv5SsR2t4Ib/1qEYLF+GmBKh3Zxq2WgDoyw=";
-    })
-    ./0001-Drop-the-void-cast-from-GCC-s-constexpr-constructor.patch
-    ./0002-Include-algorithm-in-filesystemarchive.cpp.patch
-  ];
+  patches =
+    [
+      # Include <cstdint> for GCC 13 https://github.com/TES3MP/TES3MP/pull/674
+      (fetchpatch {
+        name = "include-cstdint.patch";
+        url = "https://github.com/TES3MP/TES3MP/commit/7921f71a79e96f817a2009100e5105a7948b3fe2.diff";
+        hash = "sha256-mpxuOSPA2xixgBeYXsxutEUI7VJL5PxAeZgaNU7YkJQ=";
+      })
+      # Add missing includes and a cast for GCC 14 https://github.com/TES3MP/TES3MP/pull/691
+      (fetchpatch {
+        name = "gcc-14-includes-and-cast.patch";
+        url = "https://github.com/TES3MP/TES3MP/commit/a877ccd5d2f6d49be9f2a5a5c458910e850ed47c.diff";
+        hash = "sha256-l3kcqBoKKv5SsR2t4Ib/1qEYLF+GmBKh3Zxq2WgDoyw=";
+      })
+      ./0001-Drop-the-void-cast-from-GCC-s-constexpr-constructor.patch
+      ./0002-Include-algorithm-in-filesystemarchive.cpp.patch
+    ]
+    ++ lib.optionals (!buildServer) [
+      # Signal EOF to FFmpeg 5+ from the sound decoder instead of hanging https://gitlab.com/OpenMW/openmw/-/merge_requests/1941
+      (fetchpatch {
+        name = "ffmpeg-decoder-signal-eof.patch";
+        url = "https://github.com/OpenMW/openmw/commit/c5cdb0c27797281dfde72761baf2cc6554a86189.diff";
+        excludes = ["CHANGELOG.md"];
+        hash = "sha256-QROpvFwDYkjbLq4NbRT4LxV0jdefWWTonEn/3Ui+hIY=";
+      })
+      # Signal EOF to FFmpeg 5+ from the video player https://gitlab.com/OpenMW/openmw/-/merge_requests/4378
+      (fetchpatch {
+        name = "videoplayer-signal-eof.patch";
+        url = "https://github.com/OpenMW/openmw/commit/2dcf1f7ed2601672e4081b6318334968fd7a9b68.diff";
+        hash = "sha256-+gV2FpoZ69V5bodTIY6pQhzfdspHNKBdlZd3b8EYH2w=";
+      })
+    ];
 
   postPatch = ''
     # NOTE(Sirius902) Clients and servers only connect when these hashes match.
