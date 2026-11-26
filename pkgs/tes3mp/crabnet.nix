@@ -1,11 +1,11 @@
 {
   lib,
-  gcc14Stdenv,
+  stdenv,
   fetchFromGitHub,
   fetchpatch,
   cmake,
 }:
-gcc14Stdenv.mkDerivation {
+stdenv.mkDerivation {
   pname = "crabnet";
   version = "0-unstable-2020-01-19";
 

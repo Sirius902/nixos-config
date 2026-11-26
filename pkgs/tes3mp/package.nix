@@ -1,6 +1,6 @@
 {
   lib,
-  gcc14Stdenv,
+  stdenv,
   callPackage,
   fetchFromGitHub,
   fetchpatch,
@@ -27,7 +27,7 @@
   buildServer ? false,
   crabnet ? callPackage ./crabnet.nix {},
 }:
-gcc14Stdenv.mkDerivation (finalAttrs: let
+stdenv.mkDerivation (finalAttrs: let
   # NOTE(Sirius902) Identical to nixpkgs' openmw's, so both come from its
   # binary cache.
   osg' = (openscenegraph.override {colladaSupport = true;}).overrideAttrs (oldAttrs: {
