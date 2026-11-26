@@ -1,0 +1,1141 @@
+From e3fe2e579530712a4914ab8ae28ef6434e8a6b1f Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Wed, 25 Nov 2026 21:47:49 -0800
+Subject: [PATCH] Port the launcher, wizard and browser to Qt 6
+
+Qt 5 is end of life. This follows OpenMW's port
+(https://gitlab.com/OpenMW/openmw/-/merge_requests/2332), whose diffs don't
+apply to 0.47, without Core5Compat: the wizard now converts Morrowind.ini's
+code page with the engine's own encoder instead of QTextCodec.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ CMakeLists.txt                                |  5 +-
+ apps/browser/CMakeLists.txt                   | 10 +--
+ apps/browser/MySortFilterProxyModel.cpp       | 12 ++-
+ apps/launcher/CMakeLists.txt                  |  8 +-
+ apps/launcher/graphicspage.cpp                | 11 +--
+ apps/launcher/main.cpp                        |  5 +-
+ apps/launcher/maindialog.cpp                  |  9 +--
+ apps/launcher/maindialog.hpp                  |  1 -
+ apps/launcher/utils/profilescombobox.cpp      |  1 -
+ apps/launcher/utils/textinputdialog.cpp       |  2 +-
+ apps/wizard/CMakeLists.txt                    |  8 +-
+ apps/wizard/inisettings.cpp                   | 76 +++++++++++++------
+ apps/wizard/inisettings.hpp                   |  8 +-
+ apps/wizard/installationpage.cpp              |  7 +-
+ apps/wizard/mainwizard.cpp                    | 11 ++-
+ apps/wizard/unshield/unshieldworker.cpp       | 36 ++++-----
+ apps/wizard/unshield/unshieldworker.hpp       |  4 +-
+ components/CMakeLists.txt                     |  6 +-
+ components/config/gamesettings.cpp            | 68 +++++++++--------
+ components/config/launchersettings.cpp        | 20 ++---
+ components/config/settingsbase.hpp            | 18 +++--
+ .../contentselector/model/contentmodel.cpp    |  7 +-
+ components/contentselector/model/esmfile.cpp  |  1 +
+ .../contentselector/model/naturalsort.cpp     |  2 +-
+ components/contentselector/view/combobox.cpp  |  2 +-
+ components/contentselector/view/combobox.hpp  |  4 +-
+ .../contentselector/view/contentselector.cpp  |  2 +-
+ components/process/processinvoker.cpp         |  4 +-
+ 28 files changed, 187 insertions(+), 161 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e91ca41..968fe9a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -204,10 +204,7 @@ find_package(OpenGL REQUIRED)
+ find_package(LZ4 REQUIRED)
+ 
+ if (USE_QT)
+-    find_package(Qt5Core 5.9 REQUIRED) # Temporary adjustment for TES3MP CI
+-    find_package(Qt5Widgets REQUIRED)
+-    find_package(Qt5Network REQUIRED)
+-    find_package(Qt5OpenGL REQUIRED)
++    find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+     # Instruct CMake to run moc automatically when needed.
+     #set(CMAKE_AUTOMOC ON)
+ endif()
+diff --git a/apps/browser/CMakeLists.txt b/apps/browser/CMakeLists.txt
+index 4da184e..46c34e8 100644
+--- a/apps/browser/CMakeLists.txt
++++ b/apps/browser/CMakeLists.txt
+@@ -1,6 +1,4 @@
+ 
+-set (CMAKE_CXX_STANDARD 14)
+-
+ set(BROWSER_UI
+         ${CMAKE_SOURCE_DIR}/files/tes3mp/ui/Main.ui
+         ${CMAKE_SOURCE_DIR}/files/tes3mp/ui/ServerInfo.ui
+@@ -55,9 +53,9 @@ if (DESIRED_QT_VERSION MATCHES 4)
+     #QT4_WRAP_CPP(MOC_SRCS ${BROWSER_HEADER_MOC})
+     #QT4_WRAP_UI(UI_HDRS ${BROWSER_UI})
+ else()
+-    QT5_ADD_RESOURCES(RCC_SRCS ${CMAKE_SOURCE_DIR}/files/launcher/launcher.qrc)
+-    QT5_WRAP_CPP(MOC_SRCS ${BROWSER_HEADER_MOC})
+-    QT5_WRAP_UI(UI_HDRS ${BROWSER_UI})
++    QT6_ADD_RESOURCES(RCC_SRCS ${CMAKE_SOURCE_DIR}/files/launcher/launcher.qrc)
++    QT6_WRAP_CPP(MOC_SRCS ${BROWSER_HEADER_MOC})
++    QT6_WRAP_UI(UI_HDRS ${BROWSER_UI})
+ endif()
+ 
+ include_directories(${CMAKE_CURRENT_BINARY_DIR})
+@@ -91,7 +89,7 @@ if (DESIRED_QT_VERSION MATCHES 4)
+ #        target_link_libraries(tes3mp-browser ${QT_QTMAIN_LIBRARY})
+ #    endif(WIN32)
+ else()
+-    qt5_use_modules(tes3mp-browser Widgets Core)
++    target_link_libraries(tes3mp-browser Qt6::Widgets Qt6::Core)
+ endif()
+ 
+ if (BUILD_WITH_CODE_COVERAGE)
+diff --git a/apps/browser/MySortFilterProxyModel.cpp b/apps/browser/MySortFilterProxyModel.cpp
+index 6897e93..0a2ac2c 100644
+--- a/apps/browser/MySortFilterProxyModel.cpp
++++ b/apps/browser/MySortFilterProxyModel.cpp
+@@ -57,24 +57,28 @@ MySortFilterProxyModel::MySortFilterProxyModel(QObject *parent) : QSortFilterPro
+ 
+ void MySortFilterProxyModel::filterEmptyServers(bool state)
+ {
++    beginFilterChange();
+     filterEmpty = state;
+-    invalidateFilter();
++    endFilterChange();
+ }
+ 
+ void MySortFilterProxyModel::filterFullServer(bool state)
+ {
++    beginFilterChange();
+     filterFull = state;
+-    invalidateFilter();
++    endFilterChange();
+ }
+ 
+ void MySortFilterProxyModel::pingLessThan(int maxPing)
+ {
++    beginFilterChange();
+     this->maxPing = maxPing;
+-    invalidateFilter();
++    endFilterChange();
+ }
+ 
+ void MySortFilterProxyModel::filterPassworded(bool state)
+ {
++    beginFilterChange();
+     filterPasswEnabled = state;
+-    invalidateFilter();
++    endFilterChange();
+ }
+diff --git a/apps/launcher/CMakeLists.txt b/apps/launcher/CMakeLists.txt
+index 3018237..956e248 100644
+--- a/apps/launcher/CMakeLists.txt
++++ b/apps/launcher/CMakeLists.txt
+@@ -73,9 +73,9 @@ if(WIN32)
+     set(QT_USE_QTMAIN TRUE)
+ endif(WIN32)
+ 
+-QT5_ADD_RESOURCES(RCC_SRCS ${CMAKE_SOURCE_DIR}/files/launcher/launcher.qrc)
+-QT5_WRAP_CPP(MOC_SRCS ${LAUNCHER_HEADER_MOC})
+-QT5_WRAP_UI(UI_HDRS ${LAUNCHER_UI})
++QT6_ADD_RESOURCES(RCC_SRCS ${CMAKE_SOURCE_DIR}/files/launcher/launcher.qrc)
++QT6_WRAP_CPP(MOC_SRCS ${LAUNCHER_HEADER_MOC})
++QT6_WRAP_UI(UI_HDRS ${LAUNCHER_UI})
+ 
+ include_directories(${CMAKE_CURRENT_BINARY_DIR})
+ if(NOT WIN32)
+@@ -102,7 +102,7 @@ target_link_libraries(openmw-launcher
+     components
+ )
+ 
+-target_link_libraries(openmw-launcher Qt5::Widgets Qt5::Core)
++target_link_libraries(openmw-launcher Qt6::Widgets Qt6::Core)
+ 
+ if (BUILD_WITH_CODE_COVERAGE)
+   add_definitions (--coverage)
+diff --git a/apps/launcher/graphicspage.cpp b/apps/launcher/graphicspage.cpp
+index ebb031e..9f5c1e5 100644
+--- a/apps/launcher/graphicspage.cpp
++++ b/apps/launcher/graphicspage.cpp
+@@ -1,6 +1,6 @@
+ #include "graphicspage.hpp"
+ 
+-#include <QDesktopWidget>
++#include <QRegularExpression>
+ #include <QMessageBox>
+ #include <QDir>
+ #include <QScreen>
+@@ -200,10 +200,11 @@ void Launcher::GraphicsPage::saveSettings()
+     int cWidth = 0;
+     int cHeight = 0;
+     if (standardRadioButton->isChecked()) {
+-        QRegExp resolutionRe(QString("(\\d+) x (\\d+).*"));
+-        if (resolutionRe.exactMatch(resolutionComboBox->currentText().simplified())) {
+-            cWidth = resolutionRe.cap(1).toInt();
+-            cHeight = resolutionRe.cap(2).toInt();
++        QRegularExpression resolutionRe(QRegularExpression::anchoredPattern(QString("(\\d+) x (\\d+).*")));
++        QRegularExpressionMatch match = resolutionRe.match(resolutionComboBox->currentText().simplified());
++        if (match.hasMatch()) {
++            cWidth = match.captured(1).toInt();
++            cHeight = match.captured(2).toInt();
+         }
+     } else {
+         cWidth = customWidthSpinBox->value();
+diff --git a/apps/launcher/main.cpp b/apps/launcher/main.cpp
+index 9c9acb4..4070cfb 100644
+--- a/apps/launcher/main.cpp
++++ b/apps/launcher/main.cpp
+@@ -1,7 +1,6 @@
+ #include <iostream>
+ 
+ #include <QTranslator>
+-#include <QTextCodec>
+ #include <QDir>
+ 
+ #ifdef MAC_OS_X_VERSION_MIN_REQUIRED
+@@ -22,8 +21,8 @@ int main(int argc, char *argv[])
+         QString locale = QLocale::system().name().section('_', 0, 0);
+ 
+         QTranslator appTranslator;
+-        appTranslator.load(":/translations/" + locale + ".qm");
+-        app.installTranslator(&appTranslator);
++        if (appTranslator.load(":/translations/" + locale + ".qm"))
++            app.installTranslator(&appTranslator);
+ 
+         // Now we make sure the current dir is set to application path
+         QDir dir(QCoreApplication::applicationDirPath());
+diff --git a/apps/launcher/maindialog.cpp b/apps/launcher/maindialog.cpp
+index 47dbbab..83705cb 100644
+--- a/apps/launcher/maindialog.cpp
++++ b/apps/launcher/maindialog.cpp
+@@ -9,7 +9,6 @@
+ #include <QInputDialog>
+ #include <QFileDialog>
+ #include <QCloseEvent>
+-#include <QTextCodec>
+ 
+ #include "playpage.hpp"
+ #include "graphicspage.hpp"
+@@ -301,7 +300,7 @@ bool Launcher::MainDialog::setupLauncherSettings()
+                 return false;
+             }
+             QTextStream stream(&file);
+-            stream.setCodec(QTextCodec::codecForName("UTF-8"));
++            stream.setEncoding(QStringConverter::Utf8);
+ 
+             mLauncherSettings.readFile(stream);
+         }
+@@ -335,7 +334,7 @@ bool Launcher::MainDialog::setupGameSettings()
+             return false;
+         }
+         QTextStream stream(&file);
+-        stream.setCodec(QTextCodec::codecForName("UTF-8"));
++        stream.setEncoding(QStringConverter::Utf8);
+ 
+         mGameSettings.readUserFile(stream);
+         file.close();
+@@ -361,7 +360,7 @@ bool Launcher::MainDialog::setupGameSettings()
+                 return false;
+             }
+             QTextStream stream(&file);
+-            stream.setCodec(QTextCodec::codecForName("UTF-8"));
++            stream.setEncoding(QStringConverter::Utf8);
+ 
+             mGameSettings.readFile(stream);
+             file.close();
+@@ -563,7 +562,7 @@ bool Launcher::MainDialog::writeSettings()
+ 
+     QTextStream stream(&file);
+     stream.setDevice(&file);
+-    stream.setCodec(QTextCodec::codecForName("UTF-8"));
++    stream.setEncoding(QStringConverter::Utf8);
+ 
+     mLauncherSettings.writeFile(stream);
+     file.close();
+diff --git a/apps/launcher/maindialog.hpp b/apps/launcher/maindialog.hpp
+index 80e014e..f37bc9e 100644
+--- a/apps/launcher/maindialog.hpp
++++ b/apps/launcher/maindialog.hpp
+@@ -17,7 +17,6 @@
+ 
+ class QListWidgetItem;
+ class QStackedWidget;
+-class QStringList;
+ class QStringListModel;
+ class QString;
+ 
+diff --git a/apps/launcher/utils/profilescombobox.cpp b/apps/launcher/utils/profilescombobox.cpp
+index af349dd..f4108a7 100644
+--- a/apps/launcher/utils/profilescombobox.cpp
++++ b/apps/launcher/utils/profilescombobox.cpp
+@@ -1,4 +1,3 @@
+-#include <QRegExpValidator>
+ #include <QString>
+ #include <QApplication>
+ #include <QKeyEvent>
+diff --git a/apps/launcher/utils/textinputdialog.cpp b/apps/launcher/utils/textinputdialog.cpp
+index 70b8275..eb94858 100644
+--- a/apps/launcher/utils/textinputdialog.cpp
++++ b/apps/launcher/utils/textinputdialog.cpp
+@@ -20,7 +20,7 @@ Launcher::TextInputDialog::TextInputDialog(const QString& title, const QString &
+     label->setText(text);
+ 
+     // Line edit
+-    QValidator *validator = new QRegExpValidator(QRegExp("^[a-zA-Z0-9_]*$"), this); // Alpha-numeric + underscore
++    QValidator *validator = new QRegularExpressionValidator(QRegularExpression("^[a-zA-Z0-9_]*$"), this); // Alpha-numeric + underscore
+     mLineEdit = new LineEdit(this);
+     mLineEdit->setValidator(validator);
+     mLineEdit->setCompleter(nullptr);
+diff --git a/apps/wizard/CMakeLists.txt b/apps/wizard/CMakeLists.txt
+index 10e06d1..41f8b2c 100644
+--- a/apps/wizard/CMakeLists.txt
++++ b/apps/wizard/CMakeLists.txt
+@@ -79,9 +79,9 @@ if(WIN32)
+     set(QT_USE_QTMAIN TRUE)
+ endif(WIN32)
+ 
+-QT5_ADD_RESOURCES(RCC_SRCS ${CMAKE_SOURCE_DIR}/files/wizard/wizard.qrc)
+-QT5_WRAP_CPP(MOC_SRCS ${WIZARD_HEADER_MOC})
+-QT5_WRAP_UI(UI_HDRS ${WIZARD_UI})
++QT6_ADD_RESOURCES(RCC_SRCS ${CMAKE_SOURCE_DIR}/files/wizard/wizard.qrc)
++QT6_WRAP_CPP(MOC_SRCS ${WIZARD_HEADER_MOC})
++QT6_WRAP_UI(UI_HDRS ${WIZARD_UI})
+ 
+ include_directories(${CMAKE_CURRENT_BINARY_DIR})
+ 
+@@ -102,7 +102,7 @@ target_link_libraries(openmw-wizard
+     components
+ )
+ 
+-target_link_libraries(openmw-wizard Qt5::Widgets Qt5::Core)
++target_link_libraries(openmw-wizard Qt6::Widgets Qt6::Core)
+ 
+ if (OPENMW_USE_UNSHIELD)
+     target_link_libraries(openmw-wizard ${LIBUNSHIELD_LIBRARIES})
+diff --git a/apps/wizard/inisettings.cpp b/apps/wizard/inisettings.cpp
+index e9cec12..92cb354 100644
+--- a/apps/wizard/inisettings.cpp
++++ b/apps/wizard/inisettings.cpp
+@@ -1,12 +1,14 @@
+ #include "inisettings.hpp"
+ 
+-#include <QTextStream>
+ #include <QFile>
+ #include <QStringList>
+ #include <QString>
+-#include <QRegExp>
++#include <QRegularExpression>
+ #include <QDebug>
+ 
++#include <fstream>
++#include <string>
++
+ Wizard::IniSettings::IniSettings()
+ {
+ }
+@@ -30,35 +32,48 @@ QStringList Wizard::IniSettings::findKeys(const QString &text)
+     return result;
+ }
+ 
+-bool Wizard::IniSettings::readFile(QTextStream &stream)
++bool Wizard::IniSettings::readFile(std::ifstream &stream, ToUTF8::FromType encoding)
+ {
+     // Look for a square bracket, "'\\["
+     // that has one or more "not nothing" in it, "([^]]+)"
+     // and is closed with a square bracket, "\\]"
+-    QRegExp sectionRe(QLatin1String("^\\[([^]]+)\\]"));
++    QRegularExpression sectionRe(QRegularExpression::anchoredPattern(QLatin1String("^\\[([^]]+)\\]")));
+ 
+     // Find any character(s) that is/are not equal sign(s), "[^=]+"
+     // followed by an optional whitespace, an equal sign, and another optional whitespace, "\\s*=\\s*"
+     // and one or more periods, "(.+)"
+-    QRegExp keyRe(QLatin1String("^([^=]+)\\s*=\\s*(.+)$"));
++    QRegularExpression keyRe(QLatin1String("^([^=]+)\\s*=\\s*(.+)$"));
+ 
+     QString currentSection;
+ 
+-    while (!stream.atEnd())
++    ToUTF8::Utf8Encoder encoder(encoding);
++
++    std::string legacyEncLine;
++    while (std::getline(stream, legacyEncLine))
+     {
+-        const QString line(stream.readLine());
++        std::string lineBuffer = encoder.getUtf8(legacyEncLine);
++
++        // unify Unix-style and Windows file ending
++        if (!lineBuffer.empty() && lineBuffer.back() == '\r')
++            lineBuffer.pop_back();
++
++        const QString line(QString::fromStdString(lineBuffer));
+ 
+         if (line.isEmpty() || line.startsWith(QLatin1Char(';')))
+             continue;
+ 
+-        if (sectionRe.exactMatch(line))
++        QRegularExpressionMatch sectionMatch = sectionRe.match(line);
++        if (sectionMatch.hasMatch())
+         {
+-            currentSection = sectionRe.cap(1);
++            currentSection = sectionMatch.captured(1);
++            continue;
+         }
+-        else if (keyRe.indexIn(line) != -1)
++
++        QRegularExpressionMatch keyMatch = keyRe.match(line);
++        if (keyMatch.hasMatch())
+         {
+-            QString key = keyRe.cap(1).trimmed();
+-            QString value = keyRe.cap(2).trimmed();
++            QString key = keyMatch.captured(1).trimmed();
++            QString value = keyMatch.captured(2).trimmed();
+ 
+             // Append the section, but only if there is one
+             if (!currentSection.isEmpty())
+@@ -71,37 +86,51 @@ bool Wizard::IniSettings::readFile(QTextStream &stream)
+     return true;
+ }
+ 
+-bool Wizard::IniSettings::writeFile(const QString &path, QTextStream &stream)
++bool Wizard::IniSettings::writeFile(const QString &path, std::ifstream &stream, ToUTF8::FromType encoding)
+ {
+     // Look for a square bracket, "'\\["
+     // that has one or more "not nothing" in it, "([^]]+)"
+     // and is closed with a square bracket, "\\]"
+-    QRegExp sectionRe(QLatin1String("^\\[([^]]+)\\]"));
++    QRegularExpression sectionRe(QRegularExpression::anchoredPattern(QLatin1String("^\\[([^]]+)\\]")));
+ 
+     // Find any character(s) that is/are not equal sign(s), "[^=]+"
+     // followed by an optional whitespace, an equal sign, and another optional whitespace, "\\s*=\\s*"
+     // and one or more periods, "(.+)"
+-    QRegExp keyRe(QLatin1String("^([^=]+)\\s*=\\s*(.+)$"));
++    QRegularExpression keyRe(QLatin1String("^([^=]+)\\s*=\\s*(.+)$"));
+ 
+     const QStringList keys(mSettings.keys());
+ 
+     QString currentSection;
+     QString buffer;
+ 
+-    while (!stream.atEnd()) {
++    ToUTF8::Utf8Encoder encoder(encoding);
++
++    std::string legacyEncLine;
++    while (std::getline(stream, legacyEncLine)) {
+ 
+-        const QString line(stream.readLine());
++        std::string lineBuffer = encoder.getUtf8(legacyEncLine);
++
++        // unify Unix-style and Windows file ending
++        if (!lineBuffer.empty() && lineBuffer.back() == '\r')
++            lineBuffer.pop_back();
++
++        const QString line(QString::fromStdString(lineBuffer));
+ 
+         if (line.isEmpty() || line.startsWith(QLatin1Char(';'))) {
+             buffer.append(line + QLatin1String("\n"));
+             continue;
+         }
+ 
+-        if (sectionRe.exactMatch(line)) {
++        QRegularExpressionMatch sectionMatch = sectionRe.match(line);
++        if (sectionMatch.hasMatch()) {
+             buffer.append(line + QLatin1String("\n"));
+-            currentSection = sectionRe.cap(1);
+-        } else  if (keyRe.indexIn(line) != -1) {
+-            QString key(keyRe.cap(1).trimmed());
++            currentSection = sectionMatch.captured(1);
++            continue;
++        }
++
++        QRegularExpressionMatch keyMatch = keyRe.match(line);
++        if (keyMatch.hasMatch()) {
++            QString key(keyMatch.captured(1).trimmed());
+             QString lookupKey(key);
+ 
+             // Append the section, but only if there is one
+@@ -150,11 +179,8 @@ bool Wizard::IniSettings::writeFile(const QString &path, QTextStream &stream)
+     QFile file(path);
+ 
+     if (file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)) {
+-        QTextStream in(&file);
+-        in.setCodec(stream.codec());
+-
+         // Write the updated buffer to an empty file
+-        in << buffer;
++        file.write(QByteArray::fromStdString(encoder.getLegacyEnc(buffer.toStdString())));
+         file.flush();
+         file.close();
+     } else {
+diff --git a/apps/wizard/inisettings.hpp b/apps/wizard/inisettings.hpp
+index d425a9b..14d95ce 100644
+--- a/apps/wizard/inisettings.hpp
++++ b/apps/wizard/inisettings.hpp
+@@ -4,7 +4,9 @@
+ #include <QHash>
+ #include <QVariant>
+ 
+-class QTextStream;
++#include <iosfwd>
++
++#include <components/to_utf8/to_utf8.hpp>
+ 
+ namespace Wizard
+ {
+@@ -39,8 +41,8 @@ namespace Wizard
+ 
+         QStringList findKeys(const QString &text);
+ 
+-        bool readFile(QTextStream &stream);
+-        bool writeFile(const QString &path, QTextStream &stream);
++        bool readFile(std::ifstream &stream, ToUTF8::FromType encoding);
++        bool writeFile(const QString &path, std::ifstream &stream, ToUTF8::FromType encoding);
+ 
+         bool parseInx(const QString &path);
+ 
+diff --git a/apps/wizard/installationpage.cpp b/apps/wizard/installationpage.cpp
+index 9c90b0b..5ce5eb3 100644
+--- a/apps/wizard/installationpage.cpp
++++ b/apps/wizard/installationpage.cpp
+@@ -1,7 +1,6 @@
+ #include "installationpage.hpp"
+ 
+ #include <QDebug>
+-#include <QTextCodec>
+ #include <QFileInfo>
+ #include <QFileDialog>
+ #include <QMessageBox>
+@@ -129,11 +128,11 @@ void Wizard::InstallationPage::startInstallation()
+     QString language(field(QLatin1String("installation.language")).toString());
+ 
+     if (language == QLatin1String("Polish")) {
+-        mUnshield->setIniCodec(QTextCodec::codecForName("windows-1250"));
++        mUnshield->setIniEncoding(ToUTF8::FromType::WINDOWS_1250);
+     } else if (language == QLatin1String("Russian")) {
+-        mUnshield->setIniCodec(QTextCodec::codecForName("windows-1251"));
++        mUnshield->setIniEncoding(ToUTF8::FromType::WINDOWS_1251);
+     }  else {
+-        mUnshield->setIniCodec(QTextCodec::codecForName("windows-1252"));
++        mUnshield->setIniEncoding(ToUTF8::FromType::WINDOWS_1252);
+     }
+ 
+     mThread->start();
+diff --git a/apps/wizard/mainwizard.cpp b/apps/wizard/mainwizard.cpp
+index d92f5b0..1ae199d 100644
+--- a/apps/wizard/mainwizard.cpp
++++ b/apps/wizard/mainwizard.cpp
+@@ -5,7 +5,6 @@
+ #include <QTime>
+ #include <QCloseEvent>
+ #include <QMessageBox>
+-#include <QTextCodec>
+ #include <QDir>
+ 
+ #include "intropage.hpp"
+@@ -152,7 +151,7 @@ void Wizard::MainWizard::setupGameSettings()
+             return qApp->quit();
+         }
+         QTextStream stream(&file);
+-        stream.setCodec(QTextCodec::codecForName("UTF-8"));
++        stream.setEncoding(QStringConverter::Utf8);
+ 
+         mGameSettings.readUserFile(stream);
+     }
+@@ -181,7 +180,7 @@ void Wizard::MainWizard::setupGameSettings()
+                 return qApp->quit();
+             }
+             QTextStream stream(&file);
+-            stream.setCodec(QTextCodec::codecForName("UTF-8"));
++            stream.setEncoding(QStringConverter::Utf8);
+ 
+             mGameSettings.readFile(stream);
+         }
+@@ -214,7 +213,7 @@ void Wizard::MainWizard::setupLauncherSettings()
+             return qApp->quit();
+         }
+         QTextStream stream(&file);
+-        stream.setCodec(QTextCodec::codecForName("UTF-8"));
++        stream.setEncoding(QStringConverter::Utf8);
+ 
+         mLauncherSettings.readFile(stream);
+     }
+@@ -416,7 +415,7 @@ void Wizard::MainWizard::writeSettings()
+     }
+ 
+     QTextStream stream(&file);
+-    stream.setCodec(QTextCodec::codecForName("UTF-8"));
++    stream.setEncoding(QStringConverter::Utf8);
+ 
+     mGameSettings.writeFile(stream);
+     file.close();
+@@ -438,7 +437,7 @@ void Wizard::MainWizard::writeSettings()
+     }
+ 
+     stream.setDevice(&file);
+-    stream.setCodec(QTextCodec::codecForName("UTF-8"));
++    stream.setEncoding(QStringConverter::Utf8);
+ 
+     mLauncherSettings.writeFile(stream);
+     file.close();
+diff --git a/apps/wizard/unshield/unshieldworker.cpp b/apps/wizard/unshield/unshieldworker.cpp
+index f84658b..6d2b448 100644
+--- a/apps/wizard/unshield/unshieldworker.cpp
++++ b/apps/wizard/unshield/unshieldworker.cpp
+@@ -7,12 +7,14 @@
+ #include <QFileDialog>
+ #include <QFileInfo>
+ #include <QStringList>
+-#include <QTextStream>
+-#include <QTextCodec>
+ #include <QFile>
+ #include <QDir>
+ #include <QDirIterator>
+ 
++#include <cerrno>
++#include <fstream>
++#include <system_error>
++
+ Wizard::UnshieldWorker::UnshieldWorker(QObject *parent) :
+     QObject(parent),
+     mIniSettings()
+@@ -24,7 +26,7 @@ Wizard::UnshieldWorker::UnshieldWorker(QObject *parent) :
+     mDiskPath = QString();
+ 
+     // Default to Latin encoding
+-    mIniCodec = QTextCodec::codecForName("windows-1252");
++    mIniEncoding = ToUTF8::FromType::WINDOWS_1252;
+ 
+     mInstallMorrowind = false;
+     mInstallTribunal = false;
+@@ -154,10 +156,10 @@ QString Wizard::UnshieldWorker::getDiskPath()
+ }
+ 
+ 
+-void Wizard::UnshieldWorker::setIniCodec(QTextCodec *codec)
++void Wizard::UnshieldWorker::setIniEncoding(ToUTF8::FromType encoding)
+ {
+     QWriteLocker writeLock(&mLock);
+-    mIniCodec = codec;
++    mIniEncoding = encoding;
+ }
+ 
+ bool Wizard::UnshieldWorker::setupSettings()
+@@ -166,18 +168,15 @@ bool Wizard::UnshieldWorker::setupSettings()
+     if (getIniPath().isEmpty())
+         return false;
+ 
+-    QFile file(getIniPath());
++    std::ifstream file(QFile::encodeName(getIniPath()).toStdString());
+ 
+-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
++    if (file.fail()) {
+         emit error(tr("Failed to open Morrowind configuration file!"),
+-                   tr("Opening %1 failed: %2.").arg(getIniPath(), file.errorString()));
++                   tr("Opening %1 failed: %2.").arg(getIniPath(), QString::fromStdString(std::generic_category().message(errno))));
+         return false;
+     }
+ 
+-    QTextStream stream(&file);
+-    stream.setCodec(mIniCodec);
+-
+-    mIniSettings.readFile(stream);
++    mIniSettings.readFile(file, mIniEncoding);
+ 
+     return true;
+ }
+@@ -187,20 +186,17 @@ bool Wizard::UnshieldWorker::writeSettings()
+     if (getIniPath().isEmpty())
+         return false;
+ 
+-    QFile file(getIniPath());
++    std::ifstream file(QFile::encodeName(getIniPath()).toStdString());
+ 
+-    if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
++    if (file.fail()) {
+         emit error(tr("Failed to open Morrowind configuration file!"),
+-                   tr("Opening %1 failed: %2.").arg(getIniPath(), file.errorString()));
++                   tr("Opening %1 failed: %2.").arg(getIniPath(), QString::fromStdString(std::generic_category().message(errno))));
+         return false;
+     }
+ 
+-    QTextStream stream(&file);
+-    stream.setCodec(mIniCodec);
+-
+-    if (!mIniSettings.writeFile(getIniPath(), stream)) {
++    if (!mIniSettings.writeFile(getIniPath(), file, mIniEncoding)) {
+          emit error(tr("Failed to write Morrowind configuration file!"),
+-                    tr("Writing to %1 failed: %2.").arg(getIniPath(), file.errorString()));
++                    tr("Writing to %1 failed: %2.").arg(getIniPath(), QString::fromStdString(std::generic_category().message(errno))));
+          return false;
+     }
+ 
+diff --git a/apps/wizard/unshield/unshieldworker.hpp b/apps/wizard/unshield/unshieldworker.hpp
+index 2553d1b..9afe6cc 100644
+--- a/apps/wizard/unshield/unshieldworker.hpp
++++ b/apps/wizard/unshield/unshieldworker.hpp
+@@ -41,7 +41,7 @@ namespace Wizard
+         QString getPath();
+         QString getIniPath();
+ 
+-        void setIniCodec(QTextCodec *codec);
++        void setIniEncoding(ToUTF8::FromType encoding);
+ 
+         bool setupSettings();
+ 
+@@ -101,7 +101,7 @@ namespace Wizard
+ 
+         IniSettings mIniSettings;
+ 
+-        QTextCodec *mIniCodec;
++        ToUTF8::FromType mIniEncoding;
+ 
+         QWaitCondition mWait;
+ 
+diff --git a/components/CMakeLists.txt b/components/CMakeLists.txt
+index 2b56aa3..d337286 100644
+--- a/components/CMakeLists.txt
++++ b/components/CMakeLists.txt
+@@ -324,8 +324,8 @@ if (USE_QT)
+         helpviewer
+         )
+ 
+-    QT5_WRAP_UI(ESM_UI_HDR ${ESM_UI})
+-    QT5_WRAP_CPP(MOC_SRCS ${COMPONENT_MOC_FILES})
++    QT6_WRAP_UI(ESM_UI_HDR ${ESM_UI})
++    QT6_WRAP_CPP(MOC_SRCS ${COMPONENT_MOC_FILES})
+ endif()
+ # Start of tes3mp change (major)
+ #
+@@ -404,7 +404,7 @@ endif()
+ IF (BUILD_OPENMW OR BUILD_OPENCS)
+ # End of tes3mp change
+ if (USE_QT)
+-    target_link_libraries(components Qt5::Widgets Qt5::Core)
++    target_link_libraries(components Qt6::Widgets Qt6::Core)
+ endif()
+ # Start of tes3mp change (major)
+ #
+diff --git a/components/config/gamesettings.cpp b/components/config/gamesettings.cpp
+index 8717a68..5aa1b43 100644
+--- a/components/config/gamesettings.cpp
++++ b/components/config/gamesettings.cpp
+@@ -1,9 +1,8 @@
+ #include "gamesettings.hpp"
+ #include "launchersettings.hpp"
+ 
+-#include <QTextCodec>
+ #include <QDir>
+-#include <QRegExp>
++#include <QRegularExpression>
+ 
+ #include <components/files/configurationmanager.hpp>
+ 
+@@ -83,7 +82,7 @@ bool Config::GameSettings::readUserFile(QTextStream &stream)
+ bool Config::GameSettings::readFile(QTextStream &stream, QMultiMap<QString, QString> &settings)
+ {
+     QMultiMap<QString, QString> cache;
+-    QRegExp keyRe("^([^=]+)\\s*=\\s*(.+)$");
++    QRegularExpression keyRe("^([^=]+)\\s*=\\s*(.+)$");
+ 
+     while (!stream.atEnd()) {
+         QString line = stream.readLine();
+@@ -91,10 +90,11 @@ bool Config::GameSettings::readFile(QTextStream &stream, QMultiMap<QString, QStr
+         if (line.isEmpty() || line.startsWith("#"))
+             continue;
+ 
+-        if (keyRe.indexIn(line) != -1) {
++        QRegularExpressionMatch match = keyRe.match(line);
++        if (match.hasMatch()) {
+ 
+-            QString key = keyRe.cap(1).trimmed();
+-            QString value = keyRe.cap(2).trimmed();
++            QString key = match.captured(1).trimmed();
++            QString value = match.captured(2).trimmed();
+ 
+             // Don't remove composing entries
+             if (key != QLatin1String("data")
+@@ -155,7 +155,7 @@ bool Config::GameSettings::readFile(QTextStream &stream, QMultiMap<QString, QStr
+ bool Config::GameSettings::writeFile(QTextStream &stream)
+ {
+     // Iterate in reverse order to preserve insertion order
+-    QMapIterator<QString, QString> i(mUserSettings);
++    QMultiMapIterator<QString, QString> i(mUserSettings);
+     i.toBack();
+ 
+     while (i.hasPrevious()) {
+@@ -196,13 +196,13 @@ bool Config::GameSettings::writeFile(QTextStream &stream)
+ 
+ bool Config::GameSettings::isOrderedLine(const QString& line)
+ {
+-    return line.contains(QRegExp("^\\s*fallback-archive\\s*="))
+-           || line.contains(QRegExp("^\\s*fallback\\s*="))
+-           || line.contains(QRegExp("^\\s*data\\s*="))
+-           || line.contains(QRegExp("^\\s*data-local\\s*="))
+-           || line.contains(QRegExp("^\\s*resources\\s*="))
+-           || line.contains(QRegExp("^\\s*groundcover\\s*="))
+-           || line.contains(QRegExp("^\\s*content\\s*="));
++    return line.contains(QRegularExpression("^\\s*fallback-archive\\s*="))
++           || line.contains(QRegularExpression("^\\s*fallback\\s*="))
++           || line.contains(QRegularExpression("^\\s*data\\s*="))
++           || line.contains(QRegularExpression("^\\s*data-local\\s*="))
++           || line.contains(QRegularExpression("^\\s*resources\\s*="))
++           || line.contains(QRegularExpression("^\\s*groundcover\\s*="))
++           || line.contains(QRegularExpression("^\\s*content\\s*="));
+ }
+ 
+ // Policy:
+@@ -222,7 +222,7 @@ bool Config::GameSettings::isOrderedLine(const QString& line)
+ bool Config::GameSettings::writeFileWithComments(QFile &file)
+ {
+     QTextStream stream(&file);
+-    stream.setCodec(QTextCodec::codecForName("UTF-8"));
++    stream.setEncoding(QStringConverter::Utf8);
+ 
+     // slurp
+     std::vector<QString> fileCopy;
+@@ -261,7 +261,7 @@ bool Config::GameSettings::writeFileWithComments(QFile &file)
+     //        +----------------------------------------------------------+
+     //
+     //
+-    QRegExp settingRegex("^([^=]+)\\s*=\\s*([^,]+)(.*)$");
++    QRegularExpression settingRegex("^([^=]+)\\s*=\\s*([^,]+)(.*)$");
+     std::vector<QString> comments;
+     auto commentStart = fileCopy.end();
+     std::map<QString, std::vector<QString> > commentsMap;
+@@ -272,9 +272,10 @@ bool Config::GameSettings::writeFileWithComments(QFile &file)
+             // save in a separate map of comments keyed by "ordered" line
+             if (!comments.empty())
+             {
+-                if (settingRegex.indexIn(*iter) != -1)
++                QRegularExpressionMatch match = settingRegex.match(*iter);
++                if (match.hasMatch())
+                 {
+-                    commentsMap[settingRegex.cap(1)+"="+settingRegex.cap(2)] = comments;
++                    commentsMap[match.captured(1)+"="+match.captured(2)] = comments;
+                     comments.clear();
+                     commentStart = fileCopy.end();
+                 }
+@@ -283,14 +284,14 @@ bool Config::GameSettings::writeFileWithComments(QFile &file)
+ 
+             *iter = QString(); // "ordered" lines to be removed later
+         }
+-        else if ((*iter).isEmpty() || (*iter).contains(QRegExp("^\\s*#")))
++        else if ((*iter).isEmpty() || (*iter).contains(QRegularExpression("^\\s*#")))
+         {
+             // comment line, save in temp buffer
+             if (comments.empty())
+                 commentStart = iter;
+ 
+             // special removed content processing
+-            if ((*iter).contains(QRegExp("^##content\\s*=")))
++            if ((*iter).contains(QRegularExpression("^##content\\s*=")))
+             {
+                 if (!comments.empty())
+                 {
+@@ -306,11 +307,12 @@ bool Config::GameSettings::writeFileWithComments(QFile &file)
+         }
+         else
+         {
+-            int index = settingRegex.indexIn(*iter);
++            QRegularExpressionMatch match = settingRegex.match(*iter);
++            int index = match.capturedStart();
+ 
+             // blank or non-"ordered" line, write saved comments
+             if (!comments.empty() && index != -1 && settingRegex.captureCount() >= 2 &&
+-                mUserSettings.find(settingRegex.cap(1)) != mUserSettings.end())
++                mUserSettings.find(match.captured(1)) != mUserSettings.end())
+             {
+                 if (commentStart == fileCopy.end())
+                     throw std::runtime_error("Config::GameSettings: failed to parse settings - iterator is past of end of settings file");
+@@ -339,15 +341,16 @@ bool Config::GameSettings::writeFileWithComments(QFile &file)
+ 
+             // look for a matching key in user settings
+             *iter = QString(); // assume no match
+-            QString key = settingRegex.cap(1);
+-            QString keyVal = settingRegex.cap(1)+"="+settingRegex.cap(2);
++            QString key = match.captured(1);
++            QString keyVal = match.captured(1)+"="+match.captured(2);
+             QMultiMap<QString, QString>::const_iterator i = mUserSettings.find(key);
+             while (i != mUserSettings.end() && i.key() == key)
+             {
+                 QString settingLine = i.key() + "=" + i.value();
+-                if (settingRegex.indexIn(settingLine) != -1)
++                QRegularExpressionMatch lineMatch = settingRegex.match(settingLine);
++                if (lineMatch.hasMatch())
+                 {
+-                    if ((settingRegex.cap(1)+"="+settingRegex.cap(2)) == keyVal)
++                    if ((lineMatch.captured(1)+"="+lineMatch.captured(2)) == keyVal)
+                     {
+                         *iter = settingLine;
+                         break;
+@@ -366,7 +369,7 @@ bool Config::GameSettings::writeFileWithComments(QFile &file)
+ 
+         // Below is based on readFile() code, if that changes corresponding change may be
+         // required (for example duplicates may be inserted if the rules don't match)
+-        if (/*(*iter).isEmpty() ||*/ iter.contains(QRegExp("^\\s*#")))
++        if (/*(*iter).isEmpty() ||*/ iter.contains(QRegularExpression("^\\s*#")))
+         {
+             stream << iter << "\n";
+             continue;
+@@ -375,7 +378,7 @@ bool Config::GameSettings::writeFileWithComments(QFile &file)
+ 
+     // Iterate in reverse order to preserve insertion order
+     QString settingLine;
+-    QMapIterator<QString, QString> it(mUserSettings);
++    QMultiMapIterator<QString, QString> it(mUserSettings);
+     it.toBack();
+ 
+     while (it.hasPrevious())
+@@ -406,13 +409,14 @@ bool Config::GameSettings::writeFileWithComments(QFile &file)
+         else
+             settingLine = it.key() + "=" + it.value();
+ 
+-        if (settingRegex.indexIn(settingLine) != -1)
++        QRegularExpressionMatch match = settingRegex.match(settingLine);
++        if (match.hasMatch())
+         {
+-            auto i = commentsMap.find(settingRegex.cap(1)+"="+settingRegex.cap(2));
++            auto i = commentsMap.find(match.captured(1)+"="+match.captured(2));
+ 
+             // check if previous removed content item with comments
+             if (i == commentsMap.end())
+-                i = commentsMap.find("##"+settingRegex.cap(1)+"="+settingRegex.cap(2));
++                i = commentsMap.find("##"+match.captured(1)+"="+match.captured(2));
+ 
+             if (i != commentsMap.end())
+             {
+@@ -433,7 +437,7 @@ bool Config::GameSettings::writeFileWithComments(QFile &file)
+         auto i = commentsMap.begin();
+         for (; i != commentsMap.end(); ++i)
+         {
+-            if (i->first.contains(QRegExp("^\\s*content\\s*=")))
++            if (i->first.contains(QRegularExpression("^\\s*content\\s*=")))
+             {
+                 std::vector<QString> cLines = i->second;
+                 for (const auto & cLine : cLines)
+diff --git a/components/config/launchersettings.cpp b/components/config/launchersettings.cpp
+index 025bc43..b016fd5 100644
+--- a/components/config/launchersettings.cpp
++++ b/components/config/launchersettings.cpp
+@@ -2,7 +2,7 @@
+ 
+ #include <QTextStream>
+ #include <QString>
+-#include <QRegExp>
++#include <QRegularExpression>
+ #include <QMultiMap>
+ 
+ #include <QDebug>
+@@ -17,16 +17,17 @@ QStringList Config::LauncherSettings::subKeys(const QString &key)
+     QMultiMap<QString, QString> settings = SettingsBase::getSettings();
+     QStringList keys = settings.uniqueKeys();
+ 
+-    QRegExp keyRe("(.+)/");
++    QRegularExpression keyRe("(.+)/");
+ 
+     QStringList result;
+ 
+     for (const QString &currentKey : keys)
+     {
+ 
+-        if (keyRe.indexIn(currentKey) != -1)
++        QRegularExpressionMatch match = keyRe.match(currentKey);
++        if (match.hasMatch())
+         {
+-            QString prefixedKey = keyRe.cap(1);
++            QString prefixedKey = match.captured(1);
+ 
+             if(prefixedKey.startsWith(key))
+             {
+@@ -45,10 +46,10 @@ QStringList Config::LauncherSettings::subKeys(const QString &key)
+ bool Config::LauncherSettings::writeFile(QTextStream &stream)
+ {
+     QString sectionPrefix;
+-    QRegExp sectionRe("([^/]+)/(.+)$");
++    QRegularExpression sectionRe(QRegularExpression::anchoredPattern("([^/]+)/(.+)$"));
+     QMultiMap<QString, QString> settings = SettingsBase::getSettings();
+ 
+-    QMapIterator<QString, QString> i(settings);
++    QMultiMapIterator<QString, QString> i(settings);
+     i.toBack();
+ 
+     while (i.hasPrevious()) {
+@@ -57,9 +58,10 @@ bool Config::LauncherSettings::writeFile(QTextStream &stream)
+         QString prefix;
+         QString key;
+ 
+-        if (sectionRe.exactMatch(i.key())) {
+-             prefix = sectionRe.cap(1);
+-             key = sectionRe.cap(2);
++        QRegularExpressionMatch match = sectionRe.match(i.key());
++        if (match.hasMatch()) {
++             prefix = match.captured(1);
++             key = match.captured(2);
+         }
+ 
+         // Get rid of legacy settings
+diff --git a/components/config/settingsbase.hpp b/components/config/settingsbase.hpp
+index 86fa962..cf204f8 100644
+--- a/components/config/settingsbase.hpp
++++ b/components/config/settingsbase.hpp
+@@ -4,7 +4,7 @@
+ #include <QTextStream>
+ #include <QStringList>
+ #include <QString>
+-#include <QRegExp>
++#include <QRegularExpression>
+ #include <QMultiMap>
+ 
+ namespace Config
+@@ -54,8 +54,8 @@ namespace Config
+ 
+             QString sectionPrefix;
+ 
+-            QRegExp sectionRe("^\\[([^]]+)\\]");
+-            QRegExp keyRe("^([^=]+)\\s*=\\s*(.+)$");
++            QRegularExpression sectionRe(QRegularExpression::anchoredPattern("^\\[([^]]+)\\]"));
++            QRegularExpression keyRe("^([^=]+)\\s*=\\s*(.+)$");
+ 
+             while (!stream.atEnd()) {
+                 QString line = stream.readLine();
+@@ -63,16 +63,18 @@ namespace Config
+                 if (line.isEmpty() || line.startsWith("#"))
+                     continue;
+ 
+-                if (sectionRe.exactMatch(line)) {
+-                    sectionPrefix = sectionRe.cap(1);
++                QRegularExpressionMatch sectionMatch = sectionRe.match(line);
++                if (sectionMatch.hasMatch()) {
++                    sectionPrefix = sectionMatch.captured(1);
+                     sectionPrefix.append("/");
+                     continue;
+                 }
+ 
+-                if (keyRe.indexIn(line) != -1) {
++                QRegularExpressionMatch keyMatch = keyRe.match(line);
++                if (keyMatch.hasMatch()) {
+ 
+-                    QString key = keyRe.cap(1).trimmed();
+-                    QString value = keyRe.cap(2).trimmed();
++                    QString key = keyMatch.captured(1).trimmed();
++                    QString value = keyMatch.captured(2).trimmed();
+ 
+                     if (!sectionPrefix.isEmpty())
+                         key.prepend(sectionPrefix);
+diff --git a/components/contentselector/model/contentmodel.cpp b/components/contentselector/model/contentmodel.cpp
+index e51c180..bc11e99 100644
+--- a/components/contentselector/model/contentmodel.cpp
++++ b/components/contentselector/model/contentmodel.cpp
+@@ -4,7 +4,6 @@
+ #include <stdexcept>
+ 
+ #include <QDir>
+-#include <QTextCodec>
+ #include <QDebug>
+ 
+ #include <components/esm/esmreader.hpp>
+@@ -179,12 +178,12 @@ QVariant ContentSelectorModel::ContentModel::data(const QModelIndex &index, int
+         {
+         case 0:
+         case 1:
+-            return Qt::AlignLeft + Qt::AlignVCenter;
++            return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
+         case 2:
+         case 3:
+-            return Qt::AlignRight + Qt::AlignVCenter;
++            return QVariant(Qt::AlignRight | Qt::AlignVCenter);
+         default:
+-            return Qt::AlignLeft + Qt::AlignVCenter;
++            return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
+         }
+     }
+ 
+diff --git a/components/contentselector/model/esmfile.cpp b/components/contentselector/model/esmfile.cpp
+index 46a7c96..3991412 100644
+--- a/components/contentselector/model/esmfile.cpp
++++ b/components/contentselector/model/esmfile.cpp
+@@ -2,6 +2,7 @@
+ 
+ #include <QMimeData>
+ #include <QDataStream>
++#include <QIODevice>
+ 
+ int ContentSelectorModel::EsmFile::sPropertyCount = 7;
+ QString ContentSelectorModel::EsmFile::sToolTip = QString("<b>Author:</b> %1<br/> \
+diff --git a/components/contentselector/model/naturalsort.cpp b/components/contentselector/model/naturalsort.cpp
+index 50d1e77..9d51269 100644
+--- a/components/contentselector/model/naturalsort.cpp
++++ b/components/contentselector/model/naturalsort.cpp
+@@ -25,7 +25,7 @@ static inline QChar getNextChar(const QString &s, int location)
+  */
+ int naturalCompare(const QString &s1, const QString &s2,  Qt::CaseSensitivity cs)
+ {
+-    for (int l1 = 0, l2 = 0; l1 <= s1.count() && l2 <= s2.count(); ++l1, ++l2) {
++    for (int l1 = 0, l2 = 0; l1 <= s1.size() && l2 <= s2.size(); ++l1, ++l2) {
+         // skip spaces, tabs and 0's
+         QChar c1 = getNextChar(s1, l1);
+         while (c1.isSpace())
+diff --git a/components/contentselector/view/combobox.cpp b/components/contentselector/view/combobox.cpp
+index 742e236..9b7ca47 100644
+--- a/components/contentselector/view/combobox.cpp
++++ b/components/contentselector/view/combobox.cpp
+@@ -6,7 +6,7 @@
+ ContentSelectorView::ComboBox::ComboBox(QWidget *parent) :
+     QComboBox(parent)
+ {
+-    mValidator = new QRegExpValidator(QRegExp("^[a-zA-Z0-9_]*$"), this); // Alpha-numeric + underscore
++    mValidator = new QRegularExpressionValidator(QRegularExpression("^[a-zA-Z0-9_]*$"), this); // Alpha-numeric + underscore
+     setValidator(mValidator);
+     setEditable(true);
+     setCompleter(nullptr);
+diff --git a/components/contentselector/view/combobox.hpp b/components/contentselector/view/combobox.hpp
+index 9af3c83..fd731c2 100644
+--- a/components/contentselector/view/combobox.hpp
++++ b/components/contentselector/view/combobox.hpp
+@@ -5,7 +5,7 @@
+ #include <QStylePainter>
+ 
+ class QString;
+-class QRegExpValidator;
++class QRegularExpressionValidator;
+ 
+ namespace ContentSelectorView
+ {
+@@ -23,7 +23,7 @@ namespace ContentSelectorView
+ 
+     protected:
+         void paintEvent(QPaintEvent *) override;
+-        QRegExpValidator *mValidator;
++        QRegularExpressionValidator *mValidator;
+     };
+ }
+ 
+diff --git a/components/contentselector/view/contentselector.cpp b/components/contentselector/view/contentselector.cpp
+index 6bb8e6e..9e0b485 100644
+--- a/components/contentselector/view/contentselector.cpp
++++ b/components/contentselector/view/contentselector.cpp
+@@ -63,7 +63,7 @@ void ContentSelectorView::ContentSelector::buildAddonView()
+     ui.addonView->setVisible (true);
+ 
+     mAddonProxyModel = new AddOnProxyModel(this);
+-    mAddonProxyModel->setFilterRegExp(searchFilter()->text());
++    mAddonProxyModel->setFilterRegularExpression(searchFilter()->text());
+     mAddonProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+     mAddonProxyModel->setDynamicSortFilter (true);
+     mAddonProxyModel->setSourceModel (mContentModel);
+diff --git a/components/process/processinvoker.cpp b/components/process/processinvoker.cpp
+index 78cf700..721d73a 100644
+--- a/components/process/processinvoker.cpp
++++ b/components/process/processinvoker.cpp
+@@ -11,8 +11,8 @@ Process::ProcessInvoker::ProcessInvoker()
+ {
+     mProcess = new QProcess(this);
+ 
+-    connect(mProcess, SIGNAL(error(QProcess::ProcessError)),
+-            this, SLOT(processError(QProcess::ProcessError)));
++    connect(mProcess, &QProcess::errorOccurred,
++            this, &ProcessInvoker::processError);
+ 
+     connect(mProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
+             this, SLOT(processFinished(int,QProcess::ExitStatus)));
+-- 
+2.56.0
+

@@ -9,7 +9,7 @@
   makeBinaryWrapper,
   copyDesktopItems,
   makeDesktopItem,
-  libsForQt5,
+  qt6Packages,
   SDL2,
   boost,
   bullet,
@@ -183,6 +183,7 @@ in {
       ./0003-Support-FFmpeg-5-and-later-in-the-sound-decoder.patch
       ./0004-Free-the-video-player-s-queued-packets.patch
       ./0005-Fix-movie-audio-in-layouts-other-than-mono-and-stere.patch
+      ./0006-Port-the-launcher-wizard-and-browser-to-Qt-6.patch
     ];
 
   postPatch = ''
@@ -217,7 +218,7 @@ in {
     ]
     ++ lib.optionals (!buildServer) [
       copyDesktopItems
-      libsForQt5.wrapQtAppsHook
+      qt6Packages.wrapQtAppsHook
     ];
 
   buildInputs =
@@ -234,7 +235,7 @@ in {
     ++ lib.optionals (!buildServer) [
       bullet'
       ffmpeg
-      libsForQt5.qtbase
+      qt6Packages.qtbase
       libxt
       mygui'
       openal
