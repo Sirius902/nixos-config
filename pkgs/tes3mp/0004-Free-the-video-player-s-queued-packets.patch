@@ -1,0 +1,94 @@
+From a044ded1556cb34f26b00e0c20373802606a88a2 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Wed, 25 Nov 2026 21:36:41 -0800
+Subject: [PATCH] Free the video player's queued packets
+
+Since OpenMW replaced AVPacketList
+(https://gitlab.com/OpenMW/openmw/-/merge_requests/1504), PacketQueue::get()
+and clear() free each list node but not the packet it owns, and the video and
+parse threads only unref theirs. get() also moved out of the shared flush
+packet, emptying it for the other queue, and PacketListFree freed the address
+of its own parameter.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ extern/osg-ffmpeg-videoplayer/videostate.cpp | 25 +++++++++++++-------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/extern/osg-ffmpeg-videoplayer/videostate.cpp b/extern/osg-ffmpeg-videoplayer/videostate.cpp
+index 664f239..fb2a15c 100644
+--- a/extern/osg-ffmpeg-videoplayer/videostate.cpp
++++ b/extern/osg-ffmpeg-videoplayer/videostate.cpp
+@@ -50,11 +50,11 @@ namespace
+     const int MAX_AUDIOQ_SIZE = (5 * 16 * 1024);
+     const int MAX_VIDEOQ_SIZE = (5 * 256 * 1024);
+ 
+-    struct AVPacketUnref
++    struct AVPacketFree
+     {
+         void operator()(AVPacket* packet) const
+         {
+-            av_packet_unref(packet);
++            av_packet_free(&packet);
+         }
+     };
+ 
+@@ -74,8 +74,9 @@ struct PacketListFree
+ {
+     void operator()(Video::PacketList* list) const
+     {
+-        av_packet_free(&list->pkt);
+-        av_free(&list);
++        if(list->pkt != &flush_pkt)
++            av_packet_free(&list->pkt);
++        av_free(list);
+     }
+ };
+ 
+@@ -158,7 +159,13 @@ int PacketQueue::get(AVPacket *pkt, VideoState *is)
+             this->size -= pkt1->pkt->size;
+ 
+             av_packet_unref(pkt);
+-            av_packet_move_ref(pkt, pkt1->pkt);
++            if(pkt1->pkt == &flush_pkt)
++                *pkt = flush_pkt;
++            else
++            {
++                av_packet_move_ref(pkt, pkt1->pkt);
++                av_packet_free(&pkt1->pkt);
++            }
+             av_free(pkt1);
+ 
+             return 1;
+@@ -186,8 +193,8 @@ void PacketQueue::clear()
+     for(pkt = this->first_pkt; pkt != nullptr; pkt = pkt1)
+     {
+         pkt1 = pkt->next;
+-        if (pkt->pkt->data != flush_pkt.data)
+-            av_packet_unref(pkt->pkt);
++        if (pkt->pkt != &flush_pkt)
++            av_packet_free(&pkt->pkt);
+         av_freep(&pkt);
+     }
+     this->last_pkt = nullptr;
+@@ -457,7 +464,7 @@ public:
+     {
+         VideoState* self = mVideoState;
+         AVPacket* packetData = av_packet_alloc();
+-        std::unique_ptr<AVPacket, AVPacketUnref> packet(packetData);
++        std::unique_ptr<AVPacket, AVPacketFree> packet(packetData);
+         std::unique_ptr<AVFrame, AVFrameFree> pFrame{av_frame_alloc()};
+ 
+         while(self->videoq.get(packet.get(), self) >= 0)
+@@ -524,7 +531,7 @@ public:
+ 
+         AVFormatContext *pFormatCtx = self->format_ctx;
+         AVPacket* packetData = av_packet_alloc();
+-        std::unique_ptr<AVPacket, AVPacketUnref> packet(packetData);
++        std::unique_ptr<AVPacket, AVPacketFree> packet(packetData);
+ 
+         try
+         {
+-- 
+2.56.0
+

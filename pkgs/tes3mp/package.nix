@@ -13,7 +13,7 @@
   SDL2,
   boost,
   bullet,
-  ffmpeg_6,
+  ffmpeg,
   libGL,
   libxt,
   luajit,
@@ -160,6 +160,29 @@ in {
         url = "https://github.com/OpenMW/openmw/commit/2dcf1f7ed2601672e4081b6318334968fd7a9b68.diff";
         hash = "sha256-+gV2FpoZ69V5bodTIY6pQhzfdspHNKBdlZd3b8EYH2w=";
       })
+      # Replace FFmpeg's removed AVPacketList https://gitlab.com/OpenMW/openmw/-/merge_requests/1504
+      (fetchpatch {
+        name = "videoplayer-replace-avpacketlist.patch";
+        url = "https://github.com/OpenMW/openmw/compare/c3d3535ffd471f03cdc48939d7ab3fca496aff70...f0db57661190b8bc94ad9fc337f5d4e25869c340.diff";
+        hash = "sha256-rxts+9xTjMknayzhPhm7SxzGYDI+3V+0DaP46HTC0ZE=";
+      })
+      # Support FFmpeg 5 and later https://gitlab.com/OpenMW/openmw/-/merge_requests/4281
+      (fetchpatch {
+        name = "videoplayer-support-ffmpeg-5.patch";
+        url = "https://github.com/OpenMW/openmw/commit/61cb5b4da638d520c41a9d99b5850384b2e22679.diff";
+        includes = ["extern/*"];
+        hash = "sha256-TSn3owjFiNt987/11vJq2xntUGxGR+xX3Ijw9UhLSlA=";
+      })
+      # Fix the libavformat version check https://gitlab.com/OpenMW/openmw/-/merge_requests/4200
+      (fetchpatch {
+        name = "videoplayer-fix-libavformat-version-check.patch";
+        url = "https://github.com/OpenMW/openmw/commit/20e3eeddde72026e500fe6fd42fdece599c1d53e.diff";
+        includes = ["extern/*"];
+        hash = "sha256-02JNR1SP9Yl2A57EPVp7/vusJKDdlv0JuMAJYBIKbgo=";
+      })
+      ./0003-Support-FFmpeg-5-and-later-in-the-sound-decoder.patch
+      ./0004-Free-the-video-player-s-queued-packets.patch
+      ./0005-Fix-movie-audio-in-layouts-other-than-mono-and-stere.patch
     ];
 
   postPatch = ''
@@ -210,7 +233,7 @@ in {
     ]
     ++ lib.optionals (!buildServer) [
       bullet'
-      ffmpeg_6
+      ffmpeg
       libsForQt5.qtbase
       libxt
       mygui'

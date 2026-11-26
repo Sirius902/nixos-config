@@ -1,0 +1,35 @@
+From 9029646db020418b5d0d19f0c8f51cf8e7aa3fa5 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Wed, 25 Nov 2026 21:37:32 -0800
+Subject: [PATCH] Fix movie audio in layouts other than mono and stereo
+
+OpenMW's FFmpeg 5 support
+(https://gitlab.com/OpenMW/openmw/-/merge_requests/4281) lets
+adjustAudioSettings() rewrite only the output layout's mask, so a quad, 5.1 or
+7.1 track downmixed to stereo kept its channel count, the resampler rejected
+the layout, and the movie played without sound. Adjust a plain mask and
+rebuild the layout from it.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ extern/osg-ffmpeg-videoplayer/audiodecoder.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/extern/osg-ffmpeg-videoplayer/audiodecoder.cpp b/extern/osg-ffmpeg-videoplayer/audiodecoder.cpp
+index 9a48dff..ff52d37 100644
+--- a/extern/osg-ffmpeg-videoplayer/audiodecoder.cpp
++++ b/extern/osg-ffmpeg-videoplayer/audiodecoder.cpp
+@@ -137,7 +137,9 @@ void MovieAudioDecoder::setupFormat()
+     mOutputSampleFormat = inputSampleFormat;
+ 
+ #if OPENMW_FFMPEG_5_OR_GREATER
+-    adjustAudioSettings(mOutputSampleFormat, mOutputChannelLayout.u.mask, mOutputSampleRate);
++    uint64_t outputChannelMask = mOutputChannelLayout.u.mask;
++    adjustAudioSettings(mOutputSampleFormat, outputChannelMask, mOutputSampleRate);
++    av_channel_layout_from_mask(&mOutputChannelLayout, outputChannelMask);
+ #else
+     mOutputChannelLayout = inputChannelLayout;
+     adjustAudioSettings(mOutputSampleFormat, mOutputChannelLayout, mOutputSampleRate);
+-- 
+2.56.0
+
