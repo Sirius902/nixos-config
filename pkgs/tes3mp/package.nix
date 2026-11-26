@@ -87,7 +87,7 @@ stdenv.mkDerivation (finalAttrs: let
     cmakeFlags =
       prevAttrs.cmakeFlags
       ++ [
-        (lib.cmakeFeature "CMAKE_POLICY_VERSION_MINIMUM" "3.5")
+        (lib.cmakeFeature "CMAKE_POLICY_VERSION_MINIMUM" "3.10")
         (lib.cmakeBool "MYGUI_DONT_USE_OBSOLETE" false)
       ];
   });
@@ -221,7 +221,7 @@ in {
 
   cmakeFlags =
     [
-      (lib.cmakeFeature "CMAKE_POLICY_VERSION_MINIMUM" "3.5")
+      (lib.cmakeFeature "CMAKE_POLICY_VERSION_MINIMUM" "3.10")
       (lib.cmakeFeature "RakNet_INCLUDES" "${crabnet}/include")
       (lib.cmakeFeature "RakNet_LIBRARY_RELEASE" "${crabnet}/lib/libRakNetLibStatic.a")
       (lib.cmakeFeature "RakNet_LIBRARY_DEBUG" "${crabnet}/lib/libRakNetLibStatic.a")

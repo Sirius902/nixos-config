@@ -33,7 +33,7 @@ stdenv.mkDerivation {
   nativeBuildInputs = [cmake];
 
   cmakeFlags = [
-    (lib.cmakeFeature "CMAKE_POLICY_VERSION_MINIMUM" "3.5")
+    (lib.cmakeFeature "CMAKE_POLICY_VERSION_MINIMUM" "3.10")
     (lib.cmakeBool "CRABNET_ENABLE_DLL" false)
   ];
 
