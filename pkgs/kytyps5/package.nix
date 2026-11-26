@@ -86,8 +86,8 @@ in
     src = fetchFromGitHub {
       owner = "KytyPS5";
       repo = "KytyPS5";
-      rev = "3057d085e41ecded17ff41f3e36d0f0d00890051";
-      hash = "sha256-UTPKHbmZ2oJ0H2iDUFwYZvCpTrYcH6605bHKwWEuCHk=";
+      rev = "93cce66564bdced2fc7054ca9794451dfeef4d9d";
+      hash = "sha256-0+SZp2mWZoh3UqHoMDOVB/JMbpU0TxNdlctASO/wAdI=";
       postCheckout = ''
         git -C "$out" log -1 --pretty=%ct > "$out/SOURCE_DATE_EPOCH"
 
