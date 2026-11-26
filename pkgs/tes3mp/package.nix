@@ -11,7 +11,7 @@
   makeDesktopItem,
   libsForQt5,
   SDL2,
-  boost187,
+  boost,
   bullet,
   ffmpeg_6,
   libGL,
@@ -178,6 +178,10 @@ in {
 
     grep -qF "recastnavigation/archive/${recast.rev}.zip" extern/CMakeLists.txt \
       || { echo "stale recastnavigation pin" >&2; exit 1; }
+
+    # Boost 1.89 dropped the System library; its headers need no linking.
+    substituteInPlace CMakeLists.txt \
+      --replace-fail 'set(BOOST_COMPONENTS system filesystem' 'set(BOOST_COMPONENTS filesystem'
   '';
 
   nativeBuildInputs =
@@ -196,7 +200,7 @@ in {
   buildInputs =
     [
       SDL2
-      boost187
+      boost
       libGL
       lz4
     ]
