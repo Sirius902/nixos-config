@@ -16,6 +16,17 @@
       '';
     };
 
+    dataReferences = lib.mkOption {
+      type = lib.types.listOf lib.types.pathInStore;
+      default = [];
+      description = ''
+        Store paths that files on the data share link into. The guest's store
+        is not the host's, so the host keeps these in its system closure for
+        the links to resolve there too. Only the current system's are kept;
+        links an earlier start made dangle until the server repoints them.
+      '';
+    };
+
     quiesce = lib.mkOption {
       type = lib.types.lines;
       default = "";

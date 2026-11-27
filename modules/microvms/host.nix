@@ -694,6 +694,8 @@ in {
       snapshotted;
     };
 
+    system.extraDependencies = lib.concatMap (vm: vm.system.my.vm.dataReferences) (lib.attrValues cfg);
+
     environment.systemPackages = [cli];
   };
 }

@@ -154,6 +154,9 @@ in {
       };
     };
 
-    my.vm.dataUser = "tes3mp-server";
+    my.vm = {
+      dataUser = "tes3mp-server";
+      dataReferences = [cfg.corescripts];
+    };
   };
 }
