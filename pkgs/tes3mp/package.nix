@@ -184,6 +184,7 @@ in {
       ./0004-Free-the-video-player-s-queued-packets.patch
       ./0005-Fix-movie-audio-in-layouts-other-than-mono-and-stere.patch
       ./0006-Port-the-launcher-wizard-and-browser-to-Qt-6.patch
+      ./0007-Load-tes3mp-client.cfg-over-the-client-s-defaults.patch
     ];
 
   postPatch = ''

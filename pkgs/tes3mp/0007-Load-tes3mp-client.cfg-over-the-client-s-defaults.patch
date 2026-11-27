@@ -1,0 +1,56 @@
+From 08a4687480208739173c3b30d558802d03323482 Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Fri, 27 Nov 2026 15:07:08 -0800
+Subject: [PATCH 7/8] Load tes3mp-client.cfg over the client's defaults
+
+The engine saves every user setting to settings.cfg on quit, so loading
+tes3mp-client.cfg as user settings copied it there, and the next start
+failed with a duplicate setting. Layer it over tes3mp-client-default.cfg
+instead, warning about keys that file lacks.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ apps/openmw/mwmp/Main.cpp | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/apps/openmw/mwmp/Main.cpp b/apps/openmw/mwmp/Main.cpp
+index f5615ee..9f85dcc 100644
+--- a/apps/openmw/mwmp/Main.cpp
++++ b/apps/openmw/mwmp/Main.cpp
+@@ -7,6 +7,8 @@
+ #include <components/esm/esmwriter.hpp>
+ #include <components/files/configurationmanager.hpp>
+ #include <components/files/escape.hpp>
++#include <components/settings/parser.hpp>
++#include <components/settings/settings.hpp>
+ 
+ #include "../mwbase/environment.hpp"
+ 
+@@ -77,7 +79,23 @@ std::string loadSettings(Settings::Manager& settings)
+     // load user settings if they exist
+     const std::string settingspath = (mCfgMgr.getUserConfigPath() / "tes3mp-client.cfg").string();
+     if (boost::filesystem::exists(settingspath))
+-        settings.loadUser(settingspath);
++    {
++        // The engine saves its user settings to settings.cfg, so these go over the defaults
++        Settings::CategorySettingValueMap userSettings;
++        Settings::SettingsFileParser parser;
++        parser.loadSettingsFile(settingspath, userSettings);
++
++        for (const auto &setting : userSettings)
++        {
++            auto defaultSetting = Settings::Manager::mDefaultSettings.find(setting.first);
++
++            if (defaultSetting != Settings::Manager::mDefaultSettings.end())
++                defaultSetting->second = setting.second;
++            else
++                LOG_MESSAGE_SIMPLE(TimedLog::LOG_WARN, "Ignoring unknown setting [%s] %s in %s",
++                    setting.first.first.c_str(), setting.first.second.c_str(), settingspath.c_str());
++        }
++    }
+ 
+     return settingspath;
+ }
+-- 
+2.56.0
+
