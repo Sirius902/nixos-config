@@ -767,15 +767,15 @@ _: [
             go;
         };
       }).overrideAttrs (finalAttrs: prevAttrs: {
-        version = "11.6.6";
+        version = "11.6.7";
 
         src = prevAttrs.src.override {
           rev = null;
           tag = "v${finalAttrs.version}";
-          hash = "sha256-aCBep/dWc8KpcYdUCD3A51UzxkhaFXozww2MQw4sQfs=";
+          hash = "sha256-HZopwTTrJLvw45fE+gnfQocg0IpGcq9PBdz2DgPTbYk=";
         };
 
-        vendorHash = "sha256-OSRwrFFGZysNkudqJH8bs3P6FibRSgEGGx4GlfkO04Q=";
+        vendorHash = "sha256-yXm5cOHZGIpeVBRGU2qXgT4tGJHBHiamS1LA+CUAlNI=";
 
         passthru =
           (prevAttrs.passthru or {})
