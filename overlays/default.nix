@@ -748,22 +748,40 @@ _: [
   })
 
   (final: prev: {
-    croc = prev.croc.overrideAttrs (finalAttrs: prevAttrs: {
-      version = "11.6.6";
-
-      src = prevAttrs.src.override {
-        rev = null;
-        tag = "v${finalAttrs.version}";
-        hash = "sha256-aCBep/dWc8KpcYdUCD3A51UzxkhaFXozww2MQw4sQfs=";
-      };
-
-      vendorHash = "sha256-OSRwrFFGZysNkudqJH8bs3P6FibRSgEGGx4GlfkO04Q=";
-
-      passthru =
-        (prevAttrs.passthru or {})
-        // {
-          updateScript = final.nix-update-script {};
+    croc = let
+      # TODO(Sirius902) Drop once nixos-unstable has Go 1.27.4, which croc's go.mod requires.
+      # https://github.com/NixOS/nixpkgs/pull/586269
+      go = prev.croc.go.overrideAttrs (finalAttrs: _: {
+        version = "1.27.4";
+        src = final.fetchurl {
+          url = "https://go.dev/dl/go${finalAttrs.version}.src.tar.gz";
+          hash = "sha256-c8+4VxrsDAEXdofbhxY9Rqog6XeWcncokaoXZU2aYJk=";
         };
-    });
+      });
+    in
+      (prev.croc.override {
+        buildGo127Module = final.buildGo127Module.override {
+          go =
+            final.lib.throwIf (final.lib.versionAtLeast prev.croc.go.version go.version)
+            "croc: nixpkgs' Go is now ${prev.croc.go.version}; drop croc's Go ${go.version} override in overlays/default.nix"
+            go;
+        };
+      }).overrideAttrs (finalAttrs: prevAttrs: {
+        version = "11.6.6";
+
+        src = prevAttrs.src.override {
+          rev = null;
+          tag = "v${finalAttrs.version}";
+          hash = "sha256-aCBep/dWc8KpcYdUCD3A51UzxkhaFXozww2MQw4sQfs=";
+        };
+
+        vendorHash = "sha256-OSRwrFFGZysNkudqJH8bs3P6FibRSgEGGx4GlfkO04Q=";
+
+        passthru =
+          (prevAttrs.passthru or {})
+          // {
+            updateScript = final.nix-update-script {};
+          };
+      });
   })
 ]
