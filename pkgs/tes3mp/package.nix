@@ -185,6 +185,7 @@ in {
       ./0005-Fix-movie-audio-in-layouts-other-than-mono-and-stere.patch
       ./0006-Port-the-launcher-wizard-and-browser-to-Qt-6.patch
       ./0007-Load-tes3mp-client.cfg-over-the-client-s-defaults.patch
+      ./0008-Keep-the-player-s-own-values-of-enforced-settings.patch
     ];
 
   postPatch = ''

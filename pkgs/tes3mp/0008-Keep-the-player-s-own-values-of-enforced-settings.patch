@@ -1,0 +1,150 @@
+From 46072c7b4f0561ea7a79b1a68bbd83fc11004ffd Mon Sep 17 00:00:00 2001
+From: Sirius902 <10891979+Sirius902@users.noreply.github.com>
+Date: Fri, 27 Nov 2026 15:09:26 -0800
+Subject: [PATCH 8/8] Keep the player's own values of enforced settings
+
+Settings the server enforced were saved to settings.cfg on quit,
+replacing the player's own values for good. Put back what the player had
+before the server enforced each one, unless they changed it during the
+session.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ apps/openmw/engine.cpp                        | 10 ++++
+ apps/openmw/mwmp/Main.cpp                     | 50 +++++++++++++++++++
+ apps/openmw/mwmp/Main.hpp                     |  2 +
+ .../player/ProcessorGameSettings.hpp          |  5 +-
+ 4 files changed, 65 insertions(+), 2 deletions(-)
+
+diff --git a/apps/openmw/engine.cpp b/apps/openmw/engine.cpp
+index fe8a0f7..cd5b6c1 100644
+--- a/apps/openmw/engine.cpp
++++ b/apps/openmw/engine.cpp
+@@ -1149,6 +1149,16 @@ void OMW::Engine::go()
+         frameRateLimiter.limit();
+     }
+ 
++    /*
++        Start of tes3mp addition
++
++        Put back the player's own values of the settings the server enforced
++    */
++    mwmp::Main::restoreUserSettings();
++    /*
++        End of tes3mp addition
++    */
++
+     // Save user settings
+     settings.saveUser(settingspath);
+ 
+diff --git a/apps/openmw/mwmp/Main.cpp b/apps/openmw/mwmp/Main.cpp
+index 9f85dcc..3e79038 100644
+--- a/apps/openmw/mwmp/Main.cpp
++++ b/apps/openmw/mwmp/Main.cpp
+@@ -1,4 +1,6 @@
+ #include <cstdlib>
++#include <map>
++#include <optional>
+ 
+ #include <components/openmw-mp/Utils.hpp>
+ #include <components/openmw-mp/TimedLog.hpp>
+@@ -173,6 +175,54 @@ bool Main::init(std::vector<std::string> &content, Files::Collections &collectio
+     return pMain->mNetworking->isConnected();
+ }
+ 
++namespace
++{
++    struct EnforcedSetting
++    {
++        std::optional<std::string> userValue;
++        std::string enforcedValue;
++    };
++
++    std::map<Settings::CategorySetting, EnforcedSetting> enforcedSettings;
++}
++
++void Main::enforceSetting(const std::string &category, const std::string &setting, const std::string &value)
++{
++    const Settings::CategorySetting key(category, setting);
++    auto enforced = enforcedSettings.find(key);
++
++    if (enforced == enforcedSettings.end())
++    {
++        EnforcedSetting newSetting;
++        auto userSetting = Settings::Manager::mUserSettings.find(key);
++        if (userSetting != Settings::Manager::mUserSettings.end())
++            newSetting.userValue = userSetting->second;
++        enforced = enforcedSettings.emplace(key, newSetting).first;
++    }
++
++    enforced->second.enforcedValue = value;
++    Settings::Manager::setString(setting, category, value);
++}
++
++void Main::restoreUserSettings()
++{
++    for (const auto &[key, enforced] : enforcedSettings)
++    {
++        auto userSetting = Settings::Manager::mUserSettings.find(key);
++
++        // Keep a value the player chose after the server enforced it
++        if (userSetting == Settings::Manager::mUserSettings.end() || userSetting->second != enforced.enforcedValue)
++            continue;
++
++        if (enforced.userValue)
++            userSetting->second = *enforced.userValue;
++        else
++            Settings::Manager::mUserSettings.erase(userSetting);
++    }
++
++    enforcedSettings.clear();
++}
++
+ void Main::postInit()
+ {
+     pMain->mGUIController->setupChat();
+diff --git a/apps/openmw/mwmp/Main.hpp b/apps/openmw/mwmp/Main.hpp
+index 5e1da71..d3dc5d3 100644
+--- a/apps/openmw/mwmp/Main.hpp
++++ b/apps/openmw/mwmp/Main.hpp
+@@ -25,6 +25,8 @@ namespace mwmp
+         static void postInit();
+         static bool isInitialized();
+         static void destroy();
++        static void enforceSetting(const std::string &category, const std::string &setting, const std::string &value);
++        static void restoreUserSettings();
+         static const Main &get();
+         static void frame(float dt);
+ 
+diff --git a/apps/openmw/mwmp/processors/player/ProcessorGameSettings.hpp b/apps/openmw/mwmp/processors/player/ProcessorGameSettings.hpp
+index 4d49c04..d828cc0 100644
+--- a/apps/openmw/mwmp/processors/player/ProcessorGameSettings.hpp
++++ b/apps/openmw/mwmp/processors/player/ProcessorGameSettings.hpp
+@@ -6,6 +6,7 @@
+ #include "apps/openmw/mwgui/windowmanagerimp.hpp"
+ 
+ #include "../PlayerProcessor.hpp"
++#include "apps/openmw/mwmp/Main.hpp"
+ 
+ namespace mwmp
+ {
+@@ -54,14 +55,14 @@ namespace mwmp
+ 
+                 for (auto setting : player->gameSettings)
+                 {
+-                    Settings::Manager::setString(setting.first, GAME_SETTING_CATEGORY, setting.second);
++                    Main::enforceSetting(GAME_SETTING_CATEGORY, setting.first, setting.second);
+                 }
+ 
+                 // Only read VR settings for players using a VR build
+ #ifdef USE_OPENXR
+                 for (auto setting : player->vrSettings)
+                 {
+-                    Settings::Manager::setString(setting.first, VR_SETTING_CATEGORY, setting.second);
++                    Main::enforceSetting(VR_SETTING_CATEGORY, setting.first, setting.second);
+                 }
+ #endif
+             }
+-- 
+2.56.0
+
