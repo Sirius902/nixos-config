@@ -18,9 +18,5 @@
     {
       file = ./gradle-drop-nixpkgs-bind.patch;
     }
-    # Update nix-update to 1.17.0 https://github.com/NixOS/nixpkgs/pull/591736
-    {
-      commit = "d164824ab9f0413b0a3cbb69ad076c18480dae94";
-    }
   ];
 }
