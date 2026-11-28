@@ -124,7 +124,6 @@ in {
       imhex
       inkscape
       intellij-idea
-      rider
       (ghidra.withExtensions (_: [
         ghidra-extensions.gamecube-loader
         ghidra-extensions.xex-loader-wv
